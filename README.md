@@ -1,4 +1,6 @@
 # typescript-examples
+## TypeScript Install
+Run `npm install -g typescript` ans `tsc` will be available
 ## Build Adapters
 ```
 cd adapters
