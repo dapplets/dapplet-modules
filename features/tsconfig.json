@@ -1,0 +1,12 @@
+{
+  "files": [
+    "PMFeature.ts"
+  ],
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "module": "none",
+    "removeComments": true,
+    "target": "es5",
+    "outDir": "../extension/dist/features"
+  }
+}
