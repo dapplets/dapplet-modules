@@ -1,0 +1,12 @@
+@startuml
+together {
+    SiteAdapter "1" *-> "N" View
+    InsertionPoint "1" <-* "N" View
+}
+SiteAdapter *- Router
+Router ..> View : activate
+SiteAdapter *-> DecorFactory
+SiteAdapter *-> DecorType
+DappletIntegration *-> Action
+DappletIntegration --> SiteAdapter 
+@enduml
