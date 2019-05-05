@@ -2,15 +2,14 @@
 interface IExtension {
     openOverlay(id:ID, ctx: any):void;
     sendWalletConnectTx(tx:any):void;
-    util: IUtil; 
 }
 
 interface IModule {
 
 }
 
-interface IDapplet extends IModule {
-    getViewActionsConfig(controlFactories:{[key:string]:IControlFactory}, core:IExtension): any;
+interface IFeature extends IModule {
+    getAugmentationConfig(actionFactories:{[key:string]:Function}, core:IExtension): any;
 }
 
 interface IAction {}
@@ -18,34 +17,101 @@ interface IAction {}
 interface IView {
     INSERT_POINTS : ID[];
     attachActions(action: IAction, insPoint:ID): void; 
+    activate(doc:Document): void;
+    deactivate(doc:Document): void;
 }
 
 
 type ID = string;
-type IControlFactory = (arg:any)=>void;
 //#endregion COMMON INTERFACES
 
 //#region UTIL LIBRARY
-class BasicView implements IView {
+abstract class BasicView implements IView {
     constructor(public name:string, public INSERT_POINTS:string[]){}
-    attachedActions : { [key:string]:IAction[]; } = {};
+    attachedActions : { [key:string]:IAction[] } = {};
+    
     attachActions(actions: IAction[], insPoint: string): void {
         if (!this.attachedActions[insPoint]) this.attachedActions[insPoint] = actions;
         else this.attachedActions[insPoint].push(...actions);
     }
+    
+    injectActions(doc:Document){
+        /*
+        //ToDo: implement
+        this.attachedActions.forEach((insPoint:string, actions:IAction[]) => {
+            insPoint.inject();
+        });
+        */
+    }
+
+    public activate(doc:Document): void {
+        this.startMutationObserver(doc);
+        this.injectActions(doc);
+    }
+
+    public deactivate(doc:Document) {
+        this.stopMutationObserver(doc);
+    }
+
+    public stopMutationObserver(doc:Document) : void {
+        //ToDo: implement
+    }
+
+    abstract startMutationObserver(doc:Document) : void;
 }
 
-interface IUtil {
-    createView(id:string, indPoints: string[]): IView;
-}
+//#endregion UTIL LIBRARY
 
-class Util implements IUtil {
-    public createView(id: string, insPoints: string[]): IView {
-        return new BasicView(id, insPoints);
+//#region TWITTER ADAPTER PACKAGE
+class TwitterAdapter {
+    constructor(public readonly core: IExtension, public readonly doc: Document){
+        this.initRouteObserver(doc);
+    }
+
+    public views:IView[] = [
+        new class extends BasicView {
+            public startMutationObserver(doc:Document){
+                //ToDo: implement MutationObserver for TimeLine View
+            }
+        }("TIMELINE", ["TWEET_SOUTH","TWEET_COMBO"]),    
+        new class extends BasicView {
+            public startMutationObserver(doc:Document){
+                //ToDo: implement MutationObserver for DirectMessage View
+            }
+        }("DIRECT_MESSAGE", ["DM_SOUTH","DM_EAST"]),        
+    ]
+    
+    private initRouteObserver(doc:Document) {
+        //ToDo: implement logic observing DOM and listening changing routes;
+        //router activates views (and inits ViewObserver for them)
+        // an old MutationObserver should be per View actually.
+    }
+
+    private onRouteChanged(viewActivating: IView[], viewDeactivating: IView[]): void {
+        for(let view of viewDeactivating) { view.deactivate(this.doc); }
+        for(let view of viewActivating)   { view.activate(this.doc);   }
+    }
+
+    public actionFactories : {[key:string]:Function} = {
+        button : (img: string, exec : (ctx:any) => void, label: (ctx:any) => string) => ( 
+            //ToDo: onClick invalid; fix-it!
+            (injector: Function) => injector("<div><img src='${img}' onclick='javascript:exec(ctx)'/>(${label}) </div>") 
+        ),
+        menuItem : <Function>  ({}) => { /*"create menuItem" */} //ToDo: implement
+    }
+  
+    registerFeature(feature: IFeature): void {
+        let actionConfig = feature.getAugmentationConfig(this.actionFactories, this.core);
+        actionConfig.forEach((viewId, viewActions) => {
+            let view = this.views[viewId];
+            viewActions.forEach((insPoint:string,actions: IAction[]) => {
+                view.attachActions(actions, insPoint);
+            })
+        });    
     }
 
 }
-//#endregion UTIL LIBRARY
+//#endregion TWITTER ADAPTER PACKAGE
 
 //#region TWITTER 4_ACTIONS FEATURE PACKAGE
 class Twitter_4Actions implements IModule {
@@ -54,8 +120,8 @@ class Twitter_4Actions implements IModule {
         overlay : <ID>"0xOverlay"
     }
 
-    public getViewActionsConfig (
-        {button, menuItem}: {[key:string]:IControlFactory},
+    public getAugmentationConfig (
+        {button, menuItem}: {[key:string]:Function},
         core : IExtension
     ):any {
         // called at view creation time
@@ -117,41 +183,3 @@ class Twitter_4Actions implements IModule {
     }
 }
 //#endregion TWITTER 4_ACTIONS FEATURE
-
-//#region TWITTER ADAPTER PACKAGE
-
-class TwitterAdapter implements ISiteAdapter {
-    public id: string = '1';
-    public version: string = '0.0.1';
-    public views:IView[] = [
-        this.core.util.createView("TIMELINE", ["TWEET_SOUTH","TWEET_COMBO"]),        
-        this.core.util.createView("DIRECT_MESSAGE", ["DM_SOUTH","DM_EAST"]),        
-    ]
-    constructor(public readonly core: IExtension, public readonly doc: Document){}
-
-    public actionFactories = {
-        button : <IActionFactory> (img: string, exec : (ctx:any) => void, text: (ctx:any) => string) => ( 
-            () => ("<html> </html>")
-        ),
-        menuItem : <IControlFactory>  ({}) => { /*"create menuItem" */}
-    }
-  
-    registerDapplet(dapplet: IDapplet): void {
-        let actionConfig = dapplet.getViewActionsConfig(this.actionFactories, this.core);
-        actionConfig.forEach((viewId, viewActions) => {
-            let view = this.views[viewId];
-            viewActions.forEach((insPoint:string,actions: IAction[]) => {
-                view.attachActions(actions, insPoint);
-            })
-        });    
-    }
-
-    deactivateView(viewId: string): void {
-        throw new Error("Method not implemented.");
-    }
-
-    activateView(viewId: string): void {
-        throw new Error("Method not implemented.");
-    }
-
-}
