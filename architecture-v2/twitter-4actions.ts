@@ -85,6 +85,7 @@ class TwitterAdapter {
         //ToDo: implement logic observing DOM and listening changing routes;
         //router activates views (and inits ViewObserver for them)
         // an old MutationObserver should be per View actually.
+        // calls onRouteChanged(...)
     }
 
     private onRouteChanged(viewActivating: IView[], viewDeactivating: IView[]): void {
