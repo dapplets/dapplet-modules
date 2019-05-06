@@ -45,9 +45,9 @@ async function init() {
 
     // ============ ADAPTER DEACTIVATION 5 SECONDS =============
 
-    await pause(10000);
-    adapter.deactivate(document);
-    console.log('deactivated');
+    // await pause(10000);
+    // adapter.deactivate(document);
+    // console.log('deactivated');
 }
 
 init();

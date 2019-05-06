@@ -1,14 +1,14 @@
 //#region INTERFACES FROM EXTENSION
 
 enum ScriptType {
-    CONTENT_ADAPTER, 
-    FEATURE 
+    CONTENT_ADAPTER,
+    FEATURE
     //, OVERLAY
 }
 
 interface IUserScript {
-    id : string;
-    version : string;
+    id: string;
+    version: string;
     type: ScriptType;
     //requires: string[];
 }
@@ -17,11 +17,11 @@ interface IContentAdapter extends IUserScript {
     //controlTypes: string[];
     activate(dom: Document): void;
     deactivate(dom: Document): void;
-    attachFeature(feature: any) : void;
+    attachFeature(feature: any): void;
 }
 
 interface IFeature extends IUserScript {
-    getContentAdapterId() : string;
+    getContentAdapterId(): string;
 }
 //#endregion
 
@@ -32,8 +32,10 @@ enum ControlTypes {
 }
 
 interface IButton {
+    class: string;
     text: string;
-    handler(context: any) : void; //onClick
+    icon: string;
+    handler(context: any): void; //onClick
 }
 
 interface ITwitterFeature extends IFeature {
@@ -47,15 +49,33 @@ class ContentAdapter implements IContentAdapter {
     public type: ScriptType = ScriptType.CONTENT_ADAPTER;
     public requires: string[] = [];
 
+    private attachedFeatures: ITwitterFeature[] = [];
+
     private observer: MutationObserver;
-    private onMutate(mutation: MutationRecord[]) : void {
-        console.log('mutated');
+    private onMutate(mutationsList: MutationRecord[]): void {
+        for (let feature of this.attachedFeatures) {
+            let buttons = feature.createControlElements({}, ControlTypes.INLINE_BUTTON);
+
+            for (let button of buttons) {
+                for (let mutation of mutationsList) {
+                    var targetContainers = (<any>mutation.target).querySelectorAll('li.stream-item div.js-actions');
+                    for (let container of targetContainers) {
+                        if (container != null) {
+                            var widget = container.querySelector(`.${button.class}`);
+                            if (widget == null) {
+                                ContentAdapter.insertInlineButton(container, button);
+                            }
+                        }
+                    }
+                }
+            }            
+        }        
     }
 
     public isSiteCompatible(doc: Document): boolean {
-        return doc 
-            && doc.location 
-            && doc.location.hostname 
+        return doc
+            && doc.location
+            && doc.location.hostname
             && doc.location.hostname === "twitter.com";
     }
 
@@ -87,14 +107,39 @@ class ContentAdapter implements IContentAdapter {
 
     public attachFeature(feature: ITwitterFeature): void {
         // TODO: onMutate
-        let buttons = feature.createControlElements({}, ControlTypes.INLINE_BUTTON);
-        for (let button of buttons) {
-            console.log('inserted');
-            let buttonDom = document.createElement('button');
-            buttonDom.innerText = button.text;
-            buttonDom.onclick = button.handler;
-            document.body.appendChild(buttonDom);
-        }
-        return;
+        this.attachedFeatures.push(feature);
+    }
+
+    private static createElementFromHTML(htmlString: string): ChildNode {
+        var div = document.createElement('div');
+        div.innerHTML = htmlString.trim();
+        return div.firstChild;
+    }
+
+    private static insertInlineButton (node: any, button: IButton) {
+        let element = ContentAdapter.createElementFromHTML(`<div class="${button.class} ProfileTweet-action">
+            <button class="ProfileTweet-actionButton" type="button">
+                <div class="IconContainer">
+                    <img src="${button.icon}">
+                </div>
+                <span class="ProfileTweet-actionCount">
+                    <span class="ProfileTweet-actionCountForPresentation" aria-hidden="true">${button.text}</span>
+                </span>
+            </button>
+        </div>`);
+
+        element.addEventListener("click", function (event: any) {
+            let tweetNode = event.target.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode;
+            let context = {
+                id: tweetNode.getAttribute('data-tweet-id'),
+                text: tweetNode.querySelector('div.js-tweet-text-container').innerText,
+                authorFullname: tweetNode.querySelector('strong.fullname').innerText,
+                authorUsername: tweetNode.querySelector('span.username').innerText,
+                authorImg: tweetNode.querySelector('img.avatar').getAttribute('src')
+            };
+            button.handler(context);
+        });
+
+        node.appendChild(element);
     }
 }
