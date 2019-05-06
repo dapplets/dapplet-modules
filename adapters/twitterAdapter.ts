@@ -31,7 +31,7 @@ enum ControlTypes {
     FLOATED_BUTTON
 }
 
-interface IButton {
+interface IButtonConfig {
     class: string;
     text: string;
     icon: string;
@@ -39,7 +39,7 @@ interface IButton {
 }
 
 interface ITwitterFeature extends IFeature {
-    createControlElements(context: any, controlType: ControlTypes): IButton[];
+    createControlElements(context: any, controlType: ControlTypes): IButtonConfig[];
 }
 //#endregion
 
@@ -68,8 +68,8 @@ class ContentAdapter implements IContentAdapter {
                         }
                     }
                 }
-            }            
-        }        
+            }
+        }
     }
 
     public isSiteCompatible(doc: Document): boolean {
@@ -109,15 +109,136 @@ class ContentAdapter implements IContentAdapter {
         // TODO: onMutate
         this.attachedFeatures.push(feature);
     }
+}
 
-    private static createElementFromHTML(htmlString: string): ChildNode {
-        var div = document.createElement('div');
-        div.innerHTML = htmlString.trim();
-        return div.firstChild;
+//#region COMMON INTERFACES
+interface IExtension {
+    openOverlay(id: ID, ctx: any): void;
+    sendWalletConnectTx(tx: any): void;
+}
+
+interface IModule { }
+
+interface IContentAdapter extends IModule {
+    init(core: IExtension, doc: Document): void;
+}
+
+interface IFeature extends IModule {
+    getAugmentationConfig(actionFactories: { [key: string]: Function }, core: IExtension): any;
+}
+
+interface IAction { }
+
+interface IView {
+    INSERT_POINTS: ID[];
+    attachActionFactories(actions: IAction[], insPoint: ID): void;
+    activate(doc: Document): void;
+    deactivate(doc: Document): void;
+}
+
+
+type ID = string;
+//#endregion COMMON INTERFACES
+
+//#region UTIL LIBRARY
+abstract class BasicView implements IView {
+    constructor(public name: string, public INSERT_POINTS: string[]) { }
+    attachedActionFactories: { [key: string]: IAction[] } = {};
+
+    attachActionFactories(actionFactories: IAction[], insPoint: ID): void {
+        if (!this.attachedActionFactories[insPoint]) this.attachedActionFactories[insPoint] = actionFactories;
+        else this.attachedActionFactories[insPoint].push(...actionFactories);
     }
 
-    private static insertInlineButton (node: any, button: IButton) {
-        let element = ContentAdapter.createElementFromHTML(`<div class="${button.class} ProfileTweet-action">
+    injectActions(doc: Document) {
+        //ToDo: implement
+        this.attachedActionFactories.forEach((insPoint: string, actionFactories: IAction[]) => {
+            actionFactories.forEach(actionFactory => actionFactory(this, insPoint))
+        });
+    }
+
+    public activate(doc: Document): void {
+        this.startMutationObserver(doc);
+        this.injectActions(doc);
+    }
+
+    public deactivate(doc: Document) {
+        this.stopMutationObserver(doc);
+    }
+
+    public stopMutationObserver(doc: Document): void {
+        //ToDo: implement
+    }
+
+    abstract startMutationObserver(doc: Document): void;
+}
+
+//#endregion UTIL LIBRARY
+
+//#region TWITTER ADAPTER PACKAGE
+class ContentAdapter implements IContentAdapter {
+    private core: IExtension = null;
+    private doc: Document = null;
+
+    // TODO: Constructor
+    public init(core: IExtension, doc: Document) {
+        this.core = core;
+        this.doc = doc;
+        this.initRouteObserver(doc);
+    }
+
+    public views: IView[] = [
+        new class extends BasicView {
+            public startMutationObserver(doc: Document) {
+                //ToDo: implement MutationObserver for TimeLine View
+            }
+        }("TIMELINE", ["TWEET_SOUTH", "TWEET_COMBO"]),
+        new class extends BasicView {
+            public startMutationObserver(doc: Document) {
+                //ToDo: implement MutationObserver for DirectMessage View
+            }
+        }("DIRECT_MESSAGE", ["DM_SOUTH", "DM_EAST"]),
+    ]
+
+    private initRouteObserver(doc: Document) {
+        //ToDo: implement logic observing DOM and listening changing routes;
+        //router activates views (and inits ViewObserver for them)
+        // an old MutationObserver should be per View actually.
+        // calls onRouteChanged(...)
+    }
+
+    private onRouteChanged(viewActivating: IView[], viewDeactivating: IView[]): void {
+        for (let view of viewDeactivating) { view.deactivate(this.doc); }
+        for (let view of viewActivating) { view.activate(this.doc); }
+    }
+
+    public actionFactories: { [key: string]: Function } = {
+        button: (config: IButtonConfig) => ((view: IView, insPoint: string) =>
+            this.insertInlineButtonInToView(view, insPoint, config)
+        ),
+        menuItem: <Function>({ }) => { /*"create menuItem" */ } //ToDo: implement
+    }
+
+    public registerFeature(feature: IFeature): void {
+        let actionConfig = feature.getAugmentationConfig(this.actionFactories, this.core);
+        actionConfig.forEach((viewId: string, viewConfig: any) => {
+            let view = this.views[viewId];
+            viewConfig.forEach((insPoint: string, actionFactories: IAction[]) => {
+                view.attachActionFactories(actionFactories, insPoint);
+            })
+        });
+    }
+
+    private insertInlineButtonInToView(view: IView, insPoint: string, button: IButtonConfig): void {
+        // ToDo: calculate node from insPoint & view
+        let nodes = document.querySelectorAll('li.stream-item div.js-actions');
+        for (let node of nodes) {
+            this.insertInlineButton(node, button);
+        }
+    }
+
+    private insertInlineButton(node: any, button: IButtonConfig): void {
+        let element = this.createElementFromHTML(`<div class="${button.class} ProfileTweet-action">
             <button class="ProfileTweet-actionButton" type="button">
                 <div class="IconContainer">
                     <img src="${button.icon}">
@@ -142,4 +263,12 @@ class ContentAdapter implements IContentAdapter {
 
         node.appendChild(element);
     }
+
+    private createElementFromHTML(htmlString: string): ChildNode {
+        var div = document.createElement('div');
+        div.innerHTML = htmlString.trim();
+        return div.firstChild;
+    }
+
 }
+//#endregion TWITTER ADAPTER PACKAGE

@@ -128,7 +128,7 @@ class Twitter_4Actions implements IModule {
         // called at view creation time
         let {overlay,adapter} = Twitter_4Actions.REQUIRES;
         return {
-            TIMELINE_VIEW       : {
+            TIMELINE_VIEW       :{ 
                 //ToDo: Augmentation Server provides additional context related two-ways info used as labels in custom actions.
                 // Example: number of likes, number of PMs opened for current tweet, displayed as "(9)" near from button.    
                 AUGM_SERVER_URL : "ws://SOMEHOST/timeline/",
