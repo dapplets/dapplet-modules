@@ -1,6 +1,6 @@
 {
   "files": [
-    "PMFeature.ts"
+    "CustomFeature.ts"
   ],
   "compilerOptions": {
     "noImplicitAny": true,
