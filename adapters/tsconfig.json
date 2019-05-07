@@ -7,7 +7,6 @@
     "module": "none",
     "removeComments": true,
     "target": "es5",
-    //"outDir": "../extension/dist/adapters",
-    "outFile": "../extension/dist/adapters/twitterAdapter.js"
+    "outDir": "../extension/dist/adapters"
   }
 }
