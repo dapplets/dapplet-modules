@@ -1,118 +1,5 @@
-//#region INTERFACES FROM EXTENSION
-
-enum ScriptType {
-    CONTENT_ADAPTER,
-    FEATURE
-    //, OVERLAY
-}
-
-interface IUserScript {
-    id: string;
-    version: string;
-    type: ScriptType;
-    //requires: string[];
-}
-
-interface IContentAdapter extends IUserScript {
-    //controlTypes: string[];
-    activate(dom: Document): void;
-    deactivate(dom: Document): void;
-    attachFeature(feature: any): void;
-}
-
-interface IFeature extends IUserScript {
-    getContentAdapterId(): string;
-}
-//#endregion
-
-//#region INTERFACES FROM ADAPTER
-enum ControlTypes {
-    INLINE_BUTTON,
-    FLOATED_BUTTON
-}
-
-interface IButtonConfig {
-    class: string;
-    text: string;
-    icon: string;
-    handler(context: any): void; //onClick
-}
-
-interface ITwitterFeature extends IFeature {
-    createControlElements(context: any, controlType: ControlTypes): IButtonConfig[];
-}
-//#endregion
-
-class ContentAdapter implements IContentAdapter {
-    public id: string = '1';
-    public version: string = '0.0.1';
-    public type: ScriptType = ScriptType.CONTENT_ADAPTER;
-    public requires: string[] = [];
-
-    private attachedFeatures: ITwitterFeature[] = [];
-
-    private observer: MutationObserver;
-    private onMutate(mutationsList: MutationRecord[]): void {
-        for (let feature of this.attachedFeatures) {
-            let buttons = feature.createControlElements({}, ControlTypes.INLINE_BUTTON);
-
-            for (let button of buttons) {
-                for (let mutation of mutationsList) {
-                    var targetContainers = (<any>mutation.target).querySelectorAll('li.stream-item div.js-actions');
-                    for (let container of targetContainers) {
-                        if (container != null) {
-                            var widget = container.querySelector(`.${button.class}`);
-                            if (widget == null) {
-                                ContentAdapter.insertInlineButton(container, button);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    public isSiteCompatible(doc: Document): boolean {
-        return doc
-            && doc.location
-            && doc.location.hostname
-            && doc.location.hostname === "twitter.com";
-    }
-
-    // TODO: rename
-    public isPageCompatible(doc: Document): boolean {
-        if (!doc) return false;
-        const res = doc.querySelectorAll('#timeline .stream-item');
-
-        return res && res.length > 0;
-    }
-
-    public activate(doc: Document): void {
-        let me = this;
-        if (!window || !MutationObserver) throw Error('MutationObserver is not available.');
-
-        me.observer = new MutationObserver(function (mutationsList) {
-            me.onMutate.call(me, mutationsList);
-        });
-
-        me.observer.observe(doc.body, {
-            childList: true,
-            subtree: true
-        });
-    }
-
-    public deactivate(dom: Document): void {
-        this.observer.disconnect();
-    }
-
-    public attachFeature(feature: ITwitterFeature): void {
-        // TODO: onMutate
-        this.attachedFeatures.push(feature);
-    }
-}
-
 //#region COMMON INTERFACES
-interface IExtension {
+interface ICore {
     openOverlay(id: ID, ctx: any): void;
     sendWalletConnectTx(tx: any): void;
 }
@@ -120,16 +7,20 @@ interface IExtension {
 interface IModule { }
 
 interface IContentAdapter extends IModule {
-    init(core: IExtension, doc: Document): void;
+    init(core: ICore, doc: Document): void;
+    registerFeature(feature: IFeature): void;
+    unregisterFeature(feature: IFeature): void;
 }
 
 interface IFeature extends IModule {
-    getAugmentationConfig(actionFactories: { [key: string]: Function }, core: IExtension): any;
+    getAugmentationConfig(actionFactories: { [key: string]: Function }, core: ICore): any;
 }
 
 interface IAction { }
 
 interface IView {
+    name: string;
+    isActive: boolean;
     INSERT_POINTS: ID[];
     attachActionFactories(actions: IAction[], insPoint: ID): void;
     activate(doc: Document): void;
@@ -140,34 +31,62 @@ interface IView {
 type ID = string;
 //#endregion COMMON INTERFACES
 
+
+//#region TWITTER ADAPTER INTERFACES
+
+interface IButtonConfig {
+    class: string;
+    text: string;
+    icon: string;
+    handler(context: any): void; //onClick
+}
+
+//#endregion
+
 //#region UTIL LIBRARY
 abstract class BasicView implements IView {
+    public isActive: boolean = false;
+    public observer: MutationObserver = null;
+
     constructor(public name: string, public INSERT_POINTS: string[]) { }
     attachedActionFactories: { [key: string]: IAction[] } = {};
 
     attachActionFactories(actionFactories: IAction[], insPoint: ID): void {
-        if (!this.attachedActionFactories[insPoint]) this.attachedActionFactories[insPoint] = actionFactories;
-        else this.attachedActionFactories[insPoint].push(...actionFactories);
+        if (!this.attachedActionFactories[insPoint]) {
+            this.attachedActionFactories[insPoint] = actionFactories;
+        } else {
+            this.attachedActionFactories[insPoint].push(...actionFactories);
+        }
+
+        console.log('actionFactory attached', { actionFactories, insPoint });
     }
 
     injectActions(doc: Document) {
         //ToDo: implement
-        this.attachedActionFactories.forEach((insPoint: string, actionFactories: IAction[]) => {
-            actionFactories.forEach(actionFactory => actionFactory(this, insPoint))
-        });
+        // this.attachedActionFactories.forEach((insPoint: string, actionFactories: IAction[]) => {
+        //     actionFactories.forEach(actionFactory => actionFactory(this, insPoint))
+        // });
+
+        console.log('injectActions this.attachedActionFactories', this.attachedActionFactories);
     }
 
     public activate(doc: Document): void {
+        this.isActive = true;
         this.startMutationObserver(doc);
         this.injectActions(doc);
+        console.log(`View "${this.name}" is activated`);
     }
 
     public deactivate(doc: Document) {
+        this.isActive = false;
         this.stopMutationObserver(doc);
+        console.log(`View "${this.name}" is deactivated`);
     }
 
     public stopMutationObserver(doc: Document): void {
         //ToDo: implement
+        this.observer && this.observer.disconnect();
+        console.log(`View "${this.name}": stopMutationObserver`);
     }
 
     abstract startMutationObserver(doc: Document): void;
@@ -177,11 +96,11 @@ abstract class BasicView implements IView {
 
 //#region TWITTER ADAPTER PACKAGE
 class ContentAdapter implements IContentAdapter {
-    private core: IExtension = null;
+    private core: ICore = null;
     private doc: Document = null;
 
     // TODO: Constructor
-    public init(core: IExtension, doc: Document) {
+    public init(core: ICore, doc: Document) {
         this.core = core;
         this.doc = doc;
         this.initRouteObserver(doc);
@@ -190,26 +109,84 @@ class ContentAdapter implements IContentAdapter {
     public views: IView[] = [
         new class extends BasicView {
             public startMutationObserver(doc: Document) {
-                //ToDo: implement MutationObserver for TimeLine View
+                console.log(`View "${this.name}": startMutationObserver`);
+                const node = doc.getElementById('timeline');
+                if (!this.observer) {
+                    this.observer = new MutationObserver((mutations) => {
+                        console.log(`View "${this.name}": mutated`);
+                    });
+                }
+                
+                this.observer.observe(node, {
+                    childList: true,
+                    subtree: true
+                });
             }
         }("TIMELINE", ["TWEET_SOUTH", "TWEET_COMBO"]),
         new class extends BasicView {
             public startMutationObserver(doc: Document) {
-                //ToDo: implement MutationObserver for DirectMessage View
+                console.log(`View "${this.name}": startMutationObserver`);
+                const node = doc.getElementById('dm_dialog');
+                if (!this.observer) {
+                    this.observer = new MutationObserver((mutations) => {
+                        console.log(`View "${this.name}": mutated`);
+                    });
+                }
+                
+                this.observer.observe(node, {
+                    childList: true,
+                    subtree: true
+                });
             }
         }("DIRECT_MESSAGE", ["DM_SOUTH", "DM_EAST"]),
     ]
 
-    private initRouteObserver(doc: Document) {
-        //ToDo: implement logic observing DOM and listening changing routes;
-        //router activates views (and inits ViewObserver for them)
-        // an old MutationObserver should be per View actually.
-        // calls onRouteChanged(...)
+    private getViewById(viewId: ID): IView {
+        let foundViews = this.views.filter(v => v.name == viewId);
+        if (foundViews.length == 0) {
+            throw new Error(`View "${viewId}" is not registered.`);
+        }
+        return foundViews[0];
     }
 
-    private onRouteChanged(viewActivating: IView[], viewDeactivating: IView[]): void {
-        for (let view of viewDeactivating) { view.deactivate(this.doc); }
-        for (let view of viewActivating) { view.activate(this.doc); }
+    private initRouteObserver(doc: Document) {
+        if (!window || !MutationObserver) throw Error('MutationObserver is not available.');
+
+        const observer = new MutationObserver((mutations) => {
+            const oldViewIds: string[] = this.views.filter(v => v.isActive == true).map(v => v.name);
+            let newViewIds: string[] = [];
+
+            if (doc.querySelector("#timeline")) {
+                newViewIds.push("TIMELINE");
+            }
+
+            const dmDialog: HTMLElement = doc.querySelector("#dm_dialog");
+            if (dmDialog && dmDialog.style.display == "") {
+                newViewIds.push("DIRECT_MESSAGE");
+            }
+
+            const activatedViewIds: string[] = newViewIds.filter(v => oldViewIds.indexOf(v) == -1);
+            const deactivatedViewIds: string[] = oldViewIds.filter(v => newViewIds.indexOf(v) == -1);
+
+            if (activatedViewIds.length > 0 || deactivatedViewIds.length > 0) {
+                this.onRouteChanged(activatedViewIds, deactivatedViewIds);
+            }
+        });
+
+        observer.observe(doc.body, {
+            childList: true,
+            subtree: true
+        });
+    }
+
+    private onRouteChanged(viewIdsActivating: string[], viewIdsDeactivating: string[]): void {
+        for (let viewId of viewIdsActivating) {
+            this.getViewById(viewId).activate(this.doc);
+        }
+
+        for (let viewId of viewIdsDeactivating) {
+            this.getViewById(viewId).deactivate(this.doc);
+        }
     }
 
     public actionFactories: { [key: string]: Function } = {
@@ -221,20 +198,27 @@ class ContentAdapter implements IContentAdapter {
 
     public registerFeature(feature: IFeature): void {
         let actionConfig = feature.getAugmentationConfig(this.actionFactories, this.core);
-        actionConfig.forEach((viewId: string, viewConfig: any) => {
-            let view = this.views[viewId];
-            viewConfig.forEach((insPoint: string, actionFactories: IAction[]) => {
+
+        for (const viewId in actionConfig) {
+            let view = this.getViewById(viewId);
+
+            for (const insPoint in actionConfig[viewId]) {
+                const actionFactories = actionConfig[viewId][insPoint];
                 view.attachActionFactories(actionFactories, insPoint);
-            })
-        });
+            }
+        }
+    }
+
+    public unregisterFeature(feature: IFeature): void {
+        console.log('unregisterFeature is not implemented');
     }
 
     private insertInlineButtonInToView(view: IView, insPoint: string, button: IButtonConfig): void {
         // ToDo: calculate node from insPoint & view
         let nodes = document.querySelectorAll('li.stream-item div.js-actions');
-        for (let node of nodes) {
-            this.insertInlineButton(node, button);
-        }
+        // for (let node of nodes) {
+        //     this.insertInlineButton(node, button);
+        // }
     }
 
     private insertInlineButton(node: any, button: IButtonConfig): void {
