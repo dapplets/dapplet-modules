@@ -49,9 +49,9 @@ async function init() {
 
     // ============ FEATURE UNREGISTRATION 5 SECONDS =============
 
-    await pause(5000);
-    adapter.unregisterFeature(feature);
-    console.log('feature unregistered');
+    //await pause(5000);
+    //adapter.unregisterFeature(feature);
+    //console.log('feature unregistered');
 }
 
 init();

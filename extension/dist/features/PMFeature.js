@@ -10,38 +10,31 @@ var Feature = (function () {
             TIMELINE: {
                 TWEET_SOUTH: [
                     button({
+                        class: 'dapplet-tweet-south-metamask',
                         img: METAMASK_ICON,
-                        exec: function (ctx) { return core.openOverlay(overlay, ctx); },
-                        label: "(${ctx.likesN})"
+                        exec: function (ctx) {
+                            alert(JSON.stringify(ctx));
+                        }
                     }),
                     button({
+                        class: 'dapplet-tweet-south-ethereum',
                         img: ETHEREUM_ICON,
-                        exec: function (ctx) { return core.sendWalletConnectTx({
-                            id: ctx.tweetId,
-                            author: ctx.authorId
-                        }); },
+                        exec: function (ctx) {
+                            alert(JSON.stringify(ctx));
+                        },
                         label: "RTN"
                     })
                 ],
-                TWEET_COMBO: [
-                    menuItem({
-                        text: "hello one",
-                        exec: function (ctx) { return core.sendWalletConnectTx({
-                            id: ctx.tweetId,
-                            author: ctx.authorId
-                        }); },
-                    })
-                ],
+                TWEET_COMBO: [],
             },
             DIRECT_MESSAGE: {
                 DM_SOUTH: [
                     button({
-                        img: "0xBASE_64_DATA03",
-                        exec: function (ctx) { return core.sendWalletConnectTx({
-                            id: ctx.tweetId,
-                            author: ctx.authorId
-                        }); },
-                        label: function (ctx) { return ctx.text; }
+                        class: 'dapplet-dm-south-metamask',
+                        img: METAMASK_ICON,
+                        exec: function (ctx) {
+                            alert(JSON.stringify(ctx));
+                        }
                     })
                 ],
             }

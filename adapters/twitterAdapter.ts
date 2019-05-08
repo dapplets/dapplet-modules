@@ -36,9 +36,9 @@ type ID = string;
 
 interface IButtonConfig {
     class: string;
-    text: string;
-    icon: string;
-    handler(context: any): void; //onClick
+    label: string;
+    img: string;
+    exec(context: any): void; //onClick
 }
 
 //#endregion
@@ -49,25 +49,22 @@ abstract class BasicView implements IView {
     public observer: MutationObserver = null;
 
     constructor(public name: string, public INSERT_POINTS: string[]) { }
-    attachedActionFactories: { [key: string]: IAction[] } = {};
+    attachedActionFactories: { [key: string]: Function[] } = {};
 
-    attachActionFactories(actionFactories: IAction[], insPoint: ID): void {
+    attachActionFactories(actionFactories: Function[], insPoint: ID): void {
         if (!this.attachedActionFactories[insPoint]) {
             this.attachedActionFactories[insPoint] = actionFactories;
         } else {
             this.attachedActionFactories[insPoint].push(...actionFactories);
         }
-
-        console.log('actionFactory attached', { actionFactories, insPoint });
     }
 
     injectActions(doc: Document) {
-        //ToDo: implement
-        // this.attachedActionFactories.forEach((insPoint: string, actionFactories: IAction[]) => {
-        //     actionFactories.forEach(actionFactory => actionFactory(this, insPoint))
-        // });
-
-        console.log('injectActions this.attachedActionFactories', this.attachedActionFactories);
+        for (const insPoint in this.attachedActionFactories) {
+            for (const actionFactory of this.attachedActionFactories[insPoint]) {
+                actionFactory(this, insPoint);
+            }
+        }
     }
 
     public activate(doc: Document): void {
@@ -114,9 +111,10 @@ class ContentAdapter implements IContentAdapter {
                 if (!this.observer) {
                     this.observer = new MutationObserver((mutations) => {
                         console.log(`View "${this.name}": mutated`);
+                        this.injectActions(doc);
                     });
                 }
-                
+
                 this.observer.observe(node, {
                     childList: true,
                     subtree: true
@@ -130,9 +128,10 @@ class ContentAdapter implements IContentAdapter {
                 if (!this.observer) {
                     this.observer = new MutationObserver((mutations) => {
                         console.log(`View "${this.name}": mutated`);
+                        this.injectActions(doc);
                     });
                 }
-                
+
                 this.observer.observe(node, {
                     childList: true,
                     subtree: true
@@ -193,7 +192,9 @@ class ContentAdapter implements IContentAdapter {
         button: (config: IButtonConfig) => ((view: IView, insPoint: string) =>
             this.insertInlineButtonInToView(view, insPoint, config)
         ),
-        menuItem: <Function>({ }) => { /*"create menuItem" */ } //ToDo: implement
+        menuItem: <Function>({ }) => ((view: IView, insPoint: string) =>
+            console.error('menuItem is not implemented')
+        ) //ToDo: implement
     }
 
     public registerFeature(feature: IFeature): void {
@@ -213,42 +214,65 @@ class ContentAdapter implements IContentAdapter {
         console.log('unregisterFeature is not implemented');
     }
 
-    private insertInlineButtonInToView(view: IView, insPoint: string, button: IButtonConfig): void {
+    private insertInlineButtonInToView(view: IView, insPoint: string, config: IButtonConfig): void {
         // ToDo: calculate node from insPoint & view
-        let nodes = document.querySelectorAll('li.stream-item div.js-actions');
-        // for (let node of nodes) {
-        //     this.insertInlineButton(node, button);
-        // }
-    }
+        let nodes: NodeListOf<Element> = null;
 
-    private insertInlineButton(node: any, button: IButtonConfig): void {
-        let element = this.createElementFromHTML(`<div class="${button.class} ProfileTweet-action">
-            <button class="ProfileTweet-actionButton" type="button">
-                <div class="IconContainer">
-                    <img src="${button.icon}">
-                </div>
-                <span class="ProfileTweet-actionCount">
-                    <span class="ProfileTweet-actionCountForPresentation" aria-hidden="true">${button.text}</span>
-                </span>
-            </button>
-        </div>`);
+        if (insPoint == "TWEET_SOUTH" || insPoint == "TWEET_COMBO") {
+            nodes = document.querySelectorAll('#timeline li.stream-item div.js-actions');
+        }
+        else if (insPoint == "DM_SOUTH") {
+            nodes = document.querySelectorAll('#dm_dialog li.DMInbox-conversationItem div.DMInboxItem');
+        }
 
-        element.addEventListener("click", function (event: any) {
-            let tweetNode = event.target.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode;
-            let context = {
-                id: tweetNode.getAttribute('data-tweet-id'),
-                text: tweetNode.querySelector('div.js-tweet-text-container').innerText,
-                authorFullname: tweetNode.querySelector('strong.fullname').innerText,
-                authorUsername: tweetNode.querySelector('span.username').innerText,
-                authorImg: tweetNode.querySelector('img.avatar').getAttribute('src')
-            };
-            button.handler(context);
+        nodes && nodes.forEach(node => {
+            if (node.getElementsByClassName(config.class).length > 0) return;
+
+            const element = this.createElementFromHTML(`<div class="${config.class} ProfileTweet-action">
+                    <button class="ProfileTweet-actionButton" type="button">
+                        <div class="IconContainer">
+                            <img height="18" src="${config.img}">
+                        </div>
+                        ${config.label ? `<span class="ProfileTweet-actionCount">
+                            <span class="ProfileTweet-actionCountForPresentation" aria-hidden="true">${config.label}</span>
+                        </span>` : ''}
+                    </button>
+                </div>`);
+
+            if (insPoint == "TWEET_SOUTH" || insPoint == "TWEET_COMBO") {
+                element.addEventListener("click", function (event: any) {
+                    let tweetNode = event.target.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode;
+                    let context = {
+                        id: tweetNode.getAttribute('data-tweet-id'),
+                        text: tweetNode.querySelector('div.js-tweet-text-container').innerText,
+                        authorFullname: tweetNode.querySelector('strong.fullname').innerText,
+                        authorUsername: tweetNode.querySelector('span.username').innerText,
+                        authorImg: tweetNode.querySelector('img.avatar').getAttribute('src')
+                    };
+                    config.exec(context);
+                });
+            }
+            else if (insPoint == "DM_SOUTH") {
+                element.addEventListener("click", function (event: any) {
+                    let tweetNode = event.target.parentNode.parentNode.parentNode.parentNode;
+                    let context = {
+                        threadId: tweetNode.getAttribute('data-thread-id'),
+                        lastMessageId: tweetNode.getAttribute('data-last-message-id'),
+                        fullname: tweetNode.querySelector('div.DMInboxItem-title .fullname') && tweetNode.querySelector('div.DMInboxItem-title .fullname').innerText,
+                        username: tweetNode.querySelector('div.DMInboxItem-title .username') && tweetNode.querySelector('div.DMInboxItem-title .username').innerText,
+                        text: tweetNode.querySelector('.DMInboxItem-snippet').innerText
+                    };
+                    config.exec(context);
+                });
+            }
+
+            node.appendChild(element);
+            console.log('appended');
+
         });
-
-        node.appendChild(element);
     }
 
-    private createElementFromHTML(htmlString: string): ChildNode {
+    private createElementFromHTML(htmlString: string): Node {
         var div = document.createElement('div');
         div.innerHTML = htmlString.trim();
         return div.firstChild;

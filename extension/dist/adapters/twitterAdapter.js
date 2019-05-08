@@ -27,10 +27,14 @@ var BasicView = (function () {
         else {
             (_a = this.attachedActionFactories[insPoint]).push.apply(_a, actionFactories);
         }
-        console.log('actionFactory attached', { actionFactories: actionFactories, insPoint: insPoint });
     };
     BasicView.prototype.injectActions = function (doc) {
-        console.log('injectActions this.attachedActionFactories', this.attachedActionFactories);
+        for (var insPoint in this.attachedActionFactories) {
+            for (var _i = 0, _a = this.attachedActionFactories[insPoint]; _i < _a.length; _i++) {
+                var actionFactory = _a[_i];
+                actionFactory(this, insPoint);
+            }
+        }
     };
     BasicView.prototype.activate = function (doc) {
         this.isActive = true;
@@ -67,6 +71,7 @@ var ContentAdapter = (function () {
                     if (!this.observer) {
                         this.observer = new MutationObserver(function (mutations) {
                             console.log("View \"" + _this.name + "\": mutated");
+                            _this.injectActions(doc);
                         });
                     }
                     this.observer.observe(node, {
@@ -88,6 +93,7 @@ var ContentAdapter = (function () {
                     if (!this.observer) {
                         this.observer = new MutationObserver(function (mutations) {
                             console.log("View \"" + _this.name + "\": mutated");
+                            _this.injectActions(doc);
                         });
                     }
                     this.observer.observe(node, {
@@ -102,7 +108,9 @@ var ContentAdapter = (function () {
             button: function (config) { return (function (view, insPoint) {
                 return _this.insertInlineButtonInToView(view, insPoint, config);
             }); },
-            menuItem: function (_a) { }
+            menuItem: function (_a) { return (function (view, insPoint) {
+                return console.error('menuItem is not implemented');
+            }); }
         };
     }
     ContentAdapter.prototype.init = function (core, doc) {
@@ -165,23 +173,48 @@ var ContentAdapter = (function () {
     ContentAdapter.prototype.unregisterFeature = function (feature) {
         console.log('unregisterFeature is not implemented');
     };
-    ContentAdapter.prototype.insertInlineButtonInToView = function (view, insPoint, button) {
-        var nodes = document.querySelectorAll('li.stream-item div.js-actions');
-    };
-    ContentAdapter.prototype.insertInlineButton = function (node, button) {
-        var element = this.createElementFromHTML("<div class=\"" + button.class + " ProfileTweet-action\">\n            <button class=\"ProfileTweet-actionButton\" type=\"button\">\n                <div class=\"IconContainer\">\n                    <img src=\"" + button.icon + "\">\n                </div>\n                <span class=\"ProfileTweet-actionCount\">\n                    <span class=\"ProfileTweet-actionCountForPresentation\" aria-hidden=\"true\">" + button.text + "</span>\n                </span>\n            </button>\n        </div>");
-        element.addEventListener("click", function (event) {
-            var tweetNode = event.target.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode;
-            var context = {
-                id: tweetNode.getAttribute('data-tweet-id'),
-                text: tweetNode.querySelector('div.js-tweet-text-container').innerText,
-                authorFullname: tweetNode.querySelector('strong.fullname').innerText,
-                authorUsername: tweetNode.querySelector('span.username').innerText,
-                authorImg: tweetNode.querySelector('img.avatar').getAttribute('src')
-            };
-            button.handler(context);
+    ContentAdapter.prototype.insertInlineButtonInToView = function (view, insPoint, config) {
+        var _this = this;
+        var nodes = null;
+        if (insPoint == "TWEET_SOUTH" || insPoint == "TWEET_COMBO") {
+            nodes = document.querySelectorAll('#timeline li.stream-item div.js-actions');
+        }
+        else if (insPoint == "DM_SOUTH") {
+            nodes = document.querySelectorAll('#dm_dialog li.DMInbox-conversationItem div.DMInboxItem');
+        }
+        nodes && nodes.forEach(function (node) {
+            if (node.getElementsByClassName(config.class).length > 0)
+                return;
+            var element = _this.createElementFromHTML("<div class=\"" + config.class + " ProfileTweet-action\">\n                    <button class=\"ProfileTweet-actionButton\" type=\"button\">\n                        <div class=\"IconContainer\">\n                            <img height=\"18\" src=\"" + config.img + "\">\n                        </div>\n                        " + (config.label ? "<span class=\"ProfileTweet-actionCount\">\n                            <span class=\"ProfileTweet-actionCountForPresentation\" aria-hidden=\"true\">" + config.label + "</span>\n                        </span>" : '') + "\n                    </button>\n                </div>");
+            if (insPoint == "TWEET_SOUTH" || insPoint == "TWEET_COMBO") {
+                element.addEventListener("click", function (event) {
+                    var tweetNode = event.target.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode;
+                    var context = {
+                        id: tweetNode.getAttribute('data-tweet-id'),
+                        text: tweetNode.querySelector('div.js-tweet-text-container').innerText,
+                        authorFullname: tweetNode.querySelector('strong.fullname').innerText,
+                        authorUsername: tweetNode.querySelector('span.username').innerText,
+                        authorImg: tweetNode.querySelector('img.avatar').getAttribute('src')
+                    };
+                    config.exec(context);
+                });
+            }
+            else if (insPoint == "DM_SOUTH") {
+                element.addEventListener("click", function (event) {
+                    var tweetNode = event.target.parentNode.parentNode.parentNode.parentNode;
+                    var context = {
+                        threadId: tweetNode.getAttribute('data-thread-id'),
+                        lastMessageId: tweetNode.getAttribute('data-last-message-id'),
+                        fullname: tweetNode.querySelector('div.DMInboxItem-title .fullname') && tweetNode.querySelector('div.DMInboxItem-title .fullname').innerText,
+                        username: tweetNode.querySelector('div.DMInboxItem-title .username') && tweetNode.querySelector('div.DMInboxItem-title .username').innerText,
+                        text: tweetNode.querySelector('.DMInboxItem-snippet').innerText
+                    };
+                    config.exec(context);
+                });
+            }
+            node.appendChild(element);
+            console.log('appended');
         });
-        node.appendChild(element);
     };
     ContentAdapter.prototype.createElementFromHTML = function (htmlString) {
         var div = document.createElement('div');
