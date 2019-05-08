@@ -20,3 +20,5 @@ npm install
 npm run build
 ```
 or `npm run watch` for watching
+
+Attach `/extension/dist` folder to Chrome
