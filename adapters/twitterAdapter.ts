@@ -104,6 +104,8 @@ class ContentAdapter implements IContentAdapter {
     }
 
     public views: IView[] = [
+        // ToDo: extract common part from this two views to common class
+        // ToDo: check performance of MutationObserver
         new class extends BasicView {
             public startMutationObserver(doc: Document) {
                 console.log(`View "${this.name}": startMutationObserver`);
