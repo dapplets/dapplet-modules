@@ -33,6 +33,19 @@ type ID = string;
 
 
 //#region TWITTER ADAPTER INTERFACES
+//type T_TwitterActionFactory = (view:IView,insPoint:string,ctx:T_TwitterContent)=>any;
+//ToDo: DiP
+type T_TwitterActionFactory = any;
+
+type T_TwitterAdapterConfig = {[key in keyof T_TwitterViewSet]:({[key:string]:T_TwitterActionFactory[]})}
+type T_TwitterViewSet = {
+    TIMELINE?:  IView;
+    DIRECT_MESSAGE?: IView;
+}
+
+interface ITwitterFeature extends IFeature {
+    getAugmentationConfig(actionFactories: { [key: string]: Function }, core: ICore): T_TwitterAdapterConfig;
+}
 
 interface IButtonConfig {
     class: string;
@@ -108,7 +121,7 @@ class ContentAdapter implements IContentAdapter {
         // ToDo: check performance of MutationObserver
         new class extends BasicView {
             public startMutationObserver(doc: Document) {
-                console.log(`View "${this.name}": startMutationObserver`);
+                console.log(`View "${this.name}": startMutationObserver #1.1`);
                 const node = doc.getElementById('timeline');
                 if (!this.observer) {
                     this.observer = new MutationObserver((mutations) => {
@@ -125,7 +138,7 @@ class ContentAdapter implements IContentAdapter {
         }("TIMELINE", ["TWEET_SOUTH", "TWEET_COMBO"]),
         new class extends BasicView {
             public startMutationObserver(doc: Document) {
-                console.log(`View "${this.name}": startMutationObserver`);
+                console.log(`View "${this.name}": startMutationObserver #1.2`);
                 const node = doc.getElementById('dm_dialog');
                 if (!this.observer) {
                     this.observer = new MutationObserver((mutations) => {
