@@ -230,20 +230,67 @@ class ContentAdapter implements IContentAdapter {
     }
 
     private insertInlineButtonInToView(view: IView, insPoint: string, config: IButtonConfig): void {
-        // ToDo: calculate node from insPoint & view
-        let nodes: NodeListOf<Element> = null;
-
         if (insPoint == "TWEET_SOUTH" || insPoint == "TWEET_COMBO") {
-            nodes = document.querySelectorAll('#timeline li.stream-item div.js-actions');
+            this.insertInlineButtonInTo_Timeline(view, insPoint, config);
+        } else if (insPoint == "DM_SOUTH") {
+            this.insertInlineButtonInTo_DirectMessage(view, insPoint, config);
         }
-        else if (insPoint == "DM_SOUTH") {
-            nodes = document.querySelectorAll('#dm_dialog li.DMInbox-conversationItem div.DMInboxItem');
-        }
+    }
+
+    private insertInlineButtonInTo_Timeline(view: IView, insPoint: string, config: IButtonConfig): void {
+        // ToDo: calculate node from insPoint & view
+        let nodes: NodeListOf<Element> = document.querySelectorAll('#timeline li.stream-item div.js-actions');
 
         nodes && nodes.forEach(node => {
             if (node.getElementsByClassName(config.class).length > 0) return;
 
-            const element = this.createElementFromHTML(`<div class="${config.class} ProfileTweet-action">
+            const element = this.createButtonHtml(config);
+
+            element.addEventListener("click", function (event: any) {
+                let tweetNode = event.target.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode;
+                let context = {
+                    id: tweetNode.getAttribute('data-tweet-id'),
+                    text: tweetNode.querySelector('div.js-tweet-text-container').innerText,
+                    authorFullname: tweetNode.querySelector('strong.fullname').innerText,
+                    authorUsername: tweetNode.querySelector('span.username').innerText,
+                    authorImg: tweetNode.querySelector('img.avatar').getAttribute('src')
+                };
+                config.exec(context);
+            });
+            node.appendChild(element);
+            console.log('appended button to Timeline');
+        });
+    }
+
+    private insertInlineButtonInTo_DirectMessage(view: IView, insPoint: string, config: IButtonConfig): void {
+        // ToDo: calculate node from insPoint & view
+        let nodes: NodeListOf<Element> = document.querySelectorAll('#dm_dialog li.DMInbox-conversationItem div.DMInboxItem');
+
+        nodes && nodes.forEach(node => {
+            if (node.getElementsByClassName(config.class).length > 0) return;
+
+            const element = this.createButtonHtml(config);
+
+            element.addEventListener("click", function (event: any) {
+                let tweetNode = event.target.parentNode.parentNode.parentNode.parentNode;
+                let context = {
+                    threadId: tweetNode.getAttribute('data-thread-id'),
+                    lastMessageId: tweetNode.getAttribute('data-last-message-id'),
+                    fullname: tweetNode.querySelector('div.DMInboxItem-title .fullname') && tweetNode.querySelector('div.DMInboxItem-title .fullname').innerText,
+                    username: tweetNode.querySelector('div.DMInboxItem-title .username') && tweetNode.querySelector('div.DMInboxItem-title .username').innerText,
+                    text: tweetNode.querySelector('.DMInboxItem-snippet').innerText
+                };
+                config.exec(context);
+            });
+            node.appendChild(element);
+            console.log('appended button to DM_VIEW');
+
+        });
+    }
+
+    private createButtonHtml(config:any): Node {
+        return this.createElementFromHTML(
+            `<div class="${config.class} ProfileTweet-action">
                     <button class="ProfileTweet-actionButton" type="button">
                         <div class="IconContainer">
                             <img height="18" src="${config.img}">
@@ -252,39 +299,8 @@ class ContentAdapter implements IContentAdapter {
                             <span class="ProfileTweet-actionCountForPresentation" aria-hidden="true">${config.label}</span>
                         </span>` : ''}
                     </button>
-                </div>`);
-
-            if (insPoint == "TWEET_SOUTH" || insPoint == "TWEET_COMBO") {
-                element.addEventListener("click", function (event: any) {
-                    let tweetNode = event.target.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode;
-                    let context = {
-                        id: tweetNode.getAttribute('data-tweet-id'),
-                        text: tweetNode.querySelector('div.js-tweet-text-container').innerText,
-                        authorFullname: tweetNode.querySelector('strong.fullname').innerText,
-                        authorUsername: tweetNode.querySelector('span.username').innerText,
-                        authorImg: tweetNode.querySelector('img.avatar').getAttribute('src')
-                    };
-                    config.exec(context);
-                });
-            }
-            else if (insPoint == "DM_SOUTH") {
-                element.addEventListener("click", function (event: any) {
-                    let tweetNode = event.target.parentNode.parentNode.parentNode.parentNode;
-                    let context = {
-                        threadId: tweetNode.getAttribute('data-thread-id'),
-                        lastMessageId: tweetNode.getAttribute('data-last-message-id'),
-                        fullname: tweetNode.querySelector('div.DMInboxItem-title .fullname') && tweetNode.querySelector('div.DMInboxItem-title .fullname').innerText,
-                        username: tweetNode.querySelector('div.DMInboxItem-title .username') && tweetNode.querySelector('div.DMInboxItem-title .username').innerText,
-                        text: tweetNode.querySelector('.DMInboxItem-snippet').innerText
-                    };
-                    config.exec(context);
-                });
-            }
-
-            node.appendChild(element);
-            console.log('appended');
-
-        });
+                </div>
+        `);
     }
 
     private createElementFromHTML(htmlString: string): Node {
