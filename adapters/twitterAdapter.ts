@@ -43,6 +43,15 @@ type T_TwitterViewSet = {
     DIRECT_MESSAGE?: IView;
 }
 
+type Context = any;
+
+type T_InsertConfig = {
+    name : string;
+    toContext: (node:Element) => Element;  
+    context: (node:Element) => Context; 
+    selector: string;
+}
+
 interface ITwitterFeature extends IFeature {
     getAugmentationConfig(actionFactories: { [key: string]: Function }, core: ICore): T_TwitterAdapterConfig;
 }
@@ -116,12 +125,56 @@ class ContentAdapter implements IContentAdapter {
         this.initRouteObserver(doc);
     }
 
+    private contextBuilders = {
+        tweetContext : (tweetNode:any) => ({
+            id: tweetNode.getAttribute('data-tweet-id'),
+            text: tweetNode.querySelector('div.js-tweet-text-container').innerText,
+            authorFullname: tweetNode.querySelector('strong.fullname').innerText,
+            authorUsername: tweetNode.querySelector('span.username').innerText,
+            authorImg: tweetNode.querySelector('img.avatar').getAttribute('src')
+        }),
+        dmContext : (tweetNode:any) => ({
+            threadId: tweetNode.getAttribute('data-thread-id'),
+            lastMessageId: tweetNode.getAttribute('data-last-message-id'),
+            fullname: tweetNode.querySelector('div.DMInboxItem-title .fullname') && tweetNode.querySelector('div.DMInboxItem-title .fullname').innerText,
+            username: tweetNode.querySelector('div.DMInboxItem-title .username') && tweetNode.querySelector('div.DMInboxItem-title .username').innerText,
+            text: tweetNode.querySelector('.DMInboxItem-snippet').innerText
+        })
+    }
+
+    private insPoints: { [key:string]:T_InsertConfig} =  {
+        TWEET_SOUTH: {
+            name: "TWEET_SOUTH",
+            toContext: (node:any) => node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
+            context: this.contextBuilders.tweetContext, 
+            selector: "#timeline li.stream-item div.js-actions"
+        },
+        TWEET_COMBO: {
+            name: "TWEET_COMBO",
+            toContext: (node:any) => node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
+            context: this.contextBuilders.tweetContext, 
+            selector: "" //ToDo
+        },
+        DM_SOUTH: {
+            name: "DM_SOUTH",
+            toContext: (node:any) => node.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
+            context: this.contextBuilders.dmContext,
+            selector: "#dm_dialog li.DMInbox-conversationItem div.DMInboxItem"
+        }, 
+        DM_EAST: {
+            name: "DM_EAST",
+            toContext: (node:any) => node.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
+            context: this.contextBuilders.dmContext,
+            selector: "" //ToDo
+        }
+    }
+
     public views: IView[] = [
         // ToDo: extract common part from this two views to common class
         // ToDo: check performance of MutationObserver
         new class extends BasicView {
             public startMutationObserver(doc: Document) {
-                console.log(`View "${this.name}": startMutationObserver #1.1`);
+                console.log(`View "${this.name}": startMutationObserver #1.3`);
                 const node = doc.getElementById('timeline');
                 if (!this.observer) {
                     this.observer = new MutationObserver((mutations) => {
@@ -138,7 +191,7 @@ class ContentAdapter implements IContentAdapter {
         }("TIMELINE", ["TWEET_SOUTH", "TWEET_COMBO"]),
         new class extends BasicView {
             public startMutationObserver(doc: Document) {
-                console.log(`View "${this.name}": startMutationObserver #1.2`);
+                console.log(`View "${this.name}": startMutationObserver #2.3`);
                 const node = doc.getElementById('dm_dialog');
                 if (!this.observer) {
                     this.observer = new MutationObserver((mutations) => {
@@ -205,7 +258,7 @@ class ContentAdapter implements IContentAdapter {
 
     public actionFactories: { [key: string]: Function } = {
         button: (config: IButtonConfig) => ((view: IView, insPoint: string) =>
-            this.insertInlineButtonInToView(view, insPoint, config)
+            this.insertInlineButtonInToView(view, this.insPoints[insPoint], config)
         ),
         menuItem: <Function>({ }) => ((view: IView, insPoint: string) =>
             console.error('menuItem is not implemented')
@@ -229,17 +282,9 @@ class ContentAdapter implements IContentAdapter {
         console.log('unregisterFeature is not implemented');
     }
 
-    private insertInlineButtonInToView(view: IView, insPoint: string, config: IButtonConfig): void {
-        if (insPoint == "TWEET_SOUTH" || insPoint == "TWEET_COMBO") {
-            this.insertInlineButtonInTo_Timeline(view, insPoint, config);
-        } else if (insPoint == "DM_SOUTH") {
-            this.insertInlineButtonInTo_DirectMessage(view, insPoint, config);
-        }
-    }
-
-    private insertInlineButtonInTo_Timeline(view: IView, insPoint: string, config: IButtonConfig): void {
+    private insertInlineButtonInToView(view: IView, insPoint: T_InsertConfig, config: IButtonConfig): void {
         // ToDo: calculate node from insPoint & view
-        let nodes: NodeListOf<Element> = document.querySelectorAll('#timeline li.stream-item div.js-actions');
+        let nodes: NodeListOf<Element> = document.querySelectorAll(insPoint.selector);
 
         nodes && nodes.forEach(node => {
             if (node.getElementsByClassName(config.class).length > 0) return;
@@ -247,44 +292,12 @@ class ContentAdapter implements IContentAdapter {
             const element = this.createButtonHtml(config);
 
             element.addEventListener("click", function (event: any) {
-                let tweetNode = event.target.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode;
-                let context = {
-                    id: tweetNode.getAttribute('data-tweet-id'),
-                    text: tweetNode.querySelector('div.js-tweet-text-container').innerText,
-                    authorFullname: tweetNode.querySelector('strong.fullname').innerText,
-                    authorUsername: tweetNode.querySelector('span.username').innerText,
-                    authorImg: tweetNode.querySelector('img.avatar').getAttribute('src')
-                };
+                let tweetNode = insPoint.toContext(event.target); //Todo: pass tweetNode from mutation observer instead of event?
+                let context = insPoint.context(tweetNode);
                 config.exec(context);
             });
             node.appendChild(element);
             console.log('appended button to Timeline');
-        });
-    }
-
-    private insertInlineButtonInTo_DirectMessage(view: IView, insPoint: string, config: IButtonConfig): void {
-        // ToDo: calculate node from insPoint & view
-        let nodes: NodeListOf<Element> = document.querySelectorAll('#dm_dialog li.DMInbox-conversationItem div.DMInboxItem');
-
-        nodes && nodes.forEach(node => {
-            if (node.getElementsByClassName(config.class).length > 0) return;
-
-            const element = this.createButtonHtml(config);
-
-            element.addEventListener("click", function (event: any) {
-                let tweetNode = event.target.parentNode.parentNode.parentNode.parentNode;
-                let context = {
-                    threadId: tweetNode.getAttribute('data-thread-id'),
-                    lastMessageId: tweetNode.getAttribute('data-last-message-id'),
-                    fullname: tweetNode.querySelector('div.DMInboxItem-title .fullname') && tweetNode.querySelector('div.DMInboxItem-title .fullname').innerText,
-                    username: tweetNode.querySelector('div.DMInboxItem-title .username') && tweetNode.querySelector('div.DMInboxItem-title .username').innerText,
-                    text: tweetNode.querySelector('.DMInboxItem-snippet').innerText
-                };
-                config.exec(context);
-            });
-            node.appendChild(element);
-            console.log('appended button to DM_VIEW');
-
         });
     }
 
