@@ -6,7 +6,6 @@
     "noImplicitAny": true,
     "module": "none",
     "removeComments": true,
-    "target": "es5",
-    "outDir": "../extension/dist/features"
+    "target": "es5"
   }
 }

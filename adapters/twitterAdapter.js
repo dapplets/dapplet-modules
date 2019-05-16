@@ -1,3 +1,11 @@
+// ==UserScript==
+// @name TwitterAdapter
+// @type adapter
+// @description Adapter for twitter.com
+// @author Dapplets Team
+// @version 1
+// @familyId TwitterAdapter
+// ==/UserScript==
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -58,6 +66,48 @@ var ContentAdapter = (function () {
         var _this = this;
         this.core = null;
         this.doc = null;
+        this.contextBuilders = {
+            tweetContext: function (tweetNode) { return ({
+                id: tweetNode.getAttribute('data-tweet-id'),
+                text: tweetNode.querySelector('div.js-tweet-text-container').innerText,
+                authorFullname: tweetNode.querySelector('strong.fullname').innerText,
+                authorUsername: tweetNode.querySelector('span.username').innerText,
+                authorImg: tweetNode.querySelector('img.avatar').getAttribute('src')
+            }); },
+            dmContext: function (tweetNode) { return ({
+                threadId: tweetNode.getAttribute('data-thread-id'),
+                lastMessageId: tweetNode.getAttribute('data-last-message-id'),
+                fullname: tweetNode.querySelector('div.DMInboxItem-title .fullname') && tweetNode.querySelector('div.DMInboxItem-title .fullname').innerText,
+                username: tweetNode.querySelector('div.DMInboxItem-title .username') && tweetNode.querySelector('div.DMInboxItem-title .username').innerText,
+                text: tweetNode.querySelector('.DMInboxItem-snippet').innerText
+            }); }
+        };
+        this.insPoints = {
+            TWEET_SOUTH: {
+                name: "TWEET_SOUTH",
+                toContext: function (node) { return node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode; },
+                context: this.contextBuilders.tweetContext,
+                selector: "#timeline li.stream-item div.js-actions"
+            },
+            TWEET_COMBO: {
+                name: "TWEET_COMBO",
+                toContext: function (node) { return node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode; },
+                context: this.contextBuilders.tweetContext,
+                selector: ""
+            },
+            DM_SOUTH: {
+                name: "DM_SOUTH",
+                toContext: function (node) { return node.parentNode.parentNode.parentNode.parentNode; },
+                context: this.contextBuilders.dmContext,
+                selector: "#dm_dialog li.DMInbox-conversationItem div.DMInboxItem"
+            },
+            DM_EAST: {
+                name: "DM_EAST",
+                toContext: function (node) { return node.parentNode.parentNode.parentNode.parentNode; },
+                context: this.contextBuilders.dmContext,
+                selector: ""
+            }
+        };
         this.views = [
             new (function (_super) {
                 __extends(class_1, _super);
@@ -66,7 +116,7 @@ var ContentAdapter = (function () {
                 }
                 class_1.prototype.startMutationObserver = function (doc) {
                     var _this = this;
-                    console.log("View \"" + this.name + "\": startMutationObserver");
+                    console.log("View \"" + this.name + "\": startMutationObserver #1.3");
                     var node = doc.getElementById('timeline');
                     if (!this.observer) {
                         this.observer = new MutationObserver(function (mutations) {
@@ -88,7 +138,7 @@ var ContentAdapter = (function () {
                 }
                 class_2.prototype.startMutationObserver = function (doc) {
                     var _this = this;
-                    console.log("View \"" + this.name + "\": startMutationObserver");
+                    console.log("View \"" + this.name + "\": startMutationObserver #2.3");
                     var node = doc.getElementById('dm_dialog');
                     if (!this.observer) {
                         this.observer = new MutationObserver(function (mutations) {
@@ -106,7 +156,7 @@ var ContentAdapter = (function () {
         ];
         this.actionFactories = {
             button: function (config) { return (function (view, insPoint) {
-                return _this.insertInlineButtonInToView(view, insPoint, config);
+                return _this.insertInlineButtonInToView(view, _this.insPoints[insPoint], config);
             }); },
             menuItem: function (_a) { return (function (view, insPoint) {
                 return console.error('menuItem is not implemented');
@@ -175,46 +225,22 @@ var ContentAdapter = (function () {
     };
     ContentAdapter.prototype.insertInlineButtonInToView = function (view, insPoint, config) {
         var _this = this;
-        var nodes = null;
-        if (insPoint == "TWEET_SOUTH" || insPoint == "TWEET_COMBO") {
-            nodes = document.querySelectorAll('#timeline li.stream-item div.js-actions');
-        }
-        else if (insPoint == "DM_SOUTH") {
-            nodes = document.querySelectorAll('#dm_dialog li.DMInbox-conversationItem div.DMInboxItem');
-        }
+        var nodes = document.querySelectorAll(insPoint.selector);
         nodes && nodes.forEach(function (node) {
             if (node.getElementsByClassName(config.class).length > 0)
                 return;
-            var element = _this.createElementFromHTML("<div class=\"" + config.class + " ProfileTweet-action\">\n                    <button class=\"ProfileTweet-actionButton\" type=\"button\">\n                        <div class=\"IconContainer\">\n                            <img height=\"18\" src=\"" + config.img + "\">\n                        </div>\n                        " + (config.label ? "<span class=\"ProfileTweet-actionCount\">\n                            <span class=\"ProfileTweet-actionCountForPresentation\" aria-hidden=\"true\">" + config.label + "</span>\n                        </span>" : '') + "\n                    </button>\n                </div>");
-            if (insPoint == "TWEET_SOUTH" || insPoint == "TWEET_COMBO") {
-                element.addEventListener("click", function (event) {
-                    var tweetNode = event.target.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode;
-                    var context = {
-                        id: tweetNode.getAttribute('data-tweet-id'),
-                        text: tweetNode.querySelector('div.js-tweet-text-container').innerText,
-                        authorFullname: tweetNode.querySelector('strong.fullname').innerText,
-                        authorUsername: tweetNode.querySelector('span.username').innerText,
-                        authorImg: tweetNode.querySelector('img.avatar').getAttribute('src')
-                    };
-                    config.exec(context);
-                });
-            }
-            else if (insPoint == "DM_SOUTH") {
-                element.addEventListener("click", function (event) {
-                    var tweetNode = event.target.parentNode.parentNode.parentNode.parentNode;
-                    var context = {
-                        threadId: tweetNode.getAttribute('data-thread-id'),
-                        lastMessageId: tweetNode.getAttribute('data-last-message-id'),
-                        fullname: tweetNode.querySelector('div.DMInboxItem-title .fullname') && tweetNode.querySelector('div.DMInboxItem-title .fullname').innerText,
-                        username: tweetNode.querySelector('div.DMInboxItem-title .username') && tweetNode.querySelector('div.DMInboxItem-title .username').innerText,
-                        text: tweetNode.querySelector('.DMInboxItem-snippet').innerText
-                    };
-                    config.exec(context);
-                });
-            }
+            var element = _this.createButtonHtml(config);
+            element.addEventListener("click", function (event) {
+                var tweetNode = insPoint.toContext(event.target);
+                var context = insPoint.context(tweetNode);
+                config.exec(context);
+            });
             node.appendChild(element);
-            console.log('appended');
+            console.log('appended button to Timeline');
         });
+    };
+    ContentAdapter.prototype.createButtonHtml = function (config) {
+        return this.createElementFromHTML("<div class=\"" + config.class + " ProfileTweet-action\">\n                    <button class=\"ProfileTweet-actionButton\" type=\"button\">\n                        <div class=\"IconContainer\">\n                            <img height=\"18\" src=\"" + config.img + "\">\n                        </div>\n                        " + (config.label ? "<span class=\"ProfileTweet-actionCount\">\n                            <span class=\"ProfileTweet-actionCountForPresentation\" aria-hidden=\"true\">" + config.label + "</span>\n                        </span>" : '') + "\n                    </button>\n                </div>\n        ");
     };
     ContentAdapter.prototype.createElementFromHTML = function (htmlString) {
         var div = document.createElement('div');
