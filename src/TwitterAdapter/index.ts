@@ -36,28 +36,26 @@ interface IView {
     deactivate(doc: Document): void;
 }
 
-
 type ID = string;
 //#endregion COMMON INTERFACES
-
 
 //#region TWITTER ADAPTER INTERFACES
 //type T_TwitterActionFactory = (view:IView,insPoint:string,ctx:T_TwitterContent)=>any;
 //ToDo: DiP
 type T_TwitterActionFactory = any;
 
-type T_TwitterAdapterConfig = {[key in keyof T_TwitterViewSet]:({[key:string]:T_TwitterActionFactory[]})}
+type T_TwitterAdapterConfig = { [key in keyof T_TwitterViewSet]: ({ [key: string]: T_TwitterActionFactory[] }) }
 type T_TwitterViewSet = {
-    TIMELINE?:  IView;
+    TIMELINE?: IView;
     DIRECT_MESSAGE?: IView;
 }
 
 type Context = any;
 
 type T_InsertConfig = {
-    name : string;
-    toContext: (node:Element) => Element;  
-    context: (node:Element) => Context; 
+    name: string;
+    toContext: (node: Element) => Element;
+    context: (node: Element) => Context;
     selector: string;
 }
 
@@ -135,14 +133,14 @@ class ContentAdapter implements IContentAdapter {
     }
 
     private contextBuilders = {
-        tweetContext : (tweetNode:any) => ({
+        tweetContext: (tweetNode: any) => ({
             id: tweetNode.getAttribute('data-tweet-id'),
             text: tweetNode.querySelector('div.js-tweet-text-container').innerText,
             authorFullname: tweetNode.querySelector('strong.fullname').innerText,
             authorUsername: tweetNode.querySelector('span.username').innerText,
             authorImg: tweetNode.querySelector('img.avatar').getAttribute('src')
         }),
-        dmContext : (tweetNode:any) => ({
+        dmContext: (tweetNode: any) => ({
             threadId: tweetNode.getAttribute('data-thread-id'),
             lastMessageId: tweetNode.getAttribute('data-last-message-id'),
             fullname: tweetNode.querySelector('div.DMInboxItem-title .fullname') && tweetNode.querySelector('div.DMInboxItem-title .fullname').innerText,
@@ -151,28 +149,28 @@ class ContentAdapter implements IContentAdapter {
         })
     }
 
-    private insPoints: { [key:string]:T_InsertConfig} =  {
+    private insPoints: { [key: string]: T_InsertConfig } = {
         TWEET_SOUTH: {
             name: "TWEET_SOUTH",
-            toContext: (node:any) => node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
-            context: this.contextBuilders.tweetContext, 
+            toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
+            context: this.contextBuilders.tweetContext,
             selector: "#timeline li.stream-item div.js-actions"
         },
         TWEET_COMBO: {
             name: "TWEET_COMBO",
-            toContext: (node:any) => node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
-            context: this.contextBuilders.tweetContext, 
+            toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
+            context: this.contextBuilders.tweetContext,
             selector: "" //ToDo
         },
         DM_SOUTH: {
             name: "DM_SOUTH",
-            toContext: (node:any) => node.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
+            toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
             context: this.contextBuilders.dmContext,
             selector: "#dm_dialog li.DMInbox-conversationItem div.DMInboxItem"
-        }, 
+        },
         DM_EAST: {
             name: "DM_EAST",
-            toContext: (node:any) => node.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
+            toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
             context: this.contextBuilders.dmContext,
             selector: "" //ToDo
         }
@@ -310,7 +308,7 @@ class ContentAdapter implements IContentAdapter {
         });
     }
 
-    private createButtonHtml(config:any): Node {
+    private createButtonHtml(config: any): Node {
         return this.createElementFromHTML(
             `<div class="${config.class} ProfileTweet-action">
                     <button class="ProfileTweet-actionButton" type="button">
@@ -332,4 +330,4 @@ class ContentAdapter implements IContentAdapter {
     }
 
 }
-//#endregion TWITTER ADAPTER PACKAGE
+// #endregion TWITTER ADAPTER PACKAGE

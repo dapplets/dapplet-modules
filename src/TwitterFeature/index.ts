@@ -42,11 +42,10 @@ interface IView {
 type ID = string;
 //#endregion COMMON INTERFACES
 
-
 //#region TWITTER ADAPTER INTERFACES
 
 type T_TwitterViewSet = {
-    TIMELINE?:  IView;
+    TIMELINE?: IView;
     DIRECT_MESSAGE?: IView;
 }
 
@@ -54,7 +53,7 @@ type T_TwitterViewSet = {
 //ToDo: DiP
 type T_TwitterActionFactory = any;
 
-type T_TwitterAdapterConfig = {[key in keyof T_TwitterViewSet]:({[key:string]:T_TwitterActionFactory[]})}
+type T_TwitterAdapterConfig = { [key in keyof T_TwitterViewSet]: ({ [key: string]: T_TwitterActionFactory[] }) }
 
 interface ITwitterFeature extends IFeature {
     getAugmentationConfig(actionFactories: { [key: string]: Function }, core: ICore): T_TwitterAdapterConfig;

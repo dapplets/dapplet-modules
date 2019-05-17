@@ -258,4 +258,4 @@ var ContentAdapter = /** @class */ (function () {
     };
     return ContentAdapter;
 }());
-//#endregion TWITTER ADAPTER PACKAGE
+// #endregion TWITTER ADAPTER PACKAGE

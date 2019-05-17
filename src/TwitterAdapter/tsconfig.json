@@ -1,11 +1,9 @@
 {
-  "files": [
-    "twitterAdapter.ts"
-  ],
   "compilerOptions": {
     "noImplicitAny": true,
     "module": "none",
     "removeComments": false,
-    "target": "es5"
+    "target": "es5",
+    "outFile": "../../dist/TwitterAdapter.js"
   }
 }

@@ -1,0 +1,35 @@
+{
+  "name": "typescript-examples",
+  "version": "1.0.0",
+  "description": "",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "start": "npm-run-all --parallel serve watch",
+    "watch": "npm-run-all --parallel build:1 build:2",
+    "serve": "http-server ./dist",
+    "build": "npm run build:1 && npm run build:2",
+
+    "watch:1": "tsc -w -p ./src/TwitterAdapter",
+    "watch:2": "tsc -w -p ./src/TwitterFeature",
+    "build:1": "tsc -p ./src/TwitterAdapter",
+    "build:2": "tsc -p ./src/TwitterFeature"
+
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dapplets/typescript-examples.git"
+  },
+  "author": "Dapplets Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dapplets/typescript-examples/issues"
+  },
+  "homepage": "https://github.com/dapplets/typescript-examples#readme",
+  "devDependencies": {
+    "http-server": "^0.11.1",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^3.4.5"
+  }
+}
