@@ -29,11 +29,6 @@ $/
 4.  `npm run build` to build a production version
 
 ### Attaching Bundles to Extension
-Run HTTP server for sharing static files from root project directory
-```
-http-server
-```
-
 Add injectors and adapters to Extension Dev Tab
 
 **TwitterAdapter**
