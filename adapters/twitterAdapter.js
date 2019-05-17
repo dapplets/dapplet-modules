@@ -19,7 +19,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var BasicView = (function () {
+//#endregion
+//#region UTIL LIBRARY
+var BasicView = /** @class */ (function () {
     function BasicView(name, INSERT_POINTS) {
         this.name = name;
         this.INSERT_POINTS = INSERT_POINTS;
@@ -56,12 +58,15 @@ var BasicView = (function () {
         console.log("View \"" + this.name + "\" is deactivated");
     };
     BasicView.prototype.stopMutationObserver = function (doc) {
+        //ToDo: implement
         this.observer && this.observer.disconnect();
         console.log("View \"" + this.name + "\": stopMutationObserver");
     };
     return BasicView;
 }());
-var ContentAdapter = (function () {
+//#endregion UTIL LIBRARY
+//#region TWITTER ADAPTER PACKAGE
+var ContentAdapter = /** @class */ (function () {
     function ContentAdapter() {
         var _this = this;
         this.core = null;
@@ -93,7 +98,7 @@ var ContentAdapter = (function () {
                 name: "TWEET_COMBO",
                 toContext: function (node) { return node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode; },
                 context: this.contextBuilders.tweetContext,
-                selector: ""
+                selector: "" //ToDo
             },
             DM_SOUTH: {
                 name: "DM_SOUTH",
@@ -105,11 +110,13 @@ var ContentAdapter = (function () {
                 name: "DM_EAST",
                 toContext: function (node) { return node.parentNode.parentNode.parentNode.parentNode; },
                 context: this.contextBuilders.dmContext,
-                selector: ""
+                selector: "" //ToDo
             }
         };
         this.views = [
-            new (function (_super) {
+            // ToDo: extract common part from this two views to common class
+            // ToDo: check performance of MutationObserver
+            new /** @class */ (function (_super) {
                 __extends(class_1, _super);
                 function class_1() {
                     return _super !== null && _super.apply(this, arguments) || this;
@@ -131,7 +138,7 @@ var ContentAdapter = (function () {
                 };
                 return class_1;
             }(BasicView))("TIMELINE", ["TWEET_SOUTH", "TWEET_COMBO"]),
-            new (function (_super) {
+            new /** @class */ (function (_super) {
                 __extends(class_2, _super);
                 function class_2() {
                     return _super !== null && _super.apply(this, arguments) || this;
@@ -160,9 +167,10 @@ var ContentAdapter = (function () {
             }); },
             menuItem: function (_a) { return (function (view, insPoint) {
                 return console.error('menuItem is not implemented');
-            }); }
+            }); } //ToDo: implement
         };
     }
+    // TODO: Constructor
     ContentAdapter.prototype.init = function (core, doc) {
         this.core = core;
         this.doc = doc;
@@ -225,13 +233,14 @@ var ContentAdapter = (function () {
     };
     ContentAdapter.prototype.insertInlineButtonInToView = function (view, insPoint, config) {
         var _this = this;
+        // ToDo: calculate node from insPoint & view
         var nodes = document.querySelectorAll(insPoint.selector);
         nodes && nodes.forEach(function (node) {
             if (node.getElementsByClassName(config.class).length > 0)
                 return;
             var element = _this.createButtonHtml(config);
             element.addEventListener("click", function (event) {
-                var tweetNode = insPoint.toContext(event.target);
+                var tweetNode = insPoint.toContext(event.target); //Todo: pass tweetNode from mutation observer instead of event?
                 var context = insPoint.context(tweetNode);
                 config.exec(context);
             });
@@ -249,3 +258,4 @@ var ContentAdapter = (function () {
     };
     return ContentAdapter;
 }());
+//#endregion TWITTER ADAPTER PACKAGE

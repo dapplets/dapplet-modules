@@ -1,3 +1,12 @@
+// ==UserScript==
+// @name TwitterAdapter
+// @type adapter
+// @description Adapter for twitter.com
+// @author Dapplets Team
+// @version 1
+// @familyId TwitterAdapter
+// ==/UserScript==
+
 //#region COMMON INTERFACES
 interface ICore {
     openOverlay(id: ID, ctx: any): void;
