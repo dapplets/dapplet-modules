@@ -4,6 +4,7 @@
     "module": "none",
     "removeComments": false,
     "target": "es5",
-    "outFile": "../../dist/TwitterFeature.js"
+    "outFile": "../../dist/TwitterFeature.js",
+    "experimentalDecorators": true
   }
 }
