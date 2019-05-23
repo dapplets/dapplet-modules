@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "module": "none",
+    "removeComments": false,
+    "target": "es5",
+    "outFile": "../../dist/TwitterFeature2.js",
+    "experimentalDecorators": true
+  }
+}

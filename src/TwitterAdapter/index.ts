@@ -16,8 +16,8 @@ interface ICore {
 interface IModule { }
 
 interface IContentAdapter extends IModule {
-    init(core: ICore, doc: Document): void;
-    registerFeature(feature: IFeature): void;
+    //init(core: ICore, doc: Document): void;
+    registerFeature(feature: IFeature, doc: Document, core: ICore): void;
     unregisterFeature(feature: IFeature): void;
 }
 
@@ -86,6 +86,7 @@ abstract class BasicView implements IView {
         } else {
             this.attachedActionFactories[insPoint].push(...actionFactories);
         }
+        this.injectActions(document); // ToDo fix
     }
 
     injectActions(doc: Document) {
@@ -121,16 +122,26 @@ abstract class BasicView implements IView {
 //#endregion UTIL LIBRARY
 
 //#region TWITTER ADAPTER PACKAGE
-class ContentAdapter implements IContentAdapter {
+declare var Load: (id: string) => Function;
+class Feature implements IContentAdapter {
     private core: ICore = null;
     private doc: Document = null;
 
-    // TODO: Constructor
-    public init(core: ICore, doc: Document) {
-        this.core = core;
-        this.doc = doc;
-        this.initRouteObserver(doc);
+    private observer: MutationObserver = null;
+
+    @Load("CommonLib-v1")
+    public library : any;
+
+    constructor() {
+        console.log('ContentAdapter created');
+        console.log('library from ContentAdapter', this.library);
     }
+
+    // TODO: Constructor
+    // public init(core: ICore, doc: Document) {
+    //     this.core = core;
+    //     this.doc = doc;
+    // }
 
     private contextBuilders = {
         tweetContext: (tweetNode: any) => ({
@@ -224,9 +235,10 @@ class ContentAdapter implements IContentAdapter {
     }
 
     private initRouteObserver(doc: Document) {
-        if (!window || !MutationObserver) throw Error('MutationObserver is not available.');
 
-        const observer = new MutationObserver((mutations) => {
+        console.log('initRouteObserver');
+
+        var onMutate = () => {
             const oldViewIds: string[] = this.views.filter(v => v.isActive == true).map(v => v.name);
             let newViewIds: string[] = [];
 
@@ -245,9 +257,17 @@ class ContentAdapter implements IContentAdapter {
             if (activatedViewIds.length > 0 || deactivatedViewIds.length > 0) {
                 this.onRouteChanged(activatedViewIds, deactivatedViewIds);
             }
-        });
+        }
 
-        observer.observe(doc.body, {
+        onMutate();
+        
+        if (this.observer) return;
+
+        if (!window || !MutationObserver) throw Error('MutationObserver is not available.');
+
+        this.observer = new MutationObserver((mutations) => onMutate());
+        
+        this.observer.observe(doc.body, {
             childList: true,
             subtree: true
         });
@@ -272,7 +292,10 @@ class ContentAdapter implements IContentAdapter {
         ) //ToDo: implement
     }
 
-    public registerFeature(feature: IFeature): void {
+    public registerFeature(feature: IFeature, doc: Document, core: ICore): void {
+        this.doc = doc;
+        this.core = core;
+        
         let actionConfig = feature.getAugmentationConfig(this.actionFactories, this.core);
 
         for (const viewId in actionConfig) {
@@ -283,6 +306,8 @@ class ContentAdapter implements IContentAdapter {
                 view.attachActionFactories(actionFactories, insPoint);
             }
         }
+
+        this.initRouteObserver(this.doc);
     }
 
     public unregisterFeature(feature: IFeature): void {
