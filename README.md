@@ -13,13 +13,17 @@ $/
   src/
     TwitterAdapter/
     TwitterFeature/
+    TwitterFeature2/
+    CommonLib/
 ```
 
 - `dist` - Releases
 - `docs` - Documentation
 - `src` - Examples of modules for Dapplet Extension
 - `src\TwitterAdapter` - Content adapter for twitter.com
-- `src\TwitterFeature` - Feature injecting controls for twitter.com
+- `src\TwitterFeature` - First Feature injecting controls for twitter.com
+- `src\TwitterFeature2` - Second Feature injecting controls for twitter.com
+- `src\CommonLib` - CommonLib for adapter
 
 ### Building
 
