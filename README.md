@@ -43,6 +43,18 @@ ID: TwitterFeature-v1
 URL: http://localhost:8080/TwitterFeature.js
 ```
 
+**TwitterFeature2**
+```
+ID: TwitterFeature2-v1
+URL: http://localhost:8080/TwitterFeature2.js
+```
+
+**CommonLib**
+```
+ID: CommonLib-v1
+URL: http://localhost:8080/CommonLib.js
+```
+
 ## Built With
 
 * [TypeScript](https://www.typescriptlang.org/)
