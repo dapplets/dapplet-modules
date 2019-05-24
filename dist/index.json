@@ -1,0 +1,12 @@
+{
+  "hostnames": {
+    "twitter.com": ["TwitterFeature-v1", "TwitterFeature2-v1", "TwitterAdapter-v1", "CommonLib-v1"]
+  },
+
+  "scripts": {
+    "TwitterFeature-v1": "TwitterFeature.js",
+    "TwitterFeature2-v1": "TwitterFeature2.js",
+    "TwitterAdapter-v1": "TwitterAdapter.js",
+    "CommonLib-v1": "CommonLib.js"
+  }
+}
