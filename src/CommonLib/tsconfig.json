@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "module": "none",
+    "removeComments": false,
+    "target": "es5",
+    "outFile": "../../dist/CommonLib.js",
+    "experimentalDecorators": true
+  }
+}

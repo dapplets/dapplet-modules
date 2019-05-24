@@ -13,13 +13,17 @@ $/
   src/
     TwitterAdapter/
     TwitterFeature/
+    TwitterFeature2/
+    CommonLib/
 ```
 
 - `dist` - Releases
 - `docs` - Documentation
 - `src` - Examples of modules for Dapplet Extension
 - `src\TwitterAdapter` - Content adapter for twitter.com
-- `src\TwitterFeature` - Feature injecting controls for twitter.com
+- `src\TwitterFeature` - First Feature injecting controls for twitter.com
+- `src\TwitterFeature2` - Second Feature injecting controls for twitter.com
+- `src\CommonLib` - CommonLib for adapter
 
 ### Building
 
@@ -41,6 +45,18 @@ URL: http://localhost:8080/TwitterAdapter.js
 ```
 ID: TwitterFeature-v1
 URL: http://localhost:8080/TwitterFeature.js
+```
+
+**TwitterFeature2**
+```
+ID: TwitterFeature2-v1
+URL: http://localhost:8080/TwitterFeature2.js
+```
+
+**CommonLib**
+```
+ID: CommonLib-v1
+URL: http://localhost:8080/CommonLib.js
 ```
 
 ## Built With
