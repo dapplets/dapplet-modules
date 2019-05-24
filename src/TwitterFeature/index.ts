@@ -119,7 +119,7 @@ class Feature implements ITwitterFeature {
                         class: 'dapplet-tweet-south-metamask',
                         img: METAMASK_ICON,
                         exec: (ctx: any) => {
-                            Core.sendWalletConnectTx(null, ctx);
+                            Core.sendWalletConnectTx('1', ctx);
                         } //ToDo: ref or val? 
                         //ToDo: implement binding and reload by backgroung.js
                     }),
