@@ -132,6 +132,7 @@ class Feature implements IContentAdapter {
     @Load("CommonLib-v1")
     public library : any;
 
+
     constructor() {
         console.log('ContentAdapter created');
         console.log('library from ContentAdapter', this.library);

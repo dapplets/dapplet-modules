@@ -69,7 +69,10 @@ interface IButtonConfig {
 //#endregion
 
 declare var Load: (id: string) => Function;
-//declare var core: any;
+declare var Core: {
+    openOverlay: (id: string, ctx: any) => void,
+    sendWalletConnectTx: (dappletId: string, metadata: any) => Promise<any>
+};
 
 //#region TWITTER 4_ACTIONS FEATURE PACKAGE
 const METAMASK_ICON: string = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAYAAAByUDbMAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAjhJREFUeNrUVM9rE1EQ/t7Lbn6UqAlFscYNYrfVKoXSi0ehLcSDknjwpFC8i5fiMbUHqQriPyD17B+QoqDQg1QoKB5Ec9GaNP4IVtq6bXa72d23zm6aEDcm4K0ODDv7DfPtNzPvLfDf2dyFdIJ87F9q2N/AfEZJhhhbojBFPjT3bG2rPf/ttnrcBSZfV2w1+7iUb+JSkOjWRGqAM7ZCoeK998lYqd45+caLhcMO2DYGiWjkVcnBu6q4317bQRaV+RW2R+SZbmG4vIHh0WMclg1sWMDToo3vmoAtxKP2Wh4ko/ZmgtjyqgOX5EghoPDB8onI3s4///KpK9lsRjlLj3Q7FiaCqSHJV8VI8gTFHkbkavCjf5DRrL6SgPetGVD24hkZ/X0Mu1YDGzjEfCwi4VdPMm9rR+KsqCQZ0kmOSVLhEXnmOLQA0WjVw66NhxeCZB0LmD4nJ/jegTF2gZrhtnJmHYhFGW3VhSsgeirTH6gniGiq+R6L0sxkoLITxnwxjfWdkI//MGW4nEs9lZGGm8FTfDDOMBqz8FCpwKZWTZrdqcM26pbbWxnN5bpX0HSdWlz/6WBzS0DTG5g3M4doohGWpU4SXcm0Gl5uU1HTDZqRadLZk7m/AINizZCgx1V8rKfGbhTsJc5Y1zYXKHXJvzouqoyxRSmZfFE7ncvYR8dzkiy3lKytlmH2L2rCLXW/6OX84F3dEoWRe5+XO25C4cnlSDic4yGe1nVj2xFi+nz26ub+/wf+FmAAmiLTFxlZBnAAAAAASUVORK5CYII=';
@@ -115,11 +118,7 @@ class Feature implements ITwitterFeature {
                         class: 'dapplet-tweet-south-ethereum-2',
                         img: ETHEREUM_ICON,
                         exec: (ctx: any) => {
-                            alert(JSON.stringify(ctx));
-                            // core.sendWalletConnectTx({
-                            //     id: ctx.tweetId,
-                            //     author: ctx.authorId
-                            // })
+                            Core.openOverlay(null, ctx);
                         },
                         //ToDo: what about global parameters?
                         //ToDo: return state object useful bound to button state?
