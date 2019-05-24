@@ -7,6 +7,8 @@
 // @familyId TwitterAdapter
 // ==/UserScript==
 
+//ToDo: refactor: try to split into logic and config parts
+
 //#region COMMON INTERFACES
 interface ICore {
     openOverlay(id: ID, ctx: any): void;
@@ -27,6 +29,7 @@ interface IFeature extends IModule {
 
 interface IAction { }
 
+//ToDo: refactor View/RouteObserver architecture to Group/InsPoint architecture
 interface IView {
     name: string;
     isActive: boolean;
@@ -41,7 +44,7 @@ type ID = string;
 
 //#region TWITTER ADAPTER INTERFACES
 //type T_TwitterActionFactory = (view:IView,insPoint:string,ctx:T_TwitterContent)=>any;
-//ToDo: DiP
+//ToDo:DiP: constrain/precise the type system; better names for types.
 type T_TwitterActionFactory = any;
 
 type T_TwitterAdapterConfig = { [key in keyof T_TwitterViewSet]: ({ [key: string]: T_TwitterActionFactory[] }) }
@@ -127,22 +130,16 @@ class Feature implements IContentAdapter {
     private core: ICore = null;
     private doc: Document = null;
 
+
     private observer: MutationObserver = null;
 
     @Load("CommonLib-v1")
     public library : any;
-
-
+  
     constructor() {
         console.log('ContentAdapter created');
         console.log('library from ContentAdapter', this.library);
     }
-
-    // TODO: Constructor
-    // public init(core: ICore, doc: Document) {
-    //     this.core = core;
-    //     this.doc = doc;
-    // }
 
     private contextBuilders = {
         tweetContext: (tweetNode: any) => ({
