@@ -111,7 +111,7 @@ class Feature implements ITwitterFeature {
         return {
             TIMELINE: {
                 //ToDo: Augmentation Server provides additional context related two-ways info used as labels in custom actions.
-                // Example: number of likes, number of PMs opened for current tweet, displayed as "(9)" near from button.    
+                // Example: number of likes, number of PMs opened for current tweet, displayed as "(9)" near from button.     
                 //AUGM_SERVER_URL : "ws://SOMEHOST/timeline/",
                 TWEET_SOUTH: [
                     // call at view creation time

@@ -131,18 +131,11 @@ class Feature implements IContentAdapter {
 
     @Load("CommonLib-v1")
     public library : any;
-
-
+  
     constructor() {
         console.log('ContentAdapter  created');
         console.log('library from ContentAdapter', this.library);
     }
-
-    // TODO: Constructor
-    // public init(core: ICore, doc: Document) {
-    //     this.core = core;
-    //     this.doc = doc;
-    // }
 
     private contextBuilders = {
         tweetContext: (tweetNode: any) => ({
