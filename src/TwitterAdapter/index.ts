@@ -134,7 +134,7 @@ class Feature implements IContentAdapter {
 
 
     constructor() {
-        console.log('ContentAdapter created');
+        console.log('ContentAdapter  created');
         console.log('library from ContentAdapter', this.library);
     }
 
