@@ -1,6 +1,6 @@
 {
   "hostnames": {
-    "twitter.com": ["TwitterFeature-v1", "TwitterFeature2-v1", "TwitterAdapter-v1", "CommonLib-v1"]
+    "twitter.com": ["TwitterFeature-v1", "TwitterFeature2-v1"]
   },
 
   "scripts": {
