@@ -1,10 +1,15 @@
 {
   "compilerOptions": {
     "noImplicitAny": true,
-    "module": "none",
+    "module": "commonjs",
+    "moduleResolution": "node",
     "removeComments": false,
     "target": "es5",
-    "outFile": "../../dist/TwitterAdapter.js",
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "baseUrl": ".",
+    "paths": {
+      "dapplet-extension-types": ["../Types/dapplet-extension-types.d.ts"],
+      "twitter-adapter-types": ["./index.d.ts"]
+    }
   }
 }

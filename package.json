@@ -10,17 +10,14 @@
     "watch": "npm-run-all --parallel watch:1 watch:2 watch:3 watch:4",
     "serve": "http-server ./dist",
     "build": "npm run build:1 && npm run build:2 && npm run build:3 && npm run build:4",
-
     "watch:1": "tsc -w -p ./src/TwitterAdapter",
     "watch:2": "tsc -w -p ./src/TwitterFeature",
     "watch:3": "tsc -w -p ./src/TwitterFeature2",
     "watch:4": "tsc -w -p ./src/CommonLib",
-
-    "build:1": "tsc -p ./src/TwitterAdapter",
-    "build:2": "tsc -p ./src/TwitterFeature",
-    "build:3": "tsc -p ./src/TwitterFeature2",
-    "build:4": "tsc -p ./src/CommonLib"
-
+    "build:1": "browserify src/CommonLib/index.ts -p [ tsify -p src/CommonLib ] > dist/CommonLib.js",
+    "build:2": "browserify src/TwitterAdapter/index.ts -p [ tsify -p src/TwitterAdapter ] > dist/TwitterAdapter.js",
+    "build:3": "browserify src/TwitterFeature/index.ts -p [ tsify -p src/TwitterFeature ] > dist/TwitterFeature.js",
+    "build:4": "browserify src/TwitterFeature2/index.ts -p [ tsify -p src/TwitterFeature2 ] > dist/TwitterFeature2.js"
   },
   "repository": {
     "type": "git",
@@ -33,8 +30,10 @@
   },
   "homepage": "https://github.com/dapplets/typescript-examples#readme",
   "devDependencies": {
+    "browserify": "^16.2.3",
     "http-server": "^0.11.1",
     "npm-run-all": "^4.1.5",
+    "tsify": "^4.0.1",
     "typescript": "^3.4.5"
   }
 }

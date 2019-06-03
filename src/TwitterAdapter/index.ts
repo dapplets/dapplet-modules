@@ -7,123 +7,12 @@
 // @familyId TwitterAdapter
 // ==/UserScript==
 
-//#region COMMON INTERFACES
-interface ICore {
-    openOverlay(id: ID, ctx: any): void;
-    sendWalletConnectTx(tx: any): void;
-}
+import BasicView from './BasicView'
+import { IAction, IModule, IView, ID, IFeature, ICore, IContentAdapter } from 'dapplet-extension-types'
+import { T_TwitterActionFactory, T_TwitterAdapterConfig, T_TwitterViewSet, Context, T_InsertConfig, ITwitterFeature, IButtonConfig } from 'twitter-adapter-types'
 
-interface IModule { }
-
-interface IContentAdapter extends IModule {
-    //init(core: ICore, doc: Document): void;
-    registerFeature(feature: IFeature, doc: Document, core: ICore): void;
-    unregisterFeature(feature: IFeature): void;
-}
-
-interface IFeature extends IModule {
-    getAugmentationConfig(actionFactories: { [key: string]: Function }, core: ICore): any;
-}
-
-interface IAction { }
-
-interface IView {
-    name: string;
-    isActive: boolean;
-    INSERT_POINTS: ID[];
-    attachActionFactories(actions: IAction[], insPoint: ID): void;
-    activate(doc: Document): void;
-    deactivate(doc: Document): void;
-}
-
-type ID = string;
-//#endregion COMMON INTERFACES
-
-//#region TWITTER ADAPTER INTERFACES
-//type T_TwitterActionFactory = (view:IView,insPoint:string,ctx:T_TwitterContent)=>any;
-//ToDo: DiP
-type T_TwitterActionFactory = any;
-
-type T_TwitterAdapterConfig = { [key in keyof T_TwitterViewSet]: ({ [key: string]: T_TwitterActionFactory[] }) }
-type T_TwitterViewSet = {
-    TIMELINE?: IView;
-    DIRECT_MESSAGE?: IView;
-}
-
-type Context = any;
-
-type T_InsertConfig = {
-    name: string;
-    toContext: (node: Element) => Element;
-    context: (node: Element) => Context;
-    selector: string;
-}
-
-interface ITwitterFeature extends IFeature {
-    getAugmentationConfig(actionFactories: { [key: string]: Function }, core: ICore): T_TwitterAdapterConfig;
-}
-
-interface IButtonConfig {
-    class: string;
-    label: string;
-    img: string;
-    exec(context: any): void; //onClick
-}
-
-//#endregion
-
-//#region UTIL LIBRARY
-abstract class BasicView implements IView {
-    public isActive: boolean = false;
-    public observer: MutationObserver = null;
-
-    constructor(public name: string, public INSERT_POINTS: string[]) { }
-    attachedActionFactories: { [key: string]: Function[] } = {};
-
-    attachActionFactories(actionFactories: Function[], insPoint: ID): void {
-        if (!this.attachedActionFactories[insPoint]) {
-            this.attachedActionFactories[insPoint] = actionFactories;
-        } else {
-            this.attachedActionFactories[insPoint].push(...actionFactories);
-        }
-        this.injectActions(document); // ToDo fix
-    }
-
-    injectActions(doc: Document) {
-        for (const insPoint in this.attachedActionFactories) {
-            for (const actionFactory of this.attachedActionFactories[insPoint]) {
-                actionFactory(this, insPoint);
-            }
-        }
-    }
-
-    public activate(doc: Document): void {
-        this.isActive = true;
-        this.startMutationObserver(doc);
-        this.injectActions(doc);
-        console.log(`View "${this.name}" is activated`);
-    }
-
-    public deactivate(doc: Document) {
-        this.isActive = false;
-        this.stopMutationObserver(doc);
-        console.log(`View "${this.name}" is deactivated`);
-    }
-
-    public stopMutationObserver(doc: Document): void {
-        //ToDo: implement
-        this.observer && this.observer.disconnect();
-        console.log(`View "${this.name}": stopMutationObserver`);
-    }
-
-    abstract startMutationObserver(doc: Document): void;
-}
-
-//#endregion UTIL LIBRARY
-
-//#region TWITTER ADAPTER PACKAGE
 declare var Load: (id: string) => Function;
-class Feature implements IContentAdapter {
+export default class Feature implements IContentAdapter {
     private core: ICore = null;
     private doc: Document = null;
 
@@ -349,4 +238,3 @@ class Feature implements IContentAdapter {
     }
 
 }
-// #endregion TWITTER ADAPTER PACKAGE
