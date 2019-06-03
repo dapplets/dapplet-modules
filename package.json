@@ -6,7 +6,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "start": "npm-run-all --parallel serve watch",
+    "start": "npm-run-all --parallel serve build",
     "watch": "npm-run-all --parallel watch:1 watch:2 watch:3 watch:4",
     "serve": "http-server ./dist",
     "build": "npm run build:1 && npm run build:2 && npm run build:3 && npm run build:4",
