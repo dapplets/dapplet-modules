@@ -6,14 +6,16 @@
     "doc": "docs"
   },
   "scripts": {
-    "start": "npm-run-all --parallel serve build",
+    "start": "npm-run-all --parallel serve watch",
     "watch": "npm-run-all --parallel watch:1 watch:2 watch:3 watch:4",
     "serve": "http-server ./dist",
     "build": "npm run build:1 && npm run build:2 && npm run build:3 && npm run build:4",
-    "watch:1": "tsc -w -p ./src/TwitterAdapter",
-    "watch:2": "tsc -w -p ./src/TwitterFeature",
-    "watch:3": "tsc -w -p ./src/TwitterFeature2",
-    "watch:4": "tsc -w -p ./src/CommonLib",
+
+    "watch:1": "watchify src/CommonLib/index.ts -p [ tsify -p src/CommonLib ] -v -o dist/CommonLib.js",
+    "watch:2": "watchify src/TwitterAdapter/index.ts -p [ tsify -p src/TwitterAdapter ] -v -o dist/TwitterAdapter.js",
+    "watch:3": "watchify src/TwitterFeature/index.ts -p [ tsify -p src/TwitterFeature ] -v -o dist/TwitterFeature.js",
+    "watch:4": "watchify src/TwitterFeature2/index.ts -p [ tsify -p src/TwitterFeature2 ] -v -o dist/TwitterFeature2.js",
+
     "build:1": "browserify src/CommonLib/index.ts -p [ tsify -p src/CommonLib ] > dist/CommonLib.js",
     "build:2": "browserify src/TwitterAdapter/index.ts -p [ tsify -p src/TwitterAdapter ] > dist/TwitterAdapter.js",
     "build:3": "browserify src/TwitterFeature/index.ts -p [ tsify -p src/TwitterFeature ] > dist/TwitterFeature.js",
@@ -34,6 +36,7 @@
     "http-server": "^0.11.1",
     "npm-run-all": "^4.1.5",
     "tsify": "^4.0.1",
-    "typescript": "^3.4.5"
+    "typescript": "^3.4.5",
+    "watchify": "^3.11.1"
   }
 }
