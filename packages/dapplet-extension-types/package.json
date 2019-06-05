@@ -1,0 +1,11 @@
+{
+  "name": "@dapplets/dapplet-extension-types",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "watch": "echo ''"
+  },
+  "author": "",
+  "license": "ISC",
+  "types": "index"
+}

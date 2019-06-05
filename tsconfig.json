@@ -1,0 +1,32 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "module": "commonjs",
+        "declaration": true,
+        "noImplicitAny": false,
+        "removeComments": false,
+        "noLib": false,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "target": "es5",
+        "sourceMap": false,
+        "lib": [
+            "es2017", "dom"
+        ]
+    },
+    "include": [],
+    "references": [
+        {
+            "path": "./packages/common-lib"
+        },
+        {
+            "path": "./packages/twitter-adapter"
+        },
+        {
+            "path": "./packages/twitter-feature-1"
+        },
+        {
+            "path": "./packages/twitter-feature-2"
+        }
+    ]
+}

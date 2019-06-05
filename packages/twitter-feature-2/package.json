@@ -1,0 +1,17 @@
+{
+  "name": "@dapplets/twitter-feature-2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "browserify -e src/index.ts -p tsify -o ../../dist/twitter-feature-2.js",
+    "watch": "watchify -v -e src/index.ts -p tsify -o ../../dist/twitter-feature-2.js",
+    "clean": "(if exist lib rd /q /s lib) & (if exist dist rd /q /s dist)"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@dapplets/dapplet-extension-types": "1.0.0",
+    "@dapplets/twitter-adapter": "1.0.0"
+  }
+}

@@ -1,10 +1,10 @@
-import { IView, ID } from 'dapplet-extension-types'
-export default abstract class BasicView implements IView {
-    public isActive: boolean = false;
-    public observer: MutationObserver = null;
+import { IView, ID } from '@dapplets/dapplet-extension-types';
 
+export abstract class BasicView implements IView {
+    public isActive: boolean = false
+    public observer: MutationObserver = null
     constructor(public name: string, public INSERT_POINTS: string[]) { }
-    attachedActionFactories: { [key: string]: Function[] } = {};
+    attachedActionFactories: { [key: string]: Function[] } = {}
 
     attachActionFactories(actionFactories: Function[], insPoint: ID): void {
         if (!this.attachedActionFactories[insPoint]) {

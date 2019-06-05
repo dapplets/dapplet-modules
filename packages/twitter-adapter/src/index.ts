@@ -7,12 +7,12 @@
 // @familyId TwitterAdapter
 // ==/UserScript==
 
-import BasicView from './BasicView'
-import { IAction, IModule, IView, ID, IFeature, ICore, IContentAdapter } from 'dapplet-extension-types'
-import { T_TwitterActionFactory, T_TwitterAdapterConfig, T_TwitterViewSet, Context, T_InsertConfig, ITwitterFeature, IButtonConfig } from 'twitter-adapter-types'
+import { BasicView } from './basicView';
+import { IAction, IModule, IView, ID, IFeature, ICore, IContentAdapter } from '@dapplets/dapplet-extension-types';
+import { T_TwitterActionFactory, T_TwitterAdapterConfig, T_TwitterViewSet, Context, T_InsertConfig, ITwitterFeature, IButtonConfig } from './types';
 
-declare var Load: (id: string) => Function;
-export default class Feature implements IContentAdapter {
+
+export default class TwitterAdapter implements IContentAdapter {
     private core: ICore = null;
     private doc: Document = null;
 

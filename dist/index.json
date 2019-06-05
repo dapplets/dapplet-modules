@@ -4,9 +4,9 @@
   },
 
   "scripts": {
-    "TwitterFeature-v1": "TwitterFeature.js",
-    "TwitterFeature2-v1": "TwitterFeature2.js",
-    "TwitterAdapter-v1": "TwitterAdapter.js",
-    "CommonLib-v1": "CommonLib.js"
+    "TwitterFeature-v1": "twitter-feature-1.js",
+    "TwitterFeature2-v1": "twitter-feature-2.js",
+    "TwitterAdapter-v1": "twitter-adapter.js",
+    "CommonLib-v1": "common-lib.js"
   }
 }
