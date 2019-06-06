@@ -4,6 +4,8 @@
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
+This repository is built as a mono-repository. Lerna is used to assemble packages inside.
+
 ### Solution Structure
 
 ```
@@ -11,53 +13,34 @@ $/
   dist/
   docs/
   src/
-    TwitterAdapter/
-    TwitterFeature/
-    TwitterFeature2/
-    CommonLib/
+    common-lib/
+    dapplet-extension-types/
+    twitter-adapter/
+    twitter-feature-1/
+    twitter-feature-2/
 ```
 
-- `dist` - Releases
+- `dist` - Build results. This directory is locally accessible at http://localhost:8080
+- `dist\index.json` - Config file for modules declaration and binding beetwen them and hostnames
 - `docs` - Documentation
 - `src` - Examples of modules for Dapplet Extension
-- `src\TwitterAdapter` - Content adapter for twitter.com
-- `src\TwitterFeature` - First Feature injecting controls for twitter.com
-- `src\TwitterFeature2` - Second Feature injecting controls for twitter.com
-- `src\CommonLib` - CommonLib for adapter
+- `src\dapplet-extension-types` - Global types of dapplet extension
+- `src\common-lib` - CommonLib for adapters
+- `src\twitter-adapter` - Content adapter for twitter.com
+- `src\twitter-feature-1` - First Feature injecting controls for twitter.com
+- `src\twitter-feature-2` - Second Feature injecting controls for twitter.com
 
 ### Building
 
 1.  Clone repo
-2.  `npm install`
+2.  `npm run bootstrap` to install all dependencies and symbolic linking of adjacent packages 
 3.  `npm run start` to run the dev task in watch mode
 4.  `npm run build` to build a production version
 
 ### Attaching Bundles to Extension
-Add injectors and adapters to Extension Dev Tab
+During `npm run start`, connect to Dev Server via Extension Dev Tab
 
-**TwitterAdapter**
-```
-ID: TwitterAdapter-v1
-URL: http://localhost:8080/TwitterAdapter.js
-```
-
-**TwitterFeature**
-```
-ID: TwitterFeature-v1
-URL: http://localhost:8080/TwitterFeature.js
-```
-
-**TwitterFeature2**
-```
-ID: TwitterFeature2-v1
-URL: http://localhost:8080/TwitterFeature2.js
-```
-
-**CommonLib**
-```
-ID: CommonLib-v1
-URL: http://localhost:8080/CommonLib.js
-```
+Dev Config URL: `http://localhost:8080/index.json`
 
 ## Built With
 
