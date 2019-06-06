@@ -1,12 +1,23 @@
 {
   "hostnames": {
-    "twitter.com": ["TwitterFeature-v1", "TwitterFeature2-v1"]
+    "twitter.com": {
+      "twitter-feature-1.dapplet-base.eth": "1.0.0",
+      "twitter-feature-2.dapplet-base.eth": "1.0.0"
+    }
   },
 
   "scripts": {
-    "TwitterFeature-v1": "twitter-feature-1.js",
-    "TwitterFeature2-v1": "twitter-feature-2.js",
-    "TwitterAdapter-v1": "twitter-adapter.js",
-    "CommonLib-v1": "common-lib.js"
+    "twitter-feature-1.dapplet-base.eth": {
+      "1.0.0": "twitter-feature-1.js"
+    },
+    "twitter-feature-2.dapplet-base.eth": {
+      "1.0.0": "twitter-feature-2.js"
+    },
+    "twitter-adapter.dapplet-base.eth": {
+      "1.0.0": "twitter-adapter.js"
+    },
+    "common-lib.dapplet-base.eth": {
+      "1.0.0": "common-lib.js"
+    }
   }
 }

@@ -28,14 +28,20 @@ export interface IView {
 
 export type ID = string;
 
+
 declare global {
 
-    export function Load(id: string): Function;
+    export function Load(name: string, version: string): Function;
 
     export var Core: {
         openOverlay: (id: string, ctx: any) => void,
         sendWalletConnectTx: (dappletId: string, metadata: any) => Promise<any>
     };
 
-    export var PublicName: (id: string, version: string) => Function;
+    export function PublicName(name: string, version: string, isFeature?: boolean): Function;
+
+    export abstract class AbstractFeature {
+        abstract activate(): void;
+        abstract deactivate(): void;
+    }
 }

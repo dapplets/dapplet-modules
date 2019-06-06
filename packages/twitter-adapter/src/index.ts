@@ -12,13 +12,14 @@ import { IAction, IModule, IView, ID, IFeature, ICore, IContentAdapter } from '@
 import { T_TwitterActionFactory, T_TwitterAdapterConfig, T_TwitterViewSet, Context, T_InsertConfig, ITwitterFeature, IButtonConfig } from './types';
 
 
+@PublicName("twitter-adapter.dapplet-base.eth", "1.0.0") 
 export default class TwitterAdapter implements IContentAdapter {
     private core: ICore = null;
     private doc: Document = null;
 
     private observer: MutationObserver = null;
 
-    @Load("CommonLib-v1")
+    @Load("common-lib.dapplet-base.eth", "1.0.0")
     public library : any;
   
     constructor() {
