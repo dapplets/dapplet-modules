@@ -42,6 +42,68 @@ During `npm run start`, connect to Dev Server via Extension Dev Tab
 
 Dev Config URL: `http://localhost:8080/index.json`
 
+### How to create a new module?
+
+1. Create a new folder inside `packages` directory.
+2. Run `npm init` for package.json file creation.
+3. Add `build`, `watch` and `clean` scripts to package.json like below (do not forget replace `{YOUR_BUNDLE_NAME}` to name of your package/folder):
+```json
+"scripts": {
+  "build": "browserify -e src/index.ts -p tsify -o ../../dist/{YOUR_BUNDLE_NAME}.js",
+  "watch": "watchify -v -e src/index.ts -p tsify -o ../../dist/{YOUR_BUNDLE_NAME}.js",
+  "clean": "(if exist lib rd /q /s lib) & (if exist dist rd /q /s dist)"
+}
+```
+4. Run `npm install @dapplets/dapplet-extension-types` from your package directory to add types of extension.
+5. Create a `tsconfig.json` file, which contains configuration of TypeScript compilation.
+```json
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "lib",
+    "rootDir": "src"
+  },
+  "include": ["./src/**/*"]
+}
+```
+6. Create `src` folder inside your package directory.
+7. Create `index.ts` file inside `src` like below:
+```typescript
+// ==UserScript==
+// @name {YOUR_PACKAGE_TITLE}
+// @type feature
+// @description {YOUR_PACKAGE_DESCRIPTION}
+// @author Dapplets Team
+// @version 1.0.0
+// @familyId {YOUR_PACKAGE_NAME}
+// @icon {YOUR_PACKAGE_ICON}
+// ==/UserScript==
+
+import { IFeature } from '@dapplets/dapplet-extension-types'
+
+@PublicName("{YOUR_PACKAGE_NAME}.dapplet-base.eth", "1.0.0", true)
+export default class Feature implements IFeature {
+
+    public activate() {
+        
+    }
+
+    public deactivate() {
+        
+    }
+}
+```
+8. [Additionaly] If you want to use (inject) existing module to your package, then run `npm install {PACKAGE_NAME}` to add dependency and do next step.
+9. [Additionaly] Add decorated property to your main class, where module will be injected like below:
+```typescript
+@Load("twitter-adapter.dapplet-base.eth", "1.0.0")
+public adapter: any;
+```
+10. Run `npm run bootstrap` from root directory of current repository to add symbolic linking of adjacent packages.
+11. Run `npm run watch` to start development!
+
+
+
 ## Built With
 
 * [TypeScript](https://www.typescriptlang.org/)
