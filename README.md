@@ -44,9 +44,19 @@ Dev Config URL: `http://localhost:8080/index.json`
 
 ### How to create a new module?
 
-1. Create a new folder inside `packages` directory.
-2. Run `npm init` for package.json file creation.
-3. Add `build`, `watch` and `clean` scripts to package.json like below (do not forget replace `{YOUR_BUNDLE_NAME}` to name of your package/folder):
+1. Add path to your package inside `tsconfig.json` file like below:
+```json
+{
+  "references": [
+    {
+      "path": "./packages/{YOUR_PACKAGE_NAME}"
+    }
+  ]
+}
+```
+2. Create a new folder inside `packages` directory.
+3. Run `npm init` for package.json file creation.
+4. Add `build`, `watch` and `clean` scripts to package.json like below (do not forget replace `{YOUR_BUNDLE_NAME}` to name of your package/folder):
 ```json
 "scripts": {
   "build": "browserify -e src/index.ts -p tsify -o ../../dist/{YOUR_BUNDLE_NAME}.js",
@@ -54,8 +64,8 @@ Dev Config URL: `http://localhost:8080/index.json`
   "clean": "(if exist lib rd /q /s lib) & (if exist dist rd /q /s dist)"
 }
 ```
-4. Run `npm install @dapplets/dapplet-extension-types` from your package directory to add types of extension.
-5. Create a `tsconfig.json` file, which contains configuration of TypeScript compilation.
+5. Run `npm install @dapplets/dapplet-extension-types` from your package directory to add types of extension.
+6. Create a `tsconfig.json` file inside your package directory, which contains configuration of TypeScript compilation.
 ```json
 {
   "extends": "../../tsconfig.json",
@@ -66,8 +76,8 @@ Dev Config URL: `http://localhost:8080/index.json`
   "include": ["./src/**/*"]
 }
 ```
-6. Create `src` folder inside your package directory.
-7. Create `index.ts` file inside `src` like below:
+7. Create `src` folder inside your package directory.
+8. Create `index.ts` file inside `src` like below:
 ```typescript
 // ==UserScript==
 // @name {YOUR_PACKAGE_TITLE}
@@ -93,16 +103,14 @@ export default class Feature implements IFeature {
     }
 }
 ```
-8. [Additionaly] If you want to use (inject) existing module to your package, then run `npm install {PACKAGE_NAME}` to add dependency and do next step.
-9. [Additionaly] Add decorated property to your main class, where module will be injected like below:
+9. [Additionaly] If you want to use (inject) existing module to your package, then run `npm install {PACKAGE_NAME}` to add dependency and do next step.
+10. [Additionaly] Add decorated property to your main class, where module will be injected like below:
 ```typescript
 @Load("twitter-adapter.dapplet-base.eth", "1.0.0")
 public adapter: any;
 ```
-10. Run `npm run bootstrap` from root directory of current repository to add symbolic linking of adjacent packages.
-11. Run `npm run watch` to start development!
-
-
+11. Run `npm run bootstrap` from root directory of current repository to add symbolic linking of adjacent packages.
+12. Run `npm run watch` to start development!
 
 ## Built With
 
