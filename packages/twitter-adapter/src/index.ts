@@ -176,7 +176,7 @@ export default class TwitterAdapter implements IContentAdapter {
         ) //ToDo: implement
     }
 
-    public registerFeature(feature: IFeature, doc: Document, core: ICore): void {
+    public registerFeature(feature: ITwitterFeature, doc: Document, core: ICore): void {
         this.doc = doc;
         this.core = core;
         
@@ -194,7 +194,7 @@ export default class TwitterAdapter implements IContentAdapter {
         this.initRouteObserver(this.doc);
     }
 
-    public unregisterFeature(feature: IFeature): void {
+    public unregisterFeature(feature: ITwitterFeature): void {
         console.log('unregisterFeature is not implemented');
     }
 

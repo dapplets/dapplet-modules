@@ -12,7 +12,8 @@ export interface IContentAdapter extends IModule {
 }
 
 export interface IFeature extends IModule {
-    getAugmentationConfig(actionFactories: { [key: string]: Function }, core: ICore): any;
+    activate(): void;
+    deactivate(): void;
 }
 
 export interface IAction { }
