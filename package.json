@@ -12,7 +12,7 @@
     "bootstrap": "npm install && lerna bootstrap",
     "build": "lerna run build",
     "watch": "lerna exec --parallel -- npm run watch",
-    "serve": "http-server ./dist",
+    "serve": "node src/server.js",
     "clean": "lerna run clean",
     "clean:node_modules": "lerna exec -- if exist node_modules rd /q /s node_modules",
     "clean:package_lock": "lerna exec -- if exist package-lock.json del /f package-lock.json",
@@ -35,5 +35,9 @@
     "tsify": "^4.0.1",
     "typescript": "^3.5.1",
     "watchify": "^3.11.1"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-ws": "^4.0.0"
   }
 }

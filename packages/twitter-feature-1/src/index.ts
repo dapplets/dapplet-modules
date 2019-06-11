@@ -20,6 +20,8 @@ export default class TwitterFeature implements ITwitterFeature {
     @Load("twitter-adapter.dapplet-base.eth", "1.0.0")
     public adapter: any;
 
+    private _ws: WebSocketProxyClient = null;
+
     constructor() {
         console.log('Feature created');
     }
@@ -27,6 +29,17 @@ export default class TwitterFeature implements ITwitterFeature {
     public activate() {
         this.adapter.registerFeature(this, document, null);
         console.log('activated');
+
+        this._ws = new WebSocketProxyClient("ws://localhost:8080");
+        this._ws.onopen = () => {
+            alert('WebSocket connection OPEN');
+        };
+        this._ws.onclose = () => {
+            alert('WebSocket connection CLOSED');
+        };
+        this._ws.onmessage = (msg) => {
+            alert('Message from WebSocket: ' + msg);
+        };
     }
 
     public deactivate() {
@@ -50,7 +63,8 @@ export default class TwitterFeature implements ITwitterFeature {
                         class: 'dapplet-tweet-south-metamask',
                         img: METAMASK_ICON,
                         exec: (ctx: any) => {
-                            Core.sendWalletConnectTx('1', ctx);
+                            //Core.sendWalletConnectTx('1', ctx);
+                            this._ws.send(ctx.text);
                         } //ToDo: ref or val? 
                         //ToDo: implement binding and reload by backgroung.js
                     }),

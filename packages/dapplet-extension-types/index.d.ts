@@ -45,4 +45,15 @@ declare global {
         abstract activate(): void;
         abstract deactivate(): void;
     }
+
+    export class WebSocketProxyClient {
+        constructor(url: string);
+        public readonly url: string;
+        public onclose: () => void;
+        public onmessage: (data: string) => void;
+        public onopen: () => void;
+        public onerror: () => void;
+        public close(): void;
+        public send(data: string): void;
+    }
 }
