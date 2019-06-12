@@ -7,8 +7,8 @@ export interface IModule { }
 
 export interface IContentAdapter extends IModule {
     //init(core: ICore, doc: Document): void;
-    registerFeature(feature: IFeature, doc: Document, core: ICore): void;
-    unregisterFeature(feature: IFeature): void;
+    //registerFeature(feature: IFeature, doc: Document, core: ICore): void;
+    //unregisterFeature(feature: IFeature): void;
 }
 
 export interface IFeature extends IModule {

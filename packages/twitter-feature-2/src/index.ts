@@ -21,75 +21,69 @@ export default class TwitterFeature implements ITwitterFeature {
     public adapter: any;
 
     constructor() {
-        console.log('Feature2 created');
+        console.log('Feature2: created');
+        this.init();
     }
 
     public activate() {
-        this.adapter.registerFeature(this, document, null);
-        console.log('activated');
+        //this.adapter.registerFeature(this, document, null);
+        console.log('feature-2: activated');
     }
 
     public deactivate() {
-        this.adapter.unregisterFeature(this);
-        console.log('deactivated');
+        //this.adapter.unregisterFeature(this);
+        console.log('feature-2: deactivated');
     }
 
-    public getAugmentationConfig(
-        { button, menuItem }: { [key: string]: Function },
-        core: ICore
-    ): T_TwitterAdapterConfig {
-        // called at view creation time
-        return {
-            TIMELINE: {
+    public init()  {
+        console.log("feature-2: this.adapter.actionFactories>", this.adapter.actionFactories);
+        let {button, menuItem} = this.adapter.actionFactories;
+        this.adapter.addFeature({
+            LIVEDATA_SERVER: [{
                 //ToDo: Augmentation Server provides additional context related two-ways info used as labels in custom actions.
-                // Example: number of likes, number of PMs opened for current tweet, displayed as "(9)" near from button.    
+                // Example: number of likes, number of PMs opened for current tweet, displayed as "(9)" near from button.     
                 //AUGM_SERVER_URL : "ws://SOMEHOST/timeline/",
-                TWEET_SOUTH: [
-                    button({
-                        class: 'dapplet-tweet-south-ethereum-2',
-                        img: ETHEREUM_ICON,
-                        exec: (ctx: any) => {
-                            Core.openOverlay(null, ctx);
-                        },
-                        //ToDo: what about global parameters?
-                        //ToDo: return state object useful bound to button state?
-                        label: "NEW" //ToDo: implement binding and reload
-                    })
-                ],
-                TWEET_COMBO: [
-                    // menuItem({
-                    //     class: '',
-                    //     text: "hello one", 
-                    //     exec: (ctx:any) => core.sendWalletConnectTx({
-                    //         id: ctx.tweetId,
-                    //         author: ctx.authorId
-                    //     }), 
-                    //     //ToDo: what about global parameters?
-                    //     //ToDo: return state object useful bound to button state?
-                    // })           
-                ],
-            },
-            DIRECT_MESSAGE: {
-                //ToDo: Augmentation Server provides additional context related two-ways info used as labels in custom actions.
-                // Example: number of likes, number of PMs opened for current tweet, displayed as "(9)" near from button.    
-                //AUGM_SERVER_URL : "ws://SOMEHOST/directmessage/",
-                DM_SOUTH: [
-                    button({
-                        class: 'dapplet-dm-south-ethereum-2',
-                        img: ETHEREUM_ICON,
-                        exec: (ctx: any) => {
-                            alert(JSON.stringify(ctx));
-                            // core.sendWalletConnectTx({
-                            //     id: ctx.tweetId,
-                            //     author: ctx.authorId
-                            // })
-                        }
-                        //ToDo: what about global parameters?
-                        //ToDo: return state object useful bound to button state?
-                        //label: (ctx:any) => ctx.text //ToDo: implement binding and reload
-                    })
-                ],
-            }
-        }
-    }
+            }],
+            TWEET_SOUTH: [
+                button({
+                    class: 'dapplet-tweet-south-ethereum-2',
+                    img: ETHEREUM_ICON,
+                    exec: (ctx: any) => {
+                        Core.openOverlay(null, ctx);
+                    },
+                    //ToDo: what about global parameters?
+                    //ToDo: return state object useful bound to button state?
+                    label: "NEW" //ToDo: implement binding and reload
+                })
+            ],
+            TWEET_COMBO: [
+                // menuItem({
+                //     class: '',
+                //     text: "hello one", 
+                //     exec: (ctx:any) => core.sendWalletConnectTx({
+                //         id: ctx.tweetId,
+                //         author: ctx.authorId
+                //     }), 
+                //     //ToDo: what about global parameters?
+                //     //ToDo: return state object useful bound to button state?
+                // })           
+            ],
+            DM_SOUTH: [
+                button({
+                    class: 'dapplet-dm-south-ethereum-2',
+                    img: ETHEREUM_ICON,
+                    exec: (ctx: any) => {
+                        alert(JSON.stringify(ctx));
+                        // core.sendWalletConnectTx({
+                        //     id: ctx.tweetId,
+                        //     author: ctx.authorId
+                        // })
+                    }
+                    //ToDo: what about global parameters?
+                    //ToDo: return state object useful bound to button state?
+                    //label: (ctx:any) => ctx.text //ToDo: implement binding and reload
+                })
+            ],
+        });
+    }//init()
 }

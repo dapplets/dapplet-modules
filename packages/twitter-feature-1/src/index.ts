@@ -10,7 +10,7 @@
 // ==/UserScript==
 
 import { IAction, IModule, IView, ID, IFeature, ICore, IContentAdapter } from '@dapplets/dapplet-extension-types'
-import { T_TwitterActionFactory, T_TwitterAdapterConfig, T_TwitterViewSet, Context, T_InsertConfig, ITwitterFeature, IButtonConfig } from '@dapplets/twitter-adapter/src/types'
+import { T_TwitterActionFactory, T_TwitterAdapterConfig, T_TwitterViewSet, Context, T_InsertConfig, ITwitterFeature, IButtonConfig, ITwitterAdapter } from '@dapplets/twitter-adapter/src/types'
 
 const METAMASK_ICON: string = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAYAAAByUDbMAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAjhJREFUeNrUVM9rE1EQ/t7Lbn6UqAlFscYNYrfVKoXSi0ehLcSDknjwpFC8i5fiMbUHqQriPyD17B+QoqDQg1QoKB5Ec9GaNP4IVtq6bXa72d23zm6aEDcm4K0ODDv7DfPtNzPvLfDf2dyFdIJ87F9q2N/AfEZJhhhbojBFPjT3bG2rPf/ttnrcBSZfV2w1+7iUb+JSkOjWRGqAM7ZCoeK998lYqd45+caLhcMO2DYGiWjkVcnBu6q4317bQRaV+RW2R+SZbmG4vIHh0WMclg1sWMDToo3vmoAtxKP2Wh4ko/ZmgtjyqgOX5EghoPDB8onI3s4///KpK9lsRjlLj3Q7FiaCqSHJV8VI8gTFHkbkavCjf5DRrL6SgPetGVD24hkZ/X0Mu1YDGzjEfCwi4VdPMm9rR+KsqCQZ0kmOSVLhEXnmOLQA0WjVw66NhxeCZB0LmD4nJ/jegTF2gZrhtnJmHYhFGW3VhSsgeirTH6gniGiq+R6L0sxkoLITxnwxjfWdkI//MGW4nEs9lZGGm8FTfDDOMBqz8FCpwKZWTZrdqcM26pbbWxnN5bpX0HSdWlz/6WBzS0DTG5g3M4doohGWpU4SXcm0Gl5uU1HTDZqRadLZk7m/AINizZCgx1V8rKfGbhTsJc5Y1zYXKHXJvzouqoyxRSmZfFE7ncvYR8dzkiy3lKytlmH2L2rCLXW/6OX84F3dEoWRe5+XO25C4cnlSDic4yGe1nVj2xFi+nz26ub+/wf+FmAAmiLTFxlZBnAAAAAASUVORK5CYII=';
 
@@ -18,16 +18,17 @@ const METAMASK_ICON: string = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABM
 export default class TwitterFeature implements ITwitterFeature {
 
     @Load("twitter-adapter.dapplet-base.eth", "1.0.0")
-    public adapter: any;
+    public adapter: ITwitterAdapter;
 
     private _ws: WebSocketProxyClient = null;
 
     constructor() {
-        console.log('Feature created');
+        console.log('Feature-1 created. calling init.');
+        this.init();
     }
 
     public activate() {
-        this.adapter.registerFeature(this, document, null);
+        //this.adapter.registerFeature(this, document, null);
         console.log('activated');
 
         this._ws = new WebSocketProxyClient("ws://localhost:8080");
@@ -43,81 +44,73 @@ export default class TwitterFeature implements ITwitterFeature {
     }
 
     public deactivate() {
-        this.adapter.unregisterFeature(this);
+        //this.adapter.unregisterFeature(this); //ToDo: remove me
         console.log('deactivated');
     }
 
-    public getAugmentationConfig(
-        { button, menuItem }: { [key: string]: Function },
-        core: ICore
-    ): T_TwitterAdapterConfig {
-        // called at view creation time
-        return {
-            TIMELINE: {
+    public init()  {
+        console.log("this.adapter.actionFactories>", this.adapter.actionFactories);
+        let {button, menuItem} = this.adapter.actionFactories;
+        this.adapter.addFeature({
+            LIVEDATA_SERVER: [{
                 //ToDo: Augmentation Server provides additional context related two-ways info used as labels in custom actions.
                 // Example: number of likes, number of PMs opened for current tweet, displayed as "(9)" near from button.     
                 //AUGM_SERVER_URL : "ws://SOMEHOST/timeline/",
-                TWEET_SOUTH: [
-                    // call at view creation time
-                    button({
-                        class: 'dapplet-tweet-south-metamask',
-                        img: METAMASK_ICON,
-                        exec: (ctx: any) => {
-                            //Core.sendWalletConnectTx('1', ctx);
-                            this._ws.send(ctx.text);
-                        } //ToDo: ref or val? 
-                        //ToDo: implement binding and reload by backgroung.js
-                    }),
-                    // button({
-                    //     class: 'dapplet-tweet-south-ethereum',
-                    //     img: ETHEREUM_ICON,
-                    //     exec: (ctx: any) => {
-                    //         alert(JSON.stringify(ctx));
-                    //         // core.sendWalletConnectTx({
-                    //         //     id: ctx.tweetId,
-                    //         //     author: ctx.authorId
-                    //         // })
-                    //     },
-                    //     //ToDo: what about global parameters?
-                    //     //ToDo: return state object useful bound to button state?
-                    //     label: "RTN" //ToDo: implement binding and reload
-                    // })
-                ],
-                TWEET_COMBO: [
-                    // menuItem({
-                    //     class: '',
-                    //     text: "hello one", 
-                    //     exec: (ctx:any) => core.sendWalletConnectTx({
-                    //         id: ctx.tweetId,
-                    //         author: ctx.authorId
-                    //     }), 
-                    //     //ToDo: what about global parameters?
-                    //     //ToDo: return state object useful bound to button state?
-                    // })           
-                ],
-            },
-            DIRECT_MESSAGE: {
-                //ToDo: Augmentation Server provides additional context related two-ways info used as labels in custom actions.
-                // Example: number of likes, number of PMs opened for current tweet, displayed as "(9)" near from button.    
-                //AUGM_SERVER_URL : "ws://SOMEHOST/directmessage/",
-                DM_SOUTH: [
-                    button({
-                        class: 'dapplet-dm-south-metamask',
-                        img: METAMASK_ICON,
-                        exec: (ctx: any) => {
-                            alert(JSON.stringify(ctx));
-                            // core.sendWalletConnectTx({
-                            //     id: ctx.tweetId,
-                            //     author: ctx.authorId
-                            // })
-                        }
-                        //ToDo: what about global parameters?
-                        //ToDo: return state object useful bound to button state?
-                        //label: (ctx:any) => ctx.text //ToDo: implement binding and reload
-                    })
-                ],
-            }
-        }
+            }],
+            TWEET_SOUTH: [
+                // call at view creation time
+                button({
+                    class: 'dapplet-tweet-south-metamask',
+                    img: METAMASK_ICON,
+                    exec: (ctx: any) => {
+                        //Core.sendWalletConnectTx('1', ctx);
+                        this._ws.send(ctx.text);
+                    } //ToDo: ref or val? 
+                    //ToDo: implement binding and reload by backgroung.js
+                }),
+                // button({
+                //     class: 'dapplet-tweet-south-ethereum',
+                //     img: ETHEREUM_ICON,
+                //     exec: (ctx: any) => {
+                //         alert(JSON.stringify(ctx));
+                //         // core.sendWalletConnectTx({
+                //         //     id: ctx.tweetId,
+                //         //     author: ctx.authorId
+                //         // })
+                //     },
+                //     //ToDo: what about global parameters?
+                //     //ToDo: return state object useful bound to button state?
+                //     label: "RTN" //ToDo: implement binding and reload
+                // })
+            ],
+            TWEET_COMBO: [
+                // menuItem({
+                //     class: '',
+                //     text: "hello one", 
+                //     exec: (ctx:any) => core.sendWalletConnectTx({
+                //         id: ctx.tweetId,
+                //         author: ctx.authorId
+                //     }), 
+                //     //ToDo: what about global parameters?
+                //     //ToDo: return state object useful bound to button state?
+                // })           
+            ],
+            DM_SOUTH: [
+                button({
+                    class: 'dapplet-dm-south-metamask',
+                    img: METAMASK_ICON,
+                    exec: (ctx: any) => {
+                        alert(JSON.stringify(ctx));
+                        // core.sendWalletConnectTx({
+                        //     id: ctx.tweetId,
+                        //     author: ctx.authorId
+                        // })
+                    }
+                    //ToDo: what about global parameters?
+                    //ToDo: return state object useful bound to button state?
+                    //label: (ctx:any) => ctx.text //ToDo: implement binding and reload
+                })
+            ]
+        }); //add feature config
     }
 }
-//#endregion TWITTER 4_ACTIONS FEATURE
