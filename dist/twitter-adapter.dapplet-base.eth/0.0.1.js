@@ -28,27 +28,26 @@ var TwitterAdapter = /** @class */ (function () {
         this.observer = null;
         this.features = [];
         this.widgetBuilders = [{
-                querySelector: "main[role=main]",
+                anchorElementId: "timeline",
                 insPoints: {
                     TWEET_SOUTH: {
-                        toContext: function (node) { return node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode; },
-                        selector: "main[role=main] div[data-testid=primaryColumn] section[role=region] article div[role=group]"
+                        toContext: function (node) { return node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode; },
+                        selector: "#timeline li.stream-item div.js-actions"
                     },
                     TWEET_COMBO: {
-                        toContext: function (node) { return node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode; },
+                        toContext: function (node) { return node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode; },
                         selector: "" //ToDo
                     }
                 },
-                // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
                 contextBuilder: function (tweetNode) { return ({
-                    id: tweetNode.querySelector('article a time').parentNode.href.substr(tweetNode.querySelector('article a time').parentNode.href.lastIndexOf('/') + 1),
-                    text: tweetNode.querySelector('div[lang]').innerText,
-                    authorFullname: tweetNode.querySelector('article a:nth-child(1) div span span').innerText,
-                    authorUsername: tweetNode.querySelector('div.r-1f6r7vd > div > span').innerText,
-                    authorImg: tweetNode.querySelector('article div img').getAttribute('src')
+                    id: tweetNode.getAttribute('data-tweet-id'),
+                    text: tweetNode.querySelector('div.js-tweet-text-container').innerText,
+                    authorFullname: tweetNode.querySelector('strong.fullname').innerText,
+                    authorUsername: tweetNode.querySelector('span.username').innerText,
+                    authorImg: tweetNode.querySelector('img.avatar').getAttribute('src')
                 }); },
             }, {
-                querySelector: "dm_dialog",
+                anchorElementId: "dm_dialog",
                 insPoints: {
                     DM_SOUTH: {
                         toContext: function (node) { return node.parentNode.parentNode.parentNode.parentNode; },
@@ -80,7 +79,7 @@ var TwitterAdapter = /** @class */ (function () {
         };
         this.observer = new MutationObserver(function (mutations) {
             _this.widgetBuilders.forEach(function (widgetBuilder) {
-                var e = doc.querySelector(widgetBuilder.querySelector);
+                var e = doc.getElementById(widgetBuilder.anchorElementId);
                 if (e && !widgetBuilder.observer) {
                     (widgetBuilder.observer = new MutationObserver(function (mutations) { return widgetBuilder.updateWidgets(_this.features, mutations); }))
                         .observe(e, OBSERVER_CONFIG);
@@ -101,7 +100,7 @@ var TwitterAdapter = /** @class */ (function () {
         __metadata("design:type", Object)
     ], TwitterAdapter.prototype, "library", void 0);
     TwitterAdapter = __decorate([
-        PublicName("twitter-adapter.dapplet-base.eth", "1.0.1"),
+        PublicName("twitter-adapter.dapplet-base.eth", "0.0.1"),
         __metadata("design:paramtypes", [])
     ], TwitterAdapter);
     return TwitterAdapter;
@@ -157,7 +156,7 @@ function createButton(builder, insPointName, config) {
     });
 }
 function createButtonHtml(config) {
-    return createElementFromHTML("<div class=\"" + config.class + " css-1dbjc4n r-1iusvr4 r-18u37iz r-16y2uox r-1h0z5md\">\n            <div role=\"button\" data-focusable=\"true\" tabindex=\"0\" class=\"css-18t94o4 css-1dbjc4n r-1777fci r-11cpok1 r-bztko3 r-lrvibr\">\n                <div dir=\"ltr\" class=\"css-901oao r-1awozwy r-1re7ezh r-6koalj r-1qd0xha r-a023e6 r-16dba41 r-1h0z5md r-ad9z0x r-bcqeeo r-o7ynqc r-clp7b1 r-3s2u2q r-qvutc0\">\n                    <div class=\"css-1dbjc4n r-xoduu5\">\n                        <img height=\"18\" src=\"" + config.img + "\" class=\"r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr\">\n                        <div class=\"css-1dbjc4n r-sdzlij r-1p0dtai r-xoduu5 r-1d2f490 r-xf4iuw r-u8s1d r-zchlnj r-ipm5af r-o7ynqc r-6416eg\"></div>\n                    </div>\n                    " + (config.label ? "<div class=\"css-1dbjc4n r-xoduu5 r-1udh08x\">\n                        <span dir=\"auto\" class=\"css-901oao css-16my406 r-1qd0xha r-ad9z0x r-1n0xq6e r-bcqeeo r-d3hbe1 r-1wgg2b2 r-axxi2z r-qvutc0\">\n                            <span dir=\"auto\" class=\"css-901oao css-16my406 r-1qd0xha r-ad9z0x r-bcqeeo r-qvutc0\">" + config.label + "</span>\n                        </span>\n                    </div>" : '') + "\n                </div>\n            </div>\n        </div>");
+    return createElementFromHTML("<div class=\"" + config.class + " ProfileTweet-action\">\n                <button class=\"ProfileTweet-actionButton\" type=\"button\">\n                    <div class=\"IconContainer\">\n                        <img height=\"18\" src=\"" + config.img + "\">\n                    </div>\n                    " + (config.label ? "<span class=\"ProfileTweet-actionCount\">\n                        <span class=\"ProfileTweet-actionCountForPresentation\" aria-hidden=\"true\">" + config.label + "</span>\n                    </span>" : '') + "\n                </button>\n            </div>\n    ");
 }
 function createElementFromHTML(htmlString) {
     var div = document.createElement('div');
