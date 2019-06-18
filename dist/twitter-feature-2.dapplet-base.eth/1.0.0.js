@@ -86,7 +86,7 @@ var TwitterFeature = /** @class */ (function () {
         });
     }; //init()
     __decorate([
-        Load("twitter-adapter.dapplet-base.eth", "1.0.0"),
+        Load("twitter-adapter.dapplet-base.eth", "1.0.1"),
         __metadata("design:type", Object)
     ], TwitterFeature.prototype, "adapter", void 0);
     TwitterFeature = __decorate([

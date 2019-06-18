@@ -32,13 +32,13 @@ var TwitterFeature = /** @class */ (function () {
         console.log('activated');
         this._ws = new WebSocketProxyClient("ws://localhost:8080");
         this._ws.onopen = function () {
-            alert('WebSocket connection OPEN');
+            console.log('WebSocket connection OPEN');
         };
         this._ws.onclose = function () {
-            alert('WebSocket connection CLOSED');
+            console.log('WebSocket connection CLOSED');
         };
         this._ws.onmessage = function (msg) {
-            alert('Message from WebSocket: ' + msg);
+            console.log('Message from WebSocket: ' + msg);
         };
     };
     TwitterFeature.prototype.deactivate = function () {
@@ -98,7 +98,7 @@ var TwitterFeature = /** @class */ (function () {
         }); //add feature config
     };
     __decorate([
-        Load("twitter-adapter.dapplet-base.eth", "1.0.0"),
+        Load("twitter-adapter.dapplet-base.eth", "1.0.1"),
         __metadata("design:type", Object)
     ], TwitterFeature.prototype, "adapter", void 0);
     TwitterFeature = __decorate([

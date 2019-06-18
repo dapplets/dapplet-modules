@@ -17,7 +17,7 @@ const METAMASK_ICON: string = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABM
 @PublicName("twitter-feature-1.dapplet-base.eth", "1.0.0", true)
 export default class TwitterFeature implements ITwitterFeature {
 
-    @Load("twitter-adapter.dapplet-base.eth", "1.0.0")
+    @Load("twitter-adapter.dapplet-base.eth", "1.0.1")
     public adapter: ITwitterAdapter;
 
     private _ws: WebSocketProxyClient = null;
@@ -33,13 +33,13 @@ export default class TwitterFeature implements ITwitterFeature {
 
         this._ws = new WebSocketProxyClient("ws://localhost:8080");
         this._ws.onopen = () => {
-            alert('WebSocket connection OPEN');
+            console.log('WebSocket connection OPEN');
         };
         this._ws.onclose = () => {
-            alert('WebSocket connection CLOSED');
+            console.log('WebSocket connection CLOSED');
         };
         this._ws.onmessage = (msg) => {
-            alert('Message from WebSocket: ' + msg);
+            console.log('Message from WebSocket: ' + msg);
         };
     }
 
