@@ -1,6 +1,6 @@
 {
   "name": "@dapplets/twitter-adapter",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "",
   "scripts": {
     "build": "browserify -e src/index.ts -p tsify -o ../../dist/%npm_package_dapplets_name%/%npm_package_version%.js",
@@ -18,7 +18,7 @@
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "dependencies": {
-    "@dapplets/dapplet-extension-types": "0.0.1"
+    "@dapplets/dapplet-extension-types": "0.1.0"
   },
   "dapplets": {
     "name": "twitter-adapter.dapplet-base.eth"

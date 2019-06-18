@@ -1,6 +1,6 @@
 {
   "name": "@dapplets/dapplet-extension-types",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "",
   "scripts": {
     "watch": "echo ''"
