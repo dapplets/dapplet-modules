@@ -11,10 +11,10 @@ import { IAction, IModule, IView, ID, IFeature, ICore, IContentAdapter } from '@
 import { T_TwitterActionFactory, T_TwitterFeatureConfig, T_TwitterViewSet, Context, T_InsertConfig, ITwitterFeature, IButtonConfig, IWidgetBuilder, IAdapterFeature, IWidgetBuilderConfig } from './types';
 import { WidgetBuilder, widgets } from './widgets';
 
-let doc:Document = document; //host document we are working on (inpage.js)
+let doc: Document = document; //host document we are working on (inpage.js)
 
 
-@PublicName("twitter-adapter.dapplet-base.eth", "0.1.0") 
+@PublicName("twitter-adapter.dapplet-base.eth", "0.1.1")
 export default class TwitterAdapter implements IContentAdapter {
 
     private core: ICore = null;
@@ -24,8 +24,8 @@ export default class TwitterAdapter implements IContentAdapter {
     private features: T_TwitterFeatureConfig[] = [];
 
     @Load("common-lib.dapplet-base.eth", "0.1.0")
-    public library : any;
-  
+    public library: any;
+
 
     addFeature(feature: T_TwitterFeatureConfig): void { //ToDo: automate two-way dependency handling(?)
         this.features.push(feature);
@@ -33,7 +33,7 @@ export default class TwitterAdapter implements IContentAdapter {
 
     constructor() {
         console.log('ContentAdapter  created');
-        console.log('library from ContentAdapter', this.library);        console.log("init adapter>")
+        console.log('library from ContentAdapter', this.library); console.log("init adapter>")
 
         if (this.observer) return;
         if (!document || !window || !MutationObserver) throw Error('Document or MutationObserver is not available.');
@@ -45,13 +45,14 @@ export default class TwitterAdapter implements IContentAdapter {
             this.widgetBuilders.forEach(widgetBuilder => {
                 let e = doc.getElementById(widgetBuilder.anchorElementId);
                 if (e && !widgetBuilder.observer) {
-                    (widgetBuilder.observer = new MutationObserver((mutations)=>widgetBuilder.updateWidgets(this.features, mutations)))
-                    .observe(e, OBSERVER_CONFIG);
+                    (widgetBuilder.observer = new MutationObserver((mutations) => widgetBuilder.updateWidgets(this.features, mutations)))
+                        .observe(e, OBSERVER_CONFIG);
+                    widgetBuilder.updateWidgets(this.features);
                 } else if (!e && widgetBuilder.observer) {
                     widgetBuilder.observer.disconnect();
                     widgetBuilder.observer = null;
                 }
-            })                
+            })
         });
         this.observer.observe(doc.body, OBSERVER_CONFIG);
     }
@@ -85,7 +86,7 @@ export default class TwitterAdapter implements IContentAdapter {
             DM_EAST: {
                 toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode, //ToDo: Adjust it!
                 selector: "" //ToDo
-            }    
+            }
         },
         contextBuilder: (tweetNode: any) => ({
             threadId: tweetNode.getAttribute('data-thread-id'),
@@ -94,5 +95,5 @@ export default class TwitterAdapter implements IContentAdapter {
             username: tweetNode.querySelector('div.DMInboxItem-title .username') && tweetNode.querySelector('div.DMInboxItem-title .username').innerText,
             text: tweetNode.querySelector('.DMInboxItem-snippet').innerText
         })
-    }].map((cfg:IWidgetBuilderConfig) => new WidgetBuilder(cfg)); 
+    }].map((cfg: IWidgetBuilderConfig) => new WidgetBuilder(cfg));
 }

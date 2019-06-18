@@ -1,6 +1,6 @@
-import {IButtonConfig, IWidgetBuilder, T_TwitterFeatureConfig, IWidgetBuilderConfig} from "./types";
+import { IButtonConfig, IWidgetBuilder, T_TwitterFeatureConfig, IWidgetBuilderConfig } from "./types";
 
-export const widgets : { [key: string]: Function } = {
+export const widgets: { [key: string]: Function } = {
     button: (config: IButtonConfig) => ((builder: IWidgetBuilder, insPointName: string) =>
         createButton(builder, insPointName, config)
     ),
@@ -10,18 +10,18 @@ export const widgets : { [key: string]: Function } = {
 };
 
 export class WidgetBuilder implements IWidgetBuilder {
-    anchorElementId:string;
+    anchorElementId: string;
     insPoints: { [key: string]: any };
-    contextBuilder: (tweetNode: any) =>any;
+    contextBuilder: (tweetNode: any) => any;
     observer: MutationObserver = null;
- 
+
     //ToDo: widgets
 
-    constructor(widgetBuilderConfig : IWidgetBuilderConfig) {
+    constructor(widgetBuilderConfig: IWidgetBuilderConfig) {
         return Object.assign(this, widgetBuilderConfig);
     }
 
-    updateWidgets(features: T_TwitterFeatureConfig[], mutations: any) {
+    updateWidgets(features: T_TwitterFeatureConfig[], mutations?: any) {
         Object.keys(this.insPoints).forEach(insPointName => {
             console.log("updateWidgets.insPointName>", insPointName)
             features.forEach(featureConfig => {
@@ -49,7 +49,7 @@ function createButton(builder: IWidgetBuilder, insPointName: string, config: IBu
             config.exec(context);
         });
         node.appendChild(element);
-        console.log('appended button to '+insPointName);
+        console.log('appended button to ' + insPointName);
     });
 }
 

@@ -1,4 +1,4 @@
-import { IView, IFeature, ICore, ID } from "@dapplets/dapplet-extension-types" 
+import { IView, IFeature, ICore, ID } from "@dapplets/dapplet-extension-types"
 
 export type T_TwitterActionFactory = any;
 
@@ -14,8 +14,8 @@ export type Context = any;
 
 export interface ITwitterAdapter {  //ToDo: eliminate excessive interfaces and use ambient module instead
     actionFactories: { [key: string]: Function };
-    addFeature(featureConfig: T_TwitterFeatureConfig):void;
-} 
+    addFeature(featureConfig: T_TwitterFeatureConfig): void;
+}
 
 export type T_InsertConfig = {
     name: string;
@@ -40,16 +40,16 @@ export interface IWidgetBuilder {
     anchorElementId: string;
     observer?: MutationObserver;
     insPoints: { [key: string]: any };
-    contextBuilder:  (tweetNode: any) => any;
+    contextBuilder: (tweetNode: any) => any;
     //connect(e:Element):void;
 }
 
-export interface IAdapterFeature extends IFeature{
+export interface IAdapterFeature extends IFeature {
     config(): T_TwitterFeatureConfig;
 }
 
 export interface IWidgetBuilderConfig {
-    anchorElementId: string, 
+    anchorElementId: string,
     insPoints: { [key: string]: any },
     contextBuilder: (tweetNode: any) => any
 }
