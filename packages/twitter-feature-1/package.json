@@ -1,6 +1,6 @@
 {
   "name": "@dapplets/twitter-feature-1",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
@@ -11,8 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@dapplets/dapplet-extension-types": "1.0.0",
-    "@dapplets/twitter-adapter": "1.0.0"
+    "@dapplets/dapplet-extension-types": "0.0.1",
+    "@dapplets/twitter-adapter": "0.0.1"
   },
   "dapplets": {
     "name": "twitter-feature-1.dapplet-base.eth"

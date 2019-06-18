@@ -14,7 +14,7 @@ import { WidgetBuilder, widgets } from './widgets';
 let doc:Document = document; //host document we are working on (inpage.js)
 
 
-@PublicName("twitter-adapter.dapplet-base.eth", "1.0.0") 
+@PublicName("twitter-adapter.dapplet-base.eth", "0.0.1") 
 export default class TwitterAdapter implements IContentAdapter {
 
     private core: ICore = null;
@@ -23,7 +23,7 @@ export default class TwitterAdapter implements IContentAdapter {
     private observer: MutationObserver = null;
     private features: T_TwitterFeatureConfig[] = [];
 
-    @Load("common-lib.dapplet-base.eth", "1.0.0")
+    @Load("common-lib.dapplet-base.eth", "0.0.1")
     public library : any;
   
 

@@ -96,11 +96,11 @@ var TwitterAdapter = /** @class */ (function () {
         this.features.push(feature);
     };
     __decorate([
-        Load("common-lib.dapplet-base.eth", "1.0.0"),
+        Load("common-lib.dapplet-base.eth", "0.0.1"),
         __metadata("design:type", Object)
     ], TwitterAdapter.prototype, "library", void 0);
     TwitterAdapter = __decorate([
-        PublicName("twitter-adapter.dapplet-base.eth", "1.0.0"),
+        PublicName("twitter-adapter.dapplet-base.eth", "0.0.1"),
         __metadata("design:paramtypes", [])
     ], TwitterAdapter);
     return TwitterAdapter;

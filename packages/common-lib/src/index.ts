@@ -11,7 +11,7 @@
 
 import {} from '@dapplets/dapplet-extension-types'
 
-@PublicName("common-lib.dapplet-base.eth", "1.0.0")
+@PublicName("common-lib.dapplet-base.eth", "0.0.1")
 export default class CommonLib {
     constructor() {
         console.log('CommonLib created');

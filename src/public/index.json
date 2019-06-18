@@ -1,8 +1,8 @@
 {
   "hostnames": {
     "twitter.com": {
-      "twitter-feature-1.dapplet-base.eth": "1.0.0",
-      "twitter-feature-2.dapplet-base.eth": "1.0.0"
+      "twitter-feature-1.dapplet-base.eth": "0.0.1",
+      "twitter-feature-2.dapplet-base.eth": "0.0.1"
     }
   }
 }
