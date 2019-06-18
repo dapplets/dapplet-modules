@@ -4,13 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "browserify -e src/index.ts -p tsify -o ../../dist/common-lib.js",
-    "watch": "watchify -v -e src/index.ts -p tsify -o ../../dist/common-lib.js",
+    "build": "browserify -e src/index.ts -p tsify -o ../../dist/%npm_package_dapplets_name%/%npm_package_version%.js",
+    "watch": "watchify -v -e src/index.ts -p tsify -o ../../dist/%npm_package_dapplets_name%/%npm_package_version%.js",
     "clean": "(if exist lib rd /q /s lib) & (if exist dist rd /q /s dist)"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@dapplets/dapplet-extension-types": "1.0.0"
+  },
+  "dapplets": {
+    "name": "common-lib.dapplet-base.eth"
   }
 }

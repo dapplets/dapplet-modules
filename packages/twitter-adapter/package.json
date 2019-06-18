@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "build": "browserify -e src/index.ts -p tsify -o ../../dist/twitter-adapter.js",
-    "watch": "watchify -v -e src/index.ts -p tsify -o ../../dist/twitter-adapter.js",
+    "build": "browserify -e src/index.ts -p tsify -o ../../dist/%npm_package_dapplets_name%/%npm_package_version%.js",
+    "watch": "watchify -v -e src/index.ts -p tsify -o ../../dist/%npm_package_dapplets_name%/%npm_package_version%.js",
     "clean": "(if exist lib rd /q /s lib) & (if exist dist rd /q /s dist)"
   },
   "author": "",
@@ -19,5 +19,8 @@
   "typings": "lib/index.d.ts",
   "dependencies": {
     "@dapplets/dapplet-extension-types": "1.0.0"
+  },
+  "dapplets": {
+    "name": "twitter-adapter.dapplet-base.eth"
   }
 }

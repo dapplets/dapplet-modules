@@ -4,20 +4,5 @@
       "twitter-feature-1.dapplet-base.eth": "1.0.0",
       "twitter-feature-2.dapplet-base.eth": "1.0.0"
     }
-  },
-
-  "scripts": {
-    "twitter-feature-1.dapplet-base.eth": {
-      "1.0.0": "dist/twitter-feature-1.js"
-    },
-    "twitter-feature-2.dapplet-base.eth": {
-      "1.0.0": "dist/twitter-feature-2.js"
-    },
-    "twitter-adapter.dapplet-base.eth": {
-      "1.0.0": "dist/twitter-adapter.js"
-    },
-    "common-lib.dapplet-base.eth": {
-      "1.0.0": "dist/common-lib.js"
-    }
   }
 }
