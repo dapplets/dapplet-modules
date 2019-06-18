@@ -1,6 +1,6 @@
 {
   "name": "@dapplets/twitter-adapter",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "",
   "scripts": {
     "build": "browserify -e src/index.ts -p tsify -o ../../dist/%npm_package_dapplets_name%/%npm_package_version%.js",

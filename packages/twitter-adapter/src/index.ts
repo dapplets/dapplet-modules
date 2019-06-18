@@ -14,7 +14,7 @@ import { WidgetBuilder, widgets } from './widgets';
 let doc:Document = document; //host document we are working on (inpage.js)
 
 
-@PublicName("twitter-adapter.dapplet-base.eth", "1.0.1") 
+@PublicName("twitter-adapter.dapplet-base.eth", "1.0.0") 
 export default class TwitterAdapter implements IContentAdapter {
 
     private core: ICore = null;
@@ -33,8 +33,7 @@ export default class TwitterAdapter implements IContentAdapter {
 
     constructor() {
         console.log('ContentAdapter  created');
-        console.log('library from ContentAdapter', this.library);
-        console.log("init adapter>")
+        console.log('library from ContentAdapter', this.library);        console.log("init adapter>")
 
         if (this.observer) return;
         if (!document || !window || !MutationObserver) throw Error('Document or MutationObserver is not available.');
@@ -44,7 +43,7 @@ export default class TwitterAdapter implements IContentAdapter {
         }
         this.observer = new MutationObserver((mutations) => {
             this.widgetBuilders.forEach(widgetBuilder => {
-                let e = doc.querySelector(widgetBuilder.querySelector);
+                let e = doc.getElementById(widgetBuilder.anchorElementId);
                 if (e && !widgetBuilder.observer) {
                     (widgetBuilder.observer = new MutationObserver((mutations)=>widgetBuilder.updateWidgets(this.features, mutations)))
                     .observe(e, OBSERVER_CONFIG);
@@ -58,27 +57,26 @@ export default class TwitterAdapter implements IContentAdapter {
     }
 
     private widgetBuilders = [{
-        querySelector: "main[role=main]",
+        anchorElementId: "timeline",
         insPoints: {
             TWEET_SOUTH: {
-                toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
-                selector: "main[role=main] div[data-testid=primaryColumn] section[role=region] article div[role=group]"
+                toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
+                selector: "#timeline li.stream-item div.js-actions"
             },
             TWEET_COMBO: {
-                toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
+                toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
                 selector: "" //ToDo
             }
         },
-        // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
         contextBuilder: (tweetNode: any) => ({
-            id: tweetNode.querySelector('article a time').parentNode.href.substr(tweetNode.querySelector('article a time').parentNode.href.lastIndexOf('/') + 1),
-            text: tweetNode.querySelector('div[lang]').innerText,
-            authorFullname: tweetNode.querySelector('article a:nth-child(1) div span span').innerText,
-            authorUsername: tweetNode.querySelector('div.r-1f6r7vd > div > span').innerText,
-            authorImg: tweetNode.querySelector('article div img').getAttribute('src')
+            id: tweetNode.getAttribute('data-tweet-id'),
+            text: tweetNode.querySelector('div.js-tweet-text-container').innerText,
+            authorFullname: tweetNode.querySelector('strong.fullname').innerText,
+            authorUsername: tweetNode.querySelector('span.username').innerText,
+            authorImg: tweetNode.querySelector('img.avatar').getAttribute('src')
         }),
     }, {
-        querySelector: "dm_dialog",
+        anchorElementId: "dm_dialog",
         insPoints: {
             DM_SOUTH: {
                 toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
@@ -98,4 +96,3 @@ export default class TwitterAdapter implements IContentAdapter {
         })
     }].map((cfg:IWidgetBuilderConfig) => new WidgetBuilder(cfg)); 
 }
-

@@ -37,7 +37,7 @@ export interface IButtonConfig {
 
 
 export interface IWidgetBuilder {
-    querySelector: string;
+    anchorElementId: string;
     observer?: MutationObserver;
     insPoints: { [key: string]: any };
     contextBuilder:  (tweetNode: any) => any;
@@ -49,7 +49,7 @@ export interface IAdapterFeature extends IFeature{
 }
 
 export interface IWidgetBuilderConfig {
-    querySelector: string, 
+    anchorElementId: string, 
     insPoints: { [key: string]: any },
     contextBuilder: (tweetNode: any) => any
 }

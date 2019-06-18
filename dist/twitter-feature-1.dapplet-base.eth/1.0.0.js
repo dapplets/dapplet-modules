@@ -98,7 +98,7 @@ var TwitterFeature = /** @class */ (function () {
         }); //add feature config
     };
     __decorate([
-        Load("twitter-adapter.dapplet-base.eth", "1.0.1"),
+        Load("twitter-adapter.dapplet-base.eth", "1.0.0"),
         __metadata("design:type", Object)
     ], TwitterFeature.prototype, "adapter", void 0);
     TwitterFeature = __decorate([

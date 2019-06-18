@@ -17,7 +17,7 @@ const METAMASK_ICON: string = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABM
 @PublicName("twitter-feature-1.dapplet-base.eth", "1.0.0", true)
 export default class TwitterFeature implements ITwitterFeature {
 
-    @Load("twitter-adapter.dapplet-base.eth", "1.0.1")
+    @Load("twitter-adapter.dapplet-base.eth", "1.0.0")
     public adapter: ITwitterAdapter;
 
     private _ws: WebSocketProxyClient = null;
