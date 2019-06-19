@@ -26,7 +26,6 @@ export default class TwitterAdapter implements IContentAdapter {
     @Load("common-lib.dapplet-base.eth", "0.1.0")
     public library: any;
 
-
     addFeature(feature: T_TwitterFeatureConfig): void { //ToDo: automate two-way dependency handling(?)
         this.features.push(feature);
     }

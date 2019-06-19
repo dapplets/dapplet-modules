@@ -28,8 +28,8 @@ var TwitterFeature = /** @class */ (function () {
         this.init();
     }
     TwitterFeature.prototype.init = function () {
-        var _this = this;
         console.log("this.adapter.actionFactories>", this.adapter.actionFactories);
+        var me = this;
         var _a = this.adapter.actionFactories, button = _a.button, menuItem = _a.menuItem;
         this.adapter.addFeature({
             LIVEDATA_SERVER: [{
@@ -42,10 +42,13 @@ var TwitterFeature = /** @class */ (function () {
                 button({
                     class: 'dapplet-tweet-south-metamask',
                     img: METAMASK_ICON,
-                    exec: function (ctx) {
-                        //Core.sendWalletConnectTx('1', ctx);
-                        _this._ws.send(ctx.text);
-                    } //ToDo: ref or val? 
+                    listeners: {
+                        click: function (ctx) {
+                            //Core.sendWalletConnectTx('1', ctx);
+                            console.log('onclick', this);
+                            me._ws.send(ctx.text);
+                        } //ToDo: ref or val?
+                    }
                     //ToDo: implement binding and reload by backgroung.js
                 }),
             ],
