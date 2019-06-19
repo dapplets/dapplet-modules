@@ -26,14 +26,6 @@ var TwitterFeature = /** @class */ (function () {
         console.log('Feature2: created');
         this.init();
     }
-    TwitterFeature.prototype.activate = function () {
-        //this.adapter.registerFeature(this, document, null);
-        console.log('feature-2: activated');
-    };
-    TwitterFeature.prototype.deactivate = function () {
-        //this.adapter.unregisterFeature(this);
-        console.log('feature-2: deactivated');
-    };
     TwitterFeature.prototype.init = function () {
         console.log("feature-2: this.adapter.actionFactories>", this.adapter.actionFactories);
         var _a = this.adapter.actionFactories, button = _a.button, menuItem = _a.menuItem;

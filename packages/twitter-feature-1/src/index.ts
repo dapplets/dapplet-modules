@@ -27,27 +27,6 @@ export default class TwitterFeature implements ITwitterFeature {
         this.init();
     }
 
-    public activate() {
-        //this.adapter.registerFeature(this, document, null);
-        console.log('activated');
-
-        this._ws = new WebSocketProxyClient("ws://localhost:8080");
-        this._ws.onopen = () => {
-            console.log('WebSocket connection OPEN');
-        };
-        this._ws.onclose = () => {
-            console.log('WebSocket connection CLOSED');
-        };
-        this._ws.onmessage = (msg) => {
-            console.log('Message from WebSocket: ' + msg);
-        };
-    }
-
-    public deactivate() {
-        //this.adapter.unregisterFeature(this); //ToDo: remove me
-        console.log('deactivated');
-    }
-
     public init()  {
         console.log("this.adapter.actionFactories>", this.adapter.actionFactories);
         let {button, menuItem} = this.adapter.actionFactories;
@@ -112,5 +91,17 @@ export default class TwitterFeature implements ITwitterFeature {
                 })
             ]
         }); //add feature config
+
+        
+        this._ws = new WebSocketProxyClient("ws://localhost:8080");
+        this._ws.onopen = () => {
+            console.log('WebSocket connection OPEN');
+        };
+        this._ws.onclose = () => {
+            console.log('WebSocket connection CLOSED');
+        };
+        this._ws.onmessage = (msg) => {
+            console.log('Message from WebSocket: ' + msg);
+        };
     }
 }

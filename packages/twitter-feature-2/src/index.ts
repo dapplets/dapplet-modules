@@ -25,16 +25,6 @@ export default class TwitterFeature implements ITwitterFeature {
         this.init();
     }
 
-    public activate() {
-        //this.adapter.registerFeature(this, document, null);
-        console.log('feature-2: activated');
-    }
-
-    public deactivate() {
-        //this.adapter.unregisterFeature(this);
-        console.log('feature-2: deactivated');
-    }
-
     public init()  {
         console.log("feature-2: this.adapter.actionFactories>", this.adapter.actionFactories);
         let {button, menuItem} = this.adapter.actionFactories;

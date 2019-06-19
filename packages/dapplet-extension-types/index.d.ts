@@ -12,8 +12,6 @@ export interface IContentAdapter extends IModule {
 }
 
 export interface IFeature extends IModule {
-    activate(): void;
-    deactivate(): void;
 }
 
 export interface IAction { }

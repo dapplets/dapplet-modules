@@ -27,24 +27,6 @@ var TwitterFeature = /** @class */ (function () {
         console.log('Feature-1 created. calling init.');
         this.init();
     }
-    TwitterFeature.prototype.activate = function () {
-        //this.adapter.registerFeature(this, document, null);
-        console.log('activated');
-        this._ws = new WebSocketProxyClient("ws://localhost:8080");
-        this._ws.onopen = function () {
-            console.log('WebSocket connection OPEN');
-        };
-        this._ws.onclose = function () {
-            console.log('WebSocket connection CLOSED');
-        };
-        this._ws.onmessage = function (msg) {
-            console.log('Message from WebSocket: ' + msg);
-        };
-    };
-    TwitterFeature.prototype.deactivate = function () {
-        //this.adapter.unregisterFeature(this); //ToDo: remove me
-        console.log('deactivated');
-    };
     TwitterFeature.prototype.init = function () {
         var _this = this;
         console.log("this.adapter.actionFactories>", this.adapter.actionFactories);
@@ -96,6 +78,16 @@ var TwitterFeature = /** @class */ (function () {
                 })
             ]
         }); //add feature config
+        this._ws = new WebSocketProxyClient("ws://localhost:8080");
+        this._ws.onopen = function () {
+            console.log('WebSocket connection OPEN');
+        };
+        this._ws.onclose = function () {
+            console.log('WebSocket connection CLOSED');
+        };
+        this._ws.onmessage = function (msg) {
+            console.log('Message from WebSocket: ' + msg);
+        };
     };
     __decorate([
         Load("twitter-adapter.dapplet-base.eth", "0.1.0"),
