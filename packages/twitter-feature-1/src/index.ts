@@ -46,9 +46,14 @@ export default class TwitterFeature implements ITwitterFeature {
                         exec: function(ctx) {
                             console.log('ctx', ctx);
                             console.log('this', this);
-                            if (!this._counter) this._counter = 0;
-                            this._counter++;
-                            this.state.label = this._counter;
+                            
+                            this.state.label = 'WAIT';
+                            setTimeout(()=>{
+                                if (!this._counter) this._counter = 0;
+                                this._counter++;
+                                this.state.label = this._counter;
+                            }, 500);
+
                         }
                     }
                     //ToDo: implement binding and reload by backgroung.js
