@@ -40,20 +40,21 @@ export default class TwitterFeature implements ITwitterFeature {
             TWEET_SOUTH: [
                 // call at view creation time
                 button({
-                    class: 'dapplet-tweet-south-metamask',
+                    clazz: 'dapplet-tweet-south-metamask',
                     img: METAMASK_ICON,
                     listeners: {
-                        click: function (ctx: any) {
-                            //Core.sendWalletConnectTx('1', ctx);
-                            console.log('onclick', this);
-                            
-                            me._ws.send(ctx.text);
-                        } //ToDo: ref or val?
+                        exec: function(ctx) {
+                            console.log('ctx', ctx);
+                            console.log('this', this);
+                            if (!this._counter) this._counter = 0;
+                            this._counter++;
+                            this.state.label = this._counter;
+                        }
                     }
                     //ToDo: implement binding and reload by backgroung.js
                 }),
                 // button({
-                //     class: 'dapplet-tweet-south-ethereum',
+                //     clazz: 'dapplet-tweet-south-ethereum',
                 //     img: ETHEREUM_ICON,
                 //     exec: (ctx: any) => {
                 //         alert(JSON.stringify(ctx));
@@ -81,7 +82,7 @@ export default class TwitterFeature implements ITwitterFeature {
             ],
             DM_SOUTH: [
                 button({
-                    class: 'dapplet-dm-south-metamask',
+                    clazz: 'dapplet-dm-south-metamask',
                     img: METAMASK_ICON,
                     exec: (ctx: any) => {
                         alert(JSON.stringify(ctx));

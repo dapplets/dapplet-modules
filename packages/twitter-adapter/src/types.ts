@@ -29,7 +29,7 @@ export interface ITwitterFeature extends IFeature {
 }
 
 export interface IButtonConfig {
-    class: string;
+    clazz: string;
     label: string;
     img: string;
     exec(context: any): void; //onClick

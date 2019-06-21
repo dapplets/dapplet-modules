@@ -36,10 +36,13 @@ export default class TwitterFeature implements ITwitterFeature {
             }],
             TWEET_SOUTH: [
                 button({
-                    class: 'dapplet-tweet-south-ethereum-2',
+                    clazz: 'dapplet-tweet-south-ethereum-2',
                     img: ETHEREUM_ICON,
-                    exec: (ctx: any) => {
-                        Core.openOverlay(null, ctx);
+                    listeners: {
+                        exec: function(ctx) {
+                            console.log('ctx', ctx);
+                            console.log('this', this);
+                        }
                     },
                     //ToDo: what about global parameters?
                     //ToDo: return state object useful bound to button state?
@@ -60,7 +63,7 @@ export default class TwitterFeature implements ITwitterFeature {
             ],
             DM_SOUTH: [
                 button({
-                    class: 'dapplet-dm-south-ethereum-2',
+                    clazz: 'dapplet-dm-south-ethereum-2',
                     img: ETHEREUM_ICON,
                     exec: (ctx: any) => {
                         alert(JSON.stringify(ctx));
