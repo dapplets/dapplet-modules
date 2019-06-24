@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Widget = /** @class */ (function () {
     function Widget(config) {
         this.state = this.createState(config);
-        config.init && config.init();
+        config.init && config.init.call(this);
     }
     Widget.prototype.createState = function (state) {
         var me = this;
@@ -77,16 +77,16 @@ var TwitterAdapter = /** @class */ (function () {
                 querySelector: "#timeline",
                 insPoints: {
                     TWEET_SOUTH: {
-                        toContext: function (node) { return node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode; },
+                        toContext: function (node) { return node.parentNode.parentNode.parentNode.parentNode.parentNode; },
                         selector: "#timeline li.stream-item div.js-actions"
                     },
                     TWEET_COMBO: {
-                        toContext: function (node) { return node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode; },
+                        toContext: function (node) { return node.parentNode.parentNode.parentNode.parentNode.parentNode; },
                         selector: "" //ToDo
                     }
                 },
                 contextBuilder: function (tweetNode) { return ({
-                    id: tweetNode.getAttribute('data-tweet-id'),
+                    id: tweetNode.getAttribute('data-item-id'),
                     text: tweetNode.querySelector('div.js-tweet-text-container').innerText,
                     authorFullname: tweetNode.querySelector('strong.fullname').innerText,
                     authorUsername: tweetNode.querySelector('span.username').innerText,
@@ -196,13 +196,16 @@ function createButton(builder, insPointName, config) {
         if (node.getElementsByClassName(config.clazz).length > 0)
             return;
         var button = builder.isTwitterDesignNew ? new button_1.Button(config) : new oldButton_1.OldButton(config);
+        button.mount();
+        node.appendChild(button.el);
+        var tweetNode = insPoint.toContext(button.el);
+        var context = builder.contextBuilder(tweetNode);
+        button.id = "button_" + context.id;
         button.onExec = function () {
             var tweetNode = insPoint.toContext(this.el);
             var context = builder.contextBuilder(tweetNode);
             config.exec.call(button, context);
         };
-        button.mount();
-        node.appendChild(button.el);
     });
 }
 
@@ -273,7 +276,6 @@ var OldButton = /** @class */ (function (_super) {
     OldButton.prototype.mount = function () {
         var _this = this;
         var _a = this.state, clazz = _a.clazz, img = _a.img, label = _a.label;
-        console.log('btn mount', clazz);
         var htmlString = "<div class=\"" + clazz + " ProfileTweet-action\">\n                <button class=\"ProfileTweet-actionButton\" type=\"button\">\n                    <div class=\"IconContainer\">\n                        <img height=\"18\" src=\"" + img + "\">\n                    </div>\n                    " + (label ? "<span class=\"ProfileTweet-actionCount\">\n                        <span class=\"ProfileTweet-actionCountForPresentation\" aria-hidden=\"true\">" + label + "</span>\n                    </span>" : '') + "\n                </button>\n            </div>";
         if (!this.el) {
             var div = document.createElement('div');

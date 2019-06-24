@@ -2,7 +2,7 @@ export abstract class Widget<T> {
 
     constructor(config: any) {
         this.state = this.createState(config);
-        config.init && config.init();
+        config.init && config.init.call(this);
     }
 
     abstract mount(): void;
@@ -23,4 +23,6 @@ export abstract class Widget<T> {
     public state: T;
 
     public onExec() {};
+
+    public id: string;
 }

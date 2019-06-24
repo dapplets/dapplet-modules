@@ -9,9 +9,7 @@ interface IOldButtonState {
 export class OldButton extends Widget<IOldButtonState> {
     public mount() {
         const { clazz, img, label } = this.state;
-
-        console.log('btn mount', clazz);
-
+        
         const htmlString = `<div class="${clazz} ProfileTweet-action">
                 <button class="ProfileTweet-actionButton" type="button">
                     <div class="IconContainer">

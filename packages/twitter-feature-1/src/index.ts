@@ -20,8 +20,6 @@ export default class TwitterFeature implements ITwitterFeature {
     @Load("twitter-adapter.dapplet-base.eth", "0.1.0")
     public adapter: ITwitterAdapter;
 
-    private _ws: WebSocketProxyClient = null;
-
     constructor() {
         console.log('Feature-1 created. calling init.');
         this.init();
@@ -43,7 +41,6 @@ export default class TwitterFeature implements ITwitterFeature {
                     clazz: 'dapplet-tweet-south-metamask',
                     img: METAMASK_ICON,
                     init: function() {
-                        console.log('btn inited', this);
                     },
                     exec: function (ctx) {
                         console.log('ctx', ctx);
@@ -102,17 +99,5 @@ export default class TwitterFeature implements ITwitterFeature {
                 })
             ]
         }); //add feature config
-
-        
-        this._ws = new WebSocketProxyClient("ws://localhost:8080");
-        this._ws.onopen = () => {
-            console.log('WebSocket connection OPEN');
-        };
-        this._ws.onclose = () => {
-            console.log('WebSocket connection CLOSED');
-        };
-        this._ws.onmessage = (msg) => {
-            console.log('Message from WebSocket: ' + msg);
-        };
     }
 }

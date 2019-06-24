@@ -19,6 +19,23 @@ app.ws('/', function (ws, req) {
     });
     console.log('socket connected');
 
+    let counter = 0;
+
+    let t = setInterval(() => {
+        ws.send(JSON.stringify({
+            like_num: {
+                button_1132992220099993600: {
+                    like_num: counter
+                }
+            }
+        }));
+
+        counter++;
+    }, 1000);
+
+    ws.on('close', function() {
+        clearInterval(t);
+    })
 });
 
 app.get('/index.json', function (req, res) {

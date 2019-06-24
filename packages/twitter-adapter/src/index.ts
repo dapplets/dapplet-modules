@@ -82,16 +82,16 @@ export default class TwitterAdapter implements IContentAdapter {
         querySelector: "#timeline",
         insPoints: {
             TWEET_SOUTH: {
-                toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
+                toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
                 selector: "#timeline li.stream-item div.js-actions"
             },
             TWEET_COMBO: {
-                toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
+                toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
                 selector: "" //ToDo
             }
         },
         contextBuilder: (tweetNode: any) => ({
-            id: tweetNode.getAttribute('data-tweet-id'),
+            id: tweetNode.getAttribute('data-item-id'),
             text: tweetNode.querySelector('div.js-tweet-text-container').innerText,
             authorFullname: tweetNode.querySelector('strong.fullname').innerText,
             authorUsername: tweetNode.querySelector('span.username').innerText,
