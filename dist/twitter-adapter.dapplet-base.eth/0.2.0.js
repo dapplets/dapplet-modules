@@ -3,64 +3,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var Widget = /** @class */ (function () {
     function Widget(config) {
-        var _this = this;
+        this.onExec = function () { };
         this.state = this.createState(config);
-        Object.keys(config.listeners || {}).forEach(function (event) {
-            _this.on(event, config.listeners[event]);
-        });
     }
-    Widget.prototype.on = function (event, fn) {
-        this._callbacks = this._callbacks || {};
-        // Create namespace for this event
-        if (!this._callbacks[event]) {
-            this._callbacks[event] = [];
-        }
-        this._callbacks[event].push(fn);
-        return this;
-    };
-    Widget.prototype.emit = function (event) {
-        var args = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            args[_i - 1] = arguments[_i];
-        }
-        this._callbacks = this._callbacks || {};
-        var callbacks = this._callbacks[event];
-        if (callbacks) {
-            for (var _a = 0, callbacks_1 = callbacks; _a < callbacks_1.length; _a++) {
-                var callback = callbacks_1[_a];
-                callback.apply(this, args);
-            }
-        }
-        return this;
-    };
-    // Remove event listener for given event. If fn is not provided, all event
-    // listeners for that event will be removed. If neither is provided, all
-    // event listeners will be removed.
-    Widget.prototype.off = function (event, fn) {
-        if (!this._callbacks || (arguments.length === 0)) {
-            this._callbacks = {};
-            return this;
-        }
-        // specific event
-        var callbacks = this._callbacks[event];
-        if (!callbacks) {
-            return this;
-        }
-        // remove all handlers
-        if (arguments.length === 1) {
-            delete this._callbacks[event];
-            return this;
-        }
-        // remove specific handler
-        for (var i = 0; i < callbacks.length; i++) {
-            var callback = callbacks[i];
-            if (callback === fn) {
-                callbacks.splice(i, 1);
-                break;
-            }
-        }
-        return this;
-    };
     Widget.prototype.createState = function (state) {
         var me = this;
         return new Proxy(state, {
@@ -251,11 +196,11 @@ function createButton(builder, insPointName, config) {
         var button = builder.isTwitterDesignNew ? new button_1.Button(config) : new oldButton_1.OldButton(config);
         button.mount();
         node.appendChild(button.el);
-        button.on('beforeexec', function () {
+        button.onExec = function () {
             var tweetNode = insPoint.toContext(this.el);
             var context = builder.contextBuilder(tweetNode);
-            this.emit('exec', context);
-        });
+            config.exec.call(button, context);
+        };
     });
 }
 
@@ -290,7 +235,7 @@ var Button = /** @class */ (function (_super) {
             div.innerHTML = htmlString.trim();
             this.el = div.lastChild;
             this.el.addEventListener("click", function (e) {
-                _this.emit("beforeexec");
+                _this.onExec();
             });
         }
         else {
@@ -333,7 +278,7 @@ var OldButton = /** @class */ (function (_super) {
             div.innerHTML = htmlString.trim();
             this.el = div.lastChild;
             this.el.addEventListener("click", function (e) {
-                _this.emit("beforeexec");
+                _this.onExec();
             });
         }
         else {

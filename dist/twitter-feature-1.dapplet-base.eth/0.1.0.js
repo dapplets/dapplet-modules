@@ -42,19 +42,17 @@ var TwitterFeature = /** @class */ (function () {
                 button({
                     clazz: 'dapplet-tweet-south-metamask',
                     img: METAMASK_ICON,
-                    listeners: {
-                        exec: function (ctx) {
-                            var _this = this;
-                            console.log('ctx', ctx);
-                            console.log('this', this);
-                            this.state.label = 'WAIT';
-                            setTimeout(function () {
-                                if (!_this._counter)
-                                    _this._counter = 0;
-                                _this._counter++;
-                                _this.state.label = _this._counter;
-                            }, 500);
-                        }
+                    exec: function (ctx) {
+                        var _this = this;
+                        console.log('ctx', ctx);
+                        console.log('this', this);
+                        this.state.label = 'WAIT';
+                        setTimeout(function () {
+                            if (!_this._counter)
+                                _this._counter = 0;
+                            _this._counter++;
+                            _this.state.label = _this._counter;
+                        }, 500);
                     }
                     //ToDo: implement binding and reload by backgroung.js
                 }),

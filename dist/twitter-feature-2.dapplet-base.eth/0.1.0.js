@@ -39,11 +39,9 @@ var TwitterFeature = /** @class */ (function () {
                 button({
                     clazz: 'dapplet-tweet-south-ethereum-2',
                     img: ETHEREUM_ICON,
-                    listeners: {
-                        exec: function (ctx) {
-                            console.log('ctx', ctx);
-                            console.log('this', this);
-                        }
+                    exec: function (ctx) {
+                        console.log('ctx', ctx);
+                        console.log('this', this);
                     },
                     //ToDo: what about global parameters?
                     //ToDo: return state object useful bound to button state?

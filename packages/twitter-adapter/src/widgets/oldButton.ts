@@ -8,8 +8,8 @@ interface IOldButtonState {
 
 export class OldButton extends Widget<IOldButtonState> {
     public mount() {
-        const { clazz, img, label } = this.state;      
-        
+        const { clazz, img, label } = this.state;
+
         console.log('btn mount', clazz);
 
         const htmlString = `<div class="${clazz} ProfileTweet-action">
@@ -29,7 +29,7 @@ export class OldButton extends Widget<IOldButtonState> {
             this.el = <Element>div.lastChild;
 
             this.el.addEventListener("click", e => {
-                this.emit("beforeexec");
+                this.onExec();
             });
         } else {
             this.el.innerHTML = htmlString;

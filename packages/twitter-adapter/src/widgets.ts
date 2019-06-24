@@ -22,7 +22,7 @@ export class WidgetBuilder implements IWidgetBuilder {
 
     constructor(widgetBuilderConfig: IWidgetBuilderConfig) {
         console.log('WidgetBuilder constructor');
-        return Object.assign(this, widgetBuilderConfig);        
+        return Object.assign(this, widgetBuilderConfig);
     }
 
     updateWidgets(features: T_TwitterFeatureConfig[], mutations?: any) {
@@ -46,10 +46,10 @@ function createButton(builder: IWidgetBuilder, insPointName: string, config: IBu
         const button = builder.isTwitterDesignNew ? new Button(config) : new OldButton(config);
         button.mount();
         node.appendChild(button.el);
-        button.on('beforeexec', function () {
+        button.onExec = function () {
             const tweetNode = insPoint.toContext(this.el);
             let context = builder.contextBuilder(tweetNode);
-            this.emit('exec', context);
-        });
+            config.exec.call(button, context);
+        };
     });
 }

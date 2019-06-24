@@ -32,7 +32,7 @@ export interface IButtonConfig {
     clazz: string;
     label: string;
     img: string;
-    exec(context: any): void; //onClick
+    exec(context: any): void;
 }
 
 

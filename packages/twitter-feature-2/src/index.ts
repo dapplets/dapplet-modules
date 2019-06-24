@@ -25,9 +25,9 @@ export default class TwitterFeature implements ITwitterFeature {
         this.init();
     }
 
-    public init()  {
+    public init() {
         console.log("feature-2: this.adapter.actionFactories>", this.adapter.actionFactories);
-        let {button, menuItem} = this.adapter.actionFactories;
+        let { button, menuItem } = this.adapter.actionFactories;
         this.adapter.addFeature({
             LIVEDATA_SERVER: [{
                 //ToDo: Augmentation Server provides additional context related two-ways info used as labels in custom actions.
@@ -38,12 +38,10 @@ export default class TwitterFeature implements ITwitterFeature {
                 button({
                     clazz: 'dapplet-tweet-south-ethereum-2',
                     img: ETHEREUM_ICON,
-                    listeners: {
-                        exec: function(ctx) {
-                            console.log('ctx', ctx);
-                            console.log('this', this);
-                        }
-                    },
+                    exec: function (ctx) {
+                        console.log('ctx', ctx);
+                        console.log('this', this);
+                    }, 
                     //ToDo: what about global parameters?
                     //ToDo: return state object useful bound to button state?
                     label: "NEW" //ToDo: implement binding and reload

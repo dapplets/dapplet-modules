@@ -8,7 +8,7 @@ interface IButtonState {
 
 export class Button extends Widget<IButtonState> {
     public mount() {
-        const { clazz, img, label } = this.state;        
+        const { clazz, img, label } = this.state;
 
         const htmlString = `<div class="${clazz} css-1dbjc4n r-1iusvr4 r-18u37iz r-16y2uox r-1h0z5md">
             <div role="button" data-focusable="true" tabindex="0" class="css-18t94o4 css-1dbjc4n r-1777fci r-11cpok1 r-bztko3 r-lrvibr">
@@ -32,7 +32,7 @@ export class Button extends Widget<IButtonState> {
             this.el = <Element>div.lastChild;
 
             this.el.addEventListener("click", e => {
-                this.emit("beforeexec");
+                this.onExec();
             });
         } else {
             this.el.innerHTML = htmlString;
