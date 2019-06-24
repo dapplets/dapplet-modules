@@ -4,7 +4,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Widget = /** @class */ (function () {
     function Widget(config) {
         this.state = this.createState(config);
-        config.init && config.init.call(this);
     }
     Widget.prototype.createState = function (state) {
         var me = this;
@@ -56,11 +55,11 @@ var TwitterAdapter = /** @class */ (function () {
                 querySelector: "main[role=main]",
                 insPoints: {
                     TWEET_SOUTH: {
-                        toContext: function (node) { return node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode; },
+                        toContext: function (node) { return node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode; },
                         selector: "main[role=main] div[data-testid=primaryColumn] section[role=region] article div[role=group]"
                     },
                     TWEET_COMBO: {
-                        toContext: function (node) { return node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode; },
+                        toContext: function (node) { return node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode; },
                         selector: "" //ToDo
                     }
                 },
@@ -77,11 +76,11 @@ var TwitterAdapter = /** @class */ (function () {
                 querySelector: "#timeline",
                 insPoints: {
                     TWEET_SOUTH: {
-                        toContext: function (node) { return node.parentNode.parentNode.parentNode.parentNode.parentNode; },
+                        toContext: function (node) { return node.parentNode.parentNode.parentNode.parentNode; },
                         selector: "#timeline li.stream-item div.js-actions"
                     },
                     TWEET_COMBO: {
-                        toContext: function (node) { return node.parentNode.parentNode.parentNode.parentNode.parentNode; },
+                        toContext: function (node) { return node.parentNode.parentNode.parentNode.parentNode; },
                         selector: "" //ToDo
                     }
                 },
@@ -200,7 +199,7 @@ function createButton(builder, insPointName, config) {
         node.appendChild(button.el);
         var tweetNode = insPoint.toContext(button.el);
         var context = builder.contextBuilder(tweetNode);
-        button.id = "button_" + context.id;
+        config.init.call(button, context); // ToDo: fix it
         button.onExec = function () {
             var tweetNode = insPoint.toContext(this.el);
             var context = builder.contextBuilder(tweetNode);

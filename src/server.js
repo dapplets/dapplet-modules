@@ -10,28 +10,29 @@ app.use('/dist', express.static('dist', {
 }));
 
 app.ws('/', function (ws, req) {
+    let ids = {};
 
     ws.on('message', function (msg) {
-        console.log('recieved: ' + msg);
-        const response = msg.length;
-        ws.send(response);
-        console.log('sent: ' + response);
+        console.log('incoming ' + msg);
+        if (/^\d{19}$/gm.test(msg)) { // is it tweet id?
+            ids[msg] = parseInt(msg[18]);
+        }
     });
     console.log('socket connected');
 
-    let counter = 0;
-
     let t = setInterval(() => {
-        ws.send(JSON.stringify({
-            like_num: {
-                button_1132992220099993600: {
-                    like_num: counter
-                }
-            }
-        }));
+        let msg = {};
 
-        counter++;
-    }, 1000);
+        Object.keys(ids).forEach(key => {
+            msg[key] = {
+                like_num: ids[key]
+            }
+
+            ids[key]++;
+        });
+
+        ws.send(JSON.stringify(msg));
+    }, 3000);
 
     ws.on('close', function() {
         clearInterval(t);

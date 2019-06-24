@@ -61,11 +61,11 @@ export default class TwitterAdapter implements IContentAdapter {
         querySelector: "main[role=main]",
         insPoints: {
             TWEET_SOUTH: {
-                toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
+                toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
                 selector: "main[role=main] div[data-testid=primaryColumn] section[role=region] article div[role=group]"
             },
             TWEET_COMBO: {
-                toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
+                toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
                 selector: "" //ToDo
             }
         },
@@ -82,11 +82,11 @@ export default class TwitterAdapter implements IContentAdapter {
         querySelector: "#timeline",
         insPoints: {
             TWEET_SOUTH: {
-                toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
+                toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
                 selector: "#timeline li.stream-item div.js-actions"
             },
             TWEET_COMBO: {
-                toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
+                toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
                 selector: "" //ToDo
             }
         },

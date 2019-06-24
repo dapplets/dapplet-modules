@@ -43,15 +43,18 @@ function createButton(builder: IWidgetBuilder, insPointName: string, config: IBu
 
     nodes && nodes.forEach(node => {
         if (node.getElementsByClassName(config.clazz).length > 0) return;
+
         const button = builder.isTwitterDesignNew ? new Button(config) : new OldButton(config);
         button.mount();
         node.appendChild(button.el);
+
         const tweetNode = insPoint.toContext(button.el);
-        let context = builder.contextBuilder(tweetNode);
-        button.id = "button_" + context.id;
+        const context = builder.contextBuilder(tweetNode);
+        config.init.call(button, context); // ToDo: fix it
+
         button.onExec = function () {
             const tweetNode = insPoint.toContext(this.el);
-            let context = builder.contextBuilder(tweetNode);
+            const context = builder.contextBuilder(tweetNode);
             config.exec.call(button, context);
         };
     });

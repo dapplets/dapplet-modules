@@ -35,9 +35,12 @@ declare global {
     export var Core: {
         openOverlay: (id: string, ctx: any) => void,
         sendWalletConnectTx: (dappletId: string, metadata: any) => Promise<any>,
-        connectServer: (url: string) => void,
-        subscribe: (serviceId: string, handler: (message: any) => void) => void
+        connect: (url: string) => Connection
     };
+
+    export class Connection {
+        subscribe: (id: string, handler: (message: any) => void) => void
+    }
 
     export function PublicName(name: string, version: string, isFeature?: boolean): Function;
 
