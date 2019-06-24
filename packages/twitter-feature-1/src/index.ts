@@ -42,6 +42,9 @@ export default class TwitterFeature implements ITwitterFeature {
                 button({
                     clazz: 'dapplet-tweet-south-metamask',
                     img: METAMASK_ICON,
+                    init: function() {
+                        console.log('btn inited', this);
+                    },
                     exec: function (ctx) {
                         console.log('ctx', ctx);
                         console.log('this', this);

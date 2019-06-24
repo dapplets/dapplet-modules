@@ -3,8 +3,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var Widget = /** @class */ (function () {
     function Widget(config) {
-        this.onExec = function () { };
         this.state = this.createState(config);
+        config.init && config.init();
     }
     Widget.prototype.createState = function (state) {
         var me = this;
@@ -16,6 +16,8 @@ var Widget = /** @class */ (function () {
             }
         });
     };
+    Widget.prototype.onExec = function () { };
+    ;
     return Widget;
 }());
 exports.Widget = Widget;
@@ -194,13 +196,13 @@ function createButton(builder, insPointName, config) {
         if (node.getElementsByClassName(config.clazz).length > 0)
             return;
         var button = builder.isTwitterDesignNew ? new button_1.Button(config) : new oldButton_1.OldButton(config);
-        button.mount();
-        node.appendChild(button.el);
         button.onExec = function () {
             var tweetNode = insPoint.toContext(this.el);
             var context = builder.contextBuilder(tweetNode);
             config.exec.call(button, context);
         };
+        button.mount();
+        node.appendChild(button.el);
     });
 }
 

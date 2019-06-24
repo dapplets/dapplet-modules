@@ -2,6 +2,7 @@ export abstract class Widget<T> {
 
     constructor(config: any) {
         this.state = this.createState(config);
+        config.init && config.init();
     }
 
     abstract mount(): void;
@@ -21,5 +22,5 @@ export abstract class Widget<T> {
 
     public state: T;
 
-    public onExec = () => {};
+    public onExec() {};
 }

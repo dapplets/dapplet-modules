@@ -42,6 +42,9 @@ var TwitterFeature = /** @class */ (function () {
                 button({
                     clazz: 'dapplet-tweet-south-metamask',
                     img: METAMASK_ICON,
+                    init: function () {
+                        console.log('btn inited', this);
+                    },
                     exec: function (ctx) {
                         var _this = this;
                         console.log('ctx', ctx);

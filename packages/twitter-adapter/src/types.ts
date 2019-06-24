@@ -33,6 +33,7 @@ export interface IButtonConfig {
     label: string;
     img: string;
     exec(context: any): void;
+    init(): void;
 }
 
 

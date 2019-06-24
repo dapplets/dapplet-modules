@@ -39,6 +39,9 @@ var TwitterFeature = /** @class */ (function () {
                 button({
                     clazz: 'dapplet-tweet-south-ethereum-2',
                     img: ETHEREUM_ICON,
+                    init: function () {
+                        console.log('btn inited', this);
+                    },
                     exec: function (ctx) {
                         console.log('ctx', ctx);
                         console.log('this', this);
