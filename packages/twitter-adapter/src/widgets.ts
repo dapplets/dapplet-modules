@@ -1,5 +1,6 @@
 import { IButtonConfig, IWidgetBuilder, T_TwitterFeatureConfig, IWidgetBuilderConfig } from "./types";
 import { Button } from "./widgets/button";
+import { OldButton } from "./widgets/oldButton";
 
 export const widgets: { [key: string]: Function } = {
     button: (config: IButtonConfig) => ((builder: IWidgetBuilder, insPointName: string) =>
@@ -42,7 +43,7 @@ function createButton(builder: IWidgetBuilder, insPointName: string, config: IBu
 
     nodes && nodes.forEach(node => {
         if (node.getElementsByClassName(config.clazz).length > 0) return;
-        const button = new Button(config);
+        const button = builder.isTwitterDesignNew ? new Button(config) : new OldButton(config);
         button.mount();
         node.appendChild(button.el);
         button.on('beforeexec', function () {
@@ -51,25 +52,4 @@ function createButton(builder: IWidgetBuilder, insPointName: string, config: IBu
             this.emit('exec', context);
         });
     });
-}
-
-function createButtonHtml(config: any): Node {
-    return createElementFromHTML(
-        `<div class="${config.class} ProfileTweet-action">
-                <button class="ProfileTweet-actionButton" type="button">
-                    <div class="IconContainer">
-                        <img height="18" src="${config.img}">
-                    </div>
-                    ${config.label ? `<span class="ProfileTweet-actionCount">
-                        <span class="ProfileTweet-actionCountForPresentation" aria-hidden="true">${config.label}</span>
-                    </span>` : ''}
-                </button>
-            </div>
-    `);
-}
-
-function createElementFromHTML(htmlString: string): Node {
-    var div = document.createElement('div');
-    div.innerHTML = htmlString.trim();
-    return div.firstChild;
 }

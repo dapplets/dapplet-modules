@@ -75,7 +75,7 @@ export default class TwitterFeature implements ITwitterFeature {
             ],
             TWEET_COMBO: [
                 // menuItem({
-                //     class: '',
+                //     clazz: '',
                 //     text: "hello one", 
                 //     exec: (ctx:any) => core.sendWalletConnectTx({
                 //         id: ctx.tweetId,

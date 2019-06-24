@@ -7,7 +7,6 @@ interface IButtonState {
 }
 
 export class Button extends Widget<IButtonState> {
-
     public mount() {
         const { clazz, img, label } = this.state;        
 

@@ -1,5 +1,82 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var Widget = /** @class */ (function () {
+    function Widget(config) {
+        var _this = this;
+        this.state = this.createState(config);
+        Object.keys(config.listeners || {}).forEach(function (event) {
+            _this.on(event, config.listeners[event]);
+        });
+    }
+    Widget.prototype.on = function (event, fn) {
+        this._callbacks = this._callbacks || {};
+        // Create namespace for this event
+        if (!this._callbacks[event]) {
+            this._callbacks[event] = [];
+        }
+        this._callbacks[event].push(fn);
+        return this;
+    };
+    Widget.prototype.emit = function (event) {
+        var args = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            args[_i - 1] = arguments[_i];
+        }
+        this._callbacks = this._callbacks || {};
+        var callbacks = this._callbacks[event];
+        if (callbacks) {
+            for (var _a = 0, callbacks_1 = callbacks; _a < callbacks_1.length; _a++) {
+                var callback = callbacks_1[_a];
+                callback.apply(this, args);
+            }
+        }
+        return this;
+    };
+    // Remove event listener for given event. If fn is not provided, all event
+    // listeners for that event will be removed. If neither is provided, all
+    // event listeners will be removed.
+    Widget.prototype.off = function (event, fn) {
+        if (!this._callbacks || (arguments.length === 0)) {
+            this._callbacks = {};
+            return this;
+        }
+        // specific event
+        var callbacks = this._callbacks[event];
+        if (!callbacks) {
+            return this;
+        }
+        // remove all handlers
+        if (arguments.length === 1) {
+            delete this._callbacks[event];
+            return this;
+        }
+        // remove specific handler
+        for (var i = 0; i < callbacks.length; i++) {
+            var callback = callbacks[i];
+            if (callback === fn) {
+                callbacks.splice(i, 1);
+                break;
+            }
+        }
+        return this;
+    };
+    Widget.prototype.createState = function (state) {
+        var me = this;
+        return new Proxy(state, {
+            set: function (target, property, value) {
+                target[property] = value;
+                me.mount();
+                return true;
+            }
+        });
+    };
+    return Widget;
+}());
+exports.Widget = Widget;
+
+},{}],2:[function(require,module,exports){
+"use strict";
 // ==UserScript==
 // @name TwitterAdapter
 // @type adapter
@@ -131,22 +208,11 @@ var TwitterAdapter = /** @class */ (function () {
 }());
 exports.default = TwitterAdapter;
 
-},{"./widgets":2}],2:[function(require,module,exports){
+},{"./widgets":3}],3:[function(require,module,exports){
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
+var button_1 = require("./widgets/button");
+var oldButton_1 = require("./widgets/oldButton");
 exports.widgets = {
     button: function (config) { return (function (builder, insPointName) {
         return createButton(builder, insPointName, config);
@@ -155,99 +221,6 @@ exports.widgets = {
         return console.error('menuItem is not implemented');
     }); } //ToDo: implement
 };
-var Component = /** @class */ (function () {
-    function Component() {
-    }
-    Component.prototype.on = function (event, fn) {
-        this._callbacks = this._callbacks || {};
-        // Create namespace for this event
-        if (!this._callbacks[event]) {
-            this._callbacks[event] = [];
-        }
-        this._callbacks[event].push(fn);
-        return this;
-    };
-    Component.prototype.emit = function (event) {
-        var args = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            args[_i - 1] = arguments[_i];
-        }
-        this._callbacks = this._callbacks || {};
-        var callbacks = this._callbacks[event];
-        if (callbacks) {
-            for (var _a = 0, callbacks_1 = callbacks; _a < callbacks_1.length; _a++) {
-                var callback = callbacks_1[_a];
-                callback.apply(this, args);
-            }
-        }
-        return this;
-    };
-    // Remove event listener for given event. If fn is not provided, all event
-    // listeners for that event will be removed. If neither is provided, all
-    // event listeners will be removed.
-    Component.prototype.off = function (event, fn) {
-        if (!this._callbacks || (arguments.length === 0)) {
-            this._callbacks = {};
-            return this;
-        }
-        // specific event
-        var callbacks = this._callbacks[event];
-        if (!callbacks) {
-            return this;
-        }
-        // remove all handlers
-        if (arguments.length === 1) {
-            delete this._callbacks[event];
-            return this;
-        }
-        // remove specific handler
-        for (var i = 0; i < callbacks.length; i++) {
-            var callback = callbacks[i];
-            if (callback === fn) {
-                callbacks.splice(i, 1);
-                break;
-            }
-        }
-        return this;
-    };
-    return Component;
-}());
-var Context = /** @class */ (function () {
-    function Context(el) {
-        this.el = el;
-        this.widgets = [];
-    }
-    Context.prototype.add = function (widget) {
-        this.widgets.push(widget);
-        widget.mount();
-        this.el.appendChild(widget.el);
-        widget.context = this;
-    };
-    return Context;
-}());
-var Button = /** @class */ (function (_super) {
-    __extends(Button, _super);
-    function Button(_config) {
-        var _this = _super.call(this) || this;
-        _this._config = _config;
-        Object.keys(_config.listeners || {}).forEach(function (event) {
-            _this.on(event, _config.listeners[event]);
-        });
-        return _this;
-    }
-    Button.prototype.mount = function () {
-        var _this = this;
-        var config = this._config;
-        var div = document.createElement('div');
-        var htmlString = "<div class=\"" + config.class + " css-1dbjc4n r-1iusvr4 r-18u37iz r-16y2uox r-1h0z5md\">\n                <div role=\"button\" data-focusable=\"true\" tabindex=\"0\" class=\"css-18t94o4 css-1dbjc4n r-1777fci r-11cpok1 r-bztko3 r-lrvibr\">\n                    <div dir=\"ltr\" class=\"css-901oao r-1awozwy r-1re7ezh r-6koalj r-1qd0xha r-a023e6 r-16dba41 r-1h0z5md r-ad9z0x r-bcqeeo r-o7ynqc r-clp7b1 r-3s2u2q r-qvutc0\">\n                        <div class=\"css-1dbjc4n r-xoduu5\">\n                            <img height=\"18\" src=\"" + config.img + "\" class=\"r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr\">\n                            <div class=\"css-1dbjc4n r-sdzlij r-1p0dtai r-xoduu5 r-1d2f490 r-xf4iuw r-u8s1d r-zchlnj r-ipm5af r-o7ynqc r-6416eg\"></div>\n                        </div>\n                        " + (config.label ? "<div class=\"css-1dbjc4n r-xoduu5 r-1udh08x\">\n                            <span dir=\"auto\" class=\"css-901oao css-16my406 r-1qd0xha r-ad9z0x r-1n0xq6e r-bcqeeo r-d3hbe1 r-1wgg2b2 r-axxi2z r-qvutc0\">\n                                <span dir=\"auto\" class=\"css-901oao css-16my406 r-1qd0xha r-ad9z0x r-bcqeeo r-qvutc0\">" + config.label + "</span>\n                            </span>\n                        </div>" : '') + "\n                    </div>\n                </div>\n            </div>";
-        div.innerHTML = htmlString.trim();
-        this.el = div.firstChild;
-        this.el.addEventListener("click", function (e) {
-            _this.emit("click");
-        });
-    };
-    return Button;
-}(Component));
 var WidgetBuilder = /** @class */ (function () {
     //ToDo: widgets
     function WidgetBuilder(widgetBuilderConfig) {
@@ -273,33 +246,102 @@ function createButton(builder, insPointName, config) {
     var insPoint = builder.insPoints[insPointName];
     var nodes = document.querySelectorAll(insPoint.selector);
     nodes && nodes.forEach(function (node) {
-        if (node.getElementsByClassName(config.class).length > 0)
+        if (node.getElementsByClassName(config.clazz).length > 0)
             return;
-        var element = builder.isTwitterDesignNew ? createButtonHtmlNew(config) : createButtonHtml(config);
-        var context = new Context(node);
-        var button = new Button(config);
-        context.add(button);
-        /*
-        (event: any) => {
-            //context created at the time of button click.
-            let tweetNode = insPoint.toContext(event.target); //Todo: pass tweetNode from mutation observer instead of event?
-            let context = builder.contextBuilder(tweetNode);
-            config.exec.bind(button, context)();
-        }
-        */
-        //console.log('appended button to ' + insPointName);
+        var button = builder.isTwitterDesignNew ? new button_1.Button(config) : new oldButton_1.OldButton(config);
+        button.mount();
+        node.appendChild(button.el);
+        button.on('beforeexec', function () {
+            var tweetNode = insPoint.toContext(this.el);
+            var context = builder.contextBuilder(tweetNode);
+            this.emit('exec', context);
+        });
     });
 }
-function createButtonHtml(config) {
-    return createElementFromHTML("<div class=\"" + config.class + " ProfileTweet-action\">\n                <button class=\"ProfileTweet-actionButton\" type=\"button\">\n                    <div class=\"IconContainer\">\n                        <img height=\"18\" src=\"" + config.img + "\">\n                    </div>\n                    " + (config.label ? "<span class=\"ProfileTweet-actionCount\">\n                        <span class=\"ProfileTweet-actionCountForPresentation\" aria-hidden=\"true\">" + config.label + "</span>\n                    </span>" : '') + "\n                </button>\n            </div>\n    ");
-}
-function createButtonHtmlNew(config) {
-    return createElementFromHTML("<div class=\"" + config.class + " css-1dbjc4n r-1iusvr4 r-18u37iz r-16y2uox r-1h0z5md\">\n            <div role=\"button\" data-focusable=\"true\" tabindex=\"0\" class=\"css-18t94o4 css-1dbjc4n r-1777fci r-11cpok1 r-bztko3 r-lrvibr\">\n                <div dir=\"ltr\" class=\"css-901oao r-1awozwy r-1re7ezh r-6koalj r-1qd0xha r-a023e6 r-16dba41 r-1h0z5md r-ad9z0x r-bcqeeo r-o7ynqc r-clp7b1 r-3s2u2q r-qvutc0\">\n                    <div class=\"css-1dbjc4n r-xoduu5\">\n                        <img height=\"18\" src=\"" + config.img + "\" class=\"r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr\">\n                        <div class=\"css-1dbjc4n r-sdzlij r-1p0dtai r-xoduu5 r-1d2f490 r-xf4iuw r-u8s1d r-zchlnj r-ipm5af r-o7ynqc r-6416eg\"></div>\n                    </div>\n                    " + (config.label ? "<div class=\"css-1dbjc4n r-xoduu5 r-1udh08x\">\n                        <span dir=\"auto\" class=\"css-901oao css-16my406 r-1qd0xha r-ad9z0x r-1n0xq6e r-bcqeeo r-d3hbe1 r-1wgg2b2 r-axxi2z r-qvutc0\">\n                            <span dir=\"auto\" class=\"css-901oao css-16my406 r-1qd0xha r-ad9z0x r-bcqeeo r-qvutc0\">" + config.label + "</span>\n                        </span>\n                    </div>" : '') + "\n                </div>\n            </div>\n        </div>");
-}
-function createElementFromHTML(htmlString) {
-    var div = document.createElement('div');
-    div.innerHTML = htmlString.trim();
-    return div.firstChild;
-}
 
-},{}]},{},[1]);
+},{"./widgets/button":4,"./widgets/oldButton":5}],4:[function(require,module,exports){
+"use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var widget_1 = require("../common/widget");
+var Button = /** @class */ (function (_super) {
+    __extends(Button, _super);
+    function Button() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Button.prototype.mount = function () {
+        var _this = this;
+        var _a = this.state, clazz = _a.clazz, img = _a.img, label = _a.label;
+        var htmlString = "<div class=\"" + clazz + " css-1dbjc4n r-1iusvr4 r-18u37iz r-16y2uox r-1h0z5md\">\n            <div role=\"button\" data-focusable=\"true\" tabindex=\"0\" class=\"css-18t94o4 css-1dbjc4n r-1777fci r-11cpok1 r-bztko3 r-lrvibr\">\n                <div dir=\"ltr\" class=\"css-901oao r-1awozwy r-1re7ezh r-6koalj r-1qd0xha r-a023e6 r-16dba41 r-1h0z5md r-ad9z0x r-bcqeeo r-o7ynqc r-clp7b1 r-3s2u2q r-qvutc0\">\n                    <div class=\"css-1dbjc4n r-xoduu5\">\n                        <img height=\"18\" src=\"" + img + "\" class=\"r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr\">\n                        <div class=\"css-1dbjc4n r-sdzlij r-1p0dtai r-xoduu5 r-1d2f490 r-xf4iuw r-u8s1d r-zchlnj r-ipm5af r-o7ynqc r-6416eg\"></div>\n                    </div>\n                    " + (label ? "<div class=\"css-1dbjc4n r-xoduu5 r-1udh08x\">\n                        <span dir=\"auto\" class=\"css-901oao css-16my406 r-1qd0xha r-ad9z0x r-1n0xq6e r-bcqeeo r-d3hbe1 r-1wgg2b2 r-axxi2z r-qvutc0\">\n                            <span dir=\"auto\" class=\"css-901oao css-16my406 r-1qd0xha r-ad9z0x r-bcqeeo r-qvutc0\">" + label + "</span>\n                        </span>\n                    </div>" : '') + "\n                </div>\n            </div>\n        </div>";
+        if (!this.el) {
+            var div = document.createElement('div');
+            div.innerHTML = htmlString.trim();
+            this.el = div.lastChild;
+            this.el.addEventListener("click", function (e) {
+                _this.emit("beforeexec");
+            });
+        }
+        else {
+            this.el.innerHTML = htmlString;
+        }
+    };
+    return Button;
+}(widget_1.Widget));
+exports.Button = Button;
+
+},{"../common/widget":1}],5:[function(require,module,exports){
+"use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var widget_1 = require("../common/widget");
+var OldButton = /** @class */ (function (_super) {
+    __extends(OldButton, _super);
+    function OldButton() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    OldButton.prototype.mount = function () {
+        var _this = this;
+        var _a = this.state, clazz = _a.clazz, img = _a.img, label = _a.label;
+        console.log('btn mount', clazz);
+        var htmlString = "<div class=\"" + clazz + " ProfileTweet-action\">\n                <button class=\"ProfileTweet-actionButton\" type=\"button\">\n                    <div class=\"IconContainer\">\n                        <img height=\"18\" src=\"" + img + "\">\n                    </div>\n                    " + (label ? "<span class=\"ProfileTweet-actionCount\">\n                        <span class=\"ProfileTweet-actionCountForPresentation\" aria-hidden=\"true\">" + label + "</span>\n                    </span>" : '') + "\n                </button>\n            </div>";
+        if (!this.el) {
+            var div = document.createElement('div');
+            div.innerHTML = htmlString.trim();
+            this.el = div.lastChild;
+            this.el.addEventListener("click", function (e) {
+                _this.emit("beforeexec");
+            });
+        }
+        else {
+            this.el.innerHTML = htmlString;
+        }
+    };
+    return OldButton;
+}(widget_1.Widget));
+exports.OldButton = OldButton;
+
+},{"../common/widget":1}]},{},[2]);

@@ -37,10 +37,13 @@ var TwitterFeature = /** @class */ (function () {
                 }],
             TWEET_SOUTH: [
                 button({
-                    class: 'dapplet-tweet-south-ethereum-2',
+                    clazz: 'dapplet-tweet-south-ethereum-2',
                     img: ETHEREUM_ICON,
-                    exec: function (ctx) {
-                        Core.openOverlay(null, ctx);
+                    listeners: {
+                        exec: function (ctx) {
+                            console.log('ctx', ctx);
+                            console.log('this', this);
+                        }
                     },
                     //ToDo: what about global parameters?
                     //ToDo: return state object useful bound to button state?
@@ -49,7 +52,7 @@ var TwitterFeature = /** @class */ (function () {
             ],
             TWEET_COMBO: [
             // menuItem({
-            //     class: '',
+            //     clazz: '',
             //     text: "hello one", 
             //     exec: (ctx:any) => core.sendWalletConnectTx({
             //         id: ctx.tweetId,
@@ -61,7 +64,7 @@ var TwitterFeature = /** @class */ (function () {
             ],
             DM_SOUTH: [
                 button({
-                    class: 'dapplet-dm-south-ethereum-2',
+                    clazz: 'dapplet-dm-south-ethereum-2',
                     img: ETHEREUM_ICON,
                     exec: function (ctx) {
                         alert(JSON.stringify(ctx));

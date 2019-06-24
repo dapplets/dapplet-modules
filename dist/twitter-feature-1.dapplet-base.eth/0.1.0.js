@@ -40,21 +40,28 @@ var TwitterFeature = /** @class */ (function () {
             TWEET_SOUTH: [
                 // call at view creation time
                 button({
-                    class: 'dapplet-tweet-south-metamask',
+                    clazz: 'dapplet-tweet-south-metamask',
                     img: METAMASK_ICON,
                     listeners: {
-                        click: function (ctx) {
-                            //Core.sendWalletConnectTx('1', ctx);
-                            console.log('onclick', this);
-                            me._ws.send(ctx.text);
-                        } //ToDo: ref or val?
+                        exec: function (ctx) {
+                            var _this = this;
+                            console.log('ctx', ctx);
+                            console.log('this', this);
+                            this.state.label = 'WAIT';
+                            setTimeout(function () {
+                                if (!_this._counter)
+                                    _this._counter = 0;
+                                _this._counter++;
+                                _this.state.label = _this._counter;
+                            }, 500);
+                        }
                     }
                     //ToDo: implement binding and reload by backgroung.js
                 }),
             ],
             TWEET_COMBO: [
             // menuItem({
-            //     class: '',
+            //     clazz: '',
             //     text: "hello one", 
             //     exec: (ctx:any) => core.sendWalletConnectTx({
             //         id: ctx.tweetId,
@@ -66,7 +73,7 @@ var TwitterFeature = /** @class */ (function () {
             ],
             DM_SOUTH: [
                 button({
-                    class: 'dapplet-dm-south-metamask',
+                    clazz: 'dapplet-dm-south-metamask',
                     img: METAMASK_ICON,
                     exec: function (ctx) {
                         alert(JSON.stringify(ctx));
