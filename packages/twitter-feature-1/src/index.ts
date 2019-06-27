@@ -40,18 +40,27 @@ export default class TwitterFeature implements ITwitterFeature {
                 button({
                     clazz: 'dapplet-tweet-south-metamask',
                     img: METAMASK_ICON,
-                    init: function() {
+                    init: function () {
                     },
                     exec: function (ctx) {
-                        console.log('ctx', ctx);
-                        console.log('this', this);
+                        // console.log('ctx', ctx);
+                        // console.log('this', this);
 
-                        this.state.label = 'WAIT';
-                        setTimeout(() => {
-                            if (!this._counter) this._counter = 0;
-                            this._counter++;
-                            this.state.label = this._counter;
-                        }, 500);
+                        // this.state.label = 'WAIT';
+                        // setTimeout(() => {
+                        //     if (!this._counter) this._counter = 0;
+                        //     this._counter++;
+                        //     this.state.label = this._counter;
+                        // }, 500);
+                        
+                        if (!this._overlayed) {
+                            Core.openOverlay('https://localhost:8080/public/overlay.html', (data) => {
+                                this.state.label = data;
+                            });
+                            this._overlayed = true;
+                        } else {
+                            Core.sendMessageToOverlay(JSON.stringify(ctx));
+                        }
                     }
                     //ToDo: implement binding and reload by backgroung.js
                 }),
@@ -94,7 +103,7 @@ export default class TwitterFeature implements ITwitterFeature {
                         // })
                     }
                     //ToDo: what about global parameters?
-            //ToDo: return state object useful bound to button state?
+                    //ToDo: return state object useful bound to button state?
                     //label: (ctx:any) => ctx.text //ToDo: implement binding and reload
                 })
             ]

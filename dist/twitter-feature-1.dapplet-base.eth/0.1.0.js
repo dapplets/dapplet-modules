@@ -44,16 +44,24 @@ var TwitterFeature = /** @class */ (function () {
                     init: function () {
                     },
                     exec: function (ctx) {
+                        // console.log('ctx', ctx);
+                        // console.log('this', this);
                         var _this = this;
-                        console.log('ctx', ctx);
-                        console.log('this', this);
-                        this.state.label = 'WAIT';
-                        setTimeout(function () {
-                            if (!_this._counter)
-                                _this._counter = 0;
-                            _this._counter++;
-                            _this.state.label = _this._counter;
-                        }, 500);
+                        // this.state.label = 'WAIT';
+                        // setTimeout(() => {
+                        //     if (!this._counter) this._counter = 0;
+                        //     this._counter++;
+                        //     this.state.label = this._counter;
+                        // }, 500);
+                        if (!this._overlayed) {
+                            Core.openOverlay('https://localhost:8080/public/overlay.html', function (data) {
+                                _this.state.label = data;
+                            });
+                            this._overlayed = true;
+                        }
+                        else {
+                            Core.sendMessageToOverlay(JSON.stringify(ctx));
+                        }
                     }
                     //ToDo: implement binding and reload by backgroung.js
                 }),

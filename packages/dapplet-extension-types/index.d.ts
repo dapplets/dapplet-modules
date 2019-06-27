@@ -33,7 +33,8 @@ declare global {
     export function Load(name: string, version: string): Function;
 
     export var Core: {
-        openOverlay: (id: string, ctx: any) => void,
+        openOverlay: (url: string, handler: Function) => void,
+        sendMessageToOverlay: (msg: string) => void,
         sendWalletConnectTx: (dappletId: string, metadata: any) => Promise<any>,
         connect: (url: string) => Connection
     };
