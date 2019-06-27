@@ -26,7 +26,7 @@ export default class TwitterFeature implements ITwitterFeature {
     }
 
     public init() {
-        const twitterService = Core.connect("ws://localhost:8080");
+        const twitterService = Core.connect("wss://localhost:8080");
 
         console.log("feature-2: this.adapter.actionFactories>", this.adapter.actionFactories);
         let { button, menuItem } = this.adapter.actionFactories;

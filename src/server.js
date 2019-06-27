@@ -1,11 +1,23 @@
 var express = require('express');
 var app = express();
-var expressWs = require('express-ws')(app);
 const fs = require('fs');
+const https = require('https');
+
+
+const server = https.createServer({
+    key: fs.readFileSync('src/server.key'),
+    cert: fs.readFileSync('src/server.cert')
+}, app);
+
+var expressWs = require('express-ws')(app, server);
 
 
 //app.use(express.static('src/public', { etag: false }));
 app.use('/dist', express.static('dist', {
+    etag: false
+}));
+
+app.use('/public', express.static('src/public', {
     etag: false
 }));
 
@@ -64,4 +76,7 @@ app.get('/index.json', function (req, res) {
 });
 
 
-app.listen(8080);
+//app.listen(8080);
+
+
+server.listen(8080);
