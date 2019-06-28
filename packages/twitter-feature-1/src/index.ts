@@ -57,7 +57,6 @@ export default class TwitterFeature implements ITwitterFeature {
                             overlay.publish(JSON.stringify(ctx));
                         }                        
                     }
-                    //ToDo: implement binding and reload by backgroung.js
                 })
             ],
             TWEET_COMBO: [

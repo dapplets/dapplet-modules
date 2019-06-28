@@ -31,11 +31,6 @@ export default class TwitterFeature implements ITwitterFeature {
         console.log("feature-2: this.adapter.actionFactories>", this.adapter.actionFactories);
         let { button, menuItem } = this.adapter.actionFactories;
         this.adapter.addFeature({
-            LIVEDATA_SERVER: [{
-                //ToDo: Augmentation Server provides additional context related two-ways info used as labels in custom actions.
-                // Example: number of likes, number of PMs opened for current tweet, displayed as "(9)" near from button.     
-                //AUGM_SERVER_URL : "ws://SOMEHOST/timeline/",
-            }],
             TWEET_SOUTH: [
                 button({
                     clazz: 'dapplet-tweet-south-ethereum-2',
