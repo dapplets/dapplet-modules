@@ -26,21 +26,20 @@ export default class TwitterFeature implements ITwitterFeature {
     }
 
     public init() {
-        console.log("this.adapter.actionFactories>", this.adapter.actionFactories);
+        const overlay = Core.overlay('https://localhost:8080/public/overlay.html');
+
         const me = this;
         let { button, menuItem } = this.adapter.actionFactories;
         this.adapter.addFeature({
-            LIVEDATA_SERVER: [{
-                //ToDo: Augmentation Server provides additional context related two-ways info used as labels in custom actions.
-                // Example: number of likes, number of PMs opened for current tweet, displayed as "(9)" near from button.     
-                //AUGM_SERVER_URL : "ws://SOMEHOST/timeline/",
-            }],
             TWEET_SOUTH: [
                 // call at view creation time
                 button({
                     clazz: 'dapplet-tweet-south-metamask',
                     img: METAMASK_ICON,
                     init: function () {
+                        overlay.subscribe((data) => {
+                            this.state.label = data;
+                        })
                     },
                     exec: function (ctx) {
                         // console.log('ctx', ctx);
@@ -52,32 +51,14 @@ export default class TwitterFeature implements ITwitterFeature {
                         //     this._counter++;
                         //     this.state.label = this._counter;
                         // }, 500);
-                        
-                        if (!this._overlayed) {
-                            Core.openOverlay('https://localhost:8080/public/overlay.html', (data) => {
-                                this.state.label = data;
-                            });
-                            this._overlayed = true;
+                        if (!overlay.isOpened) {
+                            overlay.open();
                         } else {
-                            Core.sendMessageToOverlay(JSON.stringify(ctx));
-                        }
+                            overlay.publish(JSON.stringify(ctx));
+                        }                        
                     }
                     //ToDo: implement binding and reload by backgroung.js
-                }),
-                // button({
-                //     clazz: 'dapplet-tweet-south-ethereum',
-                //     img: ETHEREUM_ICON,
-                //     exec: (ctx: any) => {
-                //         alert(JSON.stringify(ctx));
-                //         // core.sendWalletConnectTx({
-                //         //     id: ctx.tweetId,
-                //         //     author: ctx.authorId
-                //         // })
-                //     },
-                //     //ToDo: what about global parameters?
-                //     //ToDo: return state object useful bound to button state?
-                //     label: "RTN" //ToDo: implement binding and reload
-                // })
+                })
             ],
             TWEET_COMBO: [
                 // menuItem({

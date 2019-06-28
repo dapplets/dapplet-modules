@@ -27,44 +27,39 @@ var TwitterFeature = /** @class */ (function () {
         this.init();
     }
     TwitterFeature.prototype.init = function () {
-        console.log("this.adapter.actionFactories>", this.adapter.actionFactories);
+        var overlay = Core.overlay('https://localhost:8080/public/overlay.html');
         var me = this;
         var _a = this.adapter.actionFactories, button = _a.button, menuItem = _a.menuItem;
         this.adapter.addFeature({
-            LIVEDATA_SERVER: [{
-                //ToDo: Augmentation Server provides additional context related two-ways info used as labels in custom actions.
-                // Example: number of likes, number of PMs opened for current tweet, displayed as "(9)" near from button.     
-                //AUGM_SERVER_URL : "ws://SOMEHOST/timeline/",
-                }],
             TWEET_SOUTH: [
                 // call at view creation time
                 button({
                     clazz: 'dapplet-tweet-south-metamask',
                     img: METAMASK_ICON,
                     init: function () {
+                        var _this = this;
+                        overlay.subscribe(function (data) {
+                            _this.state.label = data;
+                        });
                     },
                     exec: function (ctx) {
                         // console.log('ctx', ctx);
                         // console.log('this', this);
-                        var _this = this;
                         // this.state.label = 'WAIT';
                         // setTimeout(() => {
                         //     if (!this._counter) this._counter = 0;
                         //     this._counter++;
                         //     this.state.label = this._counter;
                         // }, 500);
-                        if (!this._overlayed) {
-                            Core.openOverlay('https://localhost:8080/public/overlay.html', function (data) {
-                                _this.state.label = data;
-                            });
-                            this._overlayed = true;
+                        if (!overlay.isOpened) {
+                            overlay.open();
                         }
                         else {
-                            Core.sendMessageToOverlay(JSON.stringify(ctx));
+                            overlay.publish(JSON.stringify(ctx));
                         }
                     }
                     //ToDo: implement binding and reload by backgroung.js
-                }),
+                })
             ],
             TWEET_COMBO: [
             // menuItem({

@@ -36,11 +36,21 @@ declare global {
         openOverlay: (url: string, handler: Function) => void,
         sendMessageToOverlay: (msg: string) => void,
         sendWalletConnectTx: (dappletId: string, metadata: any) => Promise<any>,
-        connect: (url: string) => Connection
+        connect: (url: string) => Connection,
+        overlay: (url: string) => Overlay
     };
 
     export class Connection {
         subscribe: (id: string, handler: (message: any) => void) => void
+    }
+
+    export class Overlay {
+        subscribe: (handler: (message: any) => void) => void
+        publish: (msg: string) => void
+        open: () => void
+        close: () => void
+        toggle: () => void
+        isOpened: boolean
     }
 
     export function PublicName(name: string, version: string, isFeature?: boolean): Function;
