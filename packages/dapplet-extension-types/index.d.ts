@@ -42,6 +42,7 @@ declare global {
 
     export class Connection {
         subscribe: (id: string, handler: (message: any) => void) => void
+        // ToDo: add publish
     }
 
     export class Overlay {
@@ -51,6 +52,7 @@ declare global {
         close: () => void
         toggle: () => void
         isOpened: boolean
+        // ToDo: do we need show/hide methods?
     }
 
     export function PublicName(name: string, version: string, isFeature?: boolean): Function;

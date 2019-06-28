@@ -44,7 +44,7 @@ function createButton(builder: IWidgetBuilder, insPointName: string, config: IBu
     nodes && nodes.forEach(node => {
         if (node.getElementsByClassName(config.clazz).length > 0) return;
 
-        const button = builder.isTwitterDesignNew ? new Button(config) : new OldButton(config);
+        const button = builder.isTwitterDesignNew ? new Button(config) : new OldButton(config); // ToDo: remove isTwitterDesignNew
         button.mount();
         node.appendChild(button.el);
 

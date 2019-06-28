@@ -194,7 +194,7 @@ function createButton(builder, insPointName, config) {
     nodes && nodes.forEach(function (node) {
         if (node.getElementsByClassName(config.clazz).length > 0)
             return;
-        var button = builder.isTwitterDesignNew ? new button_1.Button(config) : new oldButton_1.OldButton(config);
+        var button = builder.isTwitterDesignNew ? new button_1.Button(config) : new oldButton_1.OldButton(config); // ToDo: remove isTwitterDesignNew
         button.mount();
         node.appendChild(button.el);
         var tweetNode = insPoint.toContext(button.el);
