@@ -3,48 +3,67 @@
 
 <head>
     <meta charset="utf-8">
-    <title>iframe Window</title>
+    <title>PM Creation</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
     <style>
-        body {
-            background-color: #D53C2F;
-            color: white;
+        .container {
+            padding: 15px;
+        }
+
+        html,
+        body,
+        .container {
+            height: 100%;
+        }
+        .card {
+            margin-bottom: 20px;
         }
     </style>
 </head>
 
 <body>
+    <div class="container">
+        <h3>Related Prediction Market</h3>
 
-    <h1>Hello there, i'm an iframe</h1>
-    <p>Click on injected control inside parent page</p>
-    <p>Send Message: <button id="message_button">Hi parent</button></p>
-    <p>Got Message:</p>
-    <div id="results" style="word-break: break-all;"></div>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Will trump go for president?</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Total: 100 ETH, Expiration Date: 07.10.2020</h6>
+                <button type="button" class="btn btn-dark btn-sm">YES - 80%</button>
+                <button type="button" class="btn btn-dark btn-sm">NO - 20%</button>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">This tweet is NOT a FakeNews?</h5>
+                <h6 class="card-subtitle mb-2 text-muted btn-sm">Total: 10 ETH, Expiration Date: 07.10.2020</h6>
+                <button type="button" class="btn btn-dark btn-sm">YES - 80%</button>
+                <button type="button" class="btn btn-dark btn-sm">NO - 20%</button>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">The color of obama's t-shurt will be ?</h5>
+                <h6 class="card-subtitle mb-2 text-muted btn-sm">Total: 10 ETH, Expiration Date: 07.10.2020</h6>
+                <button type="button" class="btn btn-dark btn-sm">WHITE - 80%</button>
+                <button type="button" class="btn btn-dark btn-sm">BLACK - 10%</button>
+                <button type="button" class="btn btn-dark btn-sm">OTHER - 10%</button>
+            </div>
+        </div>
+    </div>
+
 
     <script>
-        // addEventListener support for IE8
-        function bindEvent(element, eventName, eventHandler) {
-            if (element.addEventListener) {
-                element.addEventListener(eventName, eventHandler, false);
-            } else if (element.attachEvent) {
-                element.attachEvent('on' + eventName, eventHandler);
-            }
-        }
-        // Send a message to the parent
-        var sendMessage = function (msg) {
-            // Make sure you are sending a string, and to stringify JSON
-            window.parent.postMessage(msg, '*');
-        };
-        var results = document.getElementById('results'),
-            messageButton = document.getElementById('message_button');
-        // Listen to messages from parent window
-        bindEvent(window, 'message', function (e) {
-            results.innerHTML = e.data;
-        });
-        // Send random message data on every button click
-        bindEvent(messageButton, 'click', function (e) {
-            var random = Math.floor(Math.random() * 100);
-            sendMessage('' + random);
-        });
     </script>
 </body>
 

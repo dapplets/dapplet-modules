@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>PM Creation</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+    <style>
+        .container {
+            padding: 15px;
+        }
+
+        html,
+        body,
+        .container {
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="alert alert-primary">
+            <div class="d-flex align-items-center">
+                <strong>Waiting Context Data...</strong>
+                <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+            </div>
+        </div>
+
+
+        <h3>Prediction Market</h3>
+        <form>
+            <div class="form-group">
+                <label for="tweetId">Tweet ID</label>
+                <input type="text" class="form-control" id="tweetId">
+            </div>
+            <div class="form-group">
+                <label for="tweetAuthor">Author</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputTweetTextPrepend">@</span>
+                    </div>
+                    <input type="text" class="form-control" aria-describedby="inputTweetTextPrepend"
+                        id="tweetAuthor">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="tweetText">Tweet Text</label>
+                <textarea class="form-control" id="tweetText" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="pmQuestion">Question (yes/no)</label>
+                <input type="text" class="form-control" id="pmQuestion">
+            </div>
+            <div class="form-group">
+                <label for="pmExpDate">Expiration Date</label>
+                <input type="date" class="form-control" id="pmExpDate">
+            </div>
+            <button id="buttonSubmit" class="btn btn-primary">Submit</button>
+        </form>
+
+
+        <p>Send Message: <button id="message_button">Hi parent</button></p>
+        <p>Got Message:</p>
+        <div id="results" style="word-break: break-all;"></div>
+    </div>
+
+
+    <script>
+        // addEventListener support for IE8
+        function bindEvent(element, eventName, eventHandler) {
+            if (element.addEventListener) {
+                element.addEventListener(eventName, eventHandler, false);
+            } else if (element.attachEvent) {
+                element.attachEvent('on' + eventName, eventHandler);
+            }
+        }
+
+        // Send a message to the parent
+        var sendMessage = function (msg) {
+            // Make sure you are sending a string, and to stringify JSON
+            window.parent.postMessage(msg, '*');
+        };
+
+        var data = {
+            tweetId: '',
+            tweetAuthor: '',
+            tweetText: '',
+            pmQuestion: '',
+            pmExpDate: ''
+        };
+
+        var proxy = new Proxy(data, {
+            get(target, prop) {
+                return document.getElementById(prop).value;
+            },
+            set(target, prop, value) {
+                document.getElementById(prop).value = value;
+                target[prop] = value;
+                return true;
+            }
+        });
+
+        var results = document.getElementById('results'),
+            messageButton = document.getElementById('message_button');
+
+        // Listen to messages from parent window
+        bindEvent(window, 'message', function (e) {
+            var data = JSON.parse(e.data);
+            proxy.tweetId = data.id;
+            proxy.tweetAuthor = data.authorUsername.replace('@','');
+            proxy.tweetText = data.text;
+        });
+
+        // Send random message data on every button click
+        bindEvent(messageButton, 'click', function (e) {
+            console.log('proxy', proxy);
+            var random = Math.floor(Math.random() * 100);
+            sendMessage('' + random);
+        });
+
+    </script>
+</body>
+
+</html>
