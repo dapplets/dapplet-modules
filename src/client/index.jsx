@@ -34,14 +34,25 @@ class Index extends React.Component {
         const { state } = this;
 
         return (<div className="container">
-            <h3>Related Prediction Markets</h3>
+            <h4>Prediction Markets</h4>
+
+            <div className="input-group mb-3">
+                <div className="input-group-prepend">
+                    <span className="input-group-text" id="basic-addon1">⌕</span>
+                </div>
+                <input type="text" className="form-control" placeholder="Search" aria-label="Search" aria-describedby="basic-addon1" />
+                <select className="form-control">
+                    <option>Tweet</option>
+                    <option>Global</option>
+                </select>
+            </div>
 
             {!state.tweet.id ? <p>Select tweet</p> : (
                 state.markets.length > 0 ? state.markets.map(m => (<div className="card" key={m.id}>
                     <div className="card-body">
                         <h5 className="card-title">{m.title}</h5>
-                        <h6 className="card-subtitle mb-2 text-muted">Volume: {m.total} ETH</h6>
-                        <h6 className="card-subtitle mb-2 text-muted">Exp: {m.expDate}</h6>
+                        <p className="card-subtitle mb-2 text-muted">Volume: {m.total} ETH</p>
+                        <p className="card-subtitle mb-2 text-muted">Exp: {m.expDate}</p>
                         {m.results.map((m, i) => (<button key={i} type="button" className="btn btn-dark btn-sm">{m.text} - {m.value}</button>))}
                     </div>
                 </div>)) : <p>There is no related prediction markets.</p>
