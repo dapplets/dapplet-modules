@@ -19,15 +19,37 @@ class Index extends React.Component {
                 const currentTweet = JSON.parse(e.data);
                 if (!currentTweet.id) return;
 
-                const response = await fetch('/api/markets');
-                const json = await response.json();
+                if (!this.marketsJson) {
+                    const response = await fetch('/api/markets');
+                    this.marketsJson = await response.json();
+                }
 
-                const markets = json.markets.filter(m =>
-                    json.tweets[currentTweet.id] && json.tweets[currentTweet.id].indexOf(m.id) != -1);
+                const markets = this.marketsJson.markets.filter(m =>
+                    this.marketsJson.tweets[currentTweet.id] && this.marketsJson.tweets[currentTweet.id].indexOf(m.id) != -1);
 
                 this.setState(state => ({ markets: markets, tweet: currentTweet }));
             } catch (ex) { }
         });
+
+        this.search = React.createRef();
+        this.searchType = React.createRef();
+    }
+
+    handleChange() {
+        const search = this.search.current.value;
+        const searchType = this.searchType.current.value;
+
+        let markets = [];
+
+        if (searchType == 'Tweet') {
+            markets = this.marketsJson.markets.filter(m => this.marketsJson.tweets[this.state.tweet.id] && this.marketsJson.tweets[this.state.tweet.id].indexOf(m.id) != -1);
+        } else {
+            markets = this.marketsJson.markets;
+        }
+
+        markets = markets.filter(m => m && m.title.toLowerCase().indexOf(search.toLowerCase()) != -1);
+
+        this.setState(state => ({ markets: markets }));
     }
 
     render() {
@@ -40,8 +62,8 @@ class Index extends React.Component {
                 <div className="input-group-prepend">
                     <span className="input-group-text" id="basic-addon1">⌕</span>
                 </div>
-                <input type="text" className="form-control" placeholder="Search" aria-label="Search" aria-describedby="basic-addon1" />
-                <select className="form-control">
+                <input onChange={() => this.handleChange()} ref={this.search} type="text" className="form-control" placeholder="Search" aria-label="Search" aria-describedby="basic-addon1" />
+                <select className="form-control" onChange={() => this.handleChange()} ref={this.searchType}>
                     <option>Tweet</option>
                     <option>Global</option>
                 </select>
