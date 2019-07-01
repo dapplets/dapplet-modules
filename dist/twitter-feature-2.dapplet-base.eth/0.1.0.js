@@ -27,7 +27,6 @@ var TwitterFeature = /** @class */ (function () {
         this.init();
     }
     TwitterFeature.prototype.init = function () {
-        var twitterService = Core.connect("wss://localhost:8080");
         console.log("feature-2: this.adapter.actionFactories>", this.adapter.actionFactories);
         var _a = this.adapter.actionFactories, button = _a.button, menuItem = _a.menuItem;
         this.adapter.addFeature({
@@ -36,12 +35,6 @@ var TwitterFeature = /** @class */ (function () {
                     clazz: 'dapplet-tweet-south-ethereum-2',
                     img: ETHEREUM_ICON,
                     init: function (ctx) {
-                        var state = this.state;
-                        twitterService.subscribe(ctx.id, function (msg) {
-                            if (msg && msg.like_num != undefined) {
-                                state.label = msg.like_num.toString();
-                            }
-                        });
                     },
                     exec: function (ctx) {
                         console.log('ctx', ctx);

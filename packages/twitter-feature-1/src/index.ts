@@ -27,6 +27,7 @@ export default class TwitterFeature implements ITwitterFeature {
 
     public init() {
         const overlay = Core.overlay('https://localhost:8080');
+        const twitterService = Core.connect("wss://localhost:8080");
 
         const me = this;
         let { button, menuItem } = this.adapter.actionFactories;
@@ -36,10 +37,16 @@ export default class TwitterFeature implements ITwitterFeature {
                 button({
                     clazz: 'dapplet-tweet-south-metamask',
                     img: METAMASK_ICON,
-                    init: function () {
+                    init: function (ctx) {
+                        const state = this.state;
+                        twitterService.subscribe(ctx.id, (msg) => {
+                            if (msg && msg.like_num != undefined) {
+                                state.label = msg.like_num.toString();
+                            }
+                        });
                         overlay.subscribe((data) => {
-                            this.state.label = data;
-                        })
+                            state.label = data;
+                        });
                     },
                     exec: function (ctx) {
                         // console.log('ctx', ctx);

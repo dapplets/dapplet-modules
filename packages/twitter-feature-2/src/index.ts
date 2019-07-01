@@ -26,7 +26,6 @@ export default class TwitterFeature implements ITwitterFeature {
     }
 
     public init() {
-        const twitterService = Core.connect("wss://localhost:8080");
 
         console.log("feature-2: this.adapter.actionFactories>", this.adapter.actionFactories);
         let { button, menuItem } = this.adapter.actionFactories;
@@ -36,13 +35,6 @@ export default class TwitterFeature implements ITwitterFeature {
                     clazz: 'dapplet-tweet-south-ethereum-2',
                     img: ETHEREUM_ICON,
                     init: function(ctx) {
-                        const state = this.state;
-
-                        twitterService.subscribe(ctx.id, (msg) => {
-                            if (msg && msg.like_num != undefined) {
-                                state.label = msg.like_num.toString();
-                            }
-                        });
                     },
                     exec: function (ctx) {
                         console.log('ctx', ctx);

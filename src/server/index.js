@@ -29,33 +29,16 @@ app.use('/', express.static('src/client', {
 }));
 
 app.ws('/', function (ws, req) {
-    let ids = {};
+    let msg = {
+        "0": { like_num: 0 }
+    };
 
-    ws.on('message', function (msg) {
-        console.log('incoming ' + msg);
-        if (/^\d{19}$/gm.test(msg)) { // is it tweet id?
-            ids[msg] = parseInt(msg[18]);
+    ws.on('message', function (tweetId) {
+        if (/^\d{19}$/gm.test(tweetId)) { // is it tweet id?
+            msg[tweetId] = { like_num: store.tweets[tweetId] ? store.tweets[tweetId].length : 0 };
         }
-    });
-    console.log('socket connected');
-
-    let t = setInterval(() => {
-        let msg = {};
-
-        Object.keys(ids).forEach(key => {
-            msg[key] = {
-                like_num: ids[key]
-            }
-
-            ids[key]++;
-        });
-
         ws.send(JSON.stringify(msg));
-    }, 3000);
-
-    ws.on('close', function () {
-        clearInterval(t);
-    })
+    });
 });
 
 app.get('/index.json', function (req, res) {

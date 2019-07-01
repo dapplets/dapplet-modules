@@ -28,6 +28,7 @@ var TwitterFeature = /** @class */ (function () {
     }
     TwitterFeature.prototype.init = function () {
         var overlay = Core.overlay('https://localhost:8080');
+        var twitterService = Core.connect("wss://localhost:8080");
         var me = this;
         var _a = this.adapter.actionFactories, button = _a.button, menuItem = _a.menuItem;
         this.adapter.addFeature({
@@ -36,10 +37,15 @@ var TwitterFeature = /** @class */ (function () {
                 button({
                     clazz: 'dapplet-tweet-south-metamask',
                     img: METAMASK_ICON,
-                    init: function () {
-                        var _this = this;
+                    init: function (ctx) {
+                        var state = this.state;
+                        twitterService.subscribe(ctx.id, function (msg) {
+                            if (msg && msg.like_num != undefined) {
+                                state.label = msg.like_num.toString();
+                            }
+                        });
                         overlay.subscribe(function (data) {
-                            _this.state.label = data;
+                            state.label = data;
                         });
                     },
                     exec: function (ctx) {
