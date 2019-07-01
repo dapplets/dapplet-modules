@@ -17,6 +17,7 @@ class Index extends React.Component {
         window.addEventListener('message', async (e) => {
             try {
                 const currentTweet = JSON.parse(e.data);
+                if (!currentTweet.id) return;
 
                 const response = await fetch('./data.json');
                 const json = await response.json();
@@ -48,6 +49,4 @@ class Index extends React.Component {
     }
 }
 
-ReactDOM.render(<Index />,
-    document.getElementById('root')
-);
+ReactDOM.render(<Index />, document.getElementById('root'));
