@@ -19,7 +19,7 @@ class Index extends React.Component {
                 const currentTweet = JSON.parse(e.data);
                 if (!currentTweet.id) return;
 
-                const response = await fetch('./data.json');
+                const response = await fetch('/api/markets');
                 const json = await response.json();
 
                 const markets = json.markets.filter(m =>
@@ -40,8 +40,9 @@ class Index extends React.Component {
                 state.markets.length > 0 ? state.markets.map(m => (<div className="card" key={m.id}>
                     <div className="card-body">
                         <h5 className="card-title">{m.title}</h5>
-                        <h6 className="card-subtitle mb-2 text-muted">Total: {m.total} ETH, Expiration Date: {m.expDate}</h6>
-                        {m.results.map((m, i) => (<button key={i} type="button" className="btn btn-dark btn-sm">{m.text} - {m.value}%</button>))}
+                        <h6 className="card-subtitle mb-2 text-muted">Volume: {m.total} ETH</h6>
+                        <h6 className="card-subtitle mb-2 text-muted">Exp: {m.expDate}</h6>
+                        {m.results.map((m, i) => (<button key={i} type="button" className="btn btn-dark btn-sm">{m.text} - {m.value}</button>))}
                     </div>
                 </div>)) : <p>There is no related prediction markets.</p>
             )}

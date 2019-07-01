@@ -2,14 +2,21 @@ var express = require('express');
 var app = express();
 const fs = require('fs');
 const https = require('https');
+var bodyParser = require('body-parser');
 
+const store = JSON.parse(fs.readFileSync('src/server/store.json'));
 
 const server = https.createServer({
-    key: fs.readFileSync('src/server.key'),
-    cert: fs.readFileSync('src/server.cert')
+    key: fs.readFileSync('src/server/secret/server.key'),
+    cert: fs.readFileSync('src/server/secret/server.cert')
 }, app);
 
 var expressWs = require('express-ws')(app, server);
+
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+app.use(bodyParser.json());
 
 
 //app.use(express.static('src/public', { etag: false }));
@@ -17,7 +24,7 @@ app.use('/dist', express.static('dist', {
     etag: false
 }));
 
-app.use('/public', express.static('src/public', {
+app.use('/', express.static('src/client', {
     etag: false
 }));
 
@@ -46,14 +53,14 @@ app.ws('/', function (ws, req) {
         ws.send(JSON.stringify(msg));
     }, 3000);
 
-    ws.on('close', function() {
+    ws.on('close', function () {
         clearInterval(t);
     })
 });
 
 app.get('/index.json', function (req, res) {
     const distPath = './dist/';
-    const indexPath = './src/public/index.json';
+    const indexPath = './src/server/config.json';
     const scriptsPath = 'scripts';
 
     fs.readFile(indexPath, (err, data) => {
@@ -75,8 +82,24 @@ app.get('/index.json', function (req, res) {
     });
 });
 
+app.get('/api/markets', function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify(store, null, 3));
+});
 
-//app.listen(8080);
+app.post('/api/markets/attach', function (req, res) {
+    const {
+        tweet,
+        market
+    } = req.body;
 
+    if (store.tweets[tweet] && store.tweets[tweet].length) {
+        store.tweets[tweet].push(market);
+    } else {
+        store.tweets[tweet] = [market];
+    }
+
+    res.status(200).end();
+});
 
 server.listen(8080);

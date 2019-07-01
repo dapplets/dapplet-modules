@@ -26,7 +26,7 @@ export default class TwitterFeature implements ITwitterFeature {
     }
 
     public init() {
-        const overlay = Core.overlay('https://localhost:8080/public/overlay/index.html');
+        const overlay = Core.overlay('https://localhost:8080');
 
         const me = this;
         let { button, menuItem } = this.adapter.actionFactories;

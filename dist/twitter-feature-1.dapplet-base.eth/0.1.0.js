@@ -27,7 +27,7 @@ var TwitterFeature = /** @class */ (function () {
         this.init();
     }
     TwitterFeature.prototype.init = function () {
-        var overlay = Core.overlay('https://localhost:8080/public/overlay/index.html');
+        var overlay = Core.overlay('https://localhost:8080');
         var me = this;
         var _a = this.adapter.actionFactories, button = _a.button, menuItem = _a.menuItem;
         this.adapter.addFeature({
