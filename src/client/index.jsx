@@ -70,7 +70,11 @@ class Index extends React.Component {
             </div>
 
             {!state.tweet.id ? <p>Select tweet</p> : (
-                state.markets.length > 0 ? state.markets.map(m => (<div className="card" key={m.id}>
+                state.markets.length > 0 ? state.markets.sort((a, b) => {
+                    const textA = a.title.toUpperCase();
+                    const textB = b.title.toUpperCase();
+                    return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+                }).map(m => (<div className="card" key={m.id}>
                     <div className="card-body">
                         <h5 className="card-title">{m.title}</h5>
                         <p className="card-subtitle mb-2 text-muted">Volume: {m.total} ETH</p>
