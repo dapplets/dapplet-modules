@@ -91,7 +91,7 @@ Dev Config URL: `http://localhost:8080/index.json`
 
 import { IFeature } from '@dapplets/dapplet-extension-types'
 
-@PublicName("{YOUR_PACKAGE_NAME}.dapplet-base.eth", "1.0.0", true)
+@Module("{YOUR_PACKAGE_NAME}.dapplet-base.eth", "1.0.0", true)
 export default class Feature implements IFeature {
 
     public activate() {
