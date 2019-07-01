@@ -26,7 +26,7 @@ export default class TwitterFeature implements ITwitterFeature {
     }
 
     public init() {
-        const overlay = Core.overlay('https://localhost:8080/public/overlay.html');
+        const overlay = Core.overlay('https://localhost:8080/public/overlay/index.html');
 
         const me = this;
         let { button, menuItem } = this.adapter.actionFactories;
@@ -53,9 +53,8 @@ export default class TwitterFeature implements ITwitterFeature {
                         // }, 500);
                         if (!overlay.isOpened) {
                             overlay.open();
-                        } else {
-                            overlay.publish(JSON.stringify(ctx));
-                        }                        
+                        }
+                        overlay.publish(JSON.stringify(ctx));
                     }
                 })
             ],

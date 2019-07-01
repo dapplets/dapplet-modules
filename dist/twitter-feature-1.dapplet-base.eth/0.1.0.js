@@ -27,7 +27,7 @@ var TwitterFeature = /** @class */ (function () {
         this.init();
     }
     TwitterFeature.prototype.init = function () {
-        var overlay = Core.overlay('https://localhost:8080/public/overlay.html');
+        var overlay = Core.overlay('https://localhost:8080/public/overlay/index.html');
         var me = this;
         var _a = this.adapter.actionFactories, button = _a.button, menuItem = _a.menuItem;
         this.adapter.addFeature({
@@ -54,11 +54,8 @@ var TwitterFeature = /** @class */ (function () {
                         if (!overlay.isOpened) {
                             overlay.open();
                         }
-                        else {
-                            overlay.publish(JSON.stringify(ctx));
-                        }
+                        overlay.publish(JSON.stringify(ctx));
                     }
-                    //ToDo: implement binding and reload by backgroung.js
                 })
             ],
             TWEET_COMBO: [

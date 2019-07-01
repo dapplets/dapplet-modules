@@ -1,0 +1,47 @@
+{
+    "markets": [{
+        "id": "1",
+        "title": "Will Trump go for president?",
+        "total": 100,
+        "expDate": "07.10.2020",
+        "results": [{
+            "text": "YES",
+            "value": 80
+        }, {
+            "text": "NO",
+            "value": 20
+        }]
+    }, {
+        "id": "2",
+        "title": "This tweet is NOT a FakeNews?",
+        "total": 10,
+        "expDate": "07.10.2020",
+        "results": [{
+            "text": "YES",
+            "value": 80
+        }, {
+            "text": "NO",
+            "value": 20
+        }]
+    }, {
+        "id": "3",
+        "title": "The color of Obama's t-shurt will be?",
+        "total": 10,
+        "expDate": "07.10.2020",
+        "results": [{
+            "text": "WHITE",
+            "value": 80
+        }, {
+            "text": "BLACK",
+            "value": 10
+        }, {
+            "text": "OTHER",
+            "value": 10
+        }]
+    }],
+
+    "tweets": {
+        "1132992220099993600": ["1", "2", "3"],
+        "1132983990032523264": ["1"]
+    }
+}
