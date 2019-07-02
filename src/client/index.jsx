@@ -90,7 +90,7 @@ class Index extends React.Component {
                 }).map(m => (<div className="card" key={m.id}>
                     <div className="card-body">
                         <h5 className="card-title">{m.title}</h5>
-                        <p className="card-subtitle mb-2 text-muted">Volume: {m.total} ETH</p>
+                        <p className="card-subtitle mb-2 text-muted">Volume: {m.total}</p>
                         <p className="card-subtitle mb-2 text-muted">Exp: {m.expDate}</p>
                         {m.results.map((m, i) => (<button key={i} type="button" className="btn btn-dark btn-sm">{m.text} - {m.value}</button>))}
                         {m.isAttached === false ? (<div><button onClick={(e) => this.handleAttachClick(m, e)} type="button" className="btn btn-primary btn-sm">Attach tweet</button></div>) : null}
