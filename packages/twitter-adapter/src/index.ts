@@ -14,7 +14,7 @@ import { WidgetBuilder, widgets } from './widgets';
 let doc: Document = document; //host document we are working on (inpage.js)
 
 
-@Module("twitter-adapter.dapplet-base.eth", "0.2.0")
+@Adapter("twitter-adapter.dapplet-base.eth", "0.2.0")
 export default class TwitterAdapter implements IContentAdapter {
 
     private core: ICore = null;

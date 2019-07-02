@@ -99,7 +99,7 @@ var TwitterFeature = /** @class */ (function () {
         __metadata("design:type", Object)
     ], TwitterFeature.prototype, "adapter", void 0);
     TwitterFeature = __decorate([
-        Module("twitter-feature-1.dapplet-base.eth", "0.1.0", true),
+        Feature("twitter-feature-1.dapplet-base.eth", "0.1.0"),
         __metadata("design:paramtypes", [])
     ], TwitterFeature);
     return TwitterFeature;

@@ -55,7 +55,10 @@ declare global {
         // ToDo: do we need show/hide methods?
     }
 
-    export function Module(name: string, version: string, isFeature?: boolean): Function;
+    export function Feature(name: string, version: string): Function;
+    export function Adapter(name: string, version: string): Function;
+    export function Resolver(name: string, version: string): Function;
+    export function Module(name: string, version: string): Function;
 
     export abstract class AbstractFeature {
         abstract activate(): void;

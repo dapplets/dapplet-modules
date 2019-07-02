@@ -147,7 +147,7 @@ var TwitterAdapter = /** @class */ (function () {
         __metadata("design:type", Object)
     ], TwitterAdapter.prototype, "library", void 0);
     TwitterAdapter = __decorate([
-        Module("twitter-adapter.dapplet-base.eth", "0.2.0"),
+        Adapter("twitter-adapter.dapplet-base.eth", "0.2.0"),
         __metadata("design:paramtypes", [])
     ], TwitterAdapter);
     return TwitterAdapter;
