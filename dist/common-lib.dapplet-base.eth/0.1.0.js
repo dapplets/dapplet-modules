@@ -28,7 +28,7 @@ var CommonLib = /** @class */ (function () {
         console.log('hello');
     };
     CommonLib = __decorate([
-        PublicName("common-lib.dapplet-base.eth", "0.1.0"),
+        Module("common-lib.dapplet-base.eth", "0.1.0"),
         __metadata("design:paramtypes", [])
     ], CommonLib);
     return CommonLib;
