@@ -18,16 +18,9 @@ class Index extends React.Component {
             try {
                 const currentTweet = JSON.parse(e.data);
                 if (!currentTweet.id) return;
+                this.setState(state => ({ tweet: currentTweet }));
 
-                if (!this.marketsJson) {
-                    const response = await fetch('/api/markets');
-                    this.marketsJson = await response.json();
-                }
-
-                const markets = this.marketsJson.markets.filter(m =>
-                    this.marketsJson.tweets[currentTweet.id] && this.marketsJson.tweets[currentTweet.id].indexOf(m.id) != -1);
-
-                this.setState(state => ({ markets: markets, tweet: currentTweet }));
+                await this.handleChange();
             } catch (ex) { }
         });
 
@@ -35,21 +28,41 @@ class Index extends React.Component {
         this.searchType = React.createRef();
     }
 
-    handleChange() {
+    async handleChange() {
+        const response = await fetch('/api/markets');
+        const json = await response.json();
+
         const search = this.search.current.value;
         const searchType = this.searchType.current.value;
 
         let markets = [];
 
         if (searchType == 'Tweet') {
-            markets = this.marketsJson.markets.filter(m => this.marketsJson.tweets[this.state.tweet.id] && this.marketsJson.tweets[this.state.tweet.id].indexOf(m.id) != -1);
+            markets = json.markets.filter(m => json.tweets[this.state.tweet.id] && json.tweets[this.state.tweet.id].indexOf(m.id) != -1);
         } else {
-            markets = this.marketsJson.markets;
+            markets = json.markets.map(m => {
+                const mapping = json.tweets[this.state.tweet.id];
+                m.isAttached = !!mapping && mapping.indexOf(m.id) != -1;
+                return m;
+            });
         }
 
         markets = markets.filter(m => m && m.title.toLowerCase().indexOf(search.toLowerCase()) != -1);
 
         this.setState(state => ({ markets: markets }));
+    }
+
+    async handleAttachClick(market, event) {
+        const response = await fetch('/api/markets/attach', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                market: market.id,
+                tweet: this.state.tweet.id
+            })
+        });
+
+        await this.handleChange();
     }
 
     render() {
@@ -80,6 +93,7 @@ class Index extends React.Component {
                         <p className="card-subtitle mb-2 text-muted">Volume: {m.total} ETH</p>
                         <p className="card-subtitle mb-2 text-muted">Exp: {m.expDate}</p>
                         {m.results.map((m, i) => (<button key={i} type="button" className="btn btn-dark btn-sm">{m.text} - {m.value}</button>))}
+                        {m.isAttached === false ? (<div><button onClick={(e) => this.handleAttachClick(m, e)} type="button" className="btn btn-primary btn-sm">Attach tweet</button></div>) : null}
                     </div>
                 </div>)) : <p>There is no related prediction markets.</p>
             )}
