@@ -68,36 +68,40 @@ class Index extends React.Component {
     render() {
         const { state } = this;
 
-        return (<div className="container">
-            <h4>Prediction Markets</h4>
-
-            <div className="input-group mb-3">
-                <div className="input-group-prepend">
-                    <span className="input-group-text" id="basic-addon1">⌕</span>
-                </div>
-                <input onChange={() => this.handleChange()} ref={this.search} type="text" className="form-control" placeholder="Search" aria-label="Search" aria-describedby="basic-addon1" />
-                <select className="form-control" onChange={() => this.handleChange()} ref={this.searchType}>
-                    <option>Tweet</option>
-                    <option>Global</option>
-                </select>
-            </div>
-
-            {!state.tweet.id ? <p>Select tweet</p> : (
-                state.markets.length > 0 ? state.markets.sort((a, b) => {
-                    const textA = a.title.toUpperCase();
-                    const textB = b.title.toUpperCase();
-                    return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
-                }).map(m => (<div className="card" key={m.id}>
-                    <div className="card-body">
-                        <h5 className="card-title">{m.title}</h5>
-                        <p className="card-subtitle mb-2 text-muted">Volume: {m.total}</p>
-                        <p className="card-subtitle mb-2 text-muted">Exp: {m.expDate}</p>
-                        {m.results.map((m, i) => (<button key={i} type="button" className="btn btn-dark btn-sm">{m.text} - {m.value}</button>))}
-                        {m.isAttached === false ? (<div><button onClick={(e) => this.handleAttachClick(m, e)} type="button" className="btn btn-primary btn-sm">Attach tweet</button></div>) : null}
+        return (<React.Fragment>
+            <header>
+                <img src='/logo.svg' className='logo'/>
+                <h4>Prediction Markets</h4>
+            </header>
+            <div className="container">
+                <div className="input-group mb-3">
+                    <div className="input-group-prepend">
+                        <span className="input-group-text" id="basic-addon1">⌕</span>
                     </div>
-                </div>)) : <p>There is no related prediction markets.</p>
-            )}
-        </div>);
+                    <input onChange={() => this.handleChange()} ref={this.search} type="text" className="form-control" placeholder="Search" aria-label="Search" aria-describedby="basic-addon1" />
+                    <select className="form-control" onChange={() => this.handleChange()} ref={this.searchType}>
+                        <option>Tweet</option>
+                        <option>Global</option>
+                    </select>
+                </div>
+
+                {!state.tweet.id ? <p>Select tweet</p> : (
+                    state.markets.length > 0 ? state.markets.sort((a, b) => {
+                        const textA = a.title.toUpperCase();
+                        const textB = b.title.toUpperCase();
+                        return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+                    }).map(m => (<div className="card" key={m.id}>
+                        <div className="card-body">
+                            <h5 className="card-title">{m.title}</h5>
+                            <p className="card-subtitle mb-2 text-muted">Volume: {m.total}</p>
+                            <p className="card-subtitle mb-2 text-muted">Exp: {m.expDate}</p>
+                            {m.results.map((m, i) => (<button key={i} type="button" className="btn btn-dark btn-sm">{m.text} - {m.value}</button>))}
+                            {m.isAttached === false ? (<div><button onClick={(e) => this.handleAttachClick(m, e)} type="button" className="btn btn-primary btn-sm">Attach tweet</button></div>) : null}
+                        </div>
+                    </div>)) : <p>There is no related prediction markets.</p>
+                )}
+            </div>
+        </React.Fragment>);
     }
 }
 
