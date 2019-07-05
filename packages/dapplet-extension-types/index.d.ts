@@ -37,7 +37,7 @@ declare global {
         sendMessageToOverlay: (msg: string) => void,
         sendWalletConnectTx: (dappletId: string, metadata: any) => Promise<any>,
         connect: (url: string) => Connection,
-        overlay: (url: string) => Overlay
+        overlay: (url: string, title: string) => Overlay
     };
 
     export class Connection {

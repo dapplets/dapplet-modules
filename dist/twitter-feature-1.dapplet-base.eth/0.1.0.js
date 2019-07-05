@@ -27,7 +27,7 @@ var TwitterFeature = /** @class */ (function () {
         this.init();
     }
     TwitterFeature.prototype.init = function () {
-        var overlay = Core.overlay('https://localhost:8080');
+        var overlay = Core.overlay('https://localhost:8080', 'Gnosis');
         var twitterService = Core.connect("wss://localhost:8080");
         var me = this;
         var _a = this.adapter.actionFactories, button = _a.button, menuItem = _a.menuItem;
@@ -57,9 +57,7 @@ var TwitterFeature = /** @class */ (function () {
                         //     this._counter++;
                         //     this.state.label = this._counter;
                         // }, 500);
-                        if (!overlay.isOpened) {
-                            overlay.open();
-                        }
+                        overlay.open();
                         overlay.publish(JSON.stringify(ctx));
                     }
                 })
@@ -74,7 +72,7 @@ var TwitterFeature = /** @class */ (function () {
             //     }), 
             //     //ToDo: what about global parameters?
             //     //ToDo: return state object useful bound to button state?
-            // })           
+            // })
             ],
             DM_SOUTH: [
                 button({

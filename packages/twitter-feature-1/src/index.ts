@@ -26,7 +26,7 @@ export default class TwitterFeature implements ITwitterFeature {
     }
 
     public init() {
-        const overlay = Core.overlay('https://localhost:8080');
+        const overlay = Core.overlay('https://localhost:8080', 'Gnosis');
         const twitterService = Core.connect("wss://localhost:8080");
 
         const me = this;
@@ -58,9 +58,7 @@ export default class TwitterFeature implements ITwitterFeature {
                         //     this._counter++;
                         //     this.state.label = this._counter;
                         // }, 500);
-                        if (!overlay.isOpened) {
-                            overlay.open();
-                        }
+                        overlay.open();
                         overlay.publish(JSON.stringify(ctx));
                     }
                 })
@@ -75,7 +73,7 @@ export default class TwitterFeature implements ITwitterFeature {
                 //     }), 
                 //     //ToDo: what about global parameters?
                 //     //ToDo: return state object useful bound to button state?
-                // })           
+                // })
             ],
             DM_SOUTH: [
                 button({

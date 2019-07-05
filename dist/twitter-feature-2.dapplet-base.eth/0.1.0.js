@@ -27,6 +27,7 @@ var TwitterFeature = /** @class */ (function () {
         this.init();
     }
     TwitterFeature.prototype.init = function () {
+        var overlay = Core.overlay('https://localhost:8080/test.html', 'Test');
         console.log("feature-2: this.adapter.actionFactories>", this.adapter.actionFactories);
         var _a = this.adapter.actionFactories, button = _a.button, menuItem = _a.menuItem;
         this.adapter.addFeature({
@@ -39,6 +40,10 @@ var TwitterFeature = /** @class */ (function () {
                     exec: function (ctx) {
                         console.log('ctx', ctx);
                         console.log('this', this);
+                        // overlay.subscribe((data) => {
+                        //     this.state.label = data;
+                        // });
+                        overlay.open();
                     },
                     //ToDo: what about global parameters?
                     //ToDo: return state object useful bound to button state?
