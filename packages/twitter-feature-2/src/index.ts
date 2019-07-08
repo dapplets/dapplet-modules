@@ -26,8 +26,6 @@ export default class TwitterFeature implements ITwitterFeature {
     }
 
     public init() {
-        const overlay = Core.overlay('https://localhost:8080/test.html', 'Test');
-
         console.log("feature-2: this.adapter.actionFactories>", this.adapter.actionFactories);
         let { button, menuItem } = this.adapter.actionFactories;
         this.adapter.addFeature({
@@ -38,12 +36,7 @@ export default class TwitterFeature implements ITwitterFeature {
                     init: function(ctx) {
                     },
                     exec: function (ctx) {
-                        console.log('ctx', ctx);
-                        console.log('this', this);
-                        // overlay.subscribe((data) => {
-                        //     this.state.label = data;
-                        // });
-                        overlay.open();
+                        Core.sendWalletConnectTx('1', ctx);
                     }, 
                     //ToDo: what about global parameters?
                     //ToDo: return state object useful bound to button state?
