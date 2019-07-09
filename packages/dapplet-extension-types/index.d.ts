@@ -46,8 +46,9 @@ declare global {
     }
 
     export class Overlay {
-        subscribe: (handler: (message: any) => void) => void
-        publish: (msg: string) => void
+        subscribe: (topic: string, handler: Function) => void
+        unsubscribe: (topic: string) => void;
+        publish: (topic: string, ...args: any) => void
         open: () => void
         close: () => void
         toggle: () => void

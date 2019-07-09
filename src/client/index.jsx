@@ -1,5 +1,42 @@
+class Bus {
+    _callbacks = {};
+
+    constructor() {
+        window.addEventListener('message', async (e) => {
+            try {
+                const data = JSON.parse(e.data);
+                if (!data || !data.topic) return;
+                
+                const callbacks = this._callbacks[data.topic] || [];
+
+                for (const callback of callbacks) {
+                    callback.apply({}, data.args);
+                }
+            } catch (ex) { }
+        });
+    }
+
+    publish(topic, ...args) {
+        const msg = JSON.stringify({ topic, args });
+        window.parent.postMessage(msg, '*');
+    }
+
+    subscribe(topic, handler) {
+        if (!this._callbacks[topic]) {
+            this._callbacks[topic] = [];
+        }
+        this._callbacks[topic].push(handler);
+    }
+
+    unsubscribe(topic) {
+        this._callbacks[topic] = [];
+    }
+}
+
 
 class Index extends React.Component {
+    bus = null;
+
     constructor(props) {
         super(props);
 
@@ -14,14 +51,11 @@ class Index extends React.Component {
             }
         };
 
-        window.addEventListener('message', async (e) => {
-            try {
-                const currentTweet = JSON.parse(e.data);
-                if (!currentTweet.id) return;
-                this.setState(state => ({ tweet: currentTweet }));
+        this.bus = new Bus();
 
-                await this.handleChange();
-            } catch (ex) { }
+        this.bus.subscribe('tweet_select', (tweet) => {
+            this.setState(state => ({ tweet }));
+            this.handleChange();
         });
 
         this.search = React.createRef();
@@ -53,16 +87,26 @@ class Index extends React.Component {
     }
 
     async handleAttachClick(market, event) {
-        const response = await fetch('/api/markets/attach', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                market: market.id,
-                tweet: this.state.tweet.id
-            })
-        });
+        const button = event.currentTarget;
+        const data = {
+            market: market.id,
+            tweet: this.state.tweet.id
+        };
 
-        await this.handleChange();
+        button.disabled = true;
+
+        this.bus.publish('pm_attach', data);
+        this.bus.subscribe('tx_created', async () => {
+            const response = await fetch('/api/markets/attach', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            await this.handleChange();
+            button.disabled = false;
+            this.bus.unsubscribe('tx_created');
+        });
     }
 
     render() {
@@ -70,7 +114,7 @@ class Index extends React.Component {
 
         return (<React.Fragment>
             <header>
-                <img src='/logo.svg' className='logo'/>
+                <img src='/logo.svg' className='logo' />
                 <h4>Prediction Markets</h4>
             </header>
             <div className="container">
@@ -96,7 +140,9 @@ class Index extends React.Component {
                             <p className="card-subtitle mb-2 text-muted">Volume: {m.total}</p>
                             <p className="card-subtitle mb-2 text-muted">Exp: {m.expDate}</p>
                             {m.results.map((m, i) => (<button key={i} type="button" className="btn btn-dark btn-sm">{m.text} - {m.value}</button>))}
-                            {m.isAttached === false ? (<div><button onClick={(e) => this.handleAttachClick(m, e)} type="button" className="btn btn-primary btn-sm">Attach tweet</button></div>) : null}
+                            {m.isAttached === false ? (<div>
+                                <button onClick={(e) => this.handleAttachClick(m, e)} type="button" className="btn btn-primary btn-sm">Attach tweet</button>
+                            </div>) : null}
                         </div>
                     </div>)) : <p>There is no related prediction markets.</p>
                 )}

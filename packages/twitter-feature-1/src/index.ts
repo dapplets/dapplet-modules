@@ -44,22 +44,16 @@ export default class TwitterFeature implements ITwitterFeature {
                                 state.label = msg.like_num.toString();
                             }
                         });
-                        overlay.subscribe((data) => {
-                            state.label = data;
-                        });
                     },
                     exec: function (ctx) {
-                        // console.log('ctx', ctx);
-                        // console.log('this', this);
-
-                        // this.state.label = 'WAIT';
-                        // setTimeout(() => {
-                        //     if (!this._counter) this._counter = 0;
-                        //     this._counter++;
-                        //     this.state.label = this._counter;
-                        // }, 500);
                         overlay.open();
-                        overlay.publish(JSON.stringify(ctx));
+                        overlay.publish('tweet_select', ctx); // ToDo: Fix it
+                        overlay.unsubscribe('pm_attach');
+                        overlay.subscribe('pm_attach', async ({ market, tweet }) => {
+                            console.log('data from overlay recieved', { market, tweet });
+                            const result = await Core.sendWalletConnectTx('1', ctx);
+                            overlay.publish('tx_created');
+                        });
                     }
                 })
             ],
