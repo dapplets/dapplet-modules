@@ -35,8 +35,15 @@ export default class TwitterFeature implements ITwitterFeature {
                     img: ETHEREUM_ICON,
                     init: function(ctx) {
                     },
-                    exec: function (ctx) {
-                        Core.sendWalletConnectTx('1', ctx);
+                    exec: async function (ctx) {
+                        this.state.label = 'TX';
+                        this.state.disabled = true;
+                        this.state.loading = true;
+
+                        await Core.sendWalletConnectTx('1', ctx);
+                        this.state.label = "NEW";
+                        this.state.disabled = false;
+                        this.state.loading = false;
                     }, 
                     //ToDo: what about global parameters?
                     //ToDo: return state object useful bound to button state?
