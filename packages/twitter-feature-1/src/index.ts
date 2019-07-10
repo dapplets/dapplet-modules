@@ -51,7 +51,7 @@ export default class TwitterFeature implements ITwitterFeature {
                             console.log('data from overlay recieved', { market, tweet });
                             const result = await Core.sendWalletConnectTx('1', ctx);
                             overlay.publish('tx_created');
-                        });
+                        }, SubscribeOptions.SINGLE_THREAD);
                     }
                 })
             ],

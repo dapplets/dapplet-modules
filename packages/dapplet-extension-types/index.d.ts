@@ -46,7 +46,7 @@ declare global {
     }
 
     export class Overlay {
-        subscribe: (topic: string, handler: Function) => void
+        subscribe: (topic: string, handler: Function, threading?: SubscribeOptions) => void
         unsubscribe: (topic: string) => void;
         publish: (topic: string, ...args: any) => void
         open: (callback?: Function) => void
@@ -54,6 +54,11 @@ declare global {
         toggle: () => void
         isOpened: boolean
         // ToDo: do we need show/hide methods?
+    }
+
+    export enum SubscribeOptions {
+        SINGLE_THREAD,
+        MULTI_THREAD
     }
 
     export function Feature(name: string, version: string): Function;

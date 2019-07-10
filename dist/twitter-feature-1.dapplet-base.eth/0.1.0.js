@@ -99,7 +99,7 @@ var TwitterFeature = /** @class */ (function () {
                                     }
                                 });
                             });
-                        });
+                        }, SubscribeOptions.SINGLE_THREAD);
                     }
                 })
             ],
