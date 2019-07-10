@@ -49,7 +49,7 @@ declare global {
         subscribe: (topic: string, handler: Function) => void
         unsubscribe: (topic: string) => void;
         publish: (topic: string, ...args: any) => void
-        open: () => void
+        open: (callback?: Function) => void
         close: () => void
         toggle: () => void
         isOpened: boolean

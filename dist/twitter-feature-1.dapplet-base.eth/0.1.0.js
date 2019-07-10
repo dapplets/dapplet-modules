@@ -82,8 +82,7 @@ var TwitterFeature = /** @class */ (function () {
                     },
                     exec: function (ctx) {
                         var _this = this;
-                        overlay.open();
-                        overlay.publish('tweet_select', ctx); // ToDo: Fix it
+                        overlay.open(function () { return overlay.publish('tweet_select', ctx); });
                         overlay.unsubscribe('pm_attach');
                         overlay.subscribe('pm_attach', function (_a) {
                             var market = _a.market, tweet = _a.tweet;

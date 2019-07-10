@@ -46,8 +46,7 @@ export default class TwitterFeature implements ITwitterFeature {
                         });
                     },
                     exec: function (ctx) {
-                        overlay.open();
-                        overlay.publish('tweet_select', ctx); // ToDo: Fix it
+                        overlay.open(() => overlay.publish('tweet_select', ctx));
                         overlay.unsubscribe('pm_attach');
                         overlay.subscribe('pm_attach', async ({ market, tweet }) => {
                             console.log('data from overlay recieved', { market, tweet });
