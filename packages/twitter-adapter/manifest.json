@@ -1,0 +1,9 @@
+{
+    "name": "twitter-adapter.dapplet-base.eth",
+    "version": "0.2.0",
+    "type": "ADAPTER",
+    "title": "TwitterAdapter",
+    "description": "Adapter for twitter.com",
+    "author": "Dapplets Team",
+    "dist": "index.js"
+}

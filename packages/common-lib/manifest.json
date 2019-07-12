@@ -1,0 +1,9 @@
+{
+    "name": "common-lib.dapplet-base.eth",
+    "version": "0.1.0",
+    "type": "LIBRARY",
+    "title": "CommonLib",
+    "description": "CommonLib for twitter.com",
+    "author": "Dapplets Team",
+    "dist": "index.js"
+}

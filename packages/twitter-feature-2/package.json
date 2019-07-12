@@ -4,9 +4,10 @@
   "description": "",
   "main": "lib/index.js",
   "scripts": {
-    "build": "browserify -e src/index.ts -p tsify -o ../../dist/%npm_package_dapplets_name%/%npm_package_version%.js",
-    "watch": "watchify -v -e src/index.ts -p tsify -o ../../dist/%npm_package_dapplets_name%/%npm_package_version%.js",
-    "clean": "(if exist lib rd /q /s lib) & (if exist dist rd /q /s dist)"
+    "build": "npm run copymanifest && browserify -e src/index.ts -p tsify -o ../../dist/%npm_package_dapplets_name%/%npm_package_version%/index.js",
+    "watch": "npm run copymanifest && watchify -v -e src/index.ts -p tsify -o ../../dist/%npm_package_dapplets_name%/%npm_package_version%/index.js",
+    "clean": "(if exist lib rd /q /s lib) & (if exist dist rd /q /s dist)",
+    "copymanifest": "copy \"manifest.json\" \"../../dist/%npm_package_dapplets_name%/%npm_package_version%/\""
   },
   "author": "",
   "license": "ISC",

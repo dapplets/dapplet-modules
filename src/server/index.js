@@ -127,7 +127,7 @@ app.ws('/', function (ws, req) {
 app.get('/index.json', function (req, res) {
     const distPath = './dist/';
     const indexPath = './src/server/config.json';
-    const scriptsPath = 'scripts';
+    const scriptsPath = 'modules';
 
     fs.readFile(indexPath, (err, data) => {
         let config = JSON.parse(data);
@@ -136,10 +136,9 @@ app.get('/index.json', function (req, res) {
         const names = fs.readdirSync(distPath);
         for (const name of names) {
             config[scriptsPath][name] = {};
-            const files = fs.readdirSync(distPath + name + '/');
-            for (const file of files) {
-                const version = file.substr(0, file.indexOf('.js'));
-                config[scriptsPath][name][version] = `dist/${name}/${file}`;
+            const versions = fs.readdirSync(distPath + name + '/');
+            for (const version of versions) {
+                config[scriptsPath][name][version] = `dist/${name}/${version}/manifest.json`;
             }
         }
 
