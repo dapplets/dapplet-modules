@@ -23,14 +23,6 @@ exports.Widget = Widget;
 
 },{}],2:[function(require,module,exports){
 "use strict";
-// ==UserScript==
-// @name TwitterAdapter
-// @type adapter
-// @description Adapter for twitter.com
-// @author Dapplets Team
-// @version 1
-// @familyId TwitterAdapter
-// ==/UserScript==
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -147,7 +139,7 @@ var TwitterAdapter = /** @class */ (function () {
         __metadata("design:type", Object)
     ], TwitterAdapter.prototype, "library", void 0);
     TwitterAdapter = __decorate([
-        Adapter("twitter-adapter.dapplet-base.eth", "0.2.0"),
+        Module(),
         __metadata("design:paramtypes", [])
     ], TwitterAdapter);
     return TwitterAdapter;

@@ -1,20 +1,10 @@
-// ==UserScript==
-// @name TwitterAdapter
-// @type adapter
-// @description Adapter for twitter.com
-// @author Dapplets Team
-// @version 1
-// @familyId TwitterAdapter
-// ==/UserScript==
-
 import { IAction, IModule, IView, ID, IFeature, ICore, IContentAdapter } from '@dapplets/dapplet-extension-types';
 import { T_TwitterActionFactory, T_TwitterFeatureConfig, T_TwitterViewSet, Context, T_InsertConfig, ITwitterFeature, IButtonConfig, IWidgetBuilder, IAdapterFeature, IWidgetBuilderConfig } from './types';
 import { WidgetBuilder, widgets } from './widgets';
 
 let doc: Document = document; //host document we are working on (inpage.js)
 
-
-@Adapter("twitter-adapter.dapplet-base.eth", "0.2.0")
+@Module()
 export default class TwitterAdapter implements IContentAdapter {
 
     private core: ICore = null;
