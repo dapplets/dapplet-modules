@@ -6,7 +6,7 @@ const ETHEREUM_ICON: string = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABM
 @Module()
 export default class TwitterFeature implements ITwitterFeature {
 
-    @Load("twitter-adapter.dapplet-base.eth", "0.1.0")
+    @Load("twitter-adapter.dapplet-base.eth")
     public adapter: any;
 
     constructor() {

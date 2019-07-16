@@ -13,7 +13,7 @@ export default class TwitterAdapter implements IContentAdapter {
     private observer: MutationObserver = null;
     private features: T_TwitterFeatureConfig[] = [];
 
-    @Load("common-lib.dapplet-base.eth", "0.1.0")
+    @Load("common-lib.dapplet-base.eth")
     public library: any;
 
     addFeature(feature: T_TwitterFeatureConfig): void { //ToDo: automate two-way dependency handling(?)

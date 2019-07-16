@@ -30,7 +30,7 @@ export type ID = string;
 
 declare global {
 
-    export function Load(name: string, version: string): Function;
+    export function Load(name: string): Function;
 
     export var Core: {
         openOverlay: (url: string, handler: Function) => void,
@@ -65,7 +65,7 @@ declare global {
     export function Adapter(name: string, version: string): Function;
     export function Resolver(name: string, version: string): Function;
     export function Module(name: string, version: string): Function;
-    export function Module() : Function;
+    export function Module(): Function;
 
     export abstract class AbstractFeature {
         abstract activate(): void;

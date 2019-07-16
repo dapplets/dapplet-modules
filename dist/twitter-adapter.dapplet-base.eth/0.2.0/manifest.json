@@ -5,5 +5,8 @@
     "title": "TwitterAdapter",
     "description": "Adapter for twitter.com",
     "author": "Dapplets Team",
-    "dist": "index.js"
+    "dist": "index.js",
+    "dependencies": {
+        "common-lib.dapplet-base.eth": "0.1.0"
+    }
 }

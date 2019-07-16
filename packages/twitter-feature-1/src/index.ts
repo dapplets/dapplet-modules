@@ -6,7 +6,7 @@ const GNOSIS_ICON: string = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAA
 @Module()
 export default class TwitterFeature implements ITwitterFeature {
 
-    @Load("twitter-adapter.dapplet-base.eth", "0.1.0")
+    @Load("twitter-adapter.dapplet-base.eth")
     public adapter: ITwitterAdapter;
 
     constructor() {
