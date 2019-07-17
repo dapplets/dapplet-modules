@@ -139,7 +139,7 @@ var TwitterAdapter = /** @class */ (function () {
         __metadata("design:type", Object)
     ], TwitterAdapter.prototype, "library", void 0);
     TwitterAdapter = __decorate([
-        Module(),
+        Injectable,
         __metadata("design:paramtypes", [])
     ], TwitterAdapter);
     return TwitterAdapter;

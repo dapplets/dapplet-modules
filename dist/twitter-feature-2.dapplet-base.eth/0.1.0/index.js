@@ -120,7 +120,7 @@ var TwitterFeature = /** @class */ (function () {
         __metadata("design:type", Object)
     ], TwitterFeature.prototype, "adapter", void 0);
     TwitterFeature = __decorate([
-        Module(),
+        Injectable,
         __metadata("design:paramtypes", [])
     ], TwitterFeature);
     return TwitterFeature;

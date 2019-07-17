@@ -4,7 +4,7 @@ import { WidgetBuilder, widgets } from './widgets';
 
 let doc: Document = document; //host document we are working on (inpage.js)
 
-@Module()
+@Injectable
 export default class TwitterAdapter implements IContentAdapter {
 
     private core: ICore = null;

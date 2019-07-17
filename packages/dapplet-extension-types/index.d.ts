@@ -61,11 +61,7 @@ declare global {
         MULTI_THREAD
     }
 
-    export function Feature(name: string, version: string): Function;
-    export function Adapter(name: string, version: string): Function;
-    export function Resolver(name: string, version: string): Function;
-    export function Module(name: string, version: string): Function;
-    export function Module(): Function;
+    export function Injectable(constructor: Function);
 
     export abstract class AbstractFeature {
         abstract activate(): void;

@@ -18,7 +18,7 @@ var CommonLib = /** @class */ (function () {
         console.log('hello');
     };
     CommonLib = __decorate([
-        Module(),
+        Injectable,
         __metadata("design:paramtypes", [])
     ], CommonLib);
     return CommonLib;
