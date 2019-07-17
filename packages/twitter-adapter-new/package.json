@@ -1,8 +1,7 @@
 {
-  "name": "@dapplets/twitter-feature-1",
-  "version": "0.1.0",
+  "name": "@dapplets/twitter-adapter-new",
+  "version": "0.2.1",
   "description": "",
-  "main": "lib/index.js",
   "scripts": {
     "build": "npm run copymanifest && browserify -e src/index.ts -p tsify -o ../../dist/%npm_package_dapplets_name%/%npm_package_dapplets_branch%/%npm_package_version%/index.js",
     "watch": "npm run copymanifest && watchify -v -e src/index.ts -p tsify -o ../../dist/%npm_package_dapplets_name%/%npm_package_dapplets_branch%/%npm_package_version%/index.js",
@@ -11,12 +10,19 @@
   },
   "author": "Dapplets Team",
   "license": "MIT",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib"
+  ],
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
   "dependencies": {
-    "@dapplets/dapplet-extension-types": ">=0.1.0",
-    "@dapplets/twitter-adapter-legacy": ">=0.1.0"
+    "@dapplets/dapplet-extension-types": "0.1.0"
   },
   "dapplets": {
-    "name": "twitter-feature-1.dapplet-base.eth",
-    "branch": "default"
+    "name": "twitter-adapter.dapplet-base.eth",
+    "branch": "new"
   }
 }

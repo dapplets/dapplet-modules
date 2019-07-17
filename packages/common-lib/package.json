@@ -4,17 +4,18 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npm run copymanifest && browserify -e src/index.ts -p tsify -o ../../dist/%npm_package_dapplets_name%/%npm_package_version%/index.js",
-    "watch": "npm run copymanifest && watchify -v -e src/index.ts -p tsify -o ../../dist/%npm_package_dapplets_name%/%npm_package_version%/index.js",
+    "build": "npm run copymanifest && browserify -e src/index.ts -p tsify -o ../../dist/%npm_package_dapplets_name%/%npm_package_dapplets_branch%/%npm_package_version%/index.js",
+    "watch": "npm run copymanifest && watchify -v -e src/index.ts -p tsify -o ../../dist/%npm_package_dapplets_name%/%npm_package_dapplets_branch%/%npm_package_version%/index.js",
     "clean": "(if exist lib rd /q /s lib) & (if exist dist rd /q /s dist)",
-    "copymanifest": "copy \"manifest.json\" \"../../dist/%npm_package_dapplets_name%/%npm_package_version%/\""
+    "copymanifest": "xcopy \"manifest.json\" \"..\\..\\dist\\%npm_package_dapplets_name%\\%npm_package_dapplets_branch%\\%npm_package_version%\\\" /Y"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Dapplets Team",
+  "license": "MIT",
   "dependencies": {
     "@dapplets/dapplet-extension-types": "0.1.0"
   },
   "dapplets": {
-    "name": "common-lib.dapplet-base.eth"
+    "name": "common-lib.dapplet-base.eth",
+    "branch": "default"
   }
 }

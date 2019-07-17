@@ -12,23 +12,33 @@ This repository is built as a mono-repository. Lerna is used to assemble package
 $/
   dist/
   docs/
-  src/
+  packages/
     common-lib/
     dapplet-extension-types/
     twitter-adapter/
+    twitter-adapter-legacy/
+    twitter-adapter-new/
     twitter-feature-1/
     twitter-feature-2/
+  src/
+    client/
+    server/
 ```
 
-- `dist` - Build results. This directory is locally accessible at http://localhost:8080
+- `dist` - Build results. This directory is locally accessible at http://localhost:8080/dist
 - `dist\index.json` - Config file for modules declaration and binding beetwen them and hostnames
 - `docs` - Documentation
-- `src` - Examples of modules for Dapplet Extension
-- `src\dapplet-extension-types` - Global types of dapplet extension
-- `src\common-lib` - CommonLib for adapters
-- `src\twitter-adapter` - Content adapter for twitter.com
-- `src\twitter-feature-1` - First Feature injecting controls for twitter.com
-- `src\twitter-feature-2` - Second Feature injecting controls for twitter.com
+- `packages` - Examples of modules for Dapplet Extension
+- `packages\dapplet-extension-types` - Global types of dapplet extension
+- `packages\common-lib` - CommonLib for adapters
+- `packages\twitter-adapter` - Resolver of Adapter for twitter.com
+- `packages\twitter-adapter-legacy` - Content adapter for legacy design of twitter.com
+- `packages\twitter-adapter-new` - Content adapter for new design of twitter.com
+- `packages\twitter-feature-1` - First Feature injecting controls for twitter.com
+- `packages\twitter-feature-2` - Second Feature injecting controls for twitter.com
+- `src` - Dev server sources
+- `src\client` - Overlay sources
+- `src\server` - It serves dist folder and generates dev config dynamically
 
 ### Building
 
@@ -42,7 +52,7 @@ During `npm run start`, connect to Dev Server via Extension Dev Tab
 
 Dev Config URL: `http://localhost:8080/index.json`
 
-### How to create a new module?
+### [NOT RELEVANT] How to create a new module?
 
 1. Add path to your package inside `tsconfig.json` file like below:
 ```json

@@ -23,6 +23,12 @@
             "path": "./packages/twitter-adapter"
         },
         {
+            "path": "./packages/twitter-adapter-legacy"
+        },
+        {
+            "path": "./packages/twitter-adapter-new"
+        },
+        {
             "path": "./packages/twitter-feature-1"
         },
         {

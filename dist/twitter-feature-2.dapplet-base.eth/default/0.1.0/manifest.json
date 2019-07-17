@@ -1,5 +1,6 @@
 {
     "name": "twitter-feature-2.dapplet-base.eth",
+    "branch": "default",
     "version": "0.1.0",
     "type": "FEATURE",
     "title": "TwitterFeature2",

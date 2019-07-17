@@ -1,5 +1,6 @@
 {
     "name": "common-lib.dapplet-base.eth",
+    "branch": "default",
     "version": "0.1.0",
     "type": "LIBRARY",
     "title": "CommonLib",

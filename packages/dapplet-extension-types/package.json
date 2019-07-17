@@ -5,7 +5,7 @@
   "scripts": {
     "watch": "echo ''"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Dapplets Team",
+  "license": "MIT",
   "types": "index"
 }

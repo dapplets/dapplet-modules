@@ -125,7 +125,7 @@ app.ws('/', function (ws, req) {
 });
 
 app.get('/index.json', function (req, res) {
-    const distPath = './dist/';
+    const distPath = './dist';
     const indexPath = './src/server/config.json';
     const scriptsPath = 'modules';
 
@@ -136,9 +136,13 @@ app.get('/index.json', function (req, res) {
         const names = fs.readdirSync(distPath);
         for (const name of names) {
             config[scriptsPath][name] = {};
-            const versions = fs.readdirSync(distPath + name + '/');
-            for (const version of versions) {
-                config[scriptsPath][name][version] = `dist/${name}/${version}/manifest.json`;
+            const branches = fs.readdirSync(distPath + '/' + name + '/');
+            for (const branch of branches) {
+                config[scriptsPath][name][branch] = {};
+                const versions = fs.readdirSync(distPath + '/' + name + '/' + branch + '/');
+                for (const version of versions) {
+                    config[scriptsPath][name][branch][version] = `dist/${name}/${branch}/${version}/manifest.json`;
+                }
             }
         }
 
