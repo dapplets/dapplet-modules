@@ -1,11 +1,12 @@
 import { IAction, IModule, IView, ID, IFeature, ICore, IContentAdapter } from '@dapplets/dapplet-extension-types';
-import { T_TwitterActionFactory, T_TwitterFeatureConfig, T_TwitterViewSet, Context, T_InsertConfig, ITwitterFeature, IButtonConfig, IWidgetBuilder, IAdapterFeature, IWidgetBuilderConfig } from './types';
+import { T_TwitterViewSet, Context, T_InsertConfig, ITwitterFeature, IButtonConfig, IWidgetBuilder, IAdapterFeature, IWidgetBuilderConfig } from './types';
 import { WidgetBuilder, widgets } from './widgets';
+import { ITwitterAdapter, T_TwitterFeatureConfig, T_TwitterActionFactory } from "@dapplets/twitter-adapter/src/types";
 
 let doc: Document = document; //host document we are working on (inpage.js)
 
 @Injectable
-export default class TwitterAdapter implements IContentAdapter {
+export default class TwitterAdapter implements ITwitterAdapter {
 
     private core: ICore = null;
     public actionFactories = widgets;

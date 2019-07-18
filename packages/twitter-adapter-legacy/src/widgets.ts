@@ -1,4 +1,5 @@
-import { IButtonConfig, IWidgetBuilder, T_TwitterFeatureConfig, IWidgetBuilderConfig } from "./types";
+import { IButtonConfig, IWidgetBuilder, IWidgetBuilderConfig } from "./types";
+import { T_TwitterFeatureConfig } from "@dapplets/twitter-adapter/src/types";
 import { Button } from "./widgets/button";
 import { OldButton } from "./widgets/oldButton";
 

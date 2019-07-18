@@ -1,9 +1,7 @@
 import { IView, IFeature, ICore, ID } from "@dapplets/dapplet-extension-types"
-
-export type T_TwitterActionFactory = any;
+import { ITwitterAdapter, T_TwitterFeatureConfig, T_TwitterActionFactory } from "@dapplets/twitter-adapter/src/types";
 
 export type T_TwitterAdapterConfig = { [key in keyof T_TwitterViewSet]: ({ [key: string]: T_TwitterActionFactory[] }) }
-export type T_TwitterFeatureConfig = { [key: string]: T_TwitterActionFactory[] }
 
 export type T_TwitterViewSet = {
     TIMELINE?: IView;
@@ -11,11 +9,6 @@ export type T_TwitterViewSet = {
 }
 
 export type Context = any;
-
-export interface ITwitterAdapter {  //ToDo: eliminate excessive interfaces and use ambient module instead
-    actionFactories: { [key: string]: Function };
-    addFeature(featureConfig: T_TwitterFeatureConfig): void;
-}
 
 export type T_InsertConfig = {
     name: string;

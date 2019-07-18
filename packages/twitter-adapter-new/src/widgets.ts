@@ -1,6 +1,7 @@
-import { IButtonConfig, IWidgetBuilder, T_TwitterFeatureConfig, IWidgetBuilderConfig } from "./types";
+import { IButtonConfig, IWidgetBuilder, IWidgetBuilderConfig } from "./types";
 import { Button } from "./widgets/button";
 import { OldButton } from "./widgets/oldButton";
+import { T_TwitterFeatureConfig } from "@dapplets/twitter-adapter/src/types";
 
 export const widgets: { [key: string]: Function } = {
     button: (config: IButtonConfig) => ((builder: IWidgetBuilder, insPointName: string) =>

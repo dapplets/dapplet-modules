@@ -19,7 +19,8 @@
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "dependencies": {
-    "@dapplets/dapplet-extension-types": "0.1.0"
+    "@dapplets/dapplet-extension-types": "0.1.0",
+    "@dapplets/twitter-adapter": ">=0.1.0"
   },
   "dapplets": {
     "name": "twitter-adapter.dapplet-base.eth",

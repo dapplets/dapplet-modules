@@ -13,7 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "@dapplets/dapplet-extension-types": ">=0.1.0",
-    "@dapplets/twitter-adapter-legacy": ">=0.1.0"
+    "@dapplets/twitter-adapter": ">=0.1.0"
   },
   "dapplets": {
     "name": "twitter-feature-1.dapplet-base.eth",
