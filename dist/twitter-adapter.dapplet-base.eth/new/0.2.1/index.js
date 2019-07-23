@@ -136,7 +136,7 @@ var TwitterAdapter = /** @class */ (function () {
         this.features.push(feature);
     };
     __decorate([
-        Load("common-lib.dapplet-base.eth"),
+        Inject("common-lib.dapplet-base.eth"),
         __metadata("design:type", Object)
     ], TwitterAdapter.prototype, "library", void 0);
     TwitterAdapter = __decorate([

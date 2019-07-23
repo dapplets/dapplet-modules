@@ -14,7 +14,7 @@ export default class TwitterAdapter implements ITwitterAdapter {
     private observer: MutationObserver = null;
     private features: T_TwitterFeatureConfig[] = [];
 
-    @Load("common-lib.dapplet-base.eth")
+    @Inject("common-lib.dapplet-base.eth")
     public library: any;
 
     addFeature(feature: T_TwitterFeatureConfig): void { //ToDo: automate two-way dependency handling(?)

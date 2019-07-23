@@ -116,7 +116,7 @@ export default class Feature implements IFeature {
 9. [Additionaly] If you want to use (inject) existing module to your package, then run `npm install {PACKAGE_NAME}` to add dependency and do next step.
 10. [Additionaly] Add decorated property to your main class, where module will be injected like below:
 ```typescript
-@Load("twitter-adapter.dapplet-base.eth", "1.0.0")
+@Inject("twitter-adapter.dapplet-base.eth", "1.0.0")
 public adapter: any;
 ```
 11. Run `npm run bootstrap` from root directory of current repository to add symbolic linking of adjacent packages.

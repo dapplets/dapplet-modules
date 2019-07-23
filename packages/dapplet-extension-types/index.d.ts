@@ -29,7 +29,7 @@ export type ID = string;
 
 declare global {
 
-    export function Load(name: string): Function;
+    export function Inject(name: string): Function;
 
     export var Core: {
         openOverlay: (url: string, handler: Function) => void,

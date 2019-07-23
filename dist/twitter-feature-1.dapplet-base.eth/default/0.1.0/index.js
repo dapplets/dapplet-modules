@@ -125,7 +125,7 @@ var TwitterFeature = /** @class */ (function () {
         }); //add feature config
     };
     __decorate([
-        Load("twitter-adapter.dapplet-base.eth"),
+        Inject("twitter-adapter.dapplet-base.eth"),
         __metadata("design:type", Object)
     ], TwitterFeature.prototype, "adapter", void 0);
     TwitterFeature = __decorate([
