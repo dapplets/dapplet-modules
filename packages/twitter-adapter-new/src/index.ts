@@ -49,7 +49,6 @@ export default class TwitterAdapter implements ITwitterAdapter {
     }
 
     private widgetBuilders = [{
-        isTwitterDesignNew: true,
         querySelector: "main[role=main]",
         insPoints: {
             TWEET_SOUTH: {
@@ -69,45 +68,5 @@ export default class TwitterAdapter implements ITwitterAdapter {
             authorUsername: tweetNode.querySelector('div.r-1f6r7vd > div > span').innerText,
             authorImg: tweetNode.querySelector('article div img').getAttribute('src')
         }),
-    }, {
-        isTwitterDesignNew: false,
-        querySelector: "#timeline",
-        insPoints: {
-            TWEET_SOUTH: {
-                toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
-                selector: "#timeline li.stream-item div.js-actions"
-            },
-            TWEET_COMBO: {
-                toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
-                selector: "" //ToDo
-            }
-        },
-        contextBuilder: (tweetNode: any) => ({
-            id: tweetNode.getAttribute('data-item-id'),
-            text: tweetNode.querySelector('div.js-tweet-text-container').innerText,
-            authorFullname: tweetNode.querySelector('strong.fullname').innerText,
-            authorUsername: tweetNode.querySelector('span.username').innerText,
-            authorImg: tweetNode.querySelector('img.avatar').getAttribute('src')
-        }),
-    }, {
-        isTwitterDesignNew: false,
-        querySelector: "#dm_dialog",
-        insPoints: {
-            DM_SOUTH: {
-                toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
-                selector: "#dm_dialog li.DMInbox-conversationItem div.DMInboxItem"
-            },
-            DM_EAST: {
-                toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode, //ToDo: Adjust it!
-                selector: "" //ToDo
-            }
-        },
-        contextBuilder: (tweetNode: any) => ({
-            threadId: tweetNode.getAttribute('data-thread-id'),
-            lastMessageId: tweetNode.getAttribute('data-last-message-id'),
-            fullname: tweetNode.querySelector('div.DMInboxItem-title .fullname') && tweetNode.querySelector('div.DMInboxItem-title .fullname').innerText,
-            username: tweetNode.querySelector('div.DMInboxItem-title .username') && tweetNode.querySelector('div.DMInboxItem-title .username').innerText,
-            text: tweetNode.querySelector('.DMInboxItem-snippet').innerText
-        })
     }].map((cfg: IWidgetBuilderConfig) => new WidgetBuilder(cfg));
 }

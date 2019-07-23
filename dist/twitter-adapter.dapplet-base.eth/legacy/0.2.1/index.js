@@ -43,28 +43,6 @@ var TwitterAdapter = /** @class */ (function () {
         this.observer = null;
         this.features = [];
         this.widgetBuilders = [{
-                isTwitterDesignNew: true,
-                querySelector: "main[role=main]",
-                insPoints: {
-                    TWEET_SOUTH: {
-                        toContext: function (node) { return node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode; },
-                        selector: "main[role=main] div[data-testid=primaryColumn] section[role=region] article div[role=group]"
-                    },
-                    TWEET_COMBO: {
-                        toContext: function (node) { return node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode; },
-                        selector: "" //ToDo
-                    }
-                },
-                // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
-                contextBuilder: function (tweetNode) { return ({
-                    id: tweetNode.querySelector('article a time').parentNode.href.substr(tweetNode.querySelector('article a time').parentNode.href.lastIndexOf('/') + 1),
-                    text: tweetNode.querySelector('div[lang]').innerText,
-                    authorFullname: tweetNode.querySelector('article a:nth-child(1) div span span').innerText,
-                    authorUsername: tweetNode.querySelector('div.r-1f6r7vd > div > span').innerText,
-                    authorImg: tweetNode.querySelector('article div img').getAttribute('src')
-                }); },
-            }, {
-                isTwitterDesignNew: false,
                 querySelector: "#timeline",
                 insPoints: {
                     TWEET_SOUTH: {
@@ -84,7 +62,6 @@ var TwitterAdapter = /** @class */ (function () {
                     authorImg: tweetNode.querySelector('img.avatar').getAttribute('src')
                 }); },
             }, {
-                isTwitterDesignNew: false,
                 querySelector: "#dm_dialog",
                 insPoints: {
                     DM_SOUTH: {
@@ -151,7 +128,6 @@ exports.default = TwitterAdapter;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var button_1 = require("./widgets/button");
-var oldButton_1 = require("./widgets/oldButton");
 exports.widgets = {
     button: function (config) { return (function (builder, insPointName) {
         return createButton(builder, insPointName, config);
@@ -187,7 +163,7 @@ function createButton(builder, insPointName, config) {
     nodes && nodes.forEach(function (node) {
         if (node.getElementsByClassName(config.clazz).length > 0)
             return;
-        var button = builder.isTwitterDesignNew ? new button_1.Button(config) : new oldButton_1.OldButton(config); // ToDo: remove isTwitterDesignNew
+        var button = new button_1.Button(config);
         button.mount();
         node.appendChild(button.el);
         var tweetNode = insPoint.toContext(button.el);
@@ -201,7 +177,7 @@ function createButton(builder, insPointName, config) {
     });
 }
 
-},{"./widgets/button":4,"./widgets/oldButton":5}],4:[function(require,module,exports){
+},{"./widgets/button":4}],4:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -226,7 +202,7 @@ var Button = /** @class */ (function (_super) {
     Button.prototype.mount = function () {
         var _this = this;
         var _a = this.state, clazz = _a.clazz, img = _a.img, label = _a.label, loading = _a.loading, disabled = _a.disabled;
-        var htmlString = "<div class=\"" + clazz + " css-1dbjc4n r-1iusvr4 r-18u37iz r-16y2uox r-1h0z5md\">\n            <div role=\"button\" data-focusable=\"true\" tabindex=\"0\" class=\"css-18t94o4 css-1dbjc4n r-1777fci r-11cpok1 r-bztko3 r-lrvibr\">\n                <div dir=\"ltr\" class=\"css-901oao r-1awozwy r-1re7ezh r-6koalj r-1qd0xha r-a023e6 r-16dba41 r-1h0z5md r-ad9z0x r-bcqeeo r-o7ynqc r-clp7b1 r-3s2u2q r-qvutc0\">\n                    <div class=\"css-1dbjc4n r-xoduu5\">\n                        " + (loading ? "<svg width=\"18px\" height=\"18px\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" preserveAspectRatio=\"xMidYMid\" class=\"lds-rolling\" style=\"background: none;\">\n                            <circle cx=\"50\" cy=\"50\" fill=\"none\" stroke=\"#1da1f2\" stroke-width=\"14\" r=\"40\" stroke-dasharray=\"188.49555921538757 64.83185307179586\" transform=\"rotate(77.5793 50 50)\">\n                                <animateTransform attributeName=\"transform\" type=\"rotate\" calcMode=\"linear\" values=\"0 50 50;360 50 50\" keyTimes=\"0;1\" dur=\"1s\" begin=\"0s\" repeatCount=\"indefinite\"></animateTransform>\n                            </circle>\n                        </svg>" : "<img height=\"18\" src=\"" + img + "\" class=\"r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr\">") + "\n                        <div class=\"css-1dbjc4n r-sdzlij r-1p0dtai r-xoduu5 r-1d2f490 r-xf4iuw r-u8s1d r-zchlnj r-ipm5af r-o7ynqc r-6416eg\"></div>\n                    </div>\n                    " + (label ? "<div class=\"css-1dbjc4n r-xoduu5 r-1udh08x\">\n                        <span dir=\"auto\" class=\"css-901oao css-16my406 r-1qd0xha r-ad9z0x r-1n0xq6e r-bcqeeo r-d3hbe1 r-1wgg2b2 r-axxi2z r-qvutc0\">\n                            <span dir=\"auto\" " + (disabled ? 'style="color:#aaa;"' : '') + " class=\"css-901oao css-16my406 r-1qd0xha r-ad9z0x r-bcqeeo r-qvutc0\">" + label + "</span>\n                        </span>\n                    </div>" : '') + "\n                </div>\n            </div>\n        </div>";
+        var htmlString = "<div class=\"" + clazz + " ProfileTweet-action\">\n                <button class=\"ProfileTweet-actionButton\" type=\"button\">\n                    <div class=\"IconContainer\">\n                        " + (loading ? "<svg width=\"18px\" height=\"18px\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" preserveAspectRatio=\"xMidYMid\" class=\"lds-rolling\" style=\"background: none;\">\n                            <circle cx=\"50\" cy=\"50\" fill=\"none\" stroke=\"#1da1f2\" stroke-width=\"14\" r=\"40\" stroke-dasharray=\"188.49555921538757 64.83185307179586\" transform=\"rotate(77.5793 50 50)\">\n                                <animateTransform attributeName=\"transform\" type=\"rotate\" calcMode=\"linear\" values=\"0 50 50;360 50 50\" keyTimes=\"0;1\" dur=\"1s\" begin=\"0s\" repeatCount=\"indefinite\"></animateTransform>\n                            </circle>\n                        </svg>" : "<img height=\"18\" src=\"" + img + "\">") + "\n                    </div>\n                    " + (label ? "<span class=\"ProfileTweet-actionCount\">\n                        <span " + (disabled ? 'style="color:#aaa;"' : '') + " class=\"ProfileTweet-actionCountForPresentation\" aria-hidden=\"true\">" + label + "</span>\n                    </span>" : '') + "\n                </button>\n            </div>";
         if (!this.el) {
             var div = document.createElement('div');
             div.innerHTML = htmlString.trim();
@@ -244,49 +220,5 @@ var Button = /** @class */ (function (_super) {
     return Button;
 }(widget_1.Widget));
 exports.Button = Button;
-
-},{"../common/widget":1}],5:[function(require,module,exports){
-"use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var widget_1 = require("../common/widget");
-var OldButton = /** @class */ (function (_super) {
-    __extends(OldButton, _super);
-    function OldButton() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    OldButton.prototype.mount = function () {
-        var _this = this;
-        var _a = this.state, clazz = _a.clazz, img = _a.img, label = _a.label, loading = _a.loading, disabled = _a.disabled;
-        var htmlString = "<div class=\"" + clazz + " ProfileTweet-action\">\n                <button class=\"ProfileTweet-actionButton\" type=\"button\">\n                    <div class=\"IconContainer\">\n                        " + (loading ? "<svg width=\"18px\" height=\"18px\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" preserveAspectRatio=\"xMidYMid\" class=\"lds-rolling\" style=\"background: none;\">\n                            <circle cx=\"50\" cy=\"50\" fill=\"none\" stroke=\"#1da1f2\" stroke-width=\"14\" r=\"40\" stroke-dasharray=\"188.49555921538757 64.83185307179586\" transform=\"rotate(77.5793 50 50)\">\n                                <animateTransform attributeName=\"transform\" type=\"rotate\" calcMode=\"linear\" values=\"0 50 50;360 50 50\" keyTimes=\"0;1\" dur=\"1s\" begin=\"0s\" repeatCount=\"indefinite\"></animateTransform>\n                            </circle>\n                        </svg>" : "<img height=\"18\" src=\"" + img + "\">") + "\n                    </div>\n                    " + (label ? "<span class=\"ProfileTweet-actionCount\">\n                        <span " + (disabled ? 'style="color:#aaa;"' : '') + " class=\"ProfileTweet-actionCountForPresentation\" aria-hidden=\"true\">" + label + "</span>\n                    </span>" : '') + "\n                </button>\n            </div>";
-        if (!this.el) {
-            var div = document.createElement('div');
-            div.innerHTML = htmlString.trim();
-            this.el = div.lastChild;
-            this.el.addEventListener("click", function (e) {
-                if (!_this.state.disabled) {
-                    _this.onExec();
-                }
-            });
-        }
-        else {
-            this.el.innerHTML = htmlString;
-        }
-    };
-    return OldButton;
-}(widget_1.Widget));
-exports.OldButton = OldButton;
 
 },{"../common/widget":1}]},{},[2]);

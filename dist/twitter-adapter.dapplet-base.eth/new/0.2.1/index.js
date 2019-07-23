@@ -43,7 +43,6 @@ var TwitterAdapter = /** @class */ (function () {
         this.observer = null;
         this.features = [];
         this.widgetBuilders = [{
-                isTwitterDesignNew: true,
                 querySelector: "main[role=main]",
                 insPoints: {
                     TWEET_SOUTH: {
@@ -63,46 +62,6 @@ var TwitterAdapter = /** @class */ (function () {
                     authorUsername: tweetNode.querySelector('div.r-1f6r7vd > div > span').innerText,
                     authorImg: tweetNode.querySelector('article div img').getAttribute('src')
                 }); },
-            }, {
-                isTwitterDesignNew: false,
-                querySelector: "#timeline",
-                insPoints: {
-                    TWEET_SOUTH: {
-                        toContext: function (node) { return node.parentNode.parentNode.parentNode.parentNode; },
-                        selector: "#timeline li.stream-item div.js-actions"
-                    },
-                    TWEET_COMBO: {
-                        toContext: function (node) { return node.parentNode.parentNode.parentNode.parentNode; },
-                        selector: "" //ToDo
-                    }
-                },
-                contextBuilder: function (tweetNode) { return ({
-                    id: tweetNode.getAttribute('data-item-id'),
-                    text: tweetNode.querySelector('div.js-tweet-text-container').innerText,
-                    authorFullname: tweetNode.querySelector('strong.fullname').innerText,
-                    authorUsername: tweetNode.querySelector('span.username').innerText,
-                    authorImg: tweetNode.querySelector('img.avatar').getAttribute('src')
-                }); },
-            }, {
-                isTwitterDesignNew: false,
-                querySelector: "#dm_dialog",
-                insPoints: {
-                    DM_SOUTH: {
-                        toContext: function (node) { return node.parentNode.parentNode.parentNode.parentNode; },
-                        selector: "#dm_dialog li.DMInbox-conversationItem div.DMInboxItem"
-                    },
-                    DM_EAST: {
-                        toContext: function (node) { return node.parentNode.parentNode.parentNode.parentNode; },
-                        selector: "" //ToDo
-                    }
-                },
-                contextBuilder: function (tweetNode) { return ({
-                    threadId: tweetNode.getAttribute('data-thread-id'),
-                    lastMessageId: tweetNode.getAttribute('data-last-message-id'),
-                    fullname: tweetNode.querySelector('div.DMInboxItem-title .fullname') && tweetNode.querySelector('div.DMInboxItem-title .fullname').innerText,
-                    username: tweetNode.querySelector('div.DMInboxItem-title .username') && tweetNode.querySelector('div.DMInboxItem-title .username').innerText,
-                    text: tweetNode.querySelector('.DMInboxItem-snippet').innerText
-                }); }
             }].map(function (cfg) { return new widgets_1.WidgetBuilder(cfg); });
         console.log('Adapter New');
         console.log('ContentAdapter  created');
@@ -151,7 +110,6 @@ exports.default = TwitterAdapter;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var button_1 = require("./widgets/button");
-var oldButton_1 = require("./widgets/oldButton");
 exports.widgets = {
     button: function (config) { return (function (builder, insPointName) {
         return createButton(builder, insPointName, config);
@@ -187,7 +145,7 @@ function createButton(builder, insPointName, config) {
     nodes && nodes.forEach(function (node) {
         if (node.getElementsByClassName(config.clazz).length > 0)
             return;
-        var button = builder.isTwitterDesignNew ? new button_1.Button(config) : new oldButton_1.OldButton(config); // ToDo: remove isTwitterDesignNew
+        var button = new button_1.Button(config);
         button.mount();
         node.appendChild(button.el);
         var tweetNode = insPoint.toContext(button.el);
@@ -201,7 +159,7 @@ function createButton(builder, insPointName, config) {
     });
 }
 
-},{"./widgets/button":4,"./widgets/oldButton":5}],4:[function(require,module,exports){
+},{"./widgets/button":4}],4:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -244,49 +202,5 @@ var Button = /** @class */ (function (_super) {
     return Button;
 }(widget_1.Widget));
 exports.Button = Button;
-
-},{"../common/widget":1}],5:[function(require,module,exports){
-"use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var widget_1 = require("../common/widget");
-var OldButton = /** @class */ (function (_super) {
-    __extends(OldButton, _super);
-    function OldButton() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    OldButton.prototype.mount = function () {
-        var _this = this;
-        var _a = this.state, clazz = _a.clazz, img = _a.img, label = _a.label, loading = _a.loading, disabled = _a.disabled;
-        var htmlString = "<div class=\"" + clazz + " ProfileTweet-action\">\n                <button class=\"ProfileTweet-actionButton\" type=\"button\">\n                    <div class=\"IconContainer\">\n                        " + (loading ? "<svg width=\"18px\" height=\"18px\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" preserveAspectRatio=\"xMidYMid\" class=\"lds-rolling\" style=\"background: none;\">\n                            <circle cx=\"50\" cy=\"50\" fill=\"none\" stroke=\"#1da1f2\" stroke-width=\"14\" r=\"40\" stroke-dasharray=\"188.49555921538757 64.83185307179586\" transform=\"rotate(77.5793 50 50)\">\n                                <animateTransform attributeName=\"transform\" type=\"rotate\" calcMode=\"linear\" values=\"0 50 50;360 50 50\" keyTimes=\"0;1\" dur=\"1s\" begin=\"0s\" repeatCount=\"indefinite\"></animateTransform>\n                            </circle>\n                        </svg>" : "<img height=\"18\" src=\"" + img + "\">") + "\n                    </div>\n                    " + (label ? "<span class=\"ProfileTweet-actionCount\">\n                        <span " + (disabled ? 'style="color:#aaa;"' : '') + " class=\"ProfileTweet-actionCountForPresentation\" aria-hidden=\"true\">" + label + "</span>\n                    </span>" : '') + "\n                </button>\n            </div>";
-        if (!this.el) {
-            var div = document.createElement('div');
-            div.innerHTML = htmlString.trim();
-            this.el = div.lastChild;
-            this.el.addEventListener("click", function (e) {
-                if (!_this.state.disabled) {
-                    _this.onExec();
-                }
-            });
-        }
-        else {
-            this.el.innerHTML = htmlString;
-        }
-    };
-    return OldButton;
-}(widget_1.Widget));
-exports.OldButton = OldButton;
 
 },{"../common/widget":1}]},{},[2]);

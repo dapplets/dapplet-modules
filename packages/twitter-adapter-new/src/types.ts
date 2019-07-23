@@ -31,7 +31,6 @@ export interface IButtonConfig {
 
 
 export interface IWidgetBuilder {
-    isTwitterDesignNew: boolean;
     querySelector: string;
     observer?: MutationObserver;
     insPoints: { [key: string]: any };

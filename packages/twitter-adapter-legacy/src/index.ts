@@ -49,28 +49,6 @@ export default class TwitterAdapter implements ITwitterAdapter {
     }
 
     private widgetBuilders = [{
-        isTwitterDesignNew: true,
-        querySelector: "main[role=main]",
-        insPoints: {
-            TWEET_SOUTH: {
-                toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
-                selector: "main[role=main] div[data-testid=primaryColumn] section[role=region] article div[role=group]"
-            },
-            TWEET_COMBO: {
-                toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
-                selector: "" //ToDo
-            }
-        },
-        // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
-        contextBuilder: (tweetNode: any) => ({
-            id: tweetNode.querySelector('article a time').parentNode.href.substr(tweetNode.querySelector('article a time').parentNode.href.lastIndexOf('/') + 1),
-            text: tweetNode.querySelector('div[lang]').innerText,
-            authorFullname: tweetNode.querySelector('article a:nth-child(1) div span span').innerText,
-            authorUsername: tweetNode.querySelector('div.r-1f6r7vd > div > span').innerText,
-            authorImg: tweetNode.querySelector('article div img').getAttribute('src')
-        }),
-    }, {
-        isTwitterDesignNew: false,
         querySelector: "#timeline",
         insPoints: {
             TWEET_SOUTH: {
@@ -90,7 +68,6 @@ export default class TwitterAdapter implements ITwitterAdapter {
             authorImg: tweetNode.querySelector('img.avatar').getAttribute('src')
         }),
     }, {
-        isTwitterDesignNew: false,
         querySelector: "#dm_dialog",
         insPoints: {
             DM_SOUTH: {

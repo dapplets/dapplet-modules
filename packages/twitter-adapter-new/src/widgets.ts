@@ -1,6 +1,5 @@
 import { IButtonConfig, IWidgetBuilder, IWidgetBuilderConfig } from "./types";
 import { Button } from "./widgets/button";
-import { OldButton } from "./widgets/oldButton";
 import { T_TwitterFeatureConfig } from "@dapplets/twitter-adapter/src/types";
 
 export const widgets: { [key: string]: Function } = {
@@ -13,7 +12,6 @@ export const widgets: { [key: string]: Function } = {
 };
 
 export class WidgetBuilder implements IWidgetBuilder {
-    isTwitterDesignNew: boolean;
     querySelector: string;
     insPoints: { [key: string]: any };
     contextBuilder: (tweetNode: any) => any;
@@ -45,7 +43,7 @@ function createButton(builder: IWidgetBuilder, insPointName: string, config: IBu
     nodes && nodes.forEach(node => {
         if (node.getElementsByClassName(config.clazz).length > 0) return;
 
-        const button = builder.isTwitterDesignNew ? new Button(config) : new OldButton(config); // ToDo: remove isTwitterDesignNew
+        const button = new Button(config);
         button.mount();
         node.appendChild(button.el);
 
