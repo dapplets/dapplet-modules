@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "typescript-examples",
+  "name": "dapplet-modules",
   "version": "0.1.0",
   "description": "Examples of modules for Dapplet Extension",
   "author": "Dapplets Team",
