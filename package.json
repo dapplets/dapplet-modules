@@ -15,7 +15,7 @@
   "scripts": {
     "start": "npm-run-all --parallel serve watch",
     "ls": "lerna ls",
-    "bootstrap": "npm install && lerna bootstrap",
+    "postinstall": "lerna bootstrap",
     "build": "lerna run build",
     "watch": "lerna exec --parallel -- npm run watch",
     "serve": "node src/server/index.js",
