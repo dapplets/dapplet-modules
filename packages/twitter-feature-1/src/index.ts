@@ -1,6 +1,6 @@
 import { IAction, IModule, IView, ID, IFeature, ICore, IContentAdapter } from '@dapplets/dapplet-extension-types'
 import { ITwitterAdapter } from '@dapplets/twitter-adapter/src/types'
-import GNOSIS_ICON from './gnosis.png'
+import * as GNOSIS_ICON from './gnosis.png'
 
 @Injectable
 export default class TwitterFeature {

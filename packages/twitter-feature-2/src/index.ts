@@ -1,6 +1,6 @@
 import { IAction, IModule, IView, ID, IFeature, ICore, IContentAdapter } from '@dapplets/dapplet-extension-types'
 import { ITwitterAdapter } from '@dapplets/twitter-adapter/src/types'
-import ETHEREUM_ICON from './ethereum.png'
+import * as ETHEREUM_ICON from './ethereum.png'
 
 @Injectable
 export default class TwitterFeature {
