@@ -2,7 +2,14 @@
   "private": true,
   "name": "typescript-examples",
   "version": "0.1.0",
-  "description": "",
+  "description": "Examples of modules for Dapplet Extension",
+  "author": "Dapplets Team",
+  "license": "MIT",
+  "main": "index.js",
+  "keywords": [
+    "dapplets",
+    "ethereum"
+  ],
   "directories": {
     "doc": "docs"
   },
@@ -20,9 +27,10 @@
     "clean:self:package_lock": "if exist package-lock.json del /f package-lock.json",
     "clean:all": "npm run clean && npm run clean:node_modules && npm run clean:package_lock && npm run clean:self:node_modules && npm run clean:self:package_lock"
   },
-  "repository": "git+https://github.com/dapplets/typescript-examples.git",
-  "author": "Dapplets Team",
-  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dapplets/typescript-examples.git"
+  },
   "bugs": {
     "url": "https://github.com/dapplets/typescript-examples/issues"
   },
