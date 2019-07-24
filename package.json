@@ -5,7 +5,6 @@
   "description": "Examples of modules for Dapplet Extension",
   "author": "Dapplets Team",
   "license": "MIT",
-  "main": "index.js",
   "keywords": [
     "dapplets",
     "ethereum"
