@@ -43,9 +43,8 @@ $/
 ### Building
 
 1.  Clone repo
-2.  `npm run bootstrap` to install all dependencies and symbolic linking of adjacent packages 
-3.  `npm run start` to run the dev task in watch mode
-4.  `npm run build` to build a production version
+2.  `npm install` to install all dependencies and symbolic linking of adjacent packages 
+3.  `npm start` to run the dev task in watch mode or `npm run build` to build a production version
 
 ### Attaching Bundles to Extension
 During `npm run start`, connect to Dev Server via Extension Dev Tab
