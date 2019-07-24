@@ -3,10 +3,10 @@
   "version": "0.2.1",
   "description": "",
   "scripts": {
-    "build": "npm run copymanifest && browserify -e src/index.ts -p tsify -o ../../dist/%npm_package_dapplets_name%/%npm_package_dapplets_branch%/%npm_package_version%/index.js",
-    "watch": "npm run copymanifest && watchify -v -e src/index.ts -p tsify -o ../../dist/%npm_package_dapplets_name%/%npm_package_dapplets_branch%/%npm_package_version%/index.js",
+    "build": "npm run copymanifest && cross-env-shell \"browserify -e src/index.ts -p tsify -o ../../dist/$npm_package_dapplets_name/$npm_package_dapplets_branch/$npm_package_version/index.js\"",
+    "watch": "npm run copymanifest && cross-env-shell \"watchify -v -e src/index.ts -p tsify -o ../../dist/$npm_package_dapplets_name/$npm_package_dapplets_branch/$npm_package_version/index.js\"",
     "clean": "(if exist lib rd /q /s lib) & (if exist dist rd /q /s dist)",
-    "copymanifest": "xcopy \"manifest.json\" \"..\\..\\dist\\%npm_package_dapplets_name%\\%npm_package_dapplets_branch%\\%npm_package_version%\\\" /Y"
+    "copymanifest": "cross-env-shell \"copyfiles manifest.json ../../dist/$npm_package_dapplets_name/$npm_package_dapplets_branch/$npm_package_version\""
   },
   "author": "Dapplets Team",
   "license": "MIT",
@@ -18,7 +18,7 @@
   ],
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
-  "dependencies": {
+  "devDependencies": {
     "@dapplets/dapplet-extension-types": "0.1.0"
   },
   "dapplets": {
