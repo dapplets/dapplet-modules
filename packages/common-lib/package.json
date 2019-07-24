@@ -12,9 +12,5 @@
   "license": "MIT",
   "devDependencies": {
     "@dapplets/dapplet-extension-types": "0.1.0"
-  },
-  "dapplets": {
-    "name": "common-lib.dapplet-base.eth",
-    "branch": "default"
   }
 }
