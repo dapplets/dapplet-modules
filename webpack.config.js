@@ -22,10 +22,21 @@ module.exports = function (dir) {
     },
     module: {
       rules: [{
-        exclude: /node_modules/,
-        test: /\.ts$/,
-        use: "ts-loader"
-      }]
+          exclude: /node_modules/,
+          test: /\.ts$/,
+          use: "ts-loader"
+        },
+        {
+          test: /\.(png|jp(e*)g|svg)$/,
+          use: [{
+            loader: 'url-loader',
+            options: {
+              limit: 8000, // Convert images < 8kb to base64 strings
+              name: 'images/[hash]-[name].[ext]'
+            }
+          }]
+        }
+      ]
     },
     plugins: [
       new CopyWebpackPlugin(["manifest.json"]),

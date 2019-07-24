@@ -19,4 +19,5 @@
   "typings": "lib/index.d.ts",
   "devDependencies": {
     "@dapplets/dapplet-extension-types": "0.1.0"
+  }
 }

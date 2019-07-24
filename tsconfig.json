@@ -12,9 +12,11 @@
         "sourceMap": false,
         "lib": [
             "es2017", "dom"
-        ]
+        ],
+        "types": [ "../../typesPatch" ],
+        "composite": true
     },
-    "include": [],
+    "include": [ ],
     "references": [
         {
             "path": "./packages/common-lib"
