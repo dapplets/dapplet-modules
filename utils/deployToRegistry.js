@@ -11,15 +11,6 @@ const DIST_PATH = path.join(__dirname, "../dist");
 
 if (!REGISTRY_KEY) throw new Error("REGISTRY_KEY is required");
 
-function str2buf(str) {
-    var buf = new ArrayBuffer(str.length);
-    var arr = new Uint8Array(buf);
-    for (var i = 0, strLen = str.length; i < strLen; i++) {
-        arr[i] = str.charCodeAt(i);
-    }
-    return Buffer.from(buf);
-}
-
 async function saveToStorage(stream) {
     var form = new FormData();
     form.append('file', stream);
