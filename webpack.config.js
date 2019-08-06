@@ -14,7 +14,7 @@ module.exports = function (dir) {
   return {
     entry: path.join(dir, "src/index.ts"),
     output: {
-      path: path.join(__dirname, `dist/${name}/${branch}/${version}`),
+      path: path.join(dir, "build"),
       filename: bundleName
     },
     resolve: {
