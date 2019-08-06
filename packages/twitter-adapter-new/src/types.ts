@@ -1,4 +1,4 @@
-import { IView, IFeature, ICore, ID } from "@dapplets/dapplet-extension-types"
+import { IView, IFeature } from "@dapplets/dapplet-extension-types"
 import { ITwitterAdapter, T_TwitterFeatureConfig, T_TwitterActionFactory } from "@dapplets/twitter-adapter/src/types";
 
 export type T_TwitterAdapterConfig = { [key in keyof T_TwitterViewSet]: ({ [key: string]: T_TwitterActionFactory[] }) }
@@ -18,7 +18,6 @@ export type T_InsertConfig = {
 }
 
 export interface ITwitterFeature extends IFeature {
-    //getAugmentationConfig(actionFactories: { [key: string]: Function }, core: ICore): T_TwitterAdapterConfig;
 }
 
 export interface IButtonConfig {

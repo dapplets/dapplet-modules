@@ -1,9 +1,9 @@
-import { IAction, IModule, IView, ID, IFeature, ICore, IContentAdapter } from '@dapplets/dapplet-extension-types'
+import { IFeature } from '@dapplets/dapplet-extension-types'
 import { ITwitterAdapter } from '@dapplets/twitter-adapter/src/types'
 import * as GNOSIS_ICON from './gnosis.png'
 
 @Injectable
-export default class TwitterFeature {
+export default class TwitterFeature implements IFeature {
 
     @Inject("twitter-adapter.dapplet-base.eth")
     public adapter: ITwitterAdapter;

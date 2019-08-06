@@ -1,8 +1,3 @@
-export interface ICore {
-    openOverlay(id: ID, ctx: any): void;
-    sendWalletConnectTx(tx: any): void;
-}
-
 export interface IModule { }
 
 export interface IContentAdapter extends IModule { }
@@ -23,9 +18,7 @@ export interface IView {
     activate(doc: Document): void;
     deactivate(doc: Document): void;
 }
-
 export type ID = string;
-
 
 declare global {
 
@@ -61,9 +54,4 @@ declare global {
     }
 
     export function Injectable(constructor: Function);
-
-    export abstract class AbstractFeature {
-        abstract activate(): void;
-        abstract deactivate(): void;
-    }
 }
