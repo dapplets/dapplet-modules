@@ -82,7 +82,7 @@ app.use(bodyParser.json());
 
 
 //app.use(express.static('src/public', { etag: false }));
-app.use('/dist', express.static('dist', {
+app.use('/packages', express.static('packages', {
     etag: false
 }));
 
@@ -106,7 +106,10 @@ app.ws('/', function (ws, req) {
         ws.send(JSON.stringify(msg));
     });
 
-    var callback = ({ tweet, market }) => {
+    var callback = ({
+        tweet,
+        market
+    }) => {
         if (msg[tweet]) {
             msg[tweet] = {
                 like_num: store.tweets[tweet] ? store.tweets[tweet].length : 0
@@ -125,7 +128,7 @@ app.ws('/', function (ws, req) {
 });
 
 app.get('/index.json', function (req, res) {
-    const distPath = './dist';
+    const packagesPath = './packages';
     const indexPath = './src/server/config.json';
     const scriptsPath = 'modules';
 
@@ -133,17 +136,26 @@ app.get('/index.json', function (req, res) {
         let config = JSON.parse(data);
         config[scriptsPath] = {};
 
-        const names = fs.readdirSync(distPath);
-        for (const name of names) {
-            config[scriptsPath][name] = {};
-            const branches = fs.readdirSync(distPath + '/' + name + '/');
-            for (const branch of branches) {
-                config[scriptsPath][name][branch] = {};
-                const versions = fs.readdirSync(distPath + '/' + name + '/' + branch + '/');
+        const packages = fs.readdirSync(packagesPath);
+        for (const package of packages) {
+            const manifest = fs.readFileSync(packagesPath + '/' + package + '/manifest.json', 'utf8');
+            let {
+                name,
+                branch,
+                version
+            } = JSON.parse(manifest);
+            if (!branch) branch = "default";
+            if (!config[scriptsPath][name]) config[scriptsPath][name] = {};
+            if (!config[scriptsPath][name][branch]) config[scriptsPath][name][branch] = {};
+
+            if (fs.existsSync(packagesPath + '/' + package + '/archive')) {
+                const versions = fs.readdirSync(packagesPath + '/' + package + '/archive');
                 for (const version of versions) {
-                    config[scriptsPath][name][branch][version] = `dist/${name}/${branch}/${version}/manifest.json`;
+                    config[scriptsPath][name][branch][version] = `packages/${package}/archive/${version}/manifest.json`;
                 }
             }
+
+            config[scriptsPath][name][branch][version] = `packages/${package}/build/manifest.json`;
         }
 
         res.setHeader('Content-Type', 'application/json');
@@ -169,7 +181,10 @@ app.post('/api/markets/attach', function (req, res) {
     }
 
     res.status(200).end();
-    emmiter.emit('tweetAttached', { tweet, market });
+    emmiter.emit('tweetAttached', {
+        tweet,
+        market
+    });
 });
 
 server.listen(8080);
