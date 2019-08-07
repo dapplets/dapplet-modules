@@ -37,6 +37,7 @@
   },
   "homepage": "https://github.com/dapplets/typescript-examples#readme",
   "devDependencies": {
+    "before-build-webpack": "^0.2.9",
     "copy-webpack-plugin": "^5.0.3",
     "form-data": "^2.5.0",
     "http-server": "^0.11.1",
