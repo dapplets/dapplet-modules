@@ -6,5 +6,5 @@
     "title": "CommonLib",
     "description": "CommonLib for twitter.com",
     "author": "Dapplets Team",
-    "dist": "build/index.js"
+    "dist": "index.js"
 }
