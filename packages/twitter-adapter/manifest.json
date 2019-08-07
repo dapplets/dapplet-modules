@@ -6,5 +6,5 @@
     "title": "TwitterAdapter",
     "description": "Adapter for twitter.com",
     "author": "Dapplets Team",
-    "dist": "index.js"
+    "dist": "build/index.js"
 }
