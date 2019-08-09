@@ -1,3 +1,8 @@
 runtime: nodejs10
+env: flex
 env_variables:
   HOSTING: "gcloud"
+network:
+  forwarded-ports:
+  - 65080
+  instance_tag: websocket
