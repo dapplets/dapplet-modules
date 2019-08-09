@@ -4,6 +4,8 @@ const fs = require('fs');
 const https = require('https');
 var bodyParser = require('body-parser');
 
+const IS_HTTPS = process.env.HOSTING !== "gcloud";
+
 class Emitter {
     // Add an event listener for given event
     on(event, fn) {
@@ -68,12 +70,18 @@ const store = JSON.parse(fs.readFileSync('src/server/store.json'));
 
 const emmiter = new Emitter();
 
-const server = https.createServer({
-    key: fs.readFileSync('src/server/secret/server.key'),
-    cert: fs.readFileSync('src/server/secret/server.cert')
-}, app);
+var server = null;
 
-var expressWs = require('express-ws')(app, server);
+if (IS_HTTPS) {
+    server = https.createServer({
+        key: fs.readFileSync('src/server/secret/server.key'),
+        cert: fs.readFileSync('src/server/secret/server.cert')
+    }, app);
+
+    var expressWs = require('express-ws')(app, server);
+} else {
+    var expressWs = require('express-ws')(app);
+}
 
 app.use(bodyParser.urlencoded({
     extended: true
@@ -191,4 +199,8 @@ app.post('/api/markets/attach', function (req, res) {
     });
 });
 
-server.listen(8080);
+if (server) {
+    server.listen(8080);
+} else {
+    app.listen(8080);
+}
