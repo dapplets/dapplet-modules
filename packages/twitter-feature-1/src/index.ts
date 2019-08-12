@@ -14,8 +14,8 @@ export default class TwitterFeature implements IFeature {
     }
 
     public init() {
-        const overlay = Core.overlay('https://dapplet-registry.appspot.com', 'Gnosis');
-        const twitterService = Core.connect("wss://dapplet-registry.appspot.com");
+        const overlay = Core.overlay('https://examples.dapplets.org', 'Gnosis');
+        const twitterService = Core.connect("wss://examples.dapplets.org");
 
         const me = this;
         let { button, menuItem } = this.adapter.actionFactories;
