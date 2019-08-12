@@ -2,13 +2,25 @@ import { IButtonConfig, IWidgetBuilder, IWidgetBuilderConfig } from "./types";
 import { Button } from "./widgets/button";
 import { T_TwitterFeatureConfig } from "@dapplets/twitter-adapter/src/types";
 
+function uuidv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
 export const widgets: { [key: string]: Function } = {
-    button: (config: IButtonConfig) => ((builder: IWidgetBuilder, insPointName: string) =>
-        createButton(builder, insPointName, config)
-    ),
-    menuItem: <Function>({ }) => ((builder: IWidgetBuilder, insPointName: string) =>
-        console.error('menuItem is not implemented')
-    ) //ToDo: implement
+    button: (config: IButtonConfig) => {
+        config.clazz = uuidv4();
+        return ((builder: IWidgetBuilder, insPointName: string) =>
+            createButton(builder, insPointName, config)
+        );
+    },
+    menuItem: <Function>({ }) => {
+        return ((builder: IWidgetBuilder, insPointName: string) =>
+            console.error('menuItem is not implemented')
+        );
+    } //ToDo: implement
 };
 
 export class WidgetBuilder implements IWidgetBuilder {

@@ -23,7 +23,6 @@ export default class TwitterFeature implements IFeature {
             TWEET_SOUTH: [
                 // call at view creation time
                 button({
-                    clazz: 'dapplet-tweet-south-metamask',
                     img: GNOSIS_ICON,
                     init: function (ctx) {
                         const state = this.state;
@@ -46,7 +45,6 @@ export default class TwitterFeature implements IFeature {
             ],
             TWEET_COMBO: [
                 // menuItem({
-                //     clazz: '',
                 //     text: "hello one", 
                 //     exec: (ctx:any) => core.sendWalletConnectTx({
                 //         id: ctx.tweetId,
@@ -58,7 +56,6 @@ export default class TwitterFeature implements IFeature {
             ],
             DM_SOUTH: [
                 button({
-                    clazz: 'dapplet-dm-south-metamask',
                     img: GNOSIS_ICON,
                     exec: (ctx: any) => {
                         alert(JSON.stringify(ctx));

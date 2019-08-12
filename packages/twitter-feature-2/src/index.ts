@@ -19,7 +19,6 @@ export default class TwitterFeature implements IFeature {
         this.adapter.addFeature({
             TWEET_SOUTH: [
                 button({
-                    clazz: 'dapplet-tweet-south-ethereum-2',
                     img: ETHEREUM_ICON,
                     init: function(ctx) {
                     },
@@ -40,7 +39,6 @@ export default class TwitterFeature implements IFeature {
             ],
             TWEET_COMBO: [
                 // menuItem({
-                //     clazz: '',
                 //     text: "hello one", 
                 //     exec: (ctx:any) => core.sendWalletConnectTx({
                 //         id: ctx.tweetId,
@@ -52,7 +50,6 @@ export default class TwitterFeature implements IFeature {
             ],
             DM_SOUTH: [
                 button({
-                    clazz: 'dapplet-dm-south-ethereum-2',
                     img: ETHEREUM_ICON,
                     exec: (ctx: any) => {
                         alert(JSON.stringify(ctx));
