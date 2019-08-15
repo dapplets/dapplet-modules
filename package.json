@@ -25,8 +25,8 @@
     "clean:self:node_modules": "if exist node_modules rd /q /s node_modules",
     "clean:self:package_lock": "if exist package-lock.json del /f package-lock.json",
     "clean:all": "npm run clean && npm run clean:node_modules && npm run clean:package_lock && npm run clean:self:node_modules && npm run clean:self:package_lock",
-    "deploy": "lerna exec -- dapplet-cli deploy",
-    "deploy:archive": "lerna exec -- dapplet-cli deploy --archive"
+    "deploy": "lerna exec --concurrency 1 -- dapplet-cli deploy",
+    "deploy:archive": "lerna exec --concurrency 1 -- dapplet-cli deploy --archive"
   },
   "repository": {
     "type": "git",
