@@ -44,10 +44,10 @@ $/
 
 1.  Clone repo
 2.  `npm install` to install all dependencies and symbolic linking of adjacent packages 
-3.  `npm run start:all` to run the dev task in watch mode or `npm run build` to build a production version
+3.  `npm run start` to run the dev task in watch mode or `npm run build` to build a production version
 
 ### Attaching Bundles to Extension
-During `npm run start:all`, connect to Dev Server via Extension Dev Tab
+During `npm run start`, connect to Dev Server via Extension Dev Tab
 
 Dev Config URL: `http://localhost:8080/index.json`
 
