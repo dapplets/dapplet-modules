@@ -1,4 +1,4 @@
-import {  } from '@dapplets/dapplet-extension-types';
+import { } from '@dapplets/dapplet-extension-types';
 import { T_TwitterViewSet, Context, T_InsertConfig, ITwitterFeature, IButtonConfig, IWidgetBuilder, IAdapterFeature, IWidgetBuilderConfig } from './types';
 import { WidgetBuilder, widgets } from './widgets';
 import { ITwitterAdapter, T_TwitterFeatureConfig, T_TwitterActionFactory } from "@dapplets/twitter-adapter/src/types";
@@ -18,6 +18,7 @@ export default class TwitterAdapter implements ITwitterAdapter {
 
     addFeature(feature: T_TwitterFeatureConfig): void { //ToDo: automate two-way dependency handling(?)
         this.features.push(feature);
+        this.updateObservers();
     }
 
     constructor() {
@@ -31,20 +32,27 @@ export default class TwitterAdapter implements ITwitterAdapter {
             childList: true,
             subtree: true
         }
-        this.observer = new MutationObserver((mutations) => {
-            this.widgetBuilders.forEach(widgetBuilder => {
-                let e = doc.querySelector(widgetBuilder.querySelector);
-                if (e && !widgetBuilder.observer) {
-                    (widgetBuilder.observer = new MutationObserver((mutations) => widgetBuilder.updateWidgets(this.features, mutations)))
-                        .observe(e, OBSERVER_CONFIG);
-                    widgetBuilder.updateWidgets(this.features);
-                } else if (!e && widgetBuilder.observer) {
-                    widgetBuilder.observer.disconnect();
-                    widgetBuilder.observer = null;
-                }
-            })
-        });
+
+        this.observer = new MutationObserver((mutations) => this.updateObservers());
+
         this.observer.observe(doc.body, OBSERVER_CONFIG);
+    }
+
+    private updateObservers() {
+        this.widgetBuilders.forEach(widgetBuilder => {
+            let e = doc.querySelector(widgetBuilder.querySelector);
+            if (e && !widgetBuilder.observer) {
+                widgetBuilder.observer = new MutationObserver((mutations) => widgetBuilder.updateWidgets(this.features, mutations));
+                widgetBuilder.observer.observe(e, {
+                    childList: true,
+                    subtree: true
+                });
+                widgetBuilder.updateWidgets(this.features);
+            } else if (!e && widgetBuilder.observer) {
+                widgetBuilder.observer.disconnect();
+                widgetBuilder.observer = null;
+            }
+        });
     }
 
     private widgetBuilders = [{
