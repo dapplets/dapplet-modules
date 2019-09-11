@@ -1,7 +1,7 @@
 {
     "name": "twitter-adapter.dapplet-base.eth",
     "branch": "new",
-    "version": "0.2.5",
+    "version": "0.2.4",
     "type": "ADAPTER",
     "title": "TwitterAdapter",
     "description": "Adapter for twitter.com",

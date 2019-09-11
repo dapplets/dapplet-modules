@@ -61,12 +61,12 @@ function createButton(builder: IWidgetBuilder, insPointName: string, config: IBu
 
         const tweetNode = insPoint.toContext(button.el);
         const context = builder.contextBuilder(tweetNode);
-        config.init.call(button, context); // ToDo: fix it
+        config.init && config.init.call(button, context); // ToDo: fix it
 
         button.onExec = function () {
             const tweetNode = insPoint.toContext(this.el);
             const context = builder.contextBuilder(tweetNode);
-            config.exec.call(button, context);
+            config.exec && config.exec.call(button, context);
         };
     });
 }
