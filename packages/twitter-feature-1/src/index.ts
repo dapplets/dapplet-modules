@@ -12,8 +12,7 @@ export default class TwitterFeature implements IFeature {
         const overlay = Core.overlay('https://examples.dapplets.org', 'Gnosis');
         const twitterService = Core.connect("wss://examples.dapplets.org");
 
-        const me = this;
-        let { button, menuItem } = this.adapter.actionFactories;
+        let { button } = this.adapter.actionFactories;
         this.adapter.addFeature({
             TWEET_SOUTH: [
                 button({
@@ -29,12 +28,12 @@ export default class TwitterFeature implements IFeature {
                     exec: function (ctx) {
                         overlay.open(() => overlay.publish('tweet_select', ctx));
                         overlay.unsubscribe('pm_attach');
-                        overlay.subscribe('pm_attach', 
+                        overlay.subscribe('pm_attach',
                             async ({ market, tweet }) => {
                                 console.log('data from overlay recieved', { market, tweet });
                                 const result = await Core.sendWalletConnectTx('1', ctx);
                                 overlay.publish('tx_created');
-                            }, 
+                            },
                             SubscribeOptions.SINGLE_THREAD
                         );
                     }

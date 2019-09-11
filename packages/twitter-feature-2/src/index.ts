@@ -9,13 +9,7 @@ export default class TwitterFeature implements IFeature {
     public adapter: ITwitterAdapter;
 
     constructor() {
-        console.log('Feature2: created');
-        this.init();
-    }
-
-    public init() {
-        console.log("feature-2: this.adapter.actionFactories>", this.adapter.actionFactories);
-        let { button, menuItem } = this.adapter.actionFactories;
+        let { button } = this.adapter.actionFactories;
         this.adapter.addFeature({
             TWEET_SOUTH: [
                 button({
@@ -25,20 +19,22 @@ export default class TwitterFeature implements IFeature {
                         this.state.disabled = true;
                         this.state.loading = true;
 
-                        await Core.sendWalletConnectTx('1', ctx);
-                        this.state.label = "NEW";
-                        this.state.disabled = false;
-                        this.state.loading = false;
-                    }, 
-                    //ToDo: what about global parameters?
-                    //ToDo: return state object useful bound to button state?
-                    label: "NEW" //ToDo: implement binding and reload
+                        try {
+                            await Core.sendWalletConnectTx('1', ctx);
+                        } catch (err) {
+                            console.error(err);
+                            this.state.label = "ERR";
+                        } finally {
+                            this.state.label = "NEW";
+                            this.state.disabled = false;
+                            this.state.loading = false;
+                        }
+                    },
+                    label: "NEW"
                 })
             ],
-            TWEET_COMBO: [         
-            ],
-            DM_SOUTH: [
-            ],
+            TWEET_COMBO: [],
+            DM_SOUTH: []
         });
-    }//init()
+    }
 }
