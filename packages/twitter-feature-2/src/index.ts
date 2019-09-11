@@ -20,8 +20,6 @@ export default class TwitterFeature implements IFeature {
             TWEET_SOUTH: [
                 button({
                     img: ETHEREUM_ICON,
-                    init: function(ctx) {
-                    },
                     exec: async function (ctx) {
                         this.state.label = 'TX';
                         this.state.disabled = true;
@@ -37,31 +35,9 @@ export default class TwitterFeature implements IFeature {
                     label: "NEW" //ToDo: implement binding and reload
                 })
             ],
-            TWEET_COMBO: [
-                // menuItem({
-                //     text: "hello one", 
-                //     exec: (ctx:any) => core.sendWalletConnectTx({
-                //         id: ctx.tweetId,
-                //         author: ctx.authorId
-                //     }), 
-                //     //ToDo: what about global parameters?
-                //     //ToDo: return state object useful bound to button state?
-                // })           
+            TWEET_COMBO: [         
             ],
             DM_SOUTH: [
-                button({
-                    img: ETHEREUM_ICON,
-                    exec: (ctx: any) => {
-                        alert(JSON.stringify(ctx));
-                        // core.sendWalletConnectTx({
-                        //     id: ctx.tweetId,
-                        //     author: ctx.authorId
-                        // })
-                    }
-                    //ToDo: what about global parameters?
-                    //ToDo: return state object useful bound to button state?
-                    //label: (ctx:any) => ctx.text //ToDo: implement binding and reload
-                })
             ],
         });
     }//init()

@@ -69,7 +69,7 @@ export default class TwitterAdapter implements ITwitterAdapter {
         },
         // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
         contextBuilder: (tweetNode: any) => ({
-            id: tweetNode.querySelector('article a time').parentNode.href.substr(tweetNode.querySelector('article a time').parentNode.href.lastIndexOf('/') + 1),
+            id: parseInt(tweetNode.querySelector('article a time').parentNode.href.substr(tweetNode.querySelector('article a time').parentNode.href.lastIndexOf('/') + 1)),
             text: tweetNode.querySelector('div[lang]').innerText,
             authorFullname: tweetNode.querySelector('article a:nth-child(1) div span span').innerText,
             authorUsername: tweetNode.querySelector('div.r-1f6r7vd > div > span').innerText,

@@ -71,7 +71,7 @@ export default class TwitterAdapter implements ITwitterAdapter {
             }
         },
         contextBuilder: (tweetNode: any) => ({
-            id: tweetNode.getAttribute('data-item-id'),
+            id: parseInt(tweetNode.getAttribute('data-item-id')),
             text: tweetNode.querySelector('div.js-tweet-text-container').innerText,
             authorFullname: tweetNode.querySelector('strong.fullname').innerText,
             authorUsername: tweetNode.querySelector('span.username').innerText,
