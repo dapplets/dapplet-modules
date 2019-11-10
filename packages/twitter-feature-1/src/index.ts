@@ -8,9 +8,11 @@ import * as GNOSIS_ICON from './gnosis.png'
 // 3) re-use the same controller for user switch on/off
 
 //  ===> ToDo: 
-// 1) ToDo: implement BulkController
-// 2) authomatic unsubscribe on context destroyed handled by Core.
-// 3) ToDo in code below
+// 1) implement a `function subscribe(contexts:string[]):string[]` 
+//    which creates subscriptions for some subset of given IDs and returns the subset.
+// 2) implement 'remove()' method initiated by init().
+// 3) authomatic 'remove()' and `unsubscribe()` when context gets destroyed.
+// 4) ToDo in code below
 
 //  ===> Use Cases
 // 1) An annotation mark (gif or meme) on the side/up/down of the tweet made by one of User's trusted persons. No note - no augmentation at all.
@@ -27,7 +29,6 @@ export default class TwitterFeature implements IFeature {
     public adapter: ITwitterAdapter;
 
     public config: ITwitterFeatureConfig;
-    public control: IFeatureControl;
 
     constructor() {
         const overlay = Core.overlay('https://examples.dapplets.org', 'Gnosis');
@@ -35,17 +36,14 @@ export default class TwitterFeature implements IFeature {
 
         let { button } = this.adapter.actionFactories;
 
-        //ToDo: implement BulkController (which of contexts has the feature)
-        //ToDo: re-think control
-        let subscriptionId:number;
-        this.control = (control, ctxs:any[]) => {
-            //only widgets from server are shown
-            subscriptionId = twitterService.subscribeBulk(ctxs.map(c=>c.id), (msg)=>control.on(msg.ids), subscriptionId);
-            //only widgets with TRUMP inside are shown
-            ctxs.filter(c=>c.tweetText.contains("TRUMP")).forEach(c=>control.on(c.id));
-        }
-
         this.config = {
+            // context lifecycle configuration with ContextName as a key.
+            CONTEXT_TWEET : async function (newContexts:any[]) : Promise<string[]> {
+                // here: server reports ids which will have a feature installed.
+                return await twitterService.subscribe(newContexts.map(c=>c.id)); 
+            },
+
+            // insertion point configuration
             TWEET_SOUTH: [
                 button({
                     img: GNOSIS_ICON,
