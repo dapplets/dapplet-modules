@@ -1,7 +1,7 @@
-import { } from '@dapplets/dapplet-extension-types';
-import { T_TwitterViewSet, Context, T_InsertConfig, ITwitterFeature, IButtonConfig, IWidgetBuilder, IAdapterFeature, IWidgetBuilderConfig } from './types';
+import { IFeature } from '@dapplets/dapplet-extension-types';
+import { T_TwitterViewSet, Context, T_InsertConfig, IButtonConfig, IWidgetBuilder, IAdapterFeature, IWidgetBuilderConfig } from './types';
 import { WidgetBuilder, widgets } from './widgets';
-import { ITwitterAdapter, T_TwitterFeatureConfig, T_TwitterActionFactory } from "@dapplets/twitter-adapter/src/types";
+import { ITwitterAdapter, T_TwitterFeatureConfig, T_TwitterActionFactory, ITwitterFeature } from "@dapplets/twitter-adapter/src/types";
 
 let doc: Document = document; //host document we are working on (inpage.js)
 
@@ -11,14 +11,24 @@ export default class TwitterAdapter implements ITwitterAdapter {
     public actionFactories = widgets;
 
     private observer: MutationObserver = null;
-    private features: T_TwitterFeatureConfig[] = [];
+    private features: ITwitterFeature[] = [];
 
     @Inject("common-lib.dapplet-base.eth")
     public library: any;
 
-    addFeature(feature: T_TwitterFeatureConfig): void { //ToDo: automate two-way dependency handling(?)
+    public attachFeature(feature: IFeature): void { // ToDo: automate two-way dependency handling(?)
+        if (this.features.find(f => f === feature)) return;
         this.features.push(feature);
         this.updateObservers();
+    }
+
+    public detachFeature(feature: IFeature): void {
+        this.features = this.features.filter(f => f !== feature);
+        this.widgetBuilders.forEach(wb => {
+            const widgets = wb.widgets.get(feature);
+            if (!widgets) return;
+            widgets.forEach(w => w.unmount());
+        });
     }
 
     constructor() {
@@ -32,7 +42,6 @@ export default class TwitterAdapter implements ITwitterAdapter {
         this.observer = new MutationObserver((mutations) => this.updateObservers());
 
         this.observer.observe(doc.body, OBSERVER_CONFIG);
-
     }
 
     private updateObservers() {
@@ -44,14 +53,13 @@ export default class TwitterAdapter implements ITwitterAdapter {
                     childList: true,
                     subtree: true
                 });
-                widgetBuilder.updateWidgets(this.features);
             } else if (!e && widgetBuilder.observer) {
                 widgetBuilder.observer.disconnect();
                 widgetBuilder.observer = null;
             }
+            widgetBuilder.updateWidgets(this.features);
         });
     }
-
 
     private widgetBuilders = [{
         querySelector: "#timeline",

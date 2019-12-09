@@ -1,5 +1,5 @@
 import { IFeature } from '@dapplets/dapplet-extension-types'
-import { ITwitterAdapter } from '@dapplets/twitter-adapter/src/types'
+import { ITwitterAdapter, T_TwitterFeatureConfig } from '@dapplets/twitter-adapter/src/types'
 import * as GNOSIS_ICON from './gnosis.png'
 
 @Injectable
@@ -7,13 +7,14 @@ export default class TwitterFeature implements IFeature {
 
     @Inject("twitter-adapter.dapplet-base.eth")
     public adapter: ITwitterAdapter;
+    public config: T_TwitterFeatureConfig;
 
     constructor() {
         const overlay = Core.overlay('https://examples.dapplets.org', 'Gnosis');
         const twitterService = Core.connect("wss://examples.dapplets.org");
 
         let { button } = this.adapter.actionFactories;
-        this.adapter.addFeature({
+        this.config = {
             TWEET_SOUTH: [
                 button({
                     img: GNOSIS_ICON,
@@ -40,6 +41,14 @@ export default class TwitterFeature implements IFeature {
             ],
             TWEET_COMBO: [],
             DM_SOUTH: []
-        });
+        }
+    }
+
+    public activate() {
+        this.adapter.attachFeature(this);
+    }
+
+    public deactivate() {
+        this.adapter.detachFeature(this);
     }
 }
