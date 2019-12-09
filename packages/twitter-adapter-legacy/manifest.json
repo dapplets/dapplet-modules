@@ -8,6 +8,6 @@
     "author": "Dapplets Team",
     "dist": "index.js",
     "dependencies": {
-        "common-lib.dapplet-base.eth": "0.1.0"
+        "common-lib.dapplet-base.eth": "0.3.1"
     }
 }
