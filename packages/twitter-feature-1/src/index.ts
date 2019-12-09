@@ -30,7 +30,6 @@ export default class TwitterFeature implements IFeature {
                         overlay.unsubscribe('pm_attach');
                         overlay.subscribe('pm_attach',
                             async ({ market, tweet }) => {
-                                console.log('data from overlay recieved', { market, tweet });
                                 const result = await Core.sendWalletConnectTx('1', ctx);
                                 overlay.publish('tx_created');
                             },

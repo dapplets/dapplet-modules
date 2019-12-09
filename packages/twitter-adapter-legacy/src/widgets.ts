@@ -32,13 +32,11 @@ export class WidgetBuilder implements IWidgetBuilder {
     //ToDo: widgets
 
     constructor(widgetBuilderConfig: IWidgetBuilderConfig) {
-        console.log('WidgetBuilder constructor');
         return Object.assign(this, widgetBuilderConfig);
     }
 
     updateWidgets(features: T_TwitterFeatureConfig[], mutations?: any) {
         Object.keys(this.insPoints).forEach(insPointName => {
-            //console.log("updateWidgets.insPointName>", insPointName)
             features.forEach(featureConfig => {
                 (featureConfig[insPointName] || [])
                     .forEach(widgetConstructor => widgetConstructor(this, insPointName))

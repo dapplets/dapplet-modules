@@ -22,10 +22,6 @@ export default class TwitterAdapter implements ITwitterAdapter {
     }
 
     constructor() {
-        console.log('Adapter New');
-        console.log('ContentAdapter  created');
-        console.log('library from ContentAdapter', this.library); console.log("init adapter>")
-
         if (this.observer) return;
         if (!document || !window || !MutationObserver) throw Error('Document or MutationObserver is not available.');
         const OBSERVER_CONFIG = {
