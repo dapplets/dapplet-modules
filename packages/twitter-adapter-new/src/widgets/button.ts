@@ -9,12 +9,21 @@ interface IButtonState {
 }
 
 export class Button extends Widget<IButtonState> {
+    constructor(config: any) {
+        super(config);
+        this.el = document.createElement('div');
+        this.el.classList.add(this.state.clazz, 'css-1dbjc4n', 'r-1iusvr4', 'r-18u37iz', 'r-16y2uox', 'r-1h0z5md');
+        this.el.addEventListener("click", e => {
+            if (!this.state.disabled) {
+                this.onExec();
+            }
+        });
+    }
 
     public mount() {
-        const { clazz, img, label, loading, disabled } = this.state;
+        const { img, label, loading, disabled } = this.state;
 
-        const htmlString = `<div class="${clazz} css-1dbjc4n r-1iusvr4 r-18u37iz r-16y2uox r-1h0z5md">
-            <div role="button" data-focusable="true" tabindex="0" class="css-18t94o4 css-1dbjc4n r-1777fci r-11cpok1 r-bztko3 r-lrvibr">
+        const htmlString = `<div role="button" data-focusable="true" tabindex="0" class="css-18t94o4 css-1dbjc4n r-1777fci r-11cpok1 r-bztko3 r-lrvibr">
                 <div dir="ltr" class="css-901oao r-1awozwy r-1re7ezh r-6koalj r-1qd0xha r-a023e6 r-16dba41 r-1h0z5md r-ad9z0x r-bcqeeo r-o7ynqc r-clp7b1 r-3s2u2q r-qvutc0">
                     <div class="css-1dbjc4n r-xoduu5">
                         ${loading ? `<svg width="18px" height="18px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="lds-rolling" style="background: none;">
@@ -30,21 +39,8 @@ export class Button extends Widget<IButtonState> {
                         </span>
                     </div>` : ''}
                 </div>
-            </div>
-        </div>`
+            </div>`
 
-        if (!this.el) {
-            const div = document.createElement('div');
-            div.innerHTML = htmlString.trim();
-            this.el = <Element>div.lastChild;
-
-            this.el.addEventListener("click", e => {
-                if (!this.state.disabled) {
-                    this.onExec();
-                }
-            });
-        } else {
-            this.el.innerHTML = htmlString;
-        }
+        this.el.innerHTML = htmlString;
     }
 }

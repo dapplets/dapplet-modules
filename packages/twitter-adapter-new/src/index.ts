@@ -16,10 +16,11 @@ export default class TwitterAdapter implements ITwitterAdapter {
     @Inject("common-lib.dapplet-base.eth")
     public library: any;
 
-    public attachFeature(feature: IFeature): void { // ToDo: automate two-way dependency handling(?)
+    public attachFeature(feature: IFeature, order: number): void { // ToDo: automate two-way dependency handling(?)
         if (this.features.find(f => f === feature)) return;
-        this.features.push(feature);
+        this.features.splice(order, 0, feature);
         this.updateObservers();
+        console.log('this.features', this.features);
     }
 
     public detachFeature(feature: IFeature): void {

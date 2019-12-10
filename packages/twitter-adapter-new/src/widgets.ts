@@ -1,7 +1,8 @@
 import { IButtonConfig, IWidgetBuilder, IWidgetBuilderConfig } from "./types";
-import { Button } from "./widgets/button";
 import { T_TwitterFeatureConfig } from "@dapplets/twitter-adapter/src/types";
+import { Button } from "./widgets/button";
 import { IFeature } from "@dapplets/dapplet-extension-types";
+import { Widget } from "./common/widget";
 
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -13,12 +14,12 @@ function uuidv4() {
 export const widgets: { [key: string]: Function } = {
     button: (config: IButtonConfig) => {
         config.clazz = uuidv4();
-        return ((builder: IWidgetBuilder, insPointName: string) =>
-            createButton(builder, insPointName, config)
+        return ((builder: IWidgetBuilder, insPointName: string, order: number) =>
+            createButton(builder, insPointName, config, order)
         );
     },
     menuItem: <Function>({ }) => {
-        return ((builder: IWidgetBuilder, insPointName: string) =>
+        return ((builder: IWidgetBuilder, insPointName: string, order: number) =>
             console.error('menuItem is not implemented')
         );
     } //ToDo: implement
@@ -39,11 +40,11 @@ export class WidgetBuilder implements IWidgetBuilder {
 
     updateWidgets(features: IFeature[], mutations?: any) {
         Object.keys(this.insPoints).forEach(insPointName => {
-            features.forEach(feature => {
+            features.forEach((feature, order) => {
                 const featureConfig = feature.config;
                 (featureConfig[insPointName] || [])
                     .forEach(widgetConstructor => {
-                        const insertedWidgets = widgetConstructor(this, insPointName);
+                        const insertedWidgets = widgetConstructor(this, insPointName, order);
                         const registeredWidgets = this.widgets.get(feature) || [];
                         registeredWidgets.push(...insertedWidgets);
                         this.widgets.set(feature, registeredWidgets);
@@ -53,7 +54,7 @@ export class WidgetBuilder implements IWidgetBuilder {
     }
 }
 
-function createButton(builder: IWidgetBuilder, insPointName: string, config: IButtonConfig): any[] {
+function createButton(builder: IWidgetBuilder, insPointName: string, config: IButtonConfig, order: number): any[] {
     const insertedWidgets = [];
 
     // ToDo: calculate node from insPoint & view
@@ -65,7 +66,14 @@ function createButton(builder: IWidgetBuilder, insPointName: string, config: IBu
 
         const button = new Button(config);
         button.mount();
-        node.appendChild(button.el);
+        button.el.classList.add('dapplet-widget');
+
+        const insertedElements = node.getElementsByClassName('dapplet-widget');
+        if (insertedElements.length >= order) {
+            node.insertBefore(button.el, insertedElements[order]);
+        } else {
+            node.appendChild(button.el);
+        }
 
         const tweetNode = insPoint.toContext(button.el);
         const context = builder.contextBuilder(tweetNode);

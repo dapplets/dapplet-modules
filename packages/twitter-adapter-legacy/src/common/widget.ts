@@ -7,7 +7,7 @@ export abstract class Widget<T> {
     abstract mount(): void;
     
     public unmount(): void {
-        this.el.remove();
+        this.el && this.el.remove();
     }
 
     public el: Element;
