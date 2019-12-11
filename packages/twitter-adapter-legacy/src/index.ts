@@ -39,14 +39,28 @@ export default class TwitterAdapter implements ITwitterAdapter {
             subtree: true
         }
 
-        this.observer = new MutationObserver((mutations) => this.updateObservers());
+        this.observer = new MutationObserver((mutations) => this.updateObservers(mutations));
 
         this.observer.observe(doc.body, OBSERVER_CONFIG);
     }
 
-    private updateObservers() {
+    private updateObservers(mutations?) {
         this.contextBuilders.forEach(contextBuilder => {
             const container = doc.querySelector(contextBuilder.containerSelector);
+            if (container) {
+                let removedContexts = []
+                mutations?.forEach(m => Array.from(m.removedNodes)
+                    .filter((n: Element) => n.nodeType == Node.ELEMENT_NODE)
+                    .forEach((n:Element) => {
+                        const contextNodes = Array.from(n?.querySelectorAll(contextBuilder.contextSelector) || []); 
+                        const contexts = contextNodes.map((n:Element)=> contextBuilder.contexts.get(n)).filter(e=>e)
+                        removedContexts.push(...contexts)
+                    }))
+                if (removedContexts && removedContexts.length > 0) {
+                    console.log('removedContexts>', removedContexts)
+                    Core.contextsFinished(removedContexts, "twitter.com");
+                }    
+            }
             if (container && !contextBuilder.observer) {
                 contextBuilder.observer = new MutationObserver((mutations) => {
                     contextBuilder.updateContexts(this.features, container, mutations);
@@ -65,7 +79,7 @@ export default class TwitterAdapter implements ITwitterAdapter {
 
     private contextBuilders = [{
         containerSelector: "#timeline",
-        contextSelector: "li.stream-item", 
+        contextSelector: "[id^=stream-item-tweet-]",
         insPoints: {
             TWEET_SOUTH: {
                 selector: "div.js-actions"

@@ -32,6 +32,7 @@ export class WidgetBuilder implements IWidgetBuilder {
     contextBuilder: (tweetNode: any) => any;
     observer: MutationObserver = null;
     widgets = new Map<IFeature, any[]>();
+    contexts = new WeakMap<Node,any>()
 
     //ToDo: widgets
 
@@ -45,22 +46,16 @@ export class WidgetBuilder implements IWidgetBuilder {
 
         if (contextNodes.length === 0) return;
 
-        const newContexts = contextNodes.filter(n => !n['dapplet-context'])
-            .map(n => this.contextBuilder(n));
+        const newContexts = contextNodes.filter(n=>!this.contexts.has(n))
+            .map(n => {
+                let context = this.contextBuilder(n)
+                this.contexts.set(n,context)
+                this.updateWidgets(features, n);
+                return context
+            });
 
-        if (newContexts.length > 0) Core.contextsStarted(newContexts, "twitter.com") // ToDo: replace Core dependency
-
-        contextNodes.forEach((node: Element) => {
-            node['dapplet-context'] = this.contextBuilder(node); // ToDo: attach parsed data to attribute
-            this.updateWidgets(features, node);
-        });
-
-        const removedContexts = mutations?.map(m => Array.from(m.removedNodes).filter((n: Element) => n.matches && n.matches(this.contextSelector)))
-            .reduce((p, c) => p.concat(c))
-            .map((n: Element) => n['dapplet-context']);
-
-        if (removedContexts && removedContexts.length > 0) {
-            Core.contextsFinished(removedContexts, "twitter.com");
+        if (newContexts.length > 0) {
+            Core.contextsStarted(newContexts, "twitter.com") // ToDo: replace Core dependency
         }
     }
 
