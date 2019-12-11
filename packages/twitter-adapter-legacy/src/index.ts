@@ -20,12 +20,11 @@ export default class TwitterAdapter implements ITwitterAdapter {
         if (this.features.find(f => f === feature)) return;
         this.features.splice(order, 0, feature);
         this.updateObservers();
-        console.log('this.features', this.features);
     }
 
     public detachFeature(feature: IFeature): void {
         this.features = this.features.filter(f => f !== feature);
-        this.widgetBuilders.forEach(wb => {
+        this.contextBuilders.forEach(wb => {
             const widgets = wb.widgets.get(feature);
             if (!widgets) return;
             widgets.forEach(w => w.unmount());
@@ -46,31 +45,32 @@ export default class TwitterAdapter implements ITwitterAdapter {
     }
 
     private updateObservers() {
-        this.widgetBuilders.forEach(widgetBuilder => {
-            let e = doc.querySelector(widgetBuilder.querySelector);
-            if (e && !widgetBuilder.observer) {
-                widgetBuilder.observer = new MutationObserver((mutations) => widgetBuilder.updateWidgets(this.features, mutations));
-                widgetBuilder.observer.observe(e, {
+        this.contextBuilders.forEach(contextBuilder => {
+            const container = doc.querySelector(contextBuilder.containerSelector);
+            if (container && !contextBuilder.observer) {
+                contextBuilder.observer = new MutationObserver((mutations) => {
+                    contextBuilder.updateContexts(this.features, container, mutations);
+                });
+                contextBuilder.observer.observe(container, {
                     childList: true,
                     subtree: true
                 });
-            } else if (!e && widgetBuilder.observer) {
-                widgetBuilder.observer.disconnect();
-                widgetBuilder.observer = null;
+            } else if (!container && contextBuilder.observer) {
+                contextBuilder.observer.disconnect();
+                contextBuilder.observer = null;
             }
-            widgetBuilder.updateWidgets(this.features);
+            contextBuilder.updateContexts(this.features, container); // ToDo: think about it
         });
     }
 
-    private widgetBuilders = [{
-        querySelector: "#timeline",
+    private contextBuilders = [{
+        containerSelector: "#timeline",
+        contextSelector: "li.stream-item", 
         insPoints: {
             TWEET_SOUTH: {
-                toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
-                selector: "#timeline li.stream-item div.js-actions"
+                selector: "div.js-actions"
             },
             TWEET_COMBO: {
-                toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
                 selector: "" //ToDo
             }
         },
@@ -82,14 +82,13 @@ export default class TwitterAdapter implements ITwitterAdapter {
             authorImg: tweetNode.querySelector('img.avatar').getAttribute('src')
         }),
     }, {
-        querySelector: "#dm_dialog",
+        containerSelector: "#dm_dialog",
+        contextSelector: "li.DMInbox-conversationItem",
         insPoints: {
             DM_SOUTH: {
-                toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
-                selector: "#dm_dialog li.DMInbox-conversationItem div.DMInboxItem"
+                selector: "div.DMInboxItem"
             },
             DM_EAST: {
-                toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode, //ToDo: Adjust it!
                 selector: "" //ToDo
             }
         },
