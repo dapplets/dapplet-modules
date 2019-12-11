@@ -10,7 +10,7 @@ export default class TwitterFeature implements IFeature {
     public config: T_TwitterFeatureConfig;
 
     constructor() {
-        let { button } = this.adapter.actionFactories;
+        let { button } = this.adapter.actionFactories();
         this.config = {
             TWEET_SOUTH: [
                 button({

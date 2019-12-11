@@ -11,19 +11,22 @@ function uuidv4() {
     });
 }
 
-export const widgets: { [key: string]: Function } = {
+export const widgets: (conn:Connection) => { [key: string]: Function } = (conn: Connection) => ({
     button: (config: IButtonConfig) => {
-        config.clazz = uuidv4();
-        return ((builder: IWidgetBuilder, insPointName: string, order: number, contextNode: Element) =>
-            createButton(builder, insPointName, config, order, contextNode)
-        );
+        let uuid = uuidv4();
+        //ToDo: This is just a brain draft for subscription binding. Check it!
+        config.clazz = uuid
+        return ((builder: IWidgetBuilder, insPointName: string, order: number, contextNode: Element) => {
+            let button = createButton(builder, insPointName, config, order, contextNode)
+            conn.subscribe(uuid, msg=>Object.assign(button.state, msg))
+        });
     },
     menuItem: <Function>({ }) => {
         return ((builder: IWidgetBuilder, insPointName: string, order: number, contextNode: Element) =>
             console.error('menuItem is not implemented')
         );
     } //ToDo: implement
-};
+})
 
 export class WidgetBuilder implements IWidgetBuilder {
     containerSelector: string;
@@ -75,7 +78,7 @@ export class WidgetBuilder implements IWidgetBuilder {
     }
 }
 
-function createButton(builder: IWidgetBuilder, insPointName: string, config: IButtonConfig, order: number, contextNode: Element): any {
+function createButton(builder: IWidgetBuilder, insPointName: string, config: IButtonConfig, order: number, contextNode: Element): Button {
     // ToDo: calculate node from insPoint & view
     const insPoint = builder.insPoints[insPointName];
     const node = contextNode.querySelector(insPoint.selector);
