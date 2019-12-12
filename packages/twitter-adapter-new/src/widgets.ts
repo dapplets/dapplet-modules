@@ -55,7 +55,7 @@ export class WidgetBuilder implements IWidgetBuilder {
             });
 
         if (newContexts.length > 0) {
-            Core.contextsStarted(newContexts, "twitter.com") // ToDo: replace Core dependency
+            Core.contextsStarted(newContexts)
         }
     }
 
