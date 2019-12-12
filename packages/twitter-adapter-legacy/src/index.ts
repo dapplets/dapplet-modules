@@ -57,7 +57,7 @@ export default class TwitterAdapter implements ITwitterAdapter {
                         removedContexts.push(...contexts)
                     }))
                 if (removedContexts && removedContexts.length > 0) {
-                    Core.contextsFinished(removedContexts);
+                    Core.contextFinished(removedContexts);
                 }    
             }
             if (container && !contextBuilder.observer) {
