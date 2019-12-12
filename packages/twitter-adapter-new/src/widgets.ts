@@ -14,23 +14,25 @@ function uuidv4() {
 export const widgets: { [key: string]: Function } = {
     button: (config: IButtonConfig) => {
         config.clazz = uuidv4();
-        return ((builder: IWidgetBuilder, insPointName: string, order: number) =>
-            createButton(builder, insPointName, config, order)
+        return ((builder: IWidgetBuilder, insPointName: string, order: number, contextNode: Element) =>
+            createButton(builder, insPointName, config, order, contextNode)
         );
     },
     menuItem: <Function>({ }) => {
-        return ((builder: IWidgetBuilder, insPointName: string, order: number) =>
+        return ((builder: IWidgetBuilder, insPointName: string, order: number, contextNode: Element) =>
             console.error('menuItem is not implemented')
         );
     } //ToDo: implement
 };
 
 export class WidgetBuilder implements IWidgetBuilder {
-    querySelector: string;
+    containerSelector: string;
+    contextSelector: string;
     insPoints: { [key: string]: any };
     contextBuilder: (tweetNode: any) => any;
     observer: MutationObserver = null;
     widgets = new Map<IFeature, any[]>();
+    contexts = new WeakMap<Node,any>()
 
     //ToDo: widgets
 
@@ -38,15 +40,34 @@ export class WidgetBuilder implements IWidgetBuilder {
         return Object.assign(this, widgetBuilderConfig);
     }
 
-    updateWidgets(features: IFeature[], mutations?: any) {
+    // `updateContexts()` is called when new context is found.
+    public updateContexts(features: IFeature[], container: Element, mutations?: MutationRecord[]) {
+        const contextNodes = Array.from(container?.querySelectorAll(this.contextSelector) || []);
+
+        if (contextNodes.length === 0) return;
+
+        const newContexts = contextNodes.filter(n=>!this.contexts.has(n))
+            .map(n => {
+                let context = this.contextBuilder(n)
+                this.contexts.set(n,context)
+                this.updateWidgets(features, n);
+                return context
+            });
+
+        if (newContexts.length > 0) {
+            Core.contextsStarted(newContexts, "twitter.com") // ToDo: replace Core dependency
+        }
+    }
+
+    updateWidgets(features: IFeature[], contextNode: Element) {
         Object.keys(this.insPoints).forEach(insPointName => {
             features.forEach((feature, order) => {
-                const featureConfig = feature.config;
-                (featureConfig[insPointName] || [])
+                (feature.config[insPointName] || [])
                     .forEach(widgetConstructor => {
-                        const insertedWidgets = widgetConstructor(this, insPointName, order);
+                        const insertedWidget = widgetConstructor(this, insPointName, order, contextNode);
+                        if (!insertedWidget) return;
                         const registeredWidgets = this.widgets.get(feature) || [];
-                        registeredWidgets.push(...insertedWidgets);
+                        registeredWidgets.push(insertedWidget);
                         this.widgets.set(feature, registeredWidgets);
                     })
             })
@@ -54,39 +75,31 @@ export class WidgetBuilder implements IWidgetBuilder {
     }
 }
 
-function createButton(builder: IWidgetBuilder, insPointName: string, config: IButtonConfig, order: number): any[] {
-    const insertedWidgets = [];
-
+function createButton(builder: IWidgetBuilder, insPointName: string, config: IButtonConfig, order: number, contextNode: Element): any {
     // ToDo: calculate node from insPoint & view
-    let insPoint = builder.insPoints[insPointName];
-    let nodes: NodeListOf<Element> = document.querySelectorAll(insPoint.selector);
+    const insPoint = builder.insPoints[insPointName];
+    const node = contextNode.querySelector(insPoint.selector);
 
-    nodes && nodes.forEach(node => {
-        if (node.getElementsByClassName(config.clazz).length > 0) return;
+    if (node.getElementsByClassName(config.clazz).length > 0) return;
 
-        const button = new Button(config);
-        button.mount();
-        button.el.classList.add('dapplet-widget');
+    const button = new Button(config);
+    button.mount();
+    button.el.classList.add('dapplet-widget');
 
-        const insertedElements = node.getElementsByClassName('dapplet-widget');
-        if (insertedElements.length >= order) {
-            node.insertBefore(button.el, insertedElements[order]);
-        } else {
-            node.appendChild(button.el);
-        }
+    const insertedElements = node.getElementsByClassName('dapplet-widget');
+    if (insertedElements.length >= order) {
+        node.insertBefore(button.el, insertedElements[order]);
+    } else {
+        node.appendChild(button.el);
+    }
 
-        const tweetNode = insPoint.toContext(button.el);
-        const context = builder.contextBuilder(tweetNode);
-        config.init && config.init.call(button, context); // ToDo: fix it
+    const context = builder.contextBuilder(contextNode);
+    config.init && config.init.call(button, context); // ToDo: fix it
 
-        button.onExec = function () {
-            const tweetNode = insPoint.toContext(this.el);
-            const context = builder.contextBuilder(tweetNode);
-            config.exec && config.exec.call(button, context);
-        };
+    button.onExec = function () {
+        const context = builder.contextBuilder(contextNode);
+        config.exec && config.exec.call(button, context);
+    };
 
-        insertedWidgets.push(button);
-    });
-
-    return insertedWidgets;
+    return button;
 }

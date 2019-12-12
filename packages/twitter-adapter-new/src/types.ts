@@ -18,6 +18,7 @@ export type T_InsertConfig = {
 }
 
 export interface ITwitterFeature extends IFeature {
+    //getAugmentationConfig(actionFactories: { [key: string]: Function }, core: ICore): T_TwitterAdapterConfig;
 }
 
 export interface IButtonConfig {
@@ -30,7 +31,8 @@ export interface IButtonConfig {
 
 
 export interface IWidgetBuilder {
-    querySelector: string;
+    containerSelector: string;
+    contextSelector: string;
     observer?: MutationObserver;
     insPoints: { [key: string]: any };
     contextBuilder: (tweetNode: any) => any;
@@ -42,7 +44,8 @@ export interface IAdapterFeature extends IFeature {
 }
 
 export interface IWidgetBuilderConfig {
-    querySelector: string,
+    containerSelector: string,
+    contextSelector: string,
     insPoints: { [key: string]: any },
     contextBuilder: (tweetNode: any) => any
 }

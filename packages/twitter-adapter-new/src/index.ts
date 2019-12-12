@@ -1,7 +1,7 @@
 import { IFeature } from '@dapplets/dapplet-extension-types';
-import { T_TwitterViewSet, Context, T_InsertConfig, ITwitterFeature, IButtonConfig, IWidgetBuilder, IAdapterFeature, IWidgetBuilderConfig } from './types';
+import { T_TwitterViewSet, Context, T_InsertConfig, IButtonConfig, IWidgetBuilder, IAdapterFeature, IWidgetBuilderConfig } from './types';
 import { WidgetBuilder, widgets } from './widgets';
-import { ITwitterAdapter, T_TwitterFeatureConfig, T_TwitterActionFactory } from "@dapplets/twitter-adapter/src/types";
+import { ITwitterAdapter, T_TwitterFeatureConfig, T_TwitterActionFactory, ITwitterFeature } from "@dapplets/twitter-adapter/src/types";
 
 let doc: Document = document; //host document we are working on (inpage.js)
 
@@ -11,7 +11,7 @@ export default class TwitterAdapter implements ITwitterAdapter {
     public actionFactories = widgets;
 
     private observer: MutationObserver = null;
-    private features: IFeature[] = [];
+    private features: ITwitterFeature[] = [];
 
     @Inject("common-lib.dapplet-base.eth")
     public library: any;
@@ -20,12 +20,11 @@ export default class TwitterAdapter implements ITwitterAdapter {
         if (this.features.find(f => f === feature)) return;
         this.features.splice(order, 0, feature);
         this.updateObservers();
-        console.log('this.features', this.features);
     }
 
     public detachFeature(feature: IFeature): void {
         this.features = this.features.filter(f => f !== feature);
-        this.widgetBuilders.forEach(wb => {
+        this.contextBuilders.forEach(wb => {
             const widgets = wb.widgets.get(feature);
             if (!widgets) return;
             widgets.forEach(w => w.unmount());
@@ -40,47 +39,61 @@ export default class TwitterAdapter implements ITwitterAdapter {
             subtree: true
         }
 
-        this.observer = new MutationObserver((mutations) => this.updateObservers());
+        this.observer = new MutationObserver((mutations) => this.updateObservers(mutations));
 
         this.observer.observe(doc.body, OBSERVER_CONFIG);
     }
 
-    private updateObservers() {
-        this.widgetBuilders.forEach(widgetBuilder => {
-            let e = doc.querySelector(widgetBuilder.querySelector);
-            if (e && !widgetBuilder.observer) {
-                widgetBuilder.observer = new MutationObserver((mutations) => widgetBuilder.updateWidgets(this.features, mutations));
-                widgetBuilder.observer.observe(e, {
+    private updateObservers(mutations?: MutationRecord[]) {
+        this.contextBuilders.forEach(contextBuilder => {
+            const container = doc.querySelector(contextBuilder.containerSelector);
+            if (container) {
+                let removedContexts = []
+                mutations?.forEach(m => Array.from(m.removedNodes)
+                    .filter((n: Element) => n.nodeType == Node.ELEMENT_NODE)
+                    .forEach((n:Element) => {
+                        const contextNodes = Array.from(n?.querySelectorAll(contextBuilder.contextSelector) || []); 
+                        const contexts = contextNodes.map((n:Element)=> contextBuilder.contexts.get(n)).filter(e=>e)
+                        removedContexts.push(...contexts)
+                    }))
+                if (removedContexts && removedContexts.length > 0) {
+                    Core.contextsFinished(removedContexts, "twitter.com");
+                }    
+            }
+            if (container && !contextBuilder.observer) {
+                contextBuilder.observer = new MutationObserver((mutations) => {
+                    contextBuilder.updateContexts(this.features, container, mutations);
+                });
+                contextBuilder.observer.observe(container, {
                     childList: true,
                     subtree: true
                 });
-            } else if (!e && widgetBuilder.observer) {
-                widgetBuilder.observer.disconnect();
-                widgetBuilder.observer = null;
+            } else if (!container && contextBuilder.observer) {
+                contextBuilder.observer.disconnect();
+                contextBuilder.observer = null;
             }
-            widgetBuilder.updateWidgets(this.features);
+            contextBuilder.updateContexts(this.features, container); // ToDo: think about it
         });
     }
 
-    private widgetBuilders = [{
-        querySelector: "main[role=main]",
+    private contextBuilders = [{
+        containerSelector: "main[role=main]",
+        contextSelector: "article",
         insPoints: {
             TWEET_SOUTH: {
-                toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
-                selector: "main[role=main] div[data-testid=primaryColumn] section[role=region] article div[role=group]"
+                selector: "div[role=group]"
             },
             TWEET_COMBO: {
-                toContext: (node: any) => node.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode, //ToDo: remove it later
                 selector: "" //ToDo
             }
         },
         // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
         contextBuilder: (tweetNode: any) => ({
-            id: parseInt(tweetNode.querySelector('article a time').parentNode.href.substr(tweetNode.querySelector('article a time').parentNode.href.lastIndexOf('/') + 1)),
-            text: tweetNode.querySelector('div[lang]').innerText,
-            authorFullname: tweetNode.querySelector('article a:nth-child(1) div span span').innerText,
-            authorUsername: tweetNode.querySelector('div.r-1f6r7vd > div > span').innerText,
-            authorImg: tweetNode.querySelector('article div img').getAttribute('src')
+            id: parseInt(tweetNode.querySelector('a time').parentNode.href.split('/').pop()),
+            text: tweetNode.querySelector('div[lang]')?.innerText,
+            authorFullname: tweetNode.querySelector('a:nth-child(1) div span span')?.innerText,
+            authorUsername: tweetNode.querySelector('div.r-1f6r7vd > div > span')?.innerText,
+            authorImg: tweetNode.querySelector('img.css-9pa8cd')?.getAttribute('src')
         }),
     }].map((cfg: IWidgetBuilderConfig) => new WidgetBuilder(cfg));
 }
