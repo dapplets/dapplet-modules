@@ -11,7 +11,7 @@
   "author": "Dapplets Team",
   "license": "MIT",
   "devDependencies": {
-    "@dapplets/dapplet-extension-types": "^0.3.4",
+    "@dapplets/dapplet-extension-types": "^0.3.5",
     "@dapplets/twitter-adapter": "^0.3.1"
   }
 }
