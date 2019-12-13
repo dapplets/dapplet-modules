@@ -35,6 +35,9 @@
         },
         {
             "path": "./packages/twitter-feature-2"
+        },
+        {
+            "path": "./packages/twitter-feature-3"
         }
     ]
 }

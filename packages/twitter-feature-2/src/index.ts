@@ -1,6 +1,6 @@
 import { IFeature } from '@dapplets/dapplet-extension-types'
 import { ITwitterAdapter, T_TwitterFeatureConfig } from '@dapplets/twitter-adapter/src/types'
-import * as ETHEREUM_ICON from './ethereum.png'
+import ETHEREUM_ICON from './ethereum.png'
 
 @Injectable
 export default class TwitterFeature implements IFeature {

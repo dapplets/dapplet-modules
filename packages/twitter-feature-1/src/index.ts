@@ -1,6 +1,6 @@
 import { IFeature } from '@dapplets/dapplet-extension-types'
 import { ITwitterAdapter, T_TwitterFeatureConfig } from '@dapplets/twitter-adapter/src/types'
-import * as GNOSIS_ICON from './gnosis.png'
+import GNOSIS_ICON from './gnosis.png'
 
 @Injectable
 export default class TwitterFeature implements IFeature {

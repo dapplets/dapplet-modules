@@ -29,6 +29,13 @@ export interface IButtonConfig {
     init(): void;
 }
 
+export interface IPictureConfig {
+    clazz: string;
+    label: string;
+    img: string;
+    exec(context: any): void;
+    init(): void;
+}
 
 export interface IWidgetBuilder {
     containerSelector: string;

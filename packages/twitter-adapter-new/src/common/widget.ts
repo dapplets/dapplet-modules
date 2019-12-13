@@ -10,7 +10,7 @@ export abstract class Widget<T> {
         this.el && this.el.remove();
     }
 
-    public el: Element;
+    public el: HTMLElement;
 
     public createState(state) {
         const me = this;

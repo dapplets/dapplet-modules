@@ -85,6 +85,9 @@ export default class TwitterAdapter implements ITwitterAdapter {
             },
             TWEET_COMBO: {
                 selector: "" //ToDo
+            },
+            PICTURE: {
+                selector: "div[lang]"
             }
         },
         // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.

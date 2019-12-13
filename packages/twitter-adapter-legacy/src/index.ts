@@ -85,6 +85,9 @@ export default class TwitterAdapter implements ITwitterAdapter {
             },
             TWEET_COMBO: {
                 selector: "" //ToDo
+            },
+            PICTURE: {
+                selector: "div.js-tweet-text-container"
             }
         },
         contextBuilder: (tweetNode: any) => ({
