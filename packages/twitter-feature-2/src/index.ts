@@ -9,6 +9,9 @@ export default class TwitterFeature implements IFeature {
     public adapter: ITwitterAdapter;
     public config: T_TwitterFeatureConfig;
 
+    public contextIds: [];
+    public orderIndex: null;
+
     constructor() {
         let { button } = this.adapter.actionFactories;
         this.config = {
@@ -39,8 +42,8 @@ export default class TwitterFeature implements IFeature {
         };
     }
 
-    public activate(order: number) {
-        this.adapter.attachFeature(this, order);
+    public activate() {
+        this.adapter.attachFeature(this);
     }
 
     public deactivate() {

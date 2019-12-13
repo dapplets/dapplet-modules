@@ -32,7 +32,7 @@ export class WidgetBuilder implements IWidgetBuilder {
     contextBuilder: (tweetNode: any) => any;
     observer: MutationObserver = null;
     widgets = new Map<IFeature, any[]>();
-    contexts = new WeakMap<Node,any>()
+    contexts = new WeakMap<Node, any>()
 
     //ToDo: widgets
 
@@ -46,29 +46,36 @@ export class WidgetBuilder implements IWidgetBuilder {
 
         if (contextNodes.length === 0) return;
 
-        const newContexts = contextNodes.filter(n=>!this.contexts.has(n))
+        const newContexts = contextNodes.filter(n => !this.contexts.has(n))
             .map(n => {
-                let context = this.contextBuilder(n)
-                this.contexts.set(n,context)
-                this.updateWidgets(features, n);
+                const context = this.contextBuilder(n)
+                this.contexts.set(n, context)
                 return context
             });
 
         if (newContexts.length > 0) {
             Core.contextStarted(newContexts)
         }
+
+        contextNodes.forEach(n => this.updateWidgets(features, n));
     }
 
     updateWidgets(features: IFeature[], contextNode: Element) {
+        const { id } = this.contexts.get(contextNode);
+
         Object.keys(this.insPoints).forEach(insPointName => {
             features.forEach((feature, order) => {
                 (feature.config[insPointName] || [])
                     .forEach(widgetConstructor => {
-                        const insertedWidget = widgetConstructor(this, insPointName, order, contextNode);
-                        if (!insertedWidget) return;
-                        const registeredWidgets = this.widgets.get(feature) || [];
-                        registeredWidgets.push(insertedWidget);
-                        this.widgets.set(feature, registeredWidgets);
+                        const contextIds = feature.contextIds || [];
+
+                        if (contextIds.length === 0 || contextIds.indexOf(id) !== -1) {
+                            const insertedWidget = widgetConstructor(this, insPointName, order, contextNode);
+                            if (!insertedWidget) return;
+                            const registeredWidgets = this.widgets.get(feature) || [];
+                            registeredWidgets.push(insertedWidget);
+                            this.widgets.set(feature, registeredWidgets);
+                        }
                     })
             })
         })

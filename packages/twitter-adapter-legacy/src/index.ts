@@ -16,9 +16,9 @@ export default class TwitterAdapter implements ITwitterAdapter {
     @Inject("common-lib.dapplet-base.eth")
     public library: any;
 
-    public attachFeature(feature: IFeature, order: number): void { // ToDo: automate two-way dependency handling(?)
+    public attachFeature(feature: IFeature): void { // ToDo: automate two-way dependency handling(?)
         if (this.features.find(f => f === feature)) return;
-        this.features.splice(order, 0, feature);
+        this.features.splice(feature.orderIndex, 0, feature);
         this.updateObservers();
     }
 
@@ -51,14 +51,15 @@ export default class TwitterAdapter implements ITwitterAdapter {
                 let removedContexts = []
                 mutations?.forEach(m => Array.from(m.removedNodes)
                     .filter((n: Element) => n.nodeType == Node.ELEMENT_NODE)
-                    .forEach((n:Element) => {
-                        const contextNodes = Array.from(n?.querySelectorAll(contextBuilder.contextSelector) || []); 
-                        const contexts = contextNodes.map((n:Element)=> contextBuilder.contexts.get(n)).filter(e=>e)
+                    .forEach((n: Element) => {
+                        const contextNodes = Array.from(n?.querySelectorAll(contextBuilder.contextSelector) || []);
+                        const contexts = contextNodes.map((n: Element) => contextBuilder.contexts.get(n)).filter(e => e)
                         removedContexts.push(...contexts)
                     }))
                 if (removedContexts && removedContexts.length > 0) {
                     Core.contextFinished(removedContexts);
-                }    
+                }
+                contextBuilder.updateContexts(this.features, container); // ToDo: think about it
             }
             if (container && !contextBuilder.observer) {
                 contextBuilder.observer = new MutationObserver((mutations) => {
@@ -72,7 +73,6 @@ export default class TwitterAdapter implements ITwitterAdapter {
                 contextBuilder.observer.disconnect();
                 contextBuilder.observer = null;
             }
-            contextBuilder.updateContexts(this.features, container); // ToDo: think about it
         });
     }
 

@@ -44,8 +44,8 @@ export default class TwitterFeature implements IFeature {
         }
     }
 
-    public activate(order: number) {
-        this.adapter.attachFeature(this, order);
+    public activate() {
+        this.adapter.attachFeature(this);
     }
 
     public deactivate() {
