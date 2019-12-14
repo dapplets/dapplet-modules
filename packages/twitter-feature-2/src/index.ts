@@ -48,6 +48,7 @@ export default class TwitterFeature implements IFeature {
             TWEET_SOUTH: [
                 button({
                     [STATE]: BTN.READY,
+                    //ToDo: use state streams for labels
                     [BTN.READY]      : { label:'new',   img: ETHEREUM_ICON,    disabled: false,  exec: sendTx       }, 
                     [BTN.TX_RUNNING] : { label:'tx' ,   img: ICON_WAITING,     disabled: true ,  exec: undefined    }, 
                     [BTN.ERR]        : { label:'err',   img: ICON_ERR,         disabled: false,  exec: openOverlay  },
