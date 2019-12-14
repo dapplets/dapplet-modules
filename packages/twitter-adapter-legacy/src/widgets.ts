@@ -17,7 +17,7 @@ export const widgets: (conn:Connection) => { [key: string]: Function } = (conn: 
         //ToDo: This is just a brain draft for subscription binding. Check it!
         config.clazz = uuid
         return ((builder: IWidgetBuilder, insPointName: string, order: number, contextNode: Element) => {
-            let button = createButton(builder, insPointName, config, order, contextNode)
+            let button = createButton(builder, insPointName, config, order, contextNode, conn)
             conn.subscribe(uuid, msg=>Object.assign(button.state, msg))
         });
     },
@@ -58,7 +58,7 @@ export class WidgetBuilder implements IWidgetBuilder {
             });
 
         if (newContexts.length > 0) {
-            Core.contextsStarted(newContexts, "twitter.com") // ToDo: replace Core dependency
+            Core.contextStarted(newContexts, "twitter.com") // ToDo: replace Core dependency
         }
     }
 
@@ -78,7 +78,7 @@ export class WidgetBuilder implements IWidgetBuilder {
     }
 }
 
-function createButton(builder: IWidgetBuilder, insPointName: string, config: IButtonConfig, order: number, contextNode: Element): Button {
+function createButton(builder: IWidgetBuilder, insPointName: string, config: IButtonConfig, order: number, contextNode: Element, conn:Connection): Button {
     // ToDo: calculate node from insPoint & view
     const insPoint = builder.insPoints[insPointName];
     const node = contextNode.querySelector(insPoint.selector);
