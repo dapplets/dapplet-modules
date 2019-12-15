@@ -1,5 +1,4 @@
 export abstract class Widget<T> {
-
     constructor(config: any) {
         this.state = this.createState(config);
     }
@@ -12,7 +11,9 @@ export abstract class Widget<T> {
 
     public el: Element;
 
-    public createState(state) {
+    public createState(config) {
+        let stateId = config['state']
+        let state = config[stateId]
         const me = this;
         return new Proxy(state, {
             set(target, property, value) {

@@ -39,7 +39,7 @@ export default class TwitterFeature implements IFeature {
 
     constructor() {
         //ToDo: use Generics for state conversions
-        let sendTx = (state, ctx) => Core.sendWalletConnectTx('1', ctx).map(EthTxStatus)
+        let sendTx = (state, ctx) => Core.sendWalletConnectTx2('1', ctx).map(EthTxStatus)
         let openOverlay = (state, ctx) => Core.overlay('1', ctx).map(OverlayStatus) 
 
         let { button } = this.adapter.actionFactories();
@@ -47,7 +47,7 @@ export default class TwitterFeature implements IFeature {
         this.config = {
             TWEET_SOUTH: [
                 button({
-                    [STATE]: BTN.READY,
+                    [button.STATE]: BTN.READY,
                     //ToDo: use state streams for labels
                     [BTN.READY]      : { label:'new',   img: ETHEREUM_ICON,    disabled: false,  exec: sendTx       }, 
                     [BTN.TX_RUNNING] : { label:'tx' ,   img: ICON_WAITING,     disabled: true ,  exec: undefined    }, 
