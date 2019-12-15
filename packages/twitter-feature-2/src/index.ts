@@ -13,7 +13,7 @@ export default class TwitterFeature implements IFeature {
     public orderIndex: null;
 
     constructor() {
-        let { button } = this.adapter.actionFactories;
+        let { button } = this.adapter.actionFactories();
         this.config = {
             TWEET_SOUTH: [
                 button({

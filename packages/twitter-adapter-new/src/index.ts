@@ -8,7 +8,7 @@ let doc: Document = document; //host document we are working on (inpage.js)
 @Injectable
 export default class TwitterAdapter implements ITwitterAdapter {
 
-    public actionFactories = widgets;
+    public actionFactories = (conn:Connection) => widgets(conn);
 
     private observer: MutationObserver = null;
     private features: ITwitterFeature[] = [];

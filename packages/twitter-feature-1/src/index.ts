@@ -13,7 +13,7 @@ export default class TwitterFeature implements IFeature {
         const overlay = Core.overlay('https://examples.dapplets.org', 'Gnosis');
         const twitterService = Core.connect("wss://examples.dapplets.org");
 
-        let { button } = this.adapter.actionFactories;
+        let { button } = this.adapter.actionFactories();
         this.config = {
             TWEET_SOUTH: [
                 button({

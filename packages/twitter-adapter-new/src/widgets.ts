@@ -12,7 +12,7 @@ function uuidv4() {
     });
 }
 
-export const widgets: { [key: string]: Function } = {
+export const widgets: (conn:Connection) => { [key: string]: Function } = (conn:Connection) => ({
     button: (config: IButtonConfig) => {
         config.clazz = uuidv4();
         return ((builder: IWidgetBuilder, insPointName: string, order: number, contextNode: Element) =>
@@ -30,7 +30,7 @@ export const widgets: { [key: string]: Function } = {
             createPicture(builder, insPointName, config, order, contextNode)
         );
     }
-};
+});
 
 export class WidgetBuilder implements IWidgetBuilder {
     containerSelector: string;
