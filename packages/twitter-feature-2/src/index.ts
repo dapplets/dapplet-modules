@@ -10,34 +10,18 @@ export default class TwitterFeature implements IFeature {
     public config: T_TwitterFeatureConfig;
 
     constructor() {
-        const overlay = Core.overlay('https://examples.dapplets.org', 'Gnosis');
-        const twitterService = Core.connect("wss://examples.dapplets.org");
-
-        let { button } = this.adapter.actionFactories();
+        let { button_2 } = this.adapter.actionFactories();
         this.config = {
+            connections: {
+                likes: Core.connect("wss://examples.dapplets.org")
+            },
             TWEET_SOUTH: [
-                button({
-                    img: GNOSIS_ICON,
-                    init: function (ctx) {
-                        const state = this.state;
-                        twitterService.subscribe(ctx.id.toString(), (msg) => {
-                            if (msg && msg.like_num != undefined) {
-                                state.label = msg.like_num.toString();
-                            }
-                        });
-                    },
-                    exec: function (ctx) {
-                        overlay.open(() => overlay.publish('tweet_select', ctx));
-                        overlay.unsubscribe('pm_attach');
-                        overlay.subscribe('pm_attach',
-                            async ({ market, tweet }) => {
-                                const result = await Core.sendWalletConnectTx('1', ctx);
-                                overlay.publish('tx_created');
-                            },
-                            SubscribeOptions.SINGLE_THREAD
-                        );
-                    }
-                })
+                button_2((ctx, state, sub) => ({
+                    state: "READY",
+                    "READY": { label: sub.likes.like_num, img: GNOSIS_ICON, disabled: false, exec: () => console.log('ready clicked') },
+                    "TX_RUNNING": { label: 'tx', img: GNOSIS_ICON, disabled: true, exec: () => console.log('txrunning clicked') },
+                    "ERR": { label: 'err', img: GNOSIS_ICON, disabled: false, exec: () => console.log('err clicked') }
+                }))
             ],
             TWEET_COMBO: [],
             DM_SOUTH: []
