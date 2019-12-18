@@ -1,5 +1,5 @@
 import { IFeature } from '@dapplets/dapplet-extension-types'
-import { ITwitterAdapter, T_TwitterFeatureConfig } from '@dapplets/twitter-adapter/src/types'
+import { T_TwitterFeatureConfig, ITwitterAdapter } from '@dapplets/twitter-adapter'
 import FAKESTAMP_PIC from './fakeStamp.png'
 
 @Injectable
