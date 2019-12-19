@@ -24,6 +24,11 @@ export abstract class Widget<T> {
                 }
             },
             set(target, property, value, receiver) {
+                if (property=='state') {
+                    Object.entries(value).forEach((key,value)=> {
+                        _set(target,key,value)
+                    })
+                }
                 const success = Reflect.set(target, property, value, receiver);
                 if (success) me.mount();
                 return success;

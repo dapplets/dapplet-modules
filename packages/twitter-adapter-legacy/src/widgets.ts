@@ -141,6 +141,34 @@ function createButton(builder: WidgetBuilder, insPointName: string, configCallba
     const config = stateConfig[stateConfig.state];
     config.clazz = clazz;
 
+
+    class DataSource {
+        setSetter(setter){...}
+        sub
+    }
+
+    for(const sub in context.subscriptions){
+        for (const key in config) {
+            const value = config[key]; // iteratin over current state only
+            if (value instanceof DataSource) {
+                value.connectionName
+                sub.handler.attachDatasource(value)
+            }
+        }
+    }
+
+    Connection.subscribe("topic", (msg)=>{
+
+    })
+
+    class Handler implements IHandler {
+        datasources : Map<key,Datasource>()
+        onMessage: (msg)=>{...}
+        add
+    }
+
+    Connection.subscribe("topic", new Handler())
+
     const button = new Button(config);
     button.mount();
     button.el.classList.add('dapplet-widget');
