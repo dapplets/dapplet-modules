@@ -5,7 +5,7 @@ export abstract class Widget<T> {
     }
 
     abstract mount(): void;
-    
+
     public unmount(): void {
         this.el && this.el.remove();
     }
@@ -14,16 +14,35 @@ export abstract class Widget<T> {
 
     public createState(state) {
         const me = this;
-        return new Proxy(state, {
-            set(target, property, value) {
-                target[property] = value;
-                me.mount();
-                return true;
+
+        const proxy = new Proxy(state, {
+            get(target, property, receiver) {
+                if (typeof target[property] === 'object' && target[property].datasource) {
+                    return undefined;
+                } else {
+                    return Reflect.get(target, property, receiver);
+                }
+            },
+            set(target, property, value, receiver) {
+                const success = Reflect.set(target, property, value, receiver);
+                if (success) me.mount();
+                return success;
             }
         });
+
+        for (const key in state) {
+            const obj = state[key];
+            if (typeof obj === 'object' && obj.datasource) {
+                obj.datasource((value: any) => {
+                    proxy[key] = value.toString();
+                });
+            }
+        }
+
+        return proxy;
     }
 
     public state: T;
 
-    public onExec() {};
+    public onExec() { };
 }

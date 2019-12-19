@@ -8,7 +8,7 @@ let doc: Document = document; //host document we are working on (inpage.js)
 @Injectable
 export default class TwitterAdapter implements ITwitterAdapter {
 
-    public actionFactories = (conn:Connection) => widgets(conn);
+    public actionFactories = widgets;
 
     private observer: MutationObserver = null;
     private features: ITwitterFeature[] = [];
@@ -57,6 +57,7 @@ export default class TwitterAdapter implements ITwitterAdapter {
                         removedContexts.push(...contexts)
                     }))
                 if (removedContexts && removedContexts.length > 0) {
+                    removedContexts.forEach(ctx => ctx.subscriptions && ctx.subscriptions.forEach(sub => sub.close()));
                     Core.contextFinished(removedContexts);
                 }
                 contextBuilder.updateContexts(this.features, container); // ToDo: think about it
