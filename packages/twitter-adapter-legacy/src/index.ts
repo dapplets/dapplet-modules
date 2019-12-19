@@ -1,7 +1,7 @@
 import { IFeature } from '@dapplets/dapplet-extension-types';
 import { T_TwitterViewSet, Context, T_InsertConfig, IButtonConfig, IWidgetBuilder, IAdapterFeature, IWidgetBuilderConfig } from './types';
 import { WidgetBuilder, widgets } from './widgets';
-import { ITwitterAdapter, T_TwitterFeatureConfig, T_TwitterActionFactory, ITwitterFeature } from "@dapplets/twitter-adapter/src/types";
+import { ITwitterAdapter, T_TwitterFeatureConfig, T_TwitterActionFactory, ITwitterFeature } from "@dapplets/twitter-adapter";
 
 let doc: Document = document; //host document we are working on (inpage.js)
 

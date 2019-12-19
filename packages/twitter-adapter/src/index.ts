@@ -1,5 +1,5 @@
 import { IResolver } from '@dapplets/dapplet-extension-types';
-import { T_TwitterFeatureConfig, ITwitterAdapter } from './types';
+import { T_TwitterFeatureConfig, ITwitterAdapter, T_TwitterActionFactory, ITwitterFeature } from './types';
 
 @Injectable
 export default class implements IResolver {
@@ -8,7 +8,9 @@ export default class implements IResolver {
     }
 }
 
-export { 
+export {
     T_TwitterFeatureConfig,
-    ITwitterAdapter
+    ITwitterAdapter,
+    T_TwitterActionFactory,
+    ITwitterFeature
 }
