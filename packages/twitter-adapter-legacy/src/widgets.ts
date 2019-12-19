@@ -67,60 +67,58 @@ export class WidgetBuilder implements IWidgetBuilder {
             // ToDo: refactor isNew checking
             if (isNew) newContexts.push(context);
 
-            context.subscriptions = [];
+            if (!context.subscriptions) {
+                context.subscriptions = [];
+                context.proxiedSubs = {};
 
-            for (let i = 0; i < features.length; i++) {
-                const feature = features[i];
-                const proxiedSubs = {};
-                const { connections } = feature.config;
-                for (const connectionName in connections) {
-                    const settersByNames = {}; // ToDo: memory leaks?
-                    proxiedSubs[connectionName] = new Proxy({}, {
-                        get(target, name, receiver) {
-                            return ({
-                                datasource: (setter) => {
-                                    if (!settersByNames[name]) settersByNames[name] = [];
-                                    settersByNames[name].push(setter);
-                                }
-                            });
-                        },
-                        set(target, name, value, receiver) {
-                            if (!Reflect.has(target, name)) {
-                                console.log(`Setting non-existent property '${name.toString()}', initial value: ${value}`);
-                            }
-                            return Reflect.set(target, name, value, receiver);
-                        }
-                    });
-                    const connection: Connection = connections[connectionName];
-                    const subscription = connection.subscribe(context.id, (data: any) => {
-                        Object.entries(data).forEach(([key, value]) => {
-                            //proxiedSubs[connectionName][key] = value;
-                            for (const key in settersByNames) {
-                                const setters = settersByNames[key] || [];
-                                setters.forEach(set => set(value));
+                for (let i = 0; i < features.length; i++) {
+                    const feature = features[i];
+
+                    const { connections } = feature.config;
+
+                    for (const connectionName in connections) {
+                        const settersByNames = {}; // ToDo: memory leaks?
+                        context.proxiedSubs[connectionName] = new Proxy({}, {
+                            get(target, name, receiver) {
+                                return ({
+                                    datasource: (setter) => {
+                                        if (!settersByNames[name]) settersByNames[name] = [];
+                                        settersByNames[name].push(setter);
+                                    }
+                                });
                             }
                         });
-                    });
-                    context.subscriptions.push(subscription);
-                }
-
-                for (const insPointName in this.insPoints) {
-                    for (const widgetConstructor of feature.config[insPointName] || []) {
-                        const contextIds = feature.contextIds || [];
-
-                        if (contextIds.length === 0 || contextIds.indexOf(context.id) !== -1) {
-                            const insertedWidget = widgetConstructor(this, insPointName, i, contextNode, proxiedSubs);
-                            if (!insertedWidget) return;
-                            const registeredWidgets = this.widgets.get(feature) || [];
-                            registeredWidgets.push(insertedWidget);
-                            this.widgets.set(feature, registeredWidgets);
-                        }
+                        const connection: Connection = connections[connectionName];
+                        const subscription = connection.subscribe(context.id, (data: any) => {
+                            for (const key in settersByNames) {
+                                const setters = settersByNames[key] || [];
+                                setters.forEach(set => set(data[key]));
+                            }
+                        });
+                        context.subscriptions.push(subscription);
                     }
                 }
             }
 
             if (isNew) {
                 this.contexts.set(contextNode, context);
+            }
+
+            for (let i = 0; i < features.length; i++) {
+                const feature = features[i];
+                for (const insPointName in this.insPoints) {
+                    for (const widgetConstructor of feature.config[insPointName] || []) {
+                        const contextIds = feature.contextIds || [];
+
+                        if (contextIds.length === 0 || contextIds.indexOf(context.id) !== -1) {
+                            const insertedWidget = widgetConstructor(this, insPointName, i, contextNode, context.proxiedSubs);
+                            if (!insertedWidget) continue;
+                            const registeredWidgets = this.widgets.get(feature) || [];
+                            registeredWidgets.push(insertedWidget);
+                            this.widgets.set(feature, registeredWidgets);
+                        }
+                    }
+                }
             }
         }
 

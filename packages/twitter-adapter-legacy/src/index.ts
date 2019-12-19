@@ -58,7 +58,7 @@ export default class TwitterAdapter implements ITwitterAdapter {
                     }))
                 if (removedContexts && removedContexts.length > 0) {
                     Core.contextFinished(removedContexts);
-                    // subscription.close()
+                    removedContexts.forEach(ctx => ctx.subscriptions && ctx.subscriptions.forEach(sub => sub.close()));
                 }
                 contextBuilder.updateContexts(this.features, container); // ToDo: think about it
             }
