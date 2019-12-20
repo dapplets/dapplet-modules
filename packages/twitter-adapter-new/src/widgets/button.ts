@@ -1,23 +1,26 @@
 import { Widget } from "../common/widget";
 
 interface IButtonState {
-    clazz: string;
     img: string;
     label: string;
     loading: boolean;
     disabled: boolean;
+    exec: () => void;
+    init: () => void;
 }
 
 export class Button extends Widget<IButtonState> {
-    constructor(config: any) {
-        super(config);
+    constructor(callbackConfig: (setState: (stateName: string) => void) => { [key: string]: IButtonState }, clazz: string) {
+        super(callbackConfig);
         this.el = document.createElement('div');
-        this.el.classList.add(this.state.clazz, 'css-1dbjc4n', 'r-1iusvr4', 'r-18u37iz', 'r-16y2uox', 'r-1h0z5md');
+        this.el.classList.add(clazz, 'css-1dbjc4n', 'r-1iusvr4', 'r-18u37iz', 'r-16y2uox', 'r-1h0z5md');
         this.el.addEventListener("click", e => {
             if (!this.state.disabled) {
-                this.onExec();
+                this.state.exec?.();
             }
         });
+        this.mount();
+        this.state.init?.();
     }
 
     public mount() {
