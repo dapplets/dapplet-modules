@@ -10,13 +10,13 @@ export default class TwitterFeature implements IFeature {
     public config: T_TwitterFeatureConfig;
 
     constructor() {
-        let { button_2 } = this.adapter.actionFactories();
+        let { button } = this.adapter.actionFactories();
         this.config = {
             connections: {
                 likes: Core.connect("wss://examples.dapplets.org")
             },
             TWEET_SOUTH: [
-                button_2((ctx, setState, { likes }) => ({
+                button((ctx, setState, { likes }) => ({
                     "DEFAULT": { label: likes.like_num, img: GNOSIS_ICON, disabled: false, exec: () => setState("TX_RUNNING") },
                     "TX_RUNNING": { label: 'tx', loading: true, disabled: false, exec: () => setState("ERR") },
                     "ERR": { label: 'err', img: GNOSIS_ICON, disabled: false, exec: () => setState("DEFAULT") }

@@ -12,13 +12,13 @@ export default class TwitterFeature implements IFeature {
     constructor() {
         const overlay = Core.overlay('https://examples.dapplets.org', 'Gnosis');
 
-        let { button_2 } = this.adapter.actionFactories();
+        let { button } = this.adapter.actionFactories();
         this.config = {
             connections: {
                 likes: Core.connect("wss://examples.dapplets.org")
             },
             TWEET_SOUTH: [
-                button_2((ctx, setState, { likes }) => ({
+                button((ctx, setState, { likes }) => ({
                     "DEFAULT": {
                         label: likes.like_num,
                         img: GNOSIS_ICON,

@@ -13,16 +13,10 @@ function uuidv4() {
 }
 
 export const widgets: (conn?: Connection) => { [key: string]: Function } = (conn?: Connection) => ({
-    button_2: (configCallback: (ctx: any, state: any, sub: any) => IButtonConfig) => {
+    button: (configCallback: (ctx: any, state: any, sub: any) => IButtonConfig) => {
         const uuid = uuidv4();
         return ((builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element, proxiedSubs: any) =>
             createButton(builder, insPointName, configCallback, order, contextNode, uuid, proxiedSubs)
-        );
-    },
-    button: (config: IButtonConfig) => {
-        const uuid = uuidv4();
-        return ((builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element, proxiedSubs: any) =>
-            createButton(builder, insPointName, () => ({ state: "DEFAULT", DEFAULT: config }), order, contextNode, uuid, proxiedSubs)
         );
     },
     menuItem: <Function>({ }) => {
