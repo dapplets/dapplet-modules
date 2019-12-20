@@ -11,35 +11,38 @@ export default class TwitterFeature implements IFeature {
 
     constructor() {
         const overlay = Core.overlay('https://examples.dapplets.org', 'Gnosis');
-        const twitterService = Core.connect("wss://examples.dapplets.org");
 
-        let { button } = this.adapter.actionFactories();
+        let { button_2 } = this.adapter.actionFactories();
         this.config = {
+            connections: {
+                likes: Core.connect("wss://examples.dapplets.org")
+            },
             TWEET_SOUTH: [
-                button({
-                    img: GNOSIS_ICON,
-                    init: function (ctx) {
-                        if (!ctx) return;
-                        const state = this.state;
-                        twitterService.subscribe(ctx.id.toString(), (msg) => {
-                            if (msg && msg.like_num != undefined) {
-                                state.label = msg.like_num.toString();
-                            }
-                        });
+                button_2((ctx, setState, { likes }) => ({
+                    "DEFAULT": {
+                        label: likes.like_num,
+                        img: GNOSIS_ICON,
+                        disabled: false,
+                        exec: () => {
+                            overlay.open(() => overlay.publish('tweet_select', ctx));
+                            overlay.unsubscribe('pm_attach');
+                            overlay.subscribe('pm_attach',
+                                async ({ market, tweet }) => {
+                                    setState("TX_RUNNING");
+                                    const result = await Core.sendWalletConnectTx('1', ctx);
+                                    overlay.publish('tx_created');
+                                    setState("DEFAULT");
+                                },
+                                SubscribeOptions.SINGLE_THREAD
+                            );
+                        }
                     },
-                    exec: function (ctx) {
-                        if (!ctx) return;
-                        overlay.open(() => overlay.publish('tweet_select', ctx));
-                        overlay.unsubscribe('pm_attach');
-                        overlay.subscribe('pm_attach',
-                            async ({ market, tweet }) => {
-                                const result = await Core.sendWalletConnectTx('1', ctx);
-                                overlay.publish('tx_created');
-                            },
-                            SubscribeOptions.SINGLE_THREAD
-                        );
+                    "TX_RUNNING": { 
+                        label: 'tx', 
+                        loading: true, 
+                        disabled: true 
                     }
-                })
+                }))
             ],
             TWEET_COMBO: [],
             DM_SOUTH: []

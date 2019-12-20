@@ -16,8 +16,8 @@ export default class TwitterFeature implements IFeature {
                 likes: Core.connect("wss://examples.dapplets.org")
             },
             TWEET_SOUTH: [
-                button_2((ctx, setState, sub) => ({
-                    "DEFAULT": { label: sub.likes.like_num, img: GNOSIS_ICON, disabled: false, exec: () => setState("TX_RUNNING") },
+                button_2((ctx, setState, { likes }) => ({
+                    "DEFAULT": { label: likes.like_num, img: GNOSIS_ICON, disabled: false, exec: () => setState("TX_RUNNING") },
                     "TX_RUNNING": { label: 'tx', loading: true, disabled: false, exec: () => setState("ERR") },
                     "ERR": { label: 'err', img: GNOSIS_ICON, disabled: false, exec: () => setState("DEFAULT") }
                 }))
