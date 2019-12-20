@@ -19,6 +19,7 @@ export default class TwitterFeature implements IFeature {
                 button({
                     img: GNOSIS_ICON,
                     init: function (ctx) {
+                        if (!ctx) return;
                         const state = this.state;
                         twitterService.subscribe(ctx.id.toString(), (msg) => {
                             if (msg && msg.like_num != undefined) {
@@ -27,6 +28,7 @@ export default class TwitterFeature implements IFeature {
                         });
                     },
                     exec: function (ctx) {
+                        if (!ctx) return;
                         overlay.open(() => overlay.publish('tweet_select', ctx));
                         overlay.unsubscribe('pm_attach');
                         overlay.subscribe('pm_attach',

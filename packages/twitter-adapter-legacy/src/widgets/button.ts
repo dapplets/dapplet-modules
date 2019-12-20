@@ -1,28 +1,31 @@
 import { Widget } from "../common/widget";
 
 interface IButtonState {
-    clazz: string;
     img: string;
     label: string;
     loading: boolean;
     disabled: boolean;
+    exec: () => void;
+    init: () => void;
 }
 
 export class Button extends Widget<IButtonState> {
-    constructor(config: any) {
-        super(config);
+    constructor(callbackConfig: (setState: (stateName: string) => void) => { [key: string]: IButtonState }, clazz: string) {
+        super(callbackConfig);
         this.el = document.createElement('div');
-        this.el.classList.add(this.state.clazz, 'ProfileTweet-action');
+        this.el.classList.add(clazz, 'ProfileTweet-action');
         this.el.addEventListener("click", e => {
             if (!this.state.disabled) {
-                this.onExec();
+                this.state.exec?.();
             }
         });
+        this.mount();
+        this.state.init?.();
     }
 
     public mount() {
-        const { clazz, img, label, loading, disabled } = this.state;
-        
+        const { img, label, loading, disabled } = this.state;
+
         const htmlString = `<button class="ProfileTweet-actionButton" type="button">
                 <div class="IconContainer">
                     ${loading ? `<svg width="18px" height="18px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="lds-rolling" style="background: none;">
@@ -35,7 +38,7 @@ export class Button extends Widget<IButtonState> {
                     <span ${disabled ? 'style="color:#aaa;"' : ''} class="ProfileTweet-actionCountForPresentation" aria-hidden="true">${label}</span>
                 </span>` : ''}
             </button>`
-        
+
         this.el.innerHTML = htmlString;
     }
 }

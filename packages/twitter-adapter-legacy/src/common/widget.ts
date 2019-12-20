@@ -1,9 +1,10 @@
 export abstract class Widget<T> {
 
-    constructor(config: any) {
-        this.state = this.createState(config);
+    constructor(callbackConfig: (setState: (stateName: string) => void) => { [key: string]: T }) {
+        this.stateTemplates = callbackConfig(n => this.setState(n));
+        this.setState("DEFAULT");
     }
-
+    
     abstract mount(): void;
 
     public unmount(): void {
@@ -42,7 +43,12 @@ export abstract class Widget<T> {
         return proxy;
     }
 
+    public stateTemplates: { [key: string]: T };
     public state: T;
 
-    public onExec() { };
+    public setState(stateName: string) {
+        const newState = this.stateTemplates[stateName];
+        this.state = this.createState(newState);
+        this.el && this.mount();
+    }
 }

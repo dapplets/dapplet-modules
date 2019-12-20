@@ -16,11 +16,10 @@ export default class TwitterFeature implements IFeature {
                 likes: Core.connect("wss://examples.dapplets.org")
             },
             TWEET_SOUTH: [
-                button_2((ctx, state, sub) => ({
-                    state: "READY",
-                    "READY": { label: sub.likes.like_num, img: GNOSIS_ICON, disabled: false, exec: () => console.log('ready clicked') },
-                    "TX_RUNNING": { label: 'tx', img: GNOSIS_ICON, disabled: true, exec: () => console.log('txrunning clicked') },
-                    "ERR": { label: 'err', img: GNOSIS_ICON, disabled: false, exec: () => console.log('err clicked') }
+                button_2((ctx, setState, sub) => ({
+                    "DEFAULT": { label: sub.likes.like_num, img: GNOSIS_ICON, disabled: false, exec: () => setState("TX_RUNNING") },
+                    "TX_RUNNING": { label: 'tx', loading: true, disabled: false, exec: () => setState("ERR") },
+                    "ERR": { label: 'err', img: GNOSIS_ICON, disabled: false, exec: () => setState("DEFAULT") }
                 }))
             ],
             TWEET_COMBO: [],

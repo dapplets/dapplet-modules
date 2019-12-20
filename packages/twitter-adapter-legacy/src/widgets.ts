@@ -1,8 +1,7 @@
-import { IButtonConfig, IWidgetBuilder, IWidgetBuilderConfig, IPictureConfig } from "./types";
-import { T_TwitterFeatureConfig } from "@dapplets/twitter-adapter";
-import { Button } from "./widgets/button";
 import { IFeature } from "@dapplets/dapplet-extension-types";
-import { Widget } from "./common/widget";
+
+import { IButtonConfig, IWidgetBuilder, IWidgetBuilderConfig, IPictureConfig } from "./types";
+import { Button } from "./widgets/button";
 import { Picture } from "./widgets/picture";
 
 function uuidv4() {
@@ -16,13 +15,13 @@ export const widgets: (conn?: Connection) => { [key: string]: Function } = (conn
     button_2: (configCallback: (ctx: any, state: any, sub: any) => IButtonConfig) => {
         const uuid = uuidv4();
         return ((builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element, proxiedSubs: any) =>
-            createButton(builder, insPointName, configCallback, order, contextNode, uuid, proxiedSubs)
+            createWidget(Button, builder, insPointName, configCallback, order, contextNode, uuid, proxiedSubs)
         );
     },
     button: (config: IButtonConfig) => {
         const uuid = uuidv4();
         return ((builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element, proxiedSubs: any) =>
-            createButton(builder, insPointName, () => ({ state: "DEFAULT", DEFAULT: config }), order, contextNode, uuid, proxiedSubs)
+            createWidget(Button, builder, insPointName, (ctx, setState, sub) => ({ "DEFAULT": config }), order, contextNode, uuid, proxiedSubs)
         );
     },
     menuItem: <Function>({ }) => {
@@ -31,9 +30,9 @@ export const widgets: (conn?: Connection) => { [key: string]: Function } = (conn
         );
     }, //ToDo: implement
     picture: (config: IPictureConfig) => {
-        config.clazz = uuidv4();
-        return ((builder: IWidgetBuilder, insPointName: string, order: number, contextNode: Element) =>
-            createPicture(builder, insPointName, config, order, contextNode)
+        const uuid = uuidv4();
+        return ((builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element, proxiedSubs: any) =>
+            createWidget(Picture, builder, insPointName, (ctx, setState, sub) => ({ "DEFAULT": config }), order, contextNode, uuid, proxiedSubs)
         );
     }
 })
@@ -128,7 +127,7 @@ export class WidgetBuilder implements IWidgetBuilder {
     }
 }
 
-function createButton(builder: WidgetBuilder, insPointName: string, configCallback: Function, order: number, contextNode: Element, clazz: string, proxiedSubs: any): any {
+function createWidget(Widget: any, builder: WidgetBuilder, insPointName: string, configCallback: Function, order: number, contextNode: Element, clazz: string, proxiedSubs: any): any {
     // ToDo: calculate node from insPoint & view
     const insPoint = builder.insPoints[insPointName];
     const node = contextNode.querySelector(insPoint.selector);
@@ -137,49 +136,15 @@ function createButton(builder: WidgetBuilder, insPointName: string, configCallba
 
     const context = builder.contexts.get(contextNode);
 
-    const stateConfig = configCallback(context, {}, proxiedSubs); // ToDo: pass state
-    const config = stateConfig[stateConfig.state];
-    config.clazz = clazz;
-
-    const button = new Button(config);
-    button.mount();
-    button.el.classList.add('dapplet-widget');
+    const widget = new Widget((setState) => configCallback(context, setState, proxiedSubs), clazz);
+    widget.el.classList.add('dapplet-widget');
 
     const insertedElements = node.getElementsByClassName('dapplet-widget');
     if (insertedElements.length >= order) {
-        node.insertBefore(button.el, insertedElements[order]);
+        node.insertBefore(widget.el, insertedElements[order]);
     } else {
-        node.appendChild(button.el);
+        node.appendChild(widget.el);
     }
 
-    config.init && config.init.call(button, context); // ToDo: fix it
-
-    button.onExec = function () {
-        config.exec && config.exec.call(button, context);
-    };
-
-    return button;
-}
-
-function createPicture(builder: IWidgetBuilder, insPointName: string, config: IPictureConfig, order: number, contextNode: Element): any {
-    // ToDo: calculate node from insPoint & view
-    const insPoint = builder.insPoints[insPointName];
-    const node = contextNode.querySelector(insPoint.selector);
-
-    if (node.getElementsByClassName(config.clazz).length > 0) return;
-
-    const picture = new Picture(config);
-    picture.mount();
-    picture.el.classList.add('dapplet-widget');
-    node.appendChild(picture.el);
-
-    const context = builder.contextBuilder(contextNode);
-    config.init && config.init.call(picture, context); // ToDo: fix it
-
-    picture.onExec = function () {
-        const context = builder.contextBuilder(contextNode);
-        config.exec && config.exec.call(picture, context);
-    };
-
-    return picture;
+    return widget;
 }
