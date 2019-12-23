@@ -4,6 +4,7 @@ import { IButtonConfig, IWidgetBuilder, IWidgetBuilderConfig, IPictureConfig } f
 import { Button } from "./widgets/button";
 import { Picture } from "./widgets/picture";
 
+//ToDo-12: use std uuid library or better drop it completely.
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -11,7 +12,9 @@ function uuidv4() {
     });
 }
 
+//ToDo-13: how to add new widget types? Who? how to audit? 
 export const widgets: (conn?: Connection) => { [key: string]: Function } = (conn?: Connection) => ({
+    // ToDo-15: collapse every widget factory into one, because they are same.
     button: (configCallback: (ctx: any, state: any, sub: any) => IButtonConfig) => {
         const uuid = uuidv4();
         return ((builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element, proxiedSubs: any) =>
@@ -31,13 +34,15 @@ export const widgets: (conn?: Connection) => { [key: string]: Function } = (conn
     }
 })
 
+
+//ToDo-16: refactor the class? 
 export class WidgetBuilder implements IWidgetBuilder {
     containerSelector: string;
     contextSelector: string;
     insPoints: { [key: string]: any };
     contextBuilder: (tweetNode: any) => any;
     observer: MutationObserver = null;
-    widgets = new Map<IFeature, any[]>();
+    widgets = new Map<IFeature, Node[]>(); // ToDo-17: replace Map to WeakMap
     contexts = new WeakMap<Node, any>();
 
     //ToDo: widgets
@@ -133,7 +138,7 @@ function createWidget(Widget: any, builder: WidgetBuilder, insPointName: string,
     const widget = new Widget((setState) => configCallback(context, setState, proxiedSubs), clazz);
     widget.el.classList.add('dapplet-widget');
 
-    const insertedElements = node.getElementsByClassName('dapplet-widget');
+    const insertedElements = node.getElementsByClassName('dapplet-widget');  //ToDo-17: refactor to WeakMap
     if (insertedElements.length >= order) {
         node.insertBefore(widget.el, insertedElements[order]);
     } else {

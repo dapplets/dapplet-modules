@@ -1,3 +1,4 @@
+//ToDo-18: move this file from common? 
 export abstract class Widget<T> {
 
     constructor(callbackConfig: (setState: (stateName: string) => void) => { [key: string]: T }) {

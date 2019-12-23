@@ -1,22 +1,29 @@
 import { IFeature } from '@dapplets/dapplet-extension-types';
+// ToDo-1: too much interfaces, which are implemented once. 
 import { T_TwitterViewSet, Context, T_InsertConfig, IButtonConfig, IWidgetBuilder, IAdapterFeature, IWidgetBuilderConfig } from './types';
 import { WidgetBuilder, widgets } from './widgets';
 import { ITwitterAdapter, T_TwitterFeatureConfig, T_TwitterActionFactory, ITwitterFeature } from "@dapplets/twitter-adapter";
 
+// ToDo-2: set root container to document.body from injector
 let doc: Document = document; //host document we are working on (inpage.js)
 
 @Injectable
 export default class TwitterAdapter implements ITwitterAdapter {
 
+    // ToDo-3: move to global adapter's interface
+    // ToDo-4: is it actionfactories or widgetfactories (like widgetbuilders)?
     public actionFactories = widgets;
 
+    // ToDo-5: extract generic code into mandatory libraries, loaded by Core & Injector
+    //         WidgetBuilder@std-adapter-lib, Observers@std-adapter-lib 
     private observer: MutationObserver = null;
     private features: ITwitterFeature[] = [];
 
     @Inject("common-lib.dapplet-base.eth")
     public library: any;
 
-    public attachFeature(feature: IFeature): void { // ToDo: automate two-way dependency handling(?)
+    // ToDo-6: can we move feature management (attaching/detaching) to the extension/injector/Core?
+    public attachFeature(feature: IFeature): void {
         if (this.features.find(f => f === feature)) return;
         this.features.splice(feature.orderIndex, 0, feature);
         this.updateObservers();
@@ -31,7 +38,7 @@ export default class TwitterAdapter implements ITwitterAdapter {
         });
     }
 
-    constructor() {
+    constructor() { // ToDo-7: `private root: Element`
         if (this.observer) return;
         if (!document || !window || !MutationObserver) throw Error('Document or MutationObserver is not available.');
         const OBSERVER_CONFIG = {
@@ -77,12 +84,18 @@ export default class TwitterAdapter implements ITwitterAdapter {
         });
     }
 
+    //ToDo-8: Think about process adding new contextBuilders and new InsPoints
+    //          who is allowed? how to audit?
     private contextBuilders = [{
         containerSelector: "#timeline",
         contextSelector: "[id^=stream-item-tweet-]",
         insPoints: {
+            //ToDo-11: may be better: "div.js-actions"
+            //         TWEET_SOUTH: 
             TWEET_SOUTH: {
-                selector: "div.js-actions"
+                selector: "div.js-actions",
+                // ToDo-14: restrict to allowed widgets
+                //widgets: [Button, Picture]
             },
             TWEET_COMBO: {
                 selector: "" //ToDo
@@ -91,6 +104,9 @@ export default class TwitterAdapter implements ITwitterAdapter {
                 selector: "div.js-tweet-text-container"
             }
         },
+        //ToDo-9:  use backticks templates for custom selectors like css, xpath etc.
+        //ToDo-10: some variables may be be undefined if the host site loads them async. 
+        //         Adapter must update context using MutationObservers
         contextBuilder: (tweetNode: any) => ({
             id: tweetNode.getAttribute('data-item-id'),
             text: tweetNode.querySelector('div.js-tweet-text-container').innerText,
@@ -112,8 +128,8 @@ export default class TwitterAdapter implements ITwitterAdapter {
         contextBuilder: (tweetNode: any) => ({
             threadId: tweetNode.getAttribute('data-thread-id'),
             lastMessageId: tweetNode.getAttribute('data-last-message-id'),
-            fullname: tweetNode.querySelector('div.DMInboxItem-title .fullname') && tweetNode.querySelector('div.DMInboxItem-title .fullname').innerText,
-            username: tweetNode.querySelector('div.DMInboxItem-title .username') && tweetNode.querySelector('div.DMInboxItem-title .username').innerText,
+            fullname: tweetNode.querySelector('div.DMInboxItem-title .fullname')?.innerText,
+            username: tweetNode.querySelector('div.DMInboxItem-title .username')?.innerText,
             text: tweetNode.querySelector('.DMInboxItem-snippet').innerText
         })
     }].map((cfg: IWidgetBuilderConfig) => new WidgetBuilder(cfg));
