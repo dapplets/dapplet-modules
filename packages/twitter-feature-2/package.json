@@ -1,6 +1,6 @@
 {
   "name": "@dapplets/twitter-feature-2",
-  "version": "0.3.1",
+  "version": "0.3.3",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
@@ -12,7 +12,7 @@
   "license": "MIT",
   "devDependencies": {
     "@dapplets/dapplet-extension-types": "^0.3.10",
-    "@dapplets/twitter-adapter": "^0.3.1"
+    "@dapplets/twitter-adapter": "^0.3.3"
   },
   "dependencies": {}
 }
