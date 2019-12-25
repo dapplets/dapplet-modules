@@ -21,7 +21,7 @@ module.exports = function (dir) {
       filename: bundleName
     },
     resolve: {
-      extensions: [".ts"]
+      extensions: [".ts", ".js"]
     },
     module: {
       rules: [{

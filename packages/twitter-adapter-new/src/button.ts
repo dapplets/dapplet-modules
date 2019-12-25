@@ -1,4 +1,4 @@
-import { Widget } from "../common/widget";
+import { Widget } from "@dapplets/dynamic-adapter";
 
 interface IButtonState {
     img: string;
@@ -7,6 +7,14 @@ interface IButtonState {
     disabled: boolean;
     exec: () => void;
     init: () => void;
+}
+
+export interface IButtonConfig {
+    clazz: string;
+    label: string;
+    img: string;
+    exec(context: any): void;
+    init(): void;
 }
 
 export class Button extends Widget<IButtonState> {

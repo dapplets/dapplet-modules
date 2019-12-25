@@ -8,7 +8,7 @@
         "noLib": false,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "target": "es5",
+        "target": "es2017",
         "sourceMap": false,
         "lib": [
             "es2017", "dom"
@@ -20,6 +20,9 @@
     "references": [
         {
             "path": "./packages/common-lib"
+        },
+        {
+            "path": "./packages/dynamic-adapter"
         },
         {
             "path": "./packages/twitter-adapter"
