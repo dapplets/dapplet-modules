@@ -13,7 +13,7 @@ export default class TwitterFeature implements IFeature {
     public orderIndex: null;
 
     constructor() {
-        const { picture } = this.adapter.actionFactories();
+        const { picture } = this.adapter.actionFactories;
         this.config = {
             PICTURE: [
                 picture(() => ({

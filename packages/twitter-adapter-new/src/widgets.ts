@@ -11,25 +11,20 @@ function uuidv4() {
     });
 }
 
-export const widgets: (conn?: Connection) => { [key: string]: Function } = (conn?: Connection) => ({
+export const widgets = {
     button: (configCallback: (ctx: any, state: any, sub: any) => IButtonConfig) => {
         const uuid = uuidv4();
         return ((builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element, proxiedSubs: any) =>
             createWidget(Button, builder, insPointName, configCallback, order, contextNode, uuid, proxiedSubs)
         );
     },
-    menuItem: <Function>({ }) => {
-        return ((builder: IWidgetBuilder, insPointName: string, order: number, contextNode: Element) =>
-            console.error('menuItem is not implemented')
-        );
-    }, //ToDo: implement
     picture: (configCallback: (ctx: any, state: any, sub: any) => IPictureConfig) => {
         const uuid = uuidv4();
         return ((builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element, proxiedSubs: any) =>
             createWidget(Picture, builder, insPointName, configCallback, order, contextNode, uuid, proxiedSubs)
         );
     }
-})
+};
 
 export type Context = {
     parsed: any,
