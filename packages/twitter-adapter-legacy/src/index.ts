@@ -1,7 +1,7 @@
 import { IFeature } from '@dapplets/dapplet-extension-types';
-import { T_TwitterViewSet, Context, T_InsertConfig, IButtonConfig, IWidgetBuilder, IAdapterFeature, IWidgetBuilderConfig } from './types';
-import { WidgetBuilder, widgets } from './widgets';
-import { ITwitterAdapter, T_TwitterFeatureConfig, T_TwitterActionFactory, ITwitterFeature } from "@dapplets/twitter-adapter";
+import { IWidgetBuilderConfig } from './types';
+import { WidgetBuilder, widgets, Context } from './widgets';
+import { ITwitterAdapter, ITwitterFeature } from "@dapplets/twitter-adapter";
 
 let doc: Document = document; //host document we are working on (inpage.js)
 
@@ -29,6 +29,7 @@ export default class TwitterAdapter implements ITwitterAdapter {
             if (!widgets) return;
             widgets.forEach(w => w.unmount());
         });
+        // ToDo: close all subscriptions and connections
     }
 
     constructor() {
@@ -48,7 +49,7 @@ export default class TwitterAdapter implements ITwitterAdapter {
         this.contextBuilders.forEach(contextBuilder => {
             const container = doc.querySelector(contextBuilder.containerSelector);
             if (container) {
-                let removedContexts = []
+                const removedContexts: Context[] = []
                 mutations?.forEach(m => Array.from(m.removedNodes)
                     .filter((n: Element) => n.nodeType == Node.ELEMENT_NODE)
                     .forEach((n: Element) => {
@@ -57,8 +58,8 @@ export default class TwitterAdapter implements ITwitterAdapter {
                         removedContexts.push(...contexts)
                     }))
                 if (removedContexts && removedContexts.length > 0) {
-                    removedContexts.forEach(ctx => ctx.subscriptions && ctx.subscriptions.forEach(sub => sub.close()));
-                    Core.contextFinished(removedContexts);
+                    removedContexts.forEach(c => c.features.forEach(f => f.subscriptions.forEach(s => s.close())));
+                    Core.contextFinished(removedContexts.map(c => c.parsed));
                 }
                 contextBuilder.updateContexts(this.features, container); // ToDo: think about it
             }

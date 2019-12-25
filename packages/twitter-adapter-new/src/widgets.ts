@@ -31,6 +31,11 @@ export const widgets: (conn?: Connection) => { [key: string]: Function } = (conn
     }
 })
 
+export type Context = {
+    parsed: any,
+    features: Map<IFeature, { subscriptions: any[], proxiedSubs: any }>
+};
+
 export class WidgetBuilder implements IWidgetBuilder {
     containerSelector: string;
     contextSelector: string;
@@ -38,7 +43,7 @@ export class WidgetBuilder implements IWidgetBuilder {
     contextBuilder: (tweetNode: any) => any;
     observer: MutationObserver = null;
     widgets = new Map<IFeature, any[]>();
-    contexts = new WeakMap<Node, any>();
+    contexts = new WeakMap<Node, Context>();
 
     //ToDo: widgets
 
@@ -51,27 +56,25 @@ export class WidgetBuilder implements IWidgetBuilder {
         const contextNodes = Array.from(container?.querySelectorAll(this.contextSelector) || []);
         if (contextNodes.length === 0) return;
 
-        const newContexts = [];
+        const newParsedContexts = [];
 
         for (const contextNode of contextNodes) {
             const isNew = !this.contexts.has(contextNode);
-            const context = isNew ? this.contextBuilder(contextNode) : this.contexts.get(contextNode);
+            const context: Context = isNew ? { parsed: this.contextBuilder(contextNode), features: new Map() } : this.contexts.get(contextNode);
 
             // ToDo: refactor isNew checking
-            if (isNew) newContexts.push(context);
+            if (isNew) newParsedContexts.push(context.parsed);
 
-            if (!context.subscriptions) {
-                context.subscriptions = [];
-                context.proxiedSubs = {};
-
-                for (let i = 0; i < features.length; i++) {
-                    const feature = features[i];
-
+            for (let i = 0; i < features.length; i++) {
+                const feature = features[i];
+                const featureInfo = context.features.get(feature);
+                if (!featureInfo) {
+                    const featureInfo = { proxiedSubs: {}, subscriptions: [] };
                     const { connections } = feature.config;
 
                     for (const connectionName in connections) {
                         const settersByNames = {}; // ToDo: memory leaks?
-                        context.proxiedSubs[connectionName] = new Proxy({}, {
+                        featureInfo.proxiedSubs[connectionName] = new Proxy({}, {
                             get(target, name, receiver) {
                                 return ({
                                     datasource: (setter) => {
@@ -82,14 +85,16 @@ export class WidgetBuilder implements IWidgetBuilder {
                             }
                         });
                         const connection: Connection = connections[connectionName];
-                        const subscription = connection.subscribe(context.id, (data: any) => {
+                        const subscription = connection.subscribe(context.parsed.id, (data: any) => {
                             for (const key in settersByNames) {
                                 const setters = settersByNames[key] || [];
                                 setters.forEach(set => set(data[key]));
                             }
                         });
-                        context.subscriptions.push(subscription);
+                        featureInfo.subscriptions.push(subscription);
                     }
+
+                    context.features.set(feature, featureInfo);
                 }
             }
 
@@ -103,8 +108,8 @@ export class WidgetBuilder implements IWidgetBuilder {
                     for (const widgetConstructor of feature.config[insPointName] || []) {
                         const contextIds = feature.contextIds || [];
 
-                        if (contextIds.length === 0 || contextIds.indexOf(context.id) !== -1) {
-                            const insertedWidget = widgetConstructor(this, insPointName, i, contextNode, context.proxiedSubs);
+                        if (contextIds.length === 0 || contextIds.indexOf(context.parsed.id) !== -1) {
+                            const insertedWidget = widgetConstructor(this, insPointName, i, contextNode, context.features.get(feature).proxiedSubs);
                             if (!insertedWidget) continue;
                             const registeredWidgets = this.widgets.get(feature) || [];
                             registeredWidgets.push(insertedWidget);
@@ -115,8 +120,8 @@ export class WidgetBuilder implements IWidgetBuilder {
             }
         }
 
-        if (newContexts.length > 0) {
-            Core.contextStarted(newContexts)
+        if (newParsedContexts.length > 0) {
+            Core.contextStarted(newParsedContexts)
         }
     }
 }
@@ -130,7 +135,7 @@ function createWidget(Widget: any, builder: WidgetBuilder, insPointName: string,
 
     const context = builder.contexts.get(contextNode);
 
-    const widget = new Widget((setState) => configCallback(context, setState, proxiedSubs), clazz);
+    const widget = new Widget((setState) => configCallback(context.parsed, setState, proxiedSubs), clazz);
     widget.el.classList.add('dapplet-widget');
 
     const insertedElements = node.getElementsByClassName('dapplet-widget');
