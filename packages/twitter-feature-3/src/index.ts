@@ -13,12 +13,14 @@ export default class TwitterFeature implements IFeature {
     public orderIndex: null;
 
     constructor() {
-        let { picture } = this.adapter.actionFactories();
+        const { picture } = this.adapter.widgets;
         this.config = {
             PICTURE: [
-                picture({
-                    img: FAKESTAMP_PIC
-                })
+                picture(() => ({
+                    DEFAULT: {
+                        img: FAKESTAMP_PIC
+                    }
+                }))
             ]
         };
     }

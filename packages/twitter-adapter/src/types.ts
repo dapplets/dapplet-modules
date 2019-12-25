@@ -13,7 +13,7 @@ export type T_TwitterFeatureConfig = {
 }
 
 export interface ITwitterAdapter extends IContentAdapter {  //ToDo: eliminate excessive interfaces and use ambient module instead
-    actionFactories: (conn?: Connection) => { [key: string]: Function };
+    widgets: { [key: string]: Function };
 }
 
 export interface ITwitterFeature extends IFeature {

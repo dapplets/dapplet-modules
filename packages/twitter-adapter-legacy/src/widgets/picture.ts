@@ -20,7 +20,7 @@ export class Picture extends Widget<IPictureState> {
         this.el.style.position = 'absolute';
         this.el.style.bottom = '15px';
         this.el.style.right = '15px';
-        this.el.style.zIndex = '999';
+        this.el.style.zIndex = '3';
         this.mount();
         this.state.init?.();
     }

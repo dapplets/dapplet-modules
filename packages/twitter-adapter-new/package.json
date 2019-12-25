@@ -18,7 +18,7 @@
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "devDependencies": {
-    "@dapplets/dapplet-extension-types": "^0.3.10",
+    "@dapplets/dapplet-extension-types": "^0.3.11",
     "@dapplets/twitter-adapter": "^0.3.3"
   }
 }
