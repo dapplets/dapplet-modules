@@ -23,10 +23,10 @@ export const widgets: (conn?: Connection) => { [key: string]: Function } = (conn
             console.error('menuItem is not implemented')
         );
     }, //ToDo: implement
-    picture: (config: IPictureConfig) => {
+    picture: (configCallback: (ctx: any, state: any, sub: any) => IPictureConfig) => {
         const uuid = uuidv4();
         return ((builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element, proxiedSubs: any) =>
-            createWidget(Picture, builder, insPointName, (ctx, setState, sub) => ({ "DEFAULT": config }), order, contextNode, uuid, proxiedSubs)
+            createWidget(Picture, builder, insPointName, configCallback, order, contextNode, uuid, proxiedSubs)
         );
     }
 })
