@@ -18,7 +18,7 @@ export type T_InsertConfig = {
 }
 
 export interface ITwitterFeature extends IFeature {
-    //getAugmentationConfig(actionFactories: { [key: string]: Function }, core: ICore): T_TwitterAdapterConfig;
+    //getAugmentationConfig(widgets: { [key: string]: Function }, core: ICore): T_TwitterAdapterConfig;
 }
 
 export interface IButtonConfig {
