@@ -10,8 +10,6 @@ export class State<T> {
 
     public changedHandler: Function;
 
-    public el: HTMLElement;
-
     public createState(state) {
         const me = this;
 
