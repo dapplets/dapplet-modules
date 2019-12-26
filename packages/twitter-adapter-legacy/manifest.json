@@ -7,5 +7,7 @@
     "description": "Adapter for twitter.com",
     "author": "Dapplets Team",
     "dist": "index.js",
-    "dependencies": {}
+    "dependencies": {
+        "dynamic-adapter.dapplet-base.eth": "0.1.0"
+    }
 }

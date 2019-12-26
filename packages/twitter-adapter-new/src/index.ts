@@ -1,6 +1,6 @@
 import { DynamicAdapter } from '@dapplets/dynamic-adapter';
-import { IButtonConfig, Button } from './button';
-import { IPictureConfig, Picture } from './picture';
+import { IButtonState, Button } from './button';
+import { IPictureState, Picture } from './picture';
 
 @Injectable
 export default class TwitterAdapter extends DynamicAdapter {
@@ -29,7 +29,7 @@ export default class TwitterAdapter extends DynamicAdapter {
     }];
 
     public widgets = {
-        button: this.createWidgetFactory<IButtonConfig>(Button),
-        picture: this.createWidgetFactory<IPictureConfig>(Picture)
+        button: this.createWidgetFactory<IButtonState>(Button),
+        picture: this.createWidgetFactory<IPictureState>(Picture)
     };
 }

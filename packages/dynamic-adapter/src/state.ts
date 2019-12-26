@@ -1,15 +1,14 @@
-export abstract class Widget<T> {
-
-    constructor(callbackConfig: (setState: (stateName: string) => void) => { [key: string]: T }) {
+export class State<T> {
+    constructor(callbackConfig: (setState: (stateName: string) => void) => { [key: string]: T }, clazz: string) {
         this.stateTemplates = callbackConfig(n => this.setState(n));
+        // ToDo: remove it
+        for (const template in this.stateTemplates) {
+            this.stateTemplates[template]["clazz"] = clazz;
+        }
         this.setState("DEFAULT");
     }
-    
-    abstract mount(): void;
 
-    public unmount(): void {
-        this.el && this.el.remove();
-    }
+    public changedHandler: Function;
 
     public el: HTMLElement;
 
@@ -26,7 +25,7 @@ export abstract class Widget<T> {
             },
             set(target, property, value, receiver) {
                 const success = Reflect.set(target, property, value, receiver);
-                if (success) me.mount();
+                if (success) me.changedHandler && me.changedHandler();
                 return success;
             }
         });
@@ -49,6 +48,6 @@ export abstract class Widget<T> {
     public setState(stateName: string) {
         const newState = this.stateTemplates[stateName];
         this.state = this.createState(newState);
-        this.el && this.mount();
+        this.changedHandler && this.changedHandler();
     }
 }

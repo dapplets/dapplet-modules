@@ -1,37 +1,22 @@
-import { Widget } from "@dapplets/dynamic-adapter";
+import { IWidget } from '@dapplets/dynamic-adapter';
 
-interface IButtonState {
+export interface IButtonState {
     img: string;
     label: string;
     loading: boolean;
     disabled: boolean;
     exec: () => void;
     init: () => void;
-}
-
-export interface IButtonConfig {
     clazz: string;
-    label: string;
-    img: string;
-    exec(context: any): void;
-    init(): void;
 }
 
-export class Button extends Widget<IButtonState> {
-    constructor(callbackConfig: (setState: (stateName: string) => void) => { [key: string]: IButtonState }, clazz: string) {
-        super(callbackConfig);
-        this.el = document.createElement('div');
-        this.el.classList.add(clazz, 'css-1dbjc4n', 'r-1iusvr4', 'r-18u37iz', 'r-16y2uox', 'r-1h0z5md');
-        this.el.addEventListener("click", e => {
-            if (!this.state.disabled) {
-                this.state.exec?.();
-            }
-        });
-        this.mount();
-        this.state.init?.();
-    }
+export class Button implements IWidget<IButtonState> {
+    public el: HTMLElement;
+    public state: IButtonState;
 
     public mount() {
+        if (!this.el) this._createElement();
+        
         const { img, label, loading, disabled } = this.state;
 
         const htmlString = `<div role="button" data-focusable="true" tabindex="0" class="css-18t94o4 css-1dbjc4n r-1777fci r-11cpok1 r-bztko3 r-lrvibr">
@@ -53,5 +38,21 @@ export class Button extends Widget<IButtonState> {
             </div>`
 
         this.el.innerHTML = htmlString;
+    }
+
+    public unmount() {
+        this.el && this.el.remove();
+    }
+
+    private _createElement() {
+        this.el = document.createElement('div');
+        this.el.classList.add(this.state.clazz, 'css-1dbjc4n', 'r-1iusvr4', 'r-18u37iz', 'r-16y2uox', 'r-1h0z5md');
+        this.el.addEventListener("click", e => {
+            if (!this.state.disabled) {
+                this.state.exec?.();
+            }
+        });
+        this.mount();
+        this.state.init?.();
     }
 }

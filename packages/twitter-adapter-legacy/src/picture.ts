@@ -1,25 +1,34 @@
-import { Widget } from "@dapplets/dynamic-adapter";
+import { IWidget } from '@dapplets/dynamic-adapter';
 
 export interface IPictureState {
     img: string;
     disabled: boolean;
     exec: () => void;
     init: () => void;
-}
-
-export interface IPictureConfig {
     clazz: string;
-    label: string;
-    img: string;
-    exec(context: any): void;
-    init(): void;
 }
 
-export class Picture extends Widget<IPictureState> {
-    constructor(callbackConfig: (setState: (stateName: string) => void) => { [key: string]: IPictureState }, clazz: string) {
-        super(callbackConfig);
+export class Picture implements IWidget<IPictureState> {
+    public el: HTMLElement;
+    public state: IPictureState;
+
+    public mount() {
+        if (!this.el) this._createElement();
+
+        const { img, disabled } = this.state;
+
+        const htmlString = `<img src="${img}" />`
+
+        this.el.innerHTML = htmlString;
+    }
+
+    public unmount() {
+        this.el && this.el.remove();
+    }
+
+    private _createElement() {
         this.el = document.createElement('div');
-        this.el.classList.add(clazz);
+        this.el.classList.add(this.state.clazz);
         this.el.addEventListener("click", e => {
             if (!this.state.disabled) {
                 this.state.exec?.();
@@ -31,13 +40,5 @@ export class Picture extends Widget<IPictureState> {
         this.el.style.zIndex = '3';
         this.mount();
         this.state.init?.();
-    }
-
-    public mount() {
-        const { img, disabled } = this.state;
-
-        const htmlString = `<img src="${img}" />`
-
-        this.el.innerHTML = htmlString;
     }
 }

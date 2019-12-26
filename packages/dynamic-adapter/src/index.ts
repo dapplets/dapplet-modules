@@ -1,11 +1,17 @@
 import { WidgetBuilder } from './widgets';
 import { IFeature, IContentAdapter } from '@dapplets/dapplet-extension-types';
-import { IWidgetBuilderConfig, Context } from './types';
-import { Widget } from './widget';
+import { IWidgetBuilderConfig, Context, IWidget } from './types';
+import { State } from './state';
 
-//let doc: Document = document; //host document we are working on (inpage.js)
+interface IDynamicAdapter extends IContentAdapter {
+    attachFeature(feature: IFeature): void;
+    detachFeature(feature: IFeature): void;
+    attachConfig(config: any[]): void;
+    createWidgetFactory<T>(Widget: any): (configCallback: (ctx: any, state: any, sub: any) => T) => (builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element, proxiedSubs: any) => any;
+}
 
-abstract class DynamicAdapter implements IContentAdapter {
+@Injectable
+class DynamicAdapter implements IDynamicAdapter {
 
     private observer: MutationObserver = null;
     private features: IFeature[] = [];
@@ -27,6 +33,11 @@ abstract class DynamicAdapter implements IContentAdapter {
         // ToDo: close all subscriptions and connections
     }
 
+    public attachConfig(config: any[]) {
+        const builders = config.map((cfg: IWidgetBuilderConfig) => new WidgetBuilder(cfg));
+        this.contextBuilders.push(...builders);
+    }
+
     constructor() {
         if (this.observer) return;
         if (!document || !window || !MutationObserver) throw Error('Document or MutationObserver is not available.');
@@ -41,10 +52,6 @@ abstract class DynamicAdapter implements IContentAdapter {
     }
 
     private updateObservers(mutations?) {
-        if (this.contextBuilders.length === 0) {
-            this.contextBuilders = this.config.map((cfg: IWidgetBuilderConfig) => new WidgetBuilder(cfg));
-        }
-
         this.contextBuilders.forEach(contextBuilder => {
             const container = document.querySelector(contextBuilder.containerSelector);
             if (container) {
@@ -77,9 +84,6 @@ abstract class DynamicAdapter implements IContentAdapter {
         });
     }
 
-    abstract config: IWidgetBuilderConfig[];
-    abstract widgets: { [key: string]: any };
-
     public createWidgetFactory<T>(Widget: any) {
         function uuidv4() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -97,7 +101,11 @@ abstract class DynamicAdapter implements IContentAdapter {
 
             const context = builder.contexts.get(contextNode);
 
-            const widget = new Widget((setState) => configCallback(context.parsed, setState, proxiedSubs), clazz);
+            const state = new State<T>((setState) => configCallback(context.parsed, setState, proxiedSubs), clazz);
+            const widget = new Widget() as IWidget<T>;
+            widget.state = state.state;
+            state.changedHandler = () => widget.mount();
+            widget.mount(); // ToDo: remove it?
             widget.el.classList.add('dapplet-widget');
 
             const insertedElements = node.getElementsByClassName('dapplet-widget');
@@ -119,4 +127,4 @@ abstract class DynamicAdapter implements IContentAdapter {
     }
 }
 
-export { DynamicAdapter, Widget }
+export { DynamicAdapter, IWidget, IDynamicAdapter }

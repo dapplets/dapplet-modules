@@ -11,3 +11,10 @@ export type Context = {
     parsed: any,
     features: Map<IFeature, { subscriptions: any[], proxiedSubs: any }>
 };
+
+export interface IWidget<T> {
+    mount(): void;
+    unmount(): void;
+    el: HTMLElement;
+    state: T;
+}

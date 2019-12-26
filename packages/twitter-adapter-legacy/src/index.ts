@@ -1,9 +1,19 @@
-import { DynamicAdapter } from '@dapplets/dynamic-adapter';
-import { IButtonConfig, Button } from './button';
-import { IPictureConfig, Picture } from './picture';
+import { IFeature } from '@dapplets/dapplet-extension-types';
+import { IDynamicAdapter } from '@dapplets/dynamic-adapter';
+import { IButtonState, Button } from './button';
+import { IPictureState, Picture } from './picture';
 
 @Injectable
-export default class TwitterAdapter extends DynamicAdapter {
+export default class TwitterAdapter {
+
+    @Inject("dynamic-adapter.dapplet-base.eth")
+    private adapter: IDynamicAdapter;
+
+    public widgets = {
+        button: this.adapter.createWidgetFactory<IButtonState>(Button),
+        picture: this.adapter.createWidgetFactory<IPictureState>(Picture)
+    };
+
     public config = [{
         containerSelector: "#timeline",
         contextSelector: "[id^=stream-item-tweet-]",
@@ -45,8 +55,15 @@ export default class TwitterAdapter extends DynamicAdapter {
         })
     }];
 
-    public widgets = {
-        button: this.createWidgetFactory<IButtonConfig>(Button),
-        picture: this.createWidgetFactory<IPictureConfig>(Picture)
-    };
+    constructor() {
+        this.adapter.attachConfig(this.config);
+    }
+
+    public attachFeature(feature: IFeature): void { // ToDo: automate two-way dependency handling(?)
+        this.adapter.attachFeature(feature);
+    }
+
+    public detachFeature(feature: IFeature): void {
+        this.adapter.detachFeature(feature);
+    }
 }
