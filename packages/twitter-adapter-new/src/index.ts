@@ -1,5 +1,3 @@
-import { IFeature } from '@dapplets/dapplet-extension-types';
-import { ITwitterAdapter, ITwitterFeature } from "@dapplets/twitter-adapter";
 import { DynamicAdapter } from '@dapplets/dynamic-adapter';
 import { IButtonConfig, Button } from './button';
 import { IPictureConfig, Picture } from './picture';

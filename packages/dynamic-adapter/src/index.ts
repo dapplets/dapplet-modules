@@ -1,6 +1,6 @@
+import { WidgetBuilder } from './widgets';
 import { IFeature, IContentAdapter } from '@dapplets/dapplet-extension-types';
 import { IWidgetBuilderConfig, Context } from './types';
-import { WidgetBuilder } from './widgets';
 import { Widget } from './widget';
 
 //let doc: Document = document; //host document we are working on (inpage.js)
