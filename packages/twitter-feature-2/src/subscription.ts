@@ -4,34 +4,36 @@ type TypeHandler<T> = (h:MessageHandler) => Subscription & T
 type TypeHandlerMap<T> = { [key: string]: TypeHandler<T> }
 
 type MsgFilter = (msg: any) => boolean
-type MsgFilterMap = { [name: string]: MsgFilter }
+type MsgFilterMap<T> = { [K in keyof T]: MsgFilter }
 
-let EthSupportImpl: {[key in keyof EthSupport]:MsgFilter} = {
+let EthSupportImpl: MsgFilterMap<EthSupport> = {
     onWalletConnect : (msg: any) => msg.type == 'WC_CONNECT',
     onTxSent: (msg: any) => msg.type == 'TX_SENT'
 }
+type FunctionPropertyNames<T> = { [K in keyof T]: T[K] extends MsgFilter ? K : never }[keyof T]
+type OnHandlers = typeof EthSupportImpl
 
 type EthSupport = {
-    onWalletConnect : (h:MessageHandler) => EthSupport & Subscription
-    onTxSent: (h:MessageHandler) => EthSupport  & Subscription
+    onWalletConnect : (h:MessageHandler) => EthSupport
+    onTxSent: (h:MessageHandler) => EthSupport
 }
 
-let SwarmSupportImpl: {[key in keyof SwarmSupport]:MsgFilter} = {
+let SwarmSupportImpl: MsgFilterMap<SwarmSupport> = {
     onSwarmNode : (msg: any) => msg.type == 'SWARM_NODE',
     onSwarmSent: (msg: any) => msg.type == 'SWARM_SENT'
 }
 
 type SwarmSupport = {
-    onSwarmNode: (h:MessageHandler) => SwarmSupport & Subscription
-    onSwarmSent: (h: MessageHandler) => SwarmSupport & Subscription
+    onSwarmNode: (h:MessageHandler) => SwarmSupport
+    onSwarmSent: (h: MessageHandler) => SwarmSupport
 }
 
 interface ConnectionChaning {
     
-    subscribe<T>(topic: string, h: MsgFilterMap): Subscription & T
-    subscribe<T>(filter: MsgFilter, h: MsgFilterMap): Subscription & T
-    subscribe<T>(h: MsgFilterMap): Subscription & T
-    subscribe<T>(topicOrFilterOrTypeHandler: string | MsgFilter | MsgFilterMap, h?: MsgFilterMap): Subscription & T
+    subscribe<T>(topic: string, h: MsgFilterMap<T>): Subscription & T
+    subscribe<T>(filter: MsgFilter, h: MsgFilterMap<T>): Subscription & T
+    subscribe<T>(h: MsgFilterMap<T>): Subscription & T
+    subscribe<T>(topicOrFilterOrTypeHandler: string | MsgFilter | MsgFilterMap<T>, h?: MsgFilterMap<T>): Subscription & T
     send(msg: any): Promise<void>
 
 }
@@ -40,10 +42,10 @@ interface ConnectionChaning {
 class Connection implements ConnectionChaning {
     subs: Subscription[] = []
     
-    subscribe<T>(topic: string, h: MsgFilterMap): Subscription & T
-    subscribe<T>(filter: MsgFilter, h: MsgFilterMap): Subscription & T
-    subscribe<T>(h: MsgFilterMap): Subscription & T
-    subscribe<T>(topicOrFilterOrTypeHandler: string | MsgFilter | MsgFilterMap, handler?: MsgFilterMap): Subscription & T {
+    subscribe<T>(topic: string, h: MsgFilterMap<T>): Subscription & T
+    subscribe<T>(filter: MsgFilter, h: MsgFilterMap<T>): Subscription & T
+    subscribe<T>(h: MsgFilterMap<T>): Subscription & T
+    subscribe<T>(topicOrFilterOrTypeHandler: string | MsgFilter | MsgFilterMap<T>, handler?: MsgFilterMap<T>): Subscription & T {
         let topic = ""
         let filter
         if (typeof topicOrFilterOrTypeHandler === 'string') topic = topicOrFilterOrTypeHandler
