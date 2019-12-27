@@ -6,19 +6,19 @@ type TypeHandlerMap<T> = { [key: string]: TypeHandler<T> }
 type MsgFilter = (msg: any) => boolean
 type MsgFilterMap<T> = { [K in keyof T]: MsgFilter }
 
-let EthSupportImpl: MsgFilterMap<EthSupport> = {
+let EthereumEvents: MsgFilterMap<EthSupport> = {
     onWalletConnect : (msg: any) => msg.type == 'WC_CONNECT',
     onTxSent: (msg: any) => msg.type == 'TX_SENT'
 }
 type FunctionPropertyNames<T> = { [K in keyof T]: T[K] extends MsgFilter ? K : never }[keyof T]
-type OnHandlers = typeof EthSupportImpl
+type OnHandlers = typeof EthereumEvents
 
 type EthSupport = {
     onWalletConnect : (h:MessageHandler) => EthSupport
     onTxSent: (h:MessageHandler) => EthSupport
 }
 
-let SwarmSupportImpl: MsgFilterMap<SwarmSupport> = {
+let SwarmEvents: MsgFilterMap<SwarmSupport> = {
     onSwarmNode : (msg: any) => msg.type == 'SWARM_NODE',
     onSwarmSent: (msg: any) => msg.type == 'SWARM_SENT'
 }
@@ -76,22 +76,22 @@ class Subscription  {
             )
         }
     }
-    //public close(): void                             //ToDo: unclear?
+    //public close(): void 
     public datasources: { [name: string]: DataSource } = {}
     public on_handlers: ((msg:any)=>void) [] = []
 
 
     
-    onMessage(msg:any):any {
-        //execute transforming subscription handler
-        if (msg) {
-            //push values to DataSources  (or better name DataPipe?)
-            Object.keys(this.datasources).forEach((key: string) => {
-                let ds = this.datasources[key]
-                ds.setter(msg[ds.propertyName])
-            })
-        }
-        this.on_handlers.forEach(fnOn=>fnOn(msg))
+    onMessage(msg: any): any {
+        if (!msg || !this.matchesTopic(msg)
+           || (this.filter && !this.filter(msg))) return
+        //push values to DataSources
+        Object.keys(this.datasources).forEach((key: string) => {
+            let ds = this.datasources[key]
+            ds.setter(msg[ds.propertyName]) //ToDo: on undefined -- ignore or unset?
+        })
+
+        this.on_handlers.forEach(fnOn => fnOn(msg))
     }
 
     
@@ -101,6 +101,21 @@ class Subscription  {
         )
         //console.log(this.on_handlers, this)
         return this
+    }
+
+    matchesTopic = (msg: any) => {
+        if (!this.topic || this.topic == msg.topic) return true;
+        else if (!msg.topic) return false;
+
+        let expected = this.topic.split('.')
+        let actual = msg.topic.split('.')
+        if (expected.length > actual.length) return false
+
+        for (let i = 0; i < actual.length; ++i) { 
+            if (actual[i] != expected[i] && expected[i] != "*")
+                return false
+        }
+        return true
     }
 }
 
@@ -116,27 +131,22 @@ function applyMixins(derivedCtor: any, baseCtors: any[]) {
     });
 }
 
-let msg = {}
-const setState = (s:any) => { }
-const RUNNING = () => setState("RUNNING")
-const ERROR = () => setState("ERROR")
-
 let conn = new Connection()
 
-conn.subscribe<EthSupport>("topic", EthSupportImpl)
-    .onWalletConnect((m) => { console.log("onWalletConnect")})
-    .onTxSent((m) => { console.log("onTxSent") })
-conn.subscribe<SwarmSupport>("acb.swarm", SwarmSupportImpl)
-    .onSwarmNode((m) => { console.log("onSwarmNode") })
-    .onSwarmSent((m) => { console.log("onSwarmSent") })
-conn.send(msg)
-    .then(RUNNING)
-    .catch(ERROR)
+conn.subscribe("the.topic", EthereumEvents)
+    .onTxSent((m) => { console.log("onTxSent  topic:", m.topic) })
+    .onWalletConnect((m) => { console.log("onWalletConnect  topic:", m.topic)})
+conn.subscribe("swarm.*", SwarmEvents)
+    .onSwarmNode((m) => { console.log("onSwarmNode topic:", m.topic) })
+    .onSwarmSent((m) => { console.log("onSwarmSent topic:", m.topic) })
+conn.send({ type: "PING" })
+    .then((res) => { console.log("message sent...") })
+    .catch((e) => { console.log("sending failed!") })
 
-conn.receive({ type: "WC_CONNECT" })
-conn.receive({ type: "TX_SENT" })
-conn.receive({ type: "SWARM_NODE" })
-conn.receive({ type: "SWARM_SENT" })
+conn.receive({ type: "WC_CONNECT", topic: "the.topic" })
+conn.receive({ type: "TX_SENT" , topic: "the.topic"})
+conn.receive({ type: "SWARM_NODE" , topic: "swarm.topic"})
+conn.receive({ type: "SWARM_SENT" , topic: "swarm.x"})
 
 interface DataSource {
     propertyName: string
