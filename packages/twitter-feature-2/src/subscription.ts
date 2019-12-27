@@ -48,7 +48,6 @@ class Connection implements ConnectionChaning {
         else handler = topicOrFilterOrTypeHandler
         let sub = new Subscription(this, topic, filter, handler) 
         this.subs.push(sub)
-        console.log(this)
         return sub as Subscription & T
     }
     public send(msg: any): Promise<void> { 
@@ -72,7 +71,6 @@ class Subscription implements ConnectionChaning  {
                 (<any>this)[name] = (msgHandler: MessageHandler) => 
                     this.on(onHandlerMap[name],msgHandler)
             )
-            console.log(onHandlerMap)
         }
     }
     //public close(): void 
@@ -98,7 +96,6 @@ class Subscription implements ConnectionChaning  {
         this.on_handlers.push(
            (msg: any) => ((condition(msg) && handler(msg)),  this) as ConnectionChaning
         )
-        //console.log(this.on_handlers, this)
         return this
     }
 
