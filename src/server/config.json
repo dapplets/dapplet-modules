@@ -2,8 +2,7 @@
   "hostnames": {
     "twitter.com": {
       "twitter-feature-1.dapplet-base.eth": "0.3.2",
-      "twitter-feature-2.dapplet-base.eth": "0.3.2",
-      "new-feature.dapplet-base.eth": "0.1.0"
+      "twitter-feature-2.dapplet-base.eth": "0.3.2"
     },
     "mobile.twitter.com": {
       "twitter-feature-1.dapplet-base.eth": "0.3.2",
