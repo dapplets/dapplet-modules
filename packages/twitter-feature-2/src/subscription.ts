@@ -41,7 +41,6 @@ class Connection implements ConnectionChaning {
     subscribe<T>(filter: MsgFilter, h: MsgFilterMap<T>): Subscription & T
     subscribe<T>(h: MsgFilterMap<T>): Subscription & T
     subscribe<T>(topicOrFilterOrTypeHandler: string | MsgFilter | MsgFilterMap<T>, handler?: MsgFilterMap<T>): Subscription & T {
-        console.log(...arguments)
         let topic
         let filter
         if (typeof topicOrFilterOrTypeHandler === 'string') topic = topicOrFilterOrTypeHandler
