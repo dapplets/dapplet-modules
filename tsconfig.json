@@ -16,15 +16,5 @@
         "types": [ "../../typesPatch" ],
         "composite": true
     },
-    "include": [ ],
-    "references": [
-        { "path": "./packages/common-lib" },
-        { "path": "./packages/dynamic-adapter" },
-        { "path": "./packages/twitter-adapter" },
-        { "path": "./packages/twitter-adapter-legacy" },
-        { "path": "./packages/twitter-adapter-new" },
-        { "path": "./packages/twitter-feature-1" },
-        { "path": "./packages/twitter-feature-2" },
-        { "path": "./packages/twitter-feature-3" }
-    ]
+    "include": [ ]
 }
