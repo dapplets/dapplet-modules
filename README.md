@@ -10,35 +10,40 @@ This repository is built as a mono-repository. Lerna is used to assemble package
 
 ```
 $/
-  dist/
   docs/
   packages/
     common-lib/
     dapplet-extension-types/
+    dynamic-adapter/
     twitter-adapter/
     twitter-adapter-legacy/
     twitter-adapter-new/
     twitter-feature-1/
     twitter-feature-2/
+    twitter-feature-3/
   src/
     client/
     server/
+  templates/
+    feature/
 ```
 
-- `dist` - Build results. This directory is locally accessible at http://localhost:8080/dist
-- `dist\index.json` - Config file for modules declaration and binding beetwen them and hostnames
 - `docs` - Documentation
 - `packages` - Examples of modules for Dapplet Extension
 - `packages\dapplet-extension-types` - Global types of dapplet extension
 - `packages\common-lib` - CommonLib for adapters
+- `packages\dynamic-adapter` - Content adapter for dynamic websites
 - `packages\twitter-adapter` - Resolver of Adapter for twitter.com
-- `packages\twitter-adapter-legacy` - Content adapter for legacy design of twitter.com
-- `packages\twitter-adapter-new` - Content adapter for new design of twitter.com
+- `packages\twitter-adapter-legacy` - the config of the twitter adapter for legacy design of twitter.com
+- `packages\twitter-adapter-new` -the config of the twitter adapter for new design of twitter.com
 - `packages\twitter-feature-1` - First Feature injecting controls for twitter.com
 - `packages\twitter-feature-2` - Second Feature injecting controls for twitter.com
+- `packages\twitter-feature-3` - Second Feature injecting controls for twitter.com
 - `src` - Dev server sources
 - `src\client` - Overlay sources
 - `src\server` - It serves dist folder and generates dev config dynamically
+- `templates` - Template projects which generates modules with `npm run create` command
+- `templates\feature` - Empty template project of feature
 
 ### Building
 
@@ -47,79 +52,31 @@ $/
 3.  `npm run start` to run the dev task in watch mode or `npm run build` to build a production version
 
 ### Attaching Bundles to Extension
+
 During `npm run start`, connect to Dev Server via Extension Dev Tab
 
 Dev Config URL: `http://localhost:8080/index.json`
 
-### [NOT RELEVANT] How to create a new module?
+### How to create a new module?
 
-1. Add path to your package inside `tsconfig.json` file like below:
-```json
-{
-  "references": [
-    {
-      "path": "./packages/{YOUR_PACKAGE_NAME}"
-    }
-  ]
-}
-```
-2. Create a new folder inside `packages` directory.
-3. Run `npm init` for package.json file creation.
-4. Add `build`, `watch` and `clean` scripts to package.json like below (do not forget replace `{YOUR_BUNDLE_NAME}` to name of your package/folder):
-```json
-"scripts": {
-  "build": "browserify -e src/index.ts -p tsify -o ../../dist/{YOUR_BUNDLE_NAME}.js",
-  "watch": "watchify -v -e src/index.ts -p tsify -o ../../dist/{YOUR_BUNDLE_NAME}.js",
-  "clean": "(if exist lib rd /q /s lib) & (if exist dist rd /q /s dist)"
-}
-```
-5. Run `npm install @dapplets/dapplet-extension-types` from your package directory to add types of extension.
-6. Create a `tsconfig.json` file inside your package directory, which contains configuration of TypeScript compilation.
-```json
-{
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "outDir": "lib",
-    "rootDir": "src"
-  },
-  "include": ["./src/**/*"]
-}
-```
-7. Create `src` folder inside your package directory.
-8. Create `index.ts` file inside `src` like below:
-```typescript
-// ==UserScript==
-// @name {YOUR_PACKAGE_TITLE}
-// @type feature
-// @description {YOUR_PACKAGE_DESCRIPTION}
-// @author Dapplets Team
-// @version 1.0.0
-// @familyId {YOUR_PACKAGE_NAME}
-// @icon {YOUR_PACKAGE_ICON}
-// ==/UserScript==
+1. `npm run create` to run the wizard of new module creation from templates.
+2. Answer the questions of CLI.
+3. You can find new module in `packages\<name_of_your_module>` directory.
 
-import { IFeature } from '@dapplets/dapplet-extension-types'
+### How to publish modules?
 
-@Feature("{YOUR_PACKAGE_NAME}.dapplet-base.eth", "1.0.0")
-export default class Feature implements IFeature {
+Run command:
 
-    public activate() {
-        
-    }
-
-    public deactivate() {
-        
-    }
-}
 ```
-9. [Additionaly] If you want to use (inject) existing module to your package, then run `npm install {PACKAGE_NAME}` to add dependency and do next step.
-10. [Additionaly] Add decorated property to your main class, where module will be injected like below:
-```typescript
-@Inject("twitter-adapter.dapplet-base.eth", "1.0.0")
-public adapter: any;
+set DAPPLET_CLI_REGISTRY=https://test.dapplets.org && set DAPPLET_CLI_ACCOUNT=dapplet-base && set DAPPLET_CLI_KEY=<YOUR_SECRET_KEY> && npm run deploy
 ```
-11. Run `npm run bootstrap` from root directory of current repository to add symbolic linking of adjacent packages.
-12. Run `npm run watch` to start development!
+
+Where instead of `npm run deploy` you can use the following commands:
+
+* `npm run deploy` for deployment of modules from `build` folders to the Test Registry.
+* `npm run deploy:archive` for deployment of modules from `build` and `archive` folders to the Test Registry.
+* `npm run deployswarm` for deployment of modules from `build` folders to the Swarm.
+* `npm run deployswarm:archive` for deployment of modules from `build` and `archive` folders to the Swarm.
 
 ## Built With
 
