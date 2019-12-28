@@ -1,9 +1,9 @@
 type MessageHandler = (msg: any) => any
 
 type MsgFilter = (msg: any) => boolean
-type MsgFilterMap<T> = { [K in keyof T]: MsgFilter }
+type EventTypes<T> = { [K in keyof T]: MsgFilter }
 
-let EthereumEvents: MsgFilterMap<EthSupport> = {
+let EthereumEvents: EventTypes<EthSupport> = {
     onWalletConnect : (msg: any) => msg.type == 'WC_CONNECT',
     onTxSent: (msg: any) => msg.type == 'TX_SENT'
 }
@@ -13,7 +13,7 @@ type EthSupport = {
     onTxSent: (h:MessageHandler) => EthSupport & ConnectionChaning
 }
 
-let SwarmEvents: MsgFilterMap<SwarmSupport> = {
+let SwarmEvents: EventTypes<SwarmSupport> = {
     onSwarmNode : (msg: any) => msg.type == 'SWARM_NODE',
     onSwarmSent: (msg: any) => msg.type == 'SWARM_SENT'
 }
@@ -25,10 +25,10 @@ type SwarmSupport = {
 
 interface ConnectionChaning {
     
-    subscribe<T>(topic: string, h: MsgFilterMap<T>): Subscription & T
-    subscribe<T>(filter: MsgFilter, h: MsgFilterMap<T>): Subscription & T
-    subscribe<T>(h: MsgFilterMap<T>): Subscription & T
-    subscribe<T>(topicOrFilterOrTypeHandler: string | MsgFilter | MsgFilterMap<T>, h?: MsgFilterMap<T>): Subscription & T
+    subscribe<T>(topic: string, h: EventTypes<T>): Subscription & T
+    subscribe<T>(filter: MsgFilter, h: EventTypes<T>): Subscription & T
+    subscribe<T>(h: EventTypes<T>): Subscription & T
+    subscribe<T>(topicOrFilterOrTypeHandler: string | MsgFilter | EventTypes<T>, h?: EventTypes<T>): Subscription & T
     send(msg: any): Promise<void>
 
 }
@@ -37,10 +37,10 @@ interface ConnectionChaning {
 class Connection implements ConnectionChaning {
     subs: Subscription[] = []
     
-    subscribe<T>(topic: string, h: MsgFilterMap<T>): Subscription & T
-    subscribe<T>(filter: MsgFilter, h: MsgFilterMap<T>): Subscription & T
-    subscribe<T>(h: MsgFilterMap<T>): Subscription & T
-    subscribe<T>(topicOrFilterOrTypeHandler: string | MsgFilter | MsgFilterMap<T>, handler?: MsgFilterMap<T>): Subscription & T {
+    subscribe<T>(topic: string, h: EventTypes<T>): Subscription & T
+    subscribe<T>(filter: MsgFilter, h: EventTypes<T>): Subscription & T
+    subscribe<T>(h: EventTypes<T>): Subscription & T
+    subscribe<T>(topicOrFilterOrTypeHandler: string | MsgFilter | EventTypes<T>, handler?: EventTypes<T>): Subscription & T {
         let topic
         let filter
         if (typeof topicOrFilterOrTypeHandler === 'string') topic = topicOrFilterOrTypeHandler
