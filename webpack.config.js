@@ -84,10 +84,10 @@ module.exports = function (dir) {
       }, ['watch-run']),
       new CopyWebpackPlugin([MANIFEST_NAME])
     ],
-    mode: "production",
+    //mode: "production",
     //devtool: "inline-source-map",
-    optimization: {
-      minimize: true
-    },
+    // optimization: {
+    //   minimize: true
+    // },
   };
 }

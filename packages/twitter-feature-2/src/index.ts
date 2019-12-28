@@ -21,9 +21,11 @@ export default class TwitterFeature implements IFeature {
                         label: likes.like_num,
                         img: GNOSIS_ICON,
                         disabled: false,
-                        exec: () => Core.sendWalletConnectTx('1', ctx, e => setState({
-                            CREATED: "DEFAULT"
-                        }[e.type] || e.type))
+                        exec: () => {
+                            Core.sendWalletConnectTx('1', ctx, e => setState(({
+                                CREATED: "DEFAULT"
+                            })[e.type] || e.type))
+                        }
                     },
                     "PENDING": { label: 'Pending', loading: true, disabled: true },
                     "PAIRING": { label: 'Pairing', loading: true, disabled: true },
