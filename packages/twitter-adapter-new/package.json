@@ -21,7 +21,7 @@
     "@dapplets/dynamic-adapter": "^0.1.0"
   },
   "devDependencies": {
-    "@dapplets/dapplet-extension-types": "^0.3.11",
+    "@dapplets/dapplet-extension-types": "^0.3.12",
     "@dapplets/twitter-adapter": "^0.3.4"
   }
 }
