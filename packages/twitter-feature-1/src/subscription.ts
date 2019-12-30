@@ -33,9 +33,42 @@ interface ConnectionChaning {
 
 }
 
+type OverlayConnConfig = {
+    url: string
+    title: string
+    tabId?: any
+}
+
+type WalletConnConfig = {
+    url: string
+    title: string
+    tabId?: any
+}
+
+//creates overlay
+class Core2 {
+    public static overlay(cfg: OverlayConnConfig){
+        return new (class extends Connection2<OverlayConnConfig>{
+            public send(msg: any): Promise<void> { 
+                //ToDo: implement overlay specific
+                return new Promise((resolve, reject)=>resolve())
+            }        
+        })(cfg)
+    }
+
+    public static wallet(cfg: WalletConnConfig){
+        return new (class extends Connection2<WalletConnConfig>{
+            public send(msg: any): Promise<void> { 
+                return new Promise((resolve, reject)=>resolve())
+            }        
+        })(cfg)
+    }
+} 
    
-class Connection implements ConnectionChaning {
-    subs: Subscription[] = []
+abstract class Connection2<ConnType> implements ConnectionChaning {
+    constructor(public props:ConnType){}
+    subConnections: Connection2<ConnType>[] = []
+    subscriptions: Subscription[] = []
     
     subscribe<T>(topic: string, h: EventTypes<T>): Subscription & T
     subscribe<T>(filter: MsgFilter, h: EventTypes<T>): Subscription & T
@@ -47,15 +80,25 @@ class Connection implements ConnectionChaning {
         else if (typeof topicOrFilterOrTypeHandler === 'function') filter = topicOrFilterOrTypeHandler as MsgFilter
         else handler = topicOrFilterOrTypeHandler
         let sub = new Subscription(this, topic, filter, handler) 
-        this.subs.push(sub)
+        this.subscriptions.push(sub)
         return sub as Subscription & T
     }
-    public send(msg: any): Promise<void> { 
-        return new Promise((resolve, reject)=>resolve())
+
+    public abstract send(msg: any): Promise<void>;
+
+    public close():void {
+        for (const conn of this.subConnections) {
+            conn.close()
+        }
+    }
+
+    public spawn(moreProps:ConnType):Connection2<ConnType> {
+        let props = {...this.props, ...moreProps}
+        return new Connection2<ConnType>(moreProps)
     }
 
     public receive(m: any) { 
-        for (let s of this.subs) { 
+        for (let s of this.subscriptions) { 
             s.onMessage(m)
         }
     }
@@ -65,7 +108,7 @@ class Connection implements ConnectionChaning {
 class Subscription implements ConnectionChaning  {
     send = this.conn.send.bind(this.conn)
     subscribe = this.conn.subscribe.bind(this.conn)
-    constructor(private conn:Connection, private topic: string="", private filter?: MsgFilter, private onHandlerMap?: any) { 
+    constructor(private conn:Connection2, private topic: string="", private filter?: MsgFilter, private onHandlerMap?: any) { 
         if (onHandlerMap) {
             Object.keys(onHandlerMap).forEach((name: string) =>
                 (<any>this)[name] = (msgHandler: MessageHandler) => 
@@ -116,7 +159,7 @@ class Subscription implements ConnectionChaning  {
 }
 
 
-let conn = new Connection()
+let conn = new Connection2()
 
 conn.subscribe("the.topic", EthereumEvents)
         .onTxSent((m) => { console.log("onTxSent  topic:", m.topic) })
