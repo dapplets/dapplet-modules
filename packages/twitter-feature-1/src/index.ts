@@ -11,8 +11,12 @@ export default class TwitterFeature implements IFeature {
 
     constructor() {
         //if some parameters are missing, return curried function?
-        const overlay = Core.overlay('https://examples.dapplets.org', 'Gnosis', 'tabId'); 
-        const wallet = Core.wallet({dappletId:'1'})
+        const overlay = Core.overlay({ url: 'https://examples.dapplets.org', title: 'Gnosis', tabId: 'tabId' });
+        const wallet = Core.wallet({ dappletId: '1' });
+
+        const PM_EVENTS = "*";
+        const WALLET_EVENTS = "*";
+
         const { button } = this.adapter.widgets;
         this.config = {
             connections: {
@@ -47,25 +51,25 @@ export default class TwitterFeature implements IFeature {
                                             // better als setState ?
                                             // setState should ignore unknown und undefined states (?)
                                             me.state = ({
-                                                CREATED:'DEFAULT',
+                                                CREATED: 'DEFAULT',
                                                 REJECTED: 'ERR'
-                                            }[e.type]|| e.type)
+                                            }[e.type] || e.type)
                                             // return message if handler/filter
                                             return e
                                         })
-                                        .onTxCreated((e)=>Core.overlay(ctx.id).send('tx_created'))
+                                        .onTxCreated((e) => Core.overlay(ctx.id).send('tx_created'))
                                 })
                         }
                     },
-                    "TX_RUNNING": { 
-                        label: 'Pending', 
-                        loading: true, 
-                        disabled: true 
+                    "TX_RUNNING": {
+                        label: 'Pending',
+                        loading: true,
+                        disabled: true
                     },
-                    "PAIRING": { 
-                        label: 'Pairing', 
-                        loading: true, 
-                        disabled: true 
+                    "PAIRING": {
+                        label: 'Pairing',
+                        loading: true,
+                        disabled: true
                     },
                     "ERR": {
                         label: 'Error'
@@ -87,24 +91,41 @@ export default class TwitterFeature implements IFeature {
 }
 
 
-/*
-                                   overlay.open(() => overlay.publish('tweet_select', ctx));
-                            overlay.unsubscribe('pm_attach');
-                            overlay.subscribe('pm_attach',
-                                async ({ market, tweet }) => {
-                                    setState("TX_RUNNING");
-                                    Core.sendWalletConnectTx('1', ctx, (e) => {
-                                        if (e.type === "CREATED") {
-                                            overlay.publish('tx_created');
-                                            setState("DEFAULT");
-                                        } else if (e.type === "PAIRING") {
-                                            setState("PAIRING");
-                                        } else if (e.type === "REJECTED") {
-                                            setState("ERR");
-                                        }
-                                    });
-                                },
-                                SubscribeOptions.SINGLE_THREAD
-  
-                                );
-  */ 
+
+
+// // CLIENT SIDE
+
+// type EthSupport = {
+//     onWalletConnect : (h:MessageHandler) => EthSupport & ConnectionChaning
+//     onTxSent: (h:MessageHandler) => EthSupport & ConnectionChaning
+// }
+
+// type SwarmSupport = {
+//     onSwarmNode: (h:MessageHandler) => SwarmSupport & ConnectionChaning
+//     onSwarmSent: (h: MessageHandler) => SwarmSupport & ConnectionChaning
+// }
+
+// let EthereumEvents: EventTypes<EthSupport> = {
+//     onWalletConnect : (msg: any) => msg.type == 'WC_CONNECT',
+//     onTxSent: (msg: any) => msg.type == 'TX_SENT'
+// }
+
+// let SwarmEvents: EventTypes<SwarmSupport> = {
+//     onSwarmNode : (msg: any) => msg.type == 'SWARM_NODE',
+//     onSwarmSent: (msg: any) => msg.type == 'SWARM_SENT'
+// }
+
+// conn.subscribe("the.topic", EthereumEvents)
+//         .onTxSent((m) => { console.log("onTxSent  topic:", m.topic) })
+//         .onWalletConnect((m) => { console.log("onWalletConnect  topic:", m.topic)})
+//     .subscribe("swarm.*", SwarmEvents)
+//         .onSwarmNode((m) => { console.log("onSwarmNode topic:", m.topic) })
+//         .onSwarmSent((m) => { console.log("onSwarmSent topic:", m.topic) })
+//     .send({ type: "PING" })
+//     .then(() => { console.log("message sent...") })
+//     .catch(() => { console.log("sending failed!") })
+
+// conn.receive({ type: "WC_CONNECT", topic: "the.topic" })
+// conn.receive({ type: "TX_SENT" , topic: "the.topic"})
+// conn.receive({ type: "SWARM_NODE" , topic: "swarm.topic"})
+// conn.receive({ type: "SWARM_SENT" , topic: "swarm.x"})
