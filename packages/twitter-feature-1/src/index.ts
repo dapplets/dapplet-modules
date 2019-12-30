@@ -34,7 +34,7 @@ export default class TwitterFeature implements IFeature {
                         exec: (ctx, me) => {
                             //ToDo: use ctx.id as a tab discriminator to stick on necessary tab
                             //ToDo: [alsakhaev] instead of id using, we can save overlay into widget's scope (this)
-                            Core.overlay(ctx.id)
+                            overlay
                                 .send('tweet_select', ctx)       //ToDo: reuse existing tab or open new tab? - the tab decides. Here depending on contextId
                                 .subscribe(PM_EVENTS)
                                 .onPmAttach(({ market, tweet }) => {
