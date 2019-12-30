@@ -36,7 +36,7 @@ export default class TwitterFeature implements IFeature {
                             //ToDo: [alsakhaev] instead of id using, we can save overlay into widget's scope (this)
                             overlay
                                 .send('tweet_select', ctx)       //ToDo: reuse existing tab or open new tab? - the tab decides. Here depending on contextId
-                                .subscribe(PM_EVENTS)
+                                .subscribe(PM_EVENTS)  // ToDo: [alsakhaev] what's difference between subscribe() vs on()?
                                 .onPmAttach(({ market, tweet }) => {
                                     //ToDo: always create a new conn? and the tab?
                                     // No - if repeated call, then replace  he already loaded  dapplet (after asking user).
