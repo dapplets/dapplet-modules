@@ -1,22 +1,22 @@
 {
-  "name": "@dapplets/twitter-adapter",
-  "version": "0.3.4",
+  "name": "@dapplets/dynamic-adapter",
+  "version": "0.1.0",
   "description": "",
   "scripts": {
     "build": "webpack --config webpack.dev.js",
     "watch": "webpack -w --config webpack.dev.js",
-    "clean": "(if exist lib rd /q /s lib) & (if exist dist rd /q /s dist)"
+    "clean": "(if exist build rd /q /s build) & (if exist dist rd /q /s dist)"
   },
   "author": "Dapplets Team",
   "license": "MIT",
   "directories": {
-    "lib": "lib"
+    "build": "build"
   },
   "files": [
-    "lib"
+    "build"
   ],
-  "main": "lib/index.js",
-  "typings": "lib/index.d.ts",
+  "main": "build/index.js",
+  "typings": "build/index.d.ts",
   "devDependencies": {
     "@dapplets/dapplet-extension-types": "^0.3.11"
   }

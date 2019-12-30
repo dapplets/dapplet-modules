@@ -28,7 +28,8 @@
     "deploy": "lerna exec --concurrency 1 -- dapplet-cli deploy",
     "deploy:archive": "lerna exec --concurrency 1 -- dapplet-cli deploy --archive",
     "deployswarm": "lerna exec --concurrency 1 -- dapplet-cli deploy --swarm",
-    "deployswarm:archive": "lerna exec --concurrency 1 -- dapplet-cli deploy --swarm --archive"
+    "deployswarm:archive": "lerna exec --concurrency 1 -- dapplet-cli deploy --swarm --archive",
+    "create": "node src/copyTemplate.js"
   },
   "repository": {
     "type": "git",
@@ -40,18 +41,23 @@
   "homepage": "https://github.com/dapplets/typescript-examples#readme",
   "devDependencies": {
     "before-build-webpack": "^0.2.9",
+    "chalk": "^3.0.0",
     "copy-webpack-plugin": "^5.1.1",
+    "ejs": "^3.0.1",
     "form-data": "^3.0.0",
     "http-server": "^0.12.0",
+    "inquirer": "^7.0.1",
     "lerna": "^3.19.0",
     "node-fetch": "^2.6.0",
     "npm-run-all": "^4.1.5",
+    "shelljs": "^0.8.3",
     "ts-loader": "^6.2.1",
-    "typescript": "^3.7.3",
+    "typescript": "^3.7.4",
     "url-loader": "^3.0.0",
-    "webpack": "^4.41.2",
+    "webpack": "^4.41.4",
     "webpack-cli": "^3.3.10",
-    "webpack-merge": "^4.2.2"
+    "webpack-merge": "^4.2.2",
+    "yargs": "^15.0.2"
   },
   "dependencies": {
     "body-parser": "^1.19.0",

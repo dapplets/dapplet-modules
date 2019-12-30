@@ -1,37 +1,8 @@
 import { IFeature } from "@dapplets/dapplet-extension-types";
 
-import { IButtonConfig, IWidgetBuilder, IWidgetBuilderConfig, IPictureConfig } from "./types";
-import { Button } from "./widgets/button";
-import { Picture } from "./widgets/picture";
+import { IWidgetBuilderConfig, Context } from "./types";
 
-function uuidv4() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-    });
-}
-
-export const widgets = {
-    button: (configCallback: (ctx: any, state: any, sub: any) => IButtonConfig) => {
-        const uuid = uuidv4();
-        return ((builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element, proxiedSubs: any) =>
-            createWidget(Button, builder, insPointName, configCallback, order, contextNode, uuid, proxiedSubs)
-        );
-    },
-    picture: (configCallback: (ctx: any, state: any, sub: any) => IPictureConfig) => {
-        const uuid = uuidv4();
-        return ((builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element, proxiedSubs: any) =>
-            createWidget(Picture, builder, insPointName, configCallback, order, contextNode, uuid, proxiedSubs)
-        );
-    }
-};
-
-export type Context = {
-    parsed: any,
-    features: Map<IFeature, { subscriptions: any[], proxiedSubs: any }>
-};
-
-export class WidgetBuilder implements IWidgetBuilder {
+export class WidgetBuilder {
     containerSelector: string;
     contextSelector: string;
     insPoints: { [key: string]: any };
@@ -119,26 +90,4 @@ export class WidgetBuilder implements IWidgetBuilder {
             Core.contextStarted(newParsedContexts)
         }
     }
-}
-
-function createWidget(Widget: any, builder: WidgetBuilder, insPointName: string, configCallback: Function, order: number, contextNode: Element, clazz: string, proxiedSubs: any): any {
-    // ToDo: calculate node from insPoint & view
-    const insPoint = builder.insPoints[insPointName];
-    const node = contextNode.querySelector(insPoint.selector);
-
-    if (node.getElementsByClassName(clazz).length > 0) return;
-
-    const context = builder.contexts.get(contextNode);
-
-    const widget = new Widget((setState) => configCallback(context.parsed, setState, proxiedSubs), clazz);
-    widget.el.classList.add('dapplet-widget');
-
-    const insertedElements = node.getElementsByClassName('dapplet-widget');
-    if (insertedElements.length >= order) {
-        node.insertBefore(widget.el, insertedElements[order]);
-    } else {
-        node.appendChild(widget.el);
-    }
-
-    return widget;
 }

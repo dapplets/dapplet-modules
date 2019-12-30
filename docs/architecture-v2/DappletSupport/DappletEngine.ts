@@ -41,7 +41,7 @@ class DappletEngine {
 
     async onRequest(dappletRequest: DappletRequest): Promise<void> {
         for (const frame of dappletRequest.frames) {
-            // будут загружаться последовательно!
+            // will be loaded consistently!
             const dappletCfg = await this.loadDappletConfig(frame.dappletPid); 
             const data = this.parseRequestData(frame.payload, frame.parserPid, dappletCfg.variables);
             const dapplet = this.createDapplet(dappletCfg, data)

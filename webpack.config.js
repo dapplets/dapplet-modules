@@ -18,10 +18,13 @@ module.exports = function (dir) {
     entry: path.join(dir, "src/index.ts"),
     output: {
       path: path.join(dir, BUILD_DIRECTORY),
-      filename: bundleName
+      filename: bundleName,
+      libraryTarget: 'umd',
+      umdNamedDefine: true,
+      globalObject: 'this'
     },
     resolve: {
-      extensions: [".ts"]
+      extensions: [".ts", ".js"]
     },
     module: {
       rules: [{
@@ -81,7 +84,10 @@ module.exports = function (dir) {
       }, ['watch-run']),
       new CopyWebpackPlugin([MANIFEST_NAME])
     ],
-    mode: "development",
-    devtool: "inline-source-map"
+    //mode: "production",
+    //devtool: "inline-source-map",
+    // optimization: {
+    //   minimize: true
+    // },
   };
 }

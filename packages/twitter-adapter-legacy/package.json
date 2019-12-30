@@ -1,6 +1,6 @@
 {
   "name": "@dapplets/twitter-adapter-legacy",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "",
   "scripts": {
     "build": "webpack --config webpack.dev.js",
@@ -17,8 +17,11 @@
   ],
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
+  "dependencies": {
+    "@dapplets/dynamic-adapter": "^0.1.0"
+  },
   "devDependencies": {
     "@dapplets/dapplet-extension-types": "^0.3.11",
-    "@dapplets/twitter-adapter": "^0.3.3"
+    "@dapplets/twitter-adapter": "^0.3.4"
   }
 }
