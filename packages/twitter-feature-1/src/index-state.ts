@@ -32,20 +32,21 @@ export default class TwitterFeature implements IFeature {
                     "DEFAULT": {
                         //ToDo: maybe we don't need to redefine 'likes' from Connection to DataSource
                         //      we can just dynamically define 'like_num' on Connection
+                        // Question: what 'like_num' looks like? It is a factory, creates/reuses a subscription on context start/end
                         label: likes.like_num,
                         img: GNOSIS_ICON,
                         disabled: false,
                         //auto-subscribe on state-entry, auto-unsubscribe on state-exit
                         //subscriptions produces events like onXXXX()
-                        //ToDo: it is not a subscription call - it is a deferred call
-                        subscribe: [wallet.subscribe("tx"), overlay.subscribe("pm_attach")],
+                        //ToDo: it is not a subscription call - it is a deferred call - returns a Fn.
+                        subscribe: [wallet.subscr("tx"), overlay.subscr("pm_attach")],
                         //change state (from and to this state)
                         change_state_when : {
                             "SENDING_TX" : [BTN.CLICKED, WAL.CONFIRMED],
                             "DEFAULT" : [BTN.CLICKED, WAL.CONFIRMED]    
                         },
                         //ToDo: think is it necessary?
-                        //add state on the to of existing one. It makes NFA - non-finite deterministic authomat
+                        //add state on the to of existing one. It makes NFA - non-finite deterministic authomat with the vector of current states [S1,S2,...]
                         //Usage: introduce sub-states like in a async communication: the button remains the same, but waiting for something...
                         add_state_when : {
                             "PAIRING_TX" : [BTN.CLICKED, WAL.CONFIRMED],
