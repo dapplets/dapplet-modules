@@ -1,109 +1,13 @@
-type MessageHandler = (msg: any) => any
-
-type MsgFilter = (msg: any) => boolean
-type EventTypes<T> = { [K in keyof T]: MsgFilter }
-
-
-type AutoPropertyConfig<T> = { [key in keyof T]?: string}
-type EventsOutConfig = { [K : string]: MsgFilter }
-type EventsInConfig = { [K : string]: (op:any, msg:any)=>void }
-
-class AutoProperty<T> {
-    conn: Connection2<T>
+// =============
+class AutoProperty {
+    conn: __Connection<any, any>
     propertyName: string
     setter: (value:any) => void
 }
 
-type ConnectionConfig<MsgType> = {
-    autoProperties  ?: AutoPropertyConfig<MsgType>,
-    eventsIn ?: EventsInConfig,
-    eventsOut  ?: EventsOutConfig
-}
+type MessageHandler = (msg: any) => void
 
-let EthereumEvents: EventTypes<EthSupport> = {
-    onWalletConnect : (msg: any) => msg.type == 'WC_CONNECT',
-    onTxSent: (msg: any) => msg.type == 'TX_SENT'
-}
-
-type EthSupport = {
-    onWalletConnect : (h:MessageHandler) => EthSupport & Connection2<EthSupport>
-    onTxSent: (h:MessageHandler) => EthSupport & Connection2<EthSupport>
-}
-
-let SwarmEvents: EventTypes<SwarmSupport> = {
-    onSwarmNode : (msg: any) => msg.type == 'SWARM_NODE',
-    onSwarmSent: (msg: any) => msg.type == 'SWARM_SENT'
-}
-
-type LikesMessage = {
-    type: 'LIKE' | 'RT'
-    likes: number,
-    retwits: string
-}
-
-// ============ to Dynamic Page Adapter
-
-// pre-process widget config for faster rendering later
-//
-// 1) collect all connections referenced in specific wifget config.
-function preProcessConfig(widgetCfg: any) {
-    let connections :Connection2<any>[] = []
-    Object.keys(widgetCfg).forEach((key)=>{
-        let p = widgetCfg[key]
-        if (p instanceof AutoProperty) {
-            if (connections.indexOf(conn)==-1) connections.push(p.conn)
-        }
-    })
-    widgetCfg.connections = connections
-
-}
-
-// here we configure specific connection:
-// this connection listens on events fired by environment and forward conetxt events to the server. 
-let likeConn  = Core2.connect<LikesMessage>("wss://examples.dapplets.org", {
-    // configurates auto-properties for this subscription
-    // allows to have different keys for used in the message and as auto-property names.  
-    autoProperties: {
-        likes : 'like',
-        retwits: 'nrretwits'
-    },
-    eventsOut: {
-        onLikeChanged : (msg: LikesMessage) => msg.type == 'LIKE',
-        onRtChanged: (msg: LikesMessage) => msg.type == 'RT'
-    }, 
-    eventsIn: {
-        CONTEXT_START: (conn, ctx) => conn.send("start", ctx.id).subscribe(ctx.id),
-        CONTEXT_END  : (conn, ctx) => conn.send("finished", ctx.id).unsubscribe(ctx.id)
-    }
-})
-
-
-// 2) forward specific events 
-function processContextStart(ctx:any, widgetCfg: any) {
-    widgetCfg.connections.forEach((conn)=>conn.processEvent(CONTEXT_START,ctx))
-}
-
-function processContextEnd(ctx:any, widgetCfg: any) {
-    widgetCfg.connections.forEach((conn)=>conn.processEvent(CONTEXT_END,ctx))
-}
-
-
-type SwarmSupport = {
-    onSwarmNode: (h:MessageHandler) => SwarmSupport & Connection2<SwarmSupport>
-    onSwarmSent: (h: MessageHandler) => SwarmSupport & Connection2<SwarmSupport>
-}
-
-/*
-interface ConnectionChaning {
-    
-    subscribe<T>(topic: string, h: EventTypes<T>): Subscription & T
-    subscribe<T>(filter: MsgFilter, h: EventTypes<T>): Subscription & T
-    subscribe<T>(h: EventTypes<T>): Subscription & T
-    subscribe<T>(topicOrFilterOrTypeHandler: string | MsgFilter | EventTypes<T>, h?: EventTypes<T>): Subscription & T
-    send<T>(msg: any): Connection2<T>
-
-}
-*/
+// ============ types used to create different __connection types
 type OverlayConnParams = {
     url: string
     title: string
@@ -111,109 +15,127 @@ type OverlayConnParams = {
 }
 
 type WalletConnParams = {
-    url: string
-    title: string
-    tabId?: any
+    dappletId: string
+    pairingHint?: any //just an example
 }
 
-class Core2 {
-    public static overlay<MsgType>(cfg: OverlayConnParams){
-        return new (class extends Connection2<MsgType>{
+type ServerConnParams = {
+    url: string
+}
+// ===========================
+
+// ============ used to define message and event processing in subscriptions
+type MsgProcessingConfig<MsgType, EventHandlerList extends string|symbol> = {
+    autoProperties ?: AutoPropertyConfig<MsgType>,
+    eventsIn ?: EventsInConfig,
+    eventsOut  ?: EventsOutConfig<EventHandlerList>
+}
+
+type AutoPropertyConfig<MsgType> = { [key:string]: keyof MsgType }
+type EventsOutConfig<EventHandlerList extends string|symbol> = Partial<Record<EventHandlerList, MsgFilter>>
+type EventsInConfig = { [key : string]: (conn:__Connection<any,any>, msg:any)=>void }
+// ===========================
+
+// ========= defines different filters on incoming messages
+type MsgFilter = (msg: any) => boolean
+type EventTypes<T> = { [K in keyof T]: MsgFilter }
+
+// ========== injected in extension
+class __Core {
+    public static overlay<MsgType, EventHandlerList extends string|symbol>(cfg: OverlayConnParams, msgProcessingCfg?: MsgProcessingConfig<MsgType, EventHandlerList>){
+        let conn = new (class extends __Connection<MsgType, EventHandlerList>{
             public send(op:any, msg: any) { 
                 //ToDo: implement overlay specific
-                return new Promise((resolve, reject)=>resolve())
+                return conn
             }        
-        })(cfg)
+        })(cfg, msgProcessingCfg)
+        return conn
     }
 
-    public static wallet<MsgType>(cfg: WalletConnParams){
-        return new (class extends Connection2<MsgType>{
+    public static wallet<MsgType, EventHandlerList extends string|symbol>(cfg: WalletConnParams, msgProcessingCfg?: MsgProcessingConfig<MsgType, EventHandlerList>){
+        let conn=new (class extends __Connection<MsgType,EventHandlerList>{
             public send(op:any, msg: any) { 
-                return new Promise((resolve, reject)=>resolve())
+                //ToDo: implement wallet specific
+                return conn
             }        
-        })(cfg)
+        })(cfg, msgProcessingCfg)
+        return conn
     }
 
-    public static connect<T>(url: string, connCfg: ConnectionConfig<T>) {
-        let r;
-        return r=new (class extends Connection2<T>{
-            public send(op:any, msg: any) { 
-                return r
+    public static connect<MsgType, EventHandlerList extends string|symbol>(cfg: ServerConnParams, msgProcessingCfg?: MsgProcessingConfig<MsgType, EventHandlerList>) {
+        let conn=new (class extends __Connection<MsgType, EventHandlerList>{
+            public send(op:any, msg: any) {
+                //ToDo: implement server connect specific
+                return conn
             }        
-        })(url)
+        })(cfg, msgProcessingCfg)
+        return conn
     }
 } 
-   
-abstract class Connection2<MsgType> {
-    constructor(public props:MsgType){}
-    subConnections: Connection2<MsgType>[] = []
-    subscriptions: Subscription[] = []
+
+abstract class __Connection<MsgType,EventHandlerList extends string|symbol> {
+    constructor(private readonly cfg:any, public readonly connCfg:MsgProcessingConfig<MsgType, EventHandlerList>){}
+    private subscriptions: {[key:string]:Subscription} = {}
     
-    eventListener: Event
-    processEvent(e:any){}
+    processEvent(e:any) {
+        this.connCfg?.eventsIn[e.type]?.(this,e)
+    }
     
-    subscribe<T>(topic: string, h: EventTypes<T>): Subscription & T
-    subscribe<T>(filter: MsgFilter, h: EventTypes<T>): Subscription & T
+    subscribe<T>(topic: string, h: EventTypes<T>): Subscription & T 
+    subscribe<T>(filter: MsgFilter, h: EventTypes<T>): Subscription & T 
     subscribe<T>(h: EventTypes<T>): Subscription & T
-    subscribe<T>(topicOrFilterOrTypeHandler: string | MsgFilter | EventTypes<T>, handler?: EventTypes<T>): Subscription & T {
+    subscribe<T>(topicOrFilterOrTypeHandler: string | MsgFilter | EventTypes<T>, handler?: EventTypes<T>): Subscription & T  {
         let topic
         let filter
         if (typeof topicOrFilterOrTypeHandler === 'string') topic = topicOrFilterOrTypeHandler
         else if (typeof topicOrFilterOrTypeHandler === 'function') filter = topicOrFilterOrTypeHandler as MsgFilter
         else handler = topicOrFilterOrTypeHandler
         let sub = new Subscription(this, topic, filter, handler) 
-        this.subscriptions.push(sub)
-        return sub as Subscription & T
+        this.subscriptions[topic]=sub //ToDo; Bad hack is here: used topic as subscription id.
+        return sub as Subscription & T 
     }
 
-    autoPropertyConfig:AutoPropertyConfig<MsgType>;
-    eventsConfig :EventsOutConfig
-    eventsHandlers :EventsInConfig
-
-    addAutoPropertyConfig(nameMap:{[key in keyof MsgType]?: string}): Connection2<MsgType> {
-        this.autoPropertyConfig = new AutoPropertyConfig(nameMap)
-        return this
-    }
-    
-    addEventsConfig(events:{ [K : string]: MsgFilter }): Connection2<MsgType> {
-        this.eventsConfig = new EventsConfig(events)
-        return this
+    unsubscribe(subId:string) {
+        this.subscriptions[subId]=null
     }
 
-    addEventsHandlers(events:{ [K : string]: MsgFilter }): Connection2<MsgType> {
-        this.eventsHandlers = new EventsHandlers(events)
-        return this
-    } 
-    public abstract send(op:any, msg: any): Connection2<any>;
+    public abstract send(op:any, msg: any): __Connection<any,any>;
 
     public close():void {
-        for (const conn of this.subConnections) {
-            conn.close()
-        }
+        // sub __connections
     }
 
     public receive(m: any) { 
-        for (let s of this.subscriptions) { 
+        for (let s of Object.values(this.subscriptions)) { 
             s.onMessage(m)
         }
     }
-
 }
 
-class Subscription implements ConnectionChaning  {
+type I__Connection = Pick<__Connection<any,any>,'subscribe'|'send'>
+
+//class Subscription implements Pick<__Connection<any,any>,'subscribe'|'send'>  {
+class Subscription implements I__Connection {
     send = this.conn.send.bind(this.conn)
     subscribe = this.conn.subscribe.bind(this.conn)
-    constructor(private conn:Connection2<any>, private topic: string="", private filter?: MsgFilter, private onHandlerMap?: any) { 
-        if (onHandlerMap) {
+    
+    constructor(private conn:__Connection<any,any>, private topic: string="", private filter?: MsgFilter, private onHandlerMap?: any) { 
+        this.createEventHandlers(conn.connCfg.eventsOut);
+        this.createEventHandlers(onHandlerMap);
+    }
+
+    private createEventHandlers(handlerCfg?:any) {
+        if (handlerCfg) {
             //ToDo fire event!!! target? scope? pubsub?
-            Object.keys(onHandlerMap).forEach((name: string) =>
+            Object.keys(handlerCfg).forEach((name: string) =>
                 (<any>this)[name] = (msgHandler: MessageHandler) => 
-                    this.on(onHandlerMap[name],msgHandler)
+                    this.on(handlerCfg[name],msgHandler)
             )
         }
     }
+
     //public close(): void 
-    public autoProperties: { [name: string]: AutoProperty<any> } = {}
+    public autoProperties: { [name: string]: AutoProperty } = {}
     public on_handlers: ((msg:any)=>void) [] = []
 
 
@@ -233,7 +155,7 @@ class Subscription implements ConnectionChaning  {
     
     on(condition: (msg: any) => boolean, handler: (msg: any) => void):Subscription { 
         this.on_handlers.push(
-           (msg: any) => ((condition(msg) && handler(msg)),  this) as ConnectionChaning
+           (msg: any) => ((condition(msg) && handler(msg)),  this) as I__Connection
         )
         return this
     }
@@ -254,10 +176,59 @@ class Subscription implements ConnectionChaning  {
     }
 }
 
+// ================ custom data structures used in examples
+let EthereumEvents: EventTypes<EthSupport> = {
+    onWalletConnect : (msg: any) => msg.type == 'WC_CONNECT',
+    onTxSent: (msg: any) => msg.type == 'TX_SENT'
+}
 
-let _conn = new Connection2()
+type EthEvents = 'onWalletConnect' | 'onTxSent'
+type EthSupport = Record<EthEvents, (h:MessageHandler) => EthSupport & __Connection<any,any>> 
 
-_conn.subscribe("the.topic", EthereumEvents)
+type SwarmSupport = {
+    onSwarmNode: (h:MessageHandler) => SwarmSupport & __Connection<any,any>
+    onSwarmSent: (h: MessageHandler) => SwarmSupport & __Connection<any,any>
+}
+
+let SwarmEvents: EventTypes<SwarmSupport> = {
+    onSwarmNode : (msg: any) => msg.type == 'SWARM_NODE',
+    onSwarmSent: (msg: any) => msg.type == 'SWARM_SENT'
+}
+
+// ==== define message format
+type LikesMessage = {
+    type: 'LIKE' | 'RT'
+    likes: number,
+    retwits: string
+}
+type EventHandlers = 'onRtChanged' | 'onLikeChanged'
+type LikeEvents = 'RT_CHANGED'| 'LIKE_CHANGED'
+
+/// =================== EXAMPLE1: __connection based configutarion 
+
+// here we configure specific __connection:
+// this __connection listens on events fired by environment and forward conetxt events to the server. 
+let likeConn  = __Core.connect<LikesMessage, EventHandlers>({url: "wss://examples.dapplets.org"} , {
+    // configurates auto-properties for this subscription
+    // allows to have different keys for used in the message and as auto-property names.  
+    autoProperties: {
+        like : 'likes',   //autoproperty 'like' maps message property 'likes'
+        retwits: 'retwits'
+    },
+    eventsOut: {
+        onLikeChanged : (msg: LikesMessage) => msg.type == 'LIKE',
+        onRtChanged: (msg: LikesMessage) => msg.type == 'RT'
+    }, 
+    eventsIn: {
+        CONTEXT_START: (conn, ctx) => conn.send("start", ctx.id).subscribe(ctx.id),
+        CONTEXT_END  : (conn, ctx) => conn.send("finished", ctx.id).unsubscribe(ctx.id)
+    }
+})
+
+// ============== EXAMPLE 2: subscription based configuration (old style)
+
+let _conn = __Core.connect({url:'wss://localhost'})
+    .subscribe("the.topic", EthereumEvents)
         .onTxSent((m) => { console.log("onTxSent  topic:", m.topic) })
         .onWalletConnect((m) => { console.log("onWalletConnect  topic:", m.topic)})
     .subscribe("swarm.*", SwarmEvents)
@@ -271,3 +242,4 @@ _conn.receive({ type: "WC_CONNECT", topic: "the.topic" })
 _conn.receive({ type: "TX_SENT" , topic: "the.topic"})
 _conn.receive({ type: "SWARM_NODE" , topic: "swarm.topic"})
 _conn.receive({ type: "SWARM_SENT" , topic: "swarm.x"})
+

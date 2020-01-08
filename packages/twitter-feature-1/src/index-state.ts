@@ -11,9 +11,9 @@ export default class TwitterFeature implements IFeature {
 
     constructor() {
         //if some parameters are missing, return curried function?
-        const overlay = Core.overlay({ url: 'https://examples.dapplets.org', title: 'Gnosis', tabId: 'tabId' });
-        const wallet = Core.wallet({ dappletId: '1' });
-        const likes = Core.connect("wss://examples.dapplets.org")
+        const overlay = __Core.overlay({ url: 'https://examples.dapplets.org', title: 'Gnosis', tabId: 'tabId' });
+        const wallet = __Core.wallet({ dappletId: '1' });
+        const likes = __Core.connect({url:"wss://examples.dapplets.org"})
 
         const PM_EVENTS = "*";
         const WALLET_EVENTS = "*";
