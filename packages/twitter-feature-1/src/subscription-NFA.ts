@@ -99,7 +99,7 @@ abstract class __Connection<MsgType,EventHandlerList extends string|symbol> {
         this.subscriptions[subId]=null
     }
 
-    public abstract send(op:any, msg: any): __Connection<any,any>;
+    public abstract send(op:any, msg: any): this;
 
     public close():void {
         // sub __connections
@@ -153,14 +153,14 @@ class Subscription implements I__Connection {
     }
 
     
-    on(condition: (msg: any) => boolean, handler: (msg: any) => void):Subscription { 
+    on(condition: (msg: any) => boolean, handler: (msg: any) => void): this { 
         this.on_handlers.push(
-           (msg: any) => ((condition(msg) && handler(msg)),  this) as I__Connection
+           (msg: any) => ((condition(msg) && handler(msg)),  this)
         )
         return this
     }
 
-    matchesTopic = (msg: any) => {
+    matchesTopic(msg: any) : boolean {
         if (!this.topic || this.topic == msg.topic) return true;
         else if (!msg.topic) return false;
 
@@ -185,6 +185,8 @@ let EthereumEvents: EventTypes<EthSupport> = {
 type EthEvents = 'onWalletConnect' | 'onTxSent'
 type EthSupport = Record<EthEvents, (h:MessageHandler) => EthSupport & __Connection<any,any>> 
 
+
+//ToDo: return type is unnecessary here. XXXSupport should be constructed, not defined.
 type SwarmSupport = {
     onSwarmNode: (h:MessageHandler) => SwarmSupport & __Connection<any,any>
     onSwarmSent: (h: MessageHandler) => SwarmSupport & __Connection<any,any>
@@ -209,7 +211,7 @@ type LikeEvents = 'RT_CHANGED'| 'LIKE_CHANGED'
 // here we configure specific __connection:
 // this __connection listens on events fired by environment and forward conetxt events to the server. 
 let likeConn  = __Core.connect<LikesMessage, EventHandlers>({url: "wss://examples.dapplets.org"} , {
-    // configurates auto-properties for this subscription
+    // configurates auto-properties as template for this subscription of this connection
     // allows to have different keys for used in the message and as auto-property names.  
     autoProperties: {
         like : 'likes',   //autoproperty 'like' maps message property 'likes'
