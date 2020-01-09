@@ -75,6 +75,7 @@ class __Core {
 
 abstract class __Connection<MsgType,EventHandlerList extends string|symbol> {
     constructor(private readonly cfg:any, public readonly connCfg:MsgProcessingConfig<MsgType, EventHandlerList>){}
+    //ToDo: possible memory leak here if not cleaned up
     private subscriptions: {[key:string]:Subscription} = {}
     
     processEvent(e:any) {
@@ -119,18 +120,14 @@ class Subscription implements I__Connection {
     send = this.conn.send.bind(this.conn)
     subscribe = this.conn.subscribe.bind(this.conn)
     
-    constructor(private conn:__Connection<any,any>, private topic: string="", private filter?: MsgFilter, private onHandlerMap?: any) { 
-        this.createEventHandlers(conn.connCfg.eventsOut);
-        this.createEventHandlers(onHandlerMap);
-    }
-
-    private createEventHandlers(handlerCfg?:any) {
-        if (handlerCfg) {
-            //ToDo fire event!!! target? scope? pubsub?
-            Object.keys(handlerCfg).forEach((name: string) =>
-                (<any>this)[name] = (msgHandler: MessageHandler) => 
-                    this.on(handlerCfg[name],msgHandler)
-            )
+    constructor(private conn:__Connection<any,any>, private topic: string="", private filter?: MsgFilter, private onHandlerMap?: any) {
+        for(let onCfg of [conn?.connCfg?.eventsOut, onHandlerMap]) {
+            if (onCfg) {
+                Object.keys(onCfg).forEach((name: string) =>
+                    (<any>this)[name] = (msgHandler: MessageHandler) => 
+                        this.on(onCfg[name],msgHandler)
+                )
+            }
         }
     }
 
@@ -138,16 +135,19 @@ class Subscription implements I__Connection {
     public autoProperties: { [name: string]: AutoProperty } = {}
     public on_handlers: ((msg:any)=>void) [] = []
 
-
     
     onMessage(msg: any): any {
         if (!msg || !this.matchesTopic(msg)
            || (this.filter && !this.filter(msg))) return
         //push values to autoProperties
-        Object.keys(this.autoProperties).forEach((key: string) => {
-            let ds = this.autoProperties[key]
-            msg[ds.propertyName] || ds.setter(msg[ds.propertyName])
-        })
+        for(let ap of [this.conn?.connCfg?.autoProperties, this.autoProperties]) {
+            if (ap) {
+                    Object.keys(ap).forEach((key: string) => {
+                    let ds = this.autoProperties[key]
+                    ds && msg[ds.propertyName] && ds.setter(msg[ds.propertyName])
+                })
+            }
+        }
 
         this.on_handlers.forEach(fnOn => fnOn(msg))
     }
@@ -222,6 +222,7 @@ let likeConn  = __Core.connect<LikesMessage, EventHandlers>({url: "wss://example
         onRtChanged: (msg: LikesMessage) => msg.type == 'RT'
     }, 
     eventsIn: {
+        //ToDo: make clean solution. f.e. using subscrId or WeakMap<ctx,sub> or ctx.sub
         CONTEXT_START: (conn, ctx) => conn.send("start", ctx.id).subscribe(ctx.id),
         CONTEXT_END  : (conn, ctx) => conn.send("finished", ctx.id).unsubscribe(ctx.id)
     }
