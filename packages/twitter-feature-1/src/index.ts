@@ -19,7 +19,11 @@ export default class TwitterFeature implements IFeature {
         function sendTx(me, ctx) {
             Core.wallet('1')
                 .send('1', ctx)
+                // ToDo_1: fire events and forward them to STM
+                //     from the DFA/STM point of view, the '.subscribe(...)' activates set of events (defined in WALLET_EVENT), 
+                //     that can occur while the subscription is active.
                 .subscribe(WALLET_EVENTS, (e) => {
+                    //ToDo_2: this should be a part of the state transition section of the "ToDo_3"
                     me.state = ({
                         CREATED: 'DEFAULT',
                         REJECTED: 'ERR'
@@ -41,13 +45,43 @@ export default class TwitterFeature implements IFeature {
             connections: {
                 likes: Core.connect("wss://examples.dapplets.org")
             },
-            TWEET_SOUTH: [
+            // DesignChoice_1: there could be two kinds of Actions  
+                TWEET_SOUTH: [
+                //ToDo_3: Proposal: STM applies not only one entry, but matches and applies matched keys.
+                //      map keys (state) can both 'State' or 'expressions' (on integers f.e.) 
                 button((ctx, setState, { likes }) => ({
-                    DEFAULT    : { label: likes.like_num, loading: false, disabled: false, img: GNOSIS_ICON, exec: onDefaultExec },
+            //===== state definitions
+                    DEFAULT    : { label: likes.like_num, loading: false, disabled: false, img: GNOSIS_ICON, 
+                        //state-dependent actions
+                        [BTN_CLICK]   : onDefaultExec,  //type is 'Function' - call a function on event occurs
+                        [TX_REJECTED] : 'ERR',          //type is STATE (symbol|string) - force a state change to 'ERR'
+                        [TX_SIGNED]   : 'DEFAULT'       //type is STATE (symbol|string) - force a state change to 'DEFAULT'
+                    },
                     TX_RUNNING : { label: 'Pending',      loading: true,  disabled: true },
                     PAIRING    : { label: 'Pairing',      loading: true,  disabled: true },
-                    ERR        : { label: 'Error' }
-                }))
+                    ERR        : { label: 'Error' },
+
+            //===== state matching expressions 
+                    [any] : {  // <=== this matches all states
+                        //you can use properties as well
+                        label: 'Pending',      loading: true,  disabled: true
+
+                        //state independent change (just an example)
+                        [BTN_CLICK]   : onDefaultExec,  
+                        [TX_REJECTED] : 'ERR',          
+                        [TX_SIGNED]   : 'DEFAULT'       
+                    },
+                    [ERR|PAIRING] : {  // <=== this matches if current state either ERR or PAIRING (can be implemented by integers as stateId)
+                        [BTN_CLICK]   : onDefaultExec,  
+                        [TX_REJECTED] : 'ERR',          
+                        [TX_SIGNED]   : 'DEFAULT'       
+                    },
+                    [ERR&PAIRING] : {  // <=== this matches if current state has both ERR and PAIRING (it is if multi-state is possible)
+                        [BTN_CLICK]   : onDefaultExec,  
+                        [TX_REJECTED] : 'ERR',          
+                        [TX_SIGNED]   : 'DEFAULT'       
+                    }
+                })
             ],
             TWEET_COMBO: [],
             DM_SOUTH: []
