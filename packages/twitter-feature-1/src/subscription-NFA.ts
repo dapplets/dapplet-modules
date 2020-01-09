@@ -137,6 +137,7 @@ class Subscription implements I__Connection {
 
     
     onMessage(msg: any): any {
+        //filter
         if (!msg || !this.matchesTopic(msg)
            || (this.filter && !this.filter(msg))) return
         //push values to autoProperties

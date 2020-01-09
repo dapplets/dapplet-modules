@@ -13,10 +13,25 @@ export default class TwitterFeature implements IFeature {
         //if some parameters are missing, return curried function?
         const overlay = __Core.overlay({ url: 'https://examples.dapplets.org', title: 'Gnosis', tabId: 'tabId' });
         const wallet = __Core.wallet({ dappletId: '1' });
-        const likes = __Core.connect({url:"wss://examples.dapplets.org"})
 
-        const PM_EVENTS = "*";
-        const WALLET_EVENTS = "*";
+        //ToDo: actually it should be defined in connection npm module and imported
+        const likes = __Core.connect<LikesMessage, EventHandlers>({url: "wss://examples.dapplets.org"}, {
+            // configurates auto-properties as template for this subscription of this connection
+            // allows to have different keys for used in the message and as auto-property names.  
+            autoProperties: {
+                like : 'likes',   //autoproperty 'like' maps message property 'likes'
+                retwits: 'retwits'
+            },
+            eventsOut: {
+                onLikeChanged : (msg: LikesMessage) => msg.type == 'LIKE',
+                onRtChanged: (msg: LikesMessage) => msg.type == 'RT'
+            }, 
+            eventsIn: {
+                //ToDo: make clean solution. f.e. using subscrId or WeakMap<ctx,sub> or ctx.sub
+                CONTEXT_START: (conn, ctx) => conn.send("start", ctx.id).subscribe(ctx.id),
+                CONTEXT_END  : (conn, ctx) => conn.send("finished", ctx.id).unsubscribe(ctx.id)
+            }
+        })
 
         const { button } = this.adapter.widgets;
         this.config = {
@@ -50,7 +65,7 @@ export default class TwitterFeature implements IFeature {
                         //Usage: introduce sub-states like in a async communication: the button remains the same, but waiting for something...
                         add_state_when : {
                             "PAIRING_TX" : [BTN.CLICKED, WAL.CONFIRMED],
-                        }
+                        },
                     },
                     "SENDING_TX": { 
                         label: likes.like_num,
