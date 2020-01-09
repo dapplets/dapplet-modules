@@ -16,8 +16,6 @@ export default class TwitterFeature implements IFeature {
         const PM_EVENTS = "*";
         const WALLET_EVENTS = "*";
 
-        const { button } = this.adapter.widgets;
-
         function sendTx(me, ctx) {
             Core.wallet('1')
                 .send('1', ctx)
@@ -38,16 +36,17 @@ export default class TwitterFeature implements IFeature {
                 .onPmAttach(({ market, tweet }) => sendTx(me, ctx))
         }
 
+        const { button } = this.adapter.widgets;
         this.config = {
             connections: {
                 likes: Core.connect("wss://examples.dapplets.org")
             },
             TWEET_SOUTH: [
                 button((ctx, setState, { likes }) => ({
-                    "DEFAULT": { label: likes.like_num, img: GNOSIS_ICON, disabled: false, exec: onDefaultExec },
-                    "TX_RUNNING": { label: 'Pending', loading: true, disabled: true },
-                    "PAIRING": { label: 'Pairing', loading: true, disabled: true },
-                    "ERR": { label: 'Error' }
+                    DEFAULT    : { label: likes.like_num, loading: false, disabled: false, img: GNOSIS_ICON, exec: onDefaultExec },
+                    TX_RUNNING : { label: 'Pending',      loading: true,  disabled: true },
+                    PAIRING    : { label: 'Pairing',      loading: true,  disabled: true },
+                    ERR        : { label: 'Error' }
                 }))
             ],
             TWEET_COMBO: [],
