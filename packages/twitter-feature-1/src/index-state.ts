@@ -12,24 +12,30 @@ export default class TwitterFeature implements IFeature {
     constructor() {
         //if some parameters are missing, return curried function?
         const overlay = __Core.overlay({ url: 'https://examples.dapplets.org', title: 'Gnosis', tabId: 'tabId' });
-        const wallet = __Core.wallet({ dappletId: '1' });
+        const wallet = __Core.wallet({ dappletId: '1' }, {
+            eventsIn: {
+                //ToDo: make clean solution. f.e. using subscrId or WeakMap<ctx,sub> or ctx.sub
+                BTN_CLICKED: (wallet, ctx) => wallet.send("start", ctx.id).subscribe(ctx.id),
+            }
+        }));
 
         //ToDo: actually it should be defined in connection npm module and imported
-        const likes = __Core.connect<LikesMessage, EventHandlers>({url: "wss://examples.dapplets.org"}, {
+        const likes = __Core.connect<LikesMessage, EventHandlers>({ url: "wss://examples.dapplets.org" }, {
             // configurates auto-properties as template for this subscription of this connection
             // allows to have different keys for used in the message and as auto-property names.  
             autoProperties: {
-                like : 'likes',   //autoproperty 'like' maps message property 'likes'
+                like: 'likes',   //autoproperty 'like' maps message property 'likes'
                 retwits: 'retwits'
             },
             eventsOut: {
-                onLikeChanged : (msg: LikesMessage) => msg.type == 'LIKE',
+                LIKE_CHANGED: (msg: LikesMessage) => msg.type == 'LIKE'
+                onLikeChanged: (msg: LikesMessage) => msg.type == 'LIKE',
                 onRtChanged: (msg: LikesMessage) => msg.type == 'RT'
-            }, 
+            },
             eventsIn: {
                 //ToDo: make clean solution. f.e. using subscrId or WeakMap<ctx,sub> or ctx.sub
                 CONTEXT_START: (conn, ctx) => conn.send("start", ctx.id).subscribe(ctx.id),
-                CONTEXT_END  : (conn, ctx) => conn.send("finished", ctx.id).unsubscribe(ctx.id)
+                CONTEXT_END: (conn, ctx) => conn.send("finished", ctx.id).unsubscribe(ctx.id)
             }
         })
 
@@ -43,7 +49,7 @@ export default class TwitterFeature implements IFeature {
                 //ToDo: use destructuring here to hide excessive and unnecessary parameters
                 //
                 //button((ctx, setState, { likes }) => ({
-                button({    
+                button({
                     "DEFAULT": {
                         //ToDo: maybe we don't need to redefine 'likes' from Connection to DataSource
                         //      we can just dynamically define 'like_num' on Connection
@@ -54,26 +60,31 @@ export default class TwitterFeature implements IFeature {
                         //auto-subscribe on state-entry, auto-unsubscribe on state-exit
                         //subscriptions produces events like onXXXX()
                         //ToDo: it is not a subscription call - it is a deferred call - returns a Fn.
-                        subscribe: [wallet.subscr("tx"), overlay.subscr("pm_attach")],
+                        in: () => [wallet.send(ctx).subscr("tx"), overlay.subscr("pm_attach")],
                         //change state (from and to this state)
-                        change_state_when : {
-                            "SENDING_TX" : [BTN.CLICKED, WAL.CONFIRMED],
-                            "DEFAULT" : [BTN.CLICKED, WAL.CONFIRMED]    
+                        change_state_when: {
+                            "SENDING_TX": [BTN.CLICKED],
+                            "DEFAULT": [WAL.CONFIRMED]
                         },
                         //ToDo: think is it necessary?
                         //add state on the to of existing one. It makes NFA - non-finite deterministic authomat with the vector of current states [S1,S2,...]
                         //Usage: introduce sub-states like in a async communication: the button remains the same, but waiting for something...
-                        add_state_when : {
-                            "PAIRING_TX" : [BTN.CLICKED, WAL.CONFIRMED],
+                        add_state_when: {
+                            "PAIRING_TX": [BTN.CLICKED, WAL.CONFIRMED],
                         },
                     },
-                    "SENDING_TX": { 
+                    "SENDING_TX": {
                         label: likes.like_num,
                         img: IMG_RUNNING,
-                        disabled: true,                        
-                        to : {
-                            "TX_RUNNING" : when([w.TX_CONFIRMED])        
-                        }
+                        disabled: true,
+                        to: {
+                            "TX_RUNNING": when([w.TX_CONFIRMED])
+                        },
+                        action: ({ event_name, ctx }) => {
+                            wallet.send(ctx.id)
+                        },
+                        in: (e) => wallet.acceptEvent(e)
+
                     },
                     "TX_RUNNING": {
                         label: 'Pending',
@@ -92,6 +103,134 @@ export default class TwitterFeature implements IFeature {
             ],
             TWEET_COMBO: [],
             DM_SOUTH: []
+        }
+
+
+        const actions = {
+            "DEFAULT": (w, ctx) => {
+                w.label = likes.like_num;
+                w.img = GNOSIS_ICON;
+                w.disabled = false;
+                wallet.send(ctx).subscr("tx");
+                overlay.subscr("pm_attach");
+            },
+            "SENDING_TX": (w, ctx) => {
+                w.label = likes.like_num;
+                w.img = IMG_RUNNING;
+                w.disabled = true;
+                wallet.send(ctx.id);
+            },
+            "TX_RUNNING": (w, ctx) => {
+                w.label = 'Pending';
+                w.loading = true;
+                w.disabled = true;
+            },
+            "PAIRING": (w, ctx) => {
+                w.label = 'Pairing';
+                w.loading = true;
+                w.disabled = true;
+            },
+            "ERR": (w, ctx) => {
+                w.label = 'Error';
+            }
+        }
+
+        const transitions = {
+            "DEFAULT": [{
+                to: "SENDING_TX",
+                when: (d) => [
+                    d.isPanelFitsContainer === true,
+                    d.viewportTop + d.panelHeight >= d.finishPoint
+                ]
+            }]
+        };
+
+        // Inspired by
+        // https://raw.githubusercontent.com/thankcreate/power-fsm-viewer/master/preview/preview-3.png
+        // https://github.com/vstirbu/fsm-as-promised
+
+        function fn1() {}
+        function fn2() {}
+
+        const fsm = {
+            initial: 'DEFAULT',
+            transitions: [
+                { on_event: btn.click, from: 'DEFAULT', to: 'PENDING', execute:[fn1, fn2] },
+                { on_event: 'click', from: 'ERR', to: 'DEFAULT' },
+                { on_event: wallet.tx_pairing, from: 'PENDING', to: 'PAIRING' },
+                { on_event: 'tx_paired', from: 'PAIRING', to: 'PENDING' },
+                { on_event: 'tx_success', from: 'PENDING', to: 'DEFAULT' },
+                { on_event: 'tx_failure', from: 'PENDING', to: 'ERR' }
+            ],
+            states: [
+                { name: 'DEFAULT', label: likes.like_num, img: GNOSIS_ICON, disabled: false },
+                { name: 'PAIRING', label: 'Pairing', loading: true, disabled: true },
+                { name: 'PENDING', label: 'Pending', loading: true, disabled: true },
+                { name: 'ERR', label: 'Error' }
+            ],
+            callbacks: {
+                onclick: () => {}, // ????
+                onenteredPAIRING: (ctx) => wallet.send(ctx)
+            }
+        }
+
+        // using object's keys instead of 'name' properties
+        const fsm2 = {
+            initial: 'DEFAULT',
+            events: {
+                'click': [{ from: 'DEFAULT', to: 'PENDING' }, { from: 'ERR', to: 'DEFAULT' }],
+                'tx_pairing': { from: 'PENDING', to: 'PAIRING' },
+                'tx_paired': { from: 'PAIRING', to: 'PENDING' },
+                'tx_success': { from: 'PENDING', to: 'DEFAULT' },
+                'tx_failure': { from: 'PENDING', to: 'ERR' },
+            },
+            states: {
+                'DEFAULT': { label: likes.like_num, img: GNOSIS_ICON, disabled: false },
+                'PAIRING': { label: 'Pairing', loading: true, disabled: true },
+                'PENDING': { label: 'Pending', loading: true, disabled: true },
+                'ERR': { label: 'Error' }
+            }
+        }
+
+        // Inspiried by
+        // https://github.com/davidkpiano/xstate
+        // https://habr.com/ru/company/ruvds/blog/346908/
+        const fsm3 = {
+            initial: 'DEFAULT',
+            states: {
+                'DEFAULT': {
+                    label: likes.like_num,
+                    img: GNOSIS_ICON,
+                    disabled: false,
+                    on: {
+                        click: 'PENDING'
+                    }
+                },
+                'PAIRING': {
+                    label: 'Pairing',
+                    loading: true,
+                    disabled: true,
+                    on: {
+                        tx_paired: 'PENDING'
+                    }
+                },
+                'PENDING': {
+                    label: 'Pending',
+                    loading: true,
+                    disabled: true,
+                    on: {
+                        tx_pairing: 'PAIRING',
+                        tx_success: 'DEFAULT',
+                        tx_error: 'ERR'
+                    }
+                },
+                'ERR': {
+                    label: 'Error',
+                    on: {
+                        click: 'DEFAULT'
+                    }
+                }
+            }
         }
     }
 
@@ -143,3 +282,4 @@ export default class TwitterFeature implements IFeature {
 // conn.receive({ type: "TX_SENT" , topic: "the.topic"})
 // conn.receive({ type: "SWARM_NODE" , topic: "swarm.topic"})
 // conn.receive({ type: "SWARM_SENT" , topic: "swarm.x"})
+
