@@ -149,27 +149,37 @@ export default class TwitterFeature implements IFeature {
         // https://raw.githubusercontent.com/thankcreate/power-fsm-viewer/master/preview/preview-3.png
         // https://github.com/vstirbu/fsm-as-promised
 
-        function fn1() {}
-        function fn2() {}
+        function datarecieved({ data }, ctx) {
+            wallet.send({
+                pm: data.pmId,
+                tweet: ctx.id
+            });
+        }
+
+        function fn2() { }
 
         const fsm = {
             initial: 'DEFAULT',
-            transitions: [
-                { on_event: btn.click, from: 'DEFAULT', to: 'PENDING', execute:[fn1, fn2] },
-                { on_event: 'click', from: 'ERR', to: 'DEFAULT' },
-                { on_event: wallet.tx_pairing, from: 'PENDING', to: 'PAIRING' },
-                { on_event: 'tx_paired', from: 'PAIRING', to: 'PENDING' },
-                { on_event: 'tx_success', from: 'PENDING', to: 'DEFAULT' },
-                { on_event: 'tx_failure', from: 'PENDING', to: 'ERR' }
-            ],
             states: [
                 { name: 'DEFAULT', label: likes.like_num, img: GNOSIS_ICON, disabled: false },
                 { name: 'PAIRING', label: 'Pairing', loading: true, disabled: true },
                 { name: 'PENDING', label: 'Pending', loading: true, disabled: true },
-                { name: 'ERR', label: 'Error' }
+                { name: 'OVERLAY_WAITING', label: 'See overlay', loading: true, disabled: true },
+                { name: 'DONE', label: 'Confirmed', img: GNOSIS_ICON, loading: false, disabled: false },
+                { name: 'ERROR', label: 'Error', img: GNOSIS_ICON }
+            ],
+            transitions: [
+                { when: 'widget.click', from: 'DEFAULT', to: 'OVERLAY_WAITING' }, // open overlay
+                { when: 'overlay.closed', from: 'OVERLAY_WAITING', to: 'DEFAULT' },
+                { when: 'overlay.datarecieved', from: 'OVERLAY_WAITING', to: 'PENDING' }, // user selected a prediction market
+                { when: 'wallet.pairing', from: 'PENDING', to: 'PAIRING' },
+                { when: 'wallet.paired', from: 'PAIRING', to: 'PENDING' },
+                { when: 'wallet.confirmed', from: 'PENDING', to: 'DONE' },
+                { when: 'wallet.rejected', from: 'PENDING', to: 'ERROR' },
+                { when: 'widget.click', from: ['DONE', 'ERROR'], to: 'DEFAULT' }
             ],
             callbacks: {
-                onclick: () => {}, // ????
+                onclick: () => { }, // ????
                 onenteredPAIRING: (ctx) => wallet.send(ctx)
             }
         }
@@ -177,19 +187,24 @@ export default class TwitterFeature implements IFeature {
         // using object's keys instead of 'name' properties
         const fsm2 = {
             initial: 'DEFAULT',
-            events: {
-                'click': [{ from: 'DEFAULT', to: 'PENDING' }, { from: 'ERR', to: 'DEFAULT' }],
-                'tx_pairing': { from: 'PENDING', to: 'PAIRING' },
-                'tx_paired': { from: 'PAIRING', to: 'PENDING' },
-                'tx_success': { from: 'PENDING', to: 'DEFAULT' },
-                'tx_failure': { from: 'PENDING', to: 'ERR' },
-            },
+            transitions: [
+                { when: 'widget.click', from: 'DEFAULT', to: 'OVERLAY_WAITING' }, // open overlay
+                { when: 'overlay.closed', from: 'OVERLAY_WAITING', to: 'DEFAULT' },
+                { when: 'overlay.datarecieved', from: 'OVERLAY_WAITING', to: 'PENDING' }, // user selected a prediction market
+                { when: 'wallet.pairing', from: 'PENDING', to: 'PAIRING' },
+                { when: 'wallet.paired', from: 'PAIRING', to: 'PENDING' },
+                { when: 'wallet.confirmed', from: 'PENDING', to: 'DONE' },
+                { when: 'wallet.rejected', from: 'PENDING', to: 'ERROR' },
+                { when: 'widget.click', from: ['DONE', 'ERROR'], to: 'DEFAULT' }
+            ],
             states: {
                 'DEFAULT': { label: likes.like_num, img: GNOSIS_ICON, disabled: false },
                 'PAIRING': { label: 'Pairing', loading: true, disabled: true },
                 'PENDING': { label: 'Pending', loading: true, disabled: true },
-                'ERR': { label: 'Error' }
-            }
+                'OVERLAY_WAITING': { label: 'See overlay', loading: true, disabled: true },
+                'DONE': { label: 'Confirmed', img: GNOSIS_ICON, loading: false, disabled: false },
+                'ERROR': { label: 'Error', img: GNOSIS_ICON }
+            },
         }
 
         // Inspiried by
@@ -232,6 +247,63 @@ export default class TwitterFeature implements IFeature {
                 }
             }
         }
+
+        // See also
+        // https://github.com/yandex-money-tech/react-fsm
+
+        function transition(nextState: string) { }
+
+        const fsm4 = {
+            initial: 'DEFAULT',
+            states: {
+                'DEFAULT': {
+                    label: likes.like_num,
+                    img: GNOSIS_ICON,
+                    disabled: false,
+                    onclick: (ctx) => {
+                        transition('OVERLAY_WAITING');
+                        overlay.send('tweet_select', ctx).subscribe('???')
+                            .on('open', () => transition('OVERLAY_WAITING'))
+                            .on('pm_attached', () => {
+                                wallet.send('1', ctx).subscribe('???')
+                                    .on('pending', () => transition('PENDING'))
+                                    .on('pairing', () => transition('PAIRING'))
+                                    .on('paired', () => transition('PENDING'))
+                                    .on('confirmed', () => transition('DONE'))
+                                    .on('rejected', () => transition('ERROR'));
+                            });
+                    }
+                },
+                'OVERLAY_WAITING': {
+                    label: 'See overlay',
+                    loading: true,
+                    disabled: true
+                },
+                'PENDING': {
+                    label: 'Pending',
+                    loading: true,
+                    disabled: true
+                },
+                'PAIRING': {
+                    label: 'Pairing',
+                    loading: true,
+                    disabled: true
+                },
+                'DONE': {
+                    label: 'Confirmed',
+                    img: GNOSIS_ICON,
+                    loading: false,
+                    disabled: false,
+                    onclick: () => transition('DEFAULT')
+                },
+                'ERROR': {
+                    label: 'Error',
+                    img: GNOSIS_ICON,
+                    onclick: () => transition('DEFAULT')
+                }
+            },
+        }
+
     }
 
     public activate() {
