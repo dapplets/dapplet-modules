@@ -27,13 +27,13 @@ type ServerConnParams = {
 // ============ used to define message and event processing in subscriptions
 type MsgProcessingConfig<MsgType, EventHandlerList extends string|symbol> = {
     autoProperties ?: AutoPropertyConfig<MsgType>,
-    eventsIn ?: EventsInConfig,
-    eventsOut  ?: EventsOutConfig<EventHandlerList>
+    onEvents ?: OnEventsConfig,
+    events  ?: EventsConfig<EventHandlerList>
 }
 
 type AutoPropertyConfig<MsgType> = { [key:string]: keyof MsgType }
-type EventsOutConfig<EventHandlerList extends string|symbol> = Partial<Record<EventHandlerList, MsgFilter>>
-type EventsInConfig = { [key : string]: (conn:__Connection<any,any>, msg:any)=>void }
+type EventsConfig<EventHandlerList extends string|symbol> = Partial<Record<EventHandlerList, MsgFilter>>
+type OnEventsConfig = { [key : string]: (conn:__Connection<any,any>, msg:any)=>void }
 // ===========================
 
 // ========= defines different filters on incoming messages
@@ -79,7 +79,7 @@ abstract class __Connection<MsgType,EventHandlerList extends string|symbol> {
     private subscriptions: {[key:string]:Subscription} = {}
     
     processEvent(e:any) {
-        this.connCfg?.eventsIn[e.type]?.(this,e)
+        this.connCfg?.onEvents[e.type]?.(this,e)
     }
     
     subscribe<T>(topic: string, h: EventTypes<T>): Subscription & T 
@@ -121,7 +121,7 @@ class Subscription implements I__Connection {
     subscribe = this.conn.subscribe.bind(this.conn)
     
     constructor(private conn:__Connection<any,any>, private topic: string="", private filter?: MsgFilter, private onHandlerMap?: any) {
-        for(let onCfg of [conn?.connCfg?.eventsOut, onHandlerMap]) {
+        for(let onCfg of [conn?.connCfg?.events, onHandlerMap]) {
             if (onCfg) {
                 Object.keys(onCfg).forEach((name: string) =>
                     (<any>this)[name] = (msgHandler: MessageHandler) => 
@@ -211,6 +211,7 @@ type LikeEvents = 'RT_CHANGED'| 'LIKE_CHANGED'
 
 // here we configure specific __connection:
 // this __connection listens on events fired by environment and forward conetxt events to the server. 
+// 
 let likeConn  = __Core.connect<LikesMessage, EventHandlers>({url: "wss://examples.dapplets.org"} , {
     // configurates auto-properties as template for this subscription of this connection
     // allows to have different keys for used in the message and as auto-property names.  
@@ -218,11 +219,11 @@ let likeConn  = __Core.connect<LikesMessage, EventHandlers>({url: "wss://example
         like : 'likes',   //autoproperty 'like' maps message property 'likes'
         retwits: 'retwits'
     },
-    eventsOut: {
+    events: {
         onLikeChanged : (msg: LikesMessage) => msg.type == 'LIKE',
         onRtChanged: (msg: LikesMessage) => msg.type == 'RT'
     }, 
-    eventsIn: {
+    onEvents: {
         //ToDo: make clean solution. f.e. using subscrId or WeakMap<ctx,sub> or ctx.sub
         CONTEXT_START: (conn, ctx) => conn.send("start", ctx.id).subscribe(ctx.id),
         CONTEXT_END  : (conn, ctx) => conn.send("finished", ctx.id).unsubscribe(ctx.id)

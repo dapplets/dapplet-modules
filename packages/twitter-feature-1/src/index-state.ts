@@ -13,7 +13,7 @@ export default class TwitterFeature implements IFeature {
         //if some parameters are missing, return curried function?
         const overlay = __Core.overlay({ url: 'https://examples.dapplets.org', title: 'Gnosis', tabId: 'tabId' });
         const wallet = __Core.wallet({ dappletId: '1' }, {
-            eventsIn: {
+            onEvents: {
                 //ToDo: make clean solution. f.e. using subscrId or WeakMap<ctx,sub> or ctx.sub
                 BTN_CLICKED: (wallet, ctx) => wallet.send("start", ctx.id).subscribe(ctx.id),
             }
@@ -27,12 +27,12 @@ export default class TwitterFeature implements IFeature {
                 like: 'likes',   //autoproperty 'like' maps message property 'likes'
                 retwits: 'retwits'
             },
-            eventsOut: {
+            events: {
                 LIKE_CHANGED: (msg: LikesMessage) => msg.type == 'LIKE'
                 onLikeChanged: (msg: LikesMessage) => msg.type == 'LIKE',
                 onRtChanged: (msg: LikesMessage) => msg.type == 'RT'
             },
-            eventsIn: {
+            onEvents: {
                 //ToDo: make clean solution. f.e. using subscrId or WeakMap<ctx,sub> or ctx.sub
                 CONTEXT_START: (conn, ctx) => conn.send("start", ctx.id).subscribe(ctx.id),
                 CONTEXT_END: (conn, ctx) => conn.send("finished", ctx.id).unsubscribe(ctx.id)
