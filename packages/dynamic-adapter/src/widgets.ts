@@ -1,4 +1,4 @@
-import { IFeature } from "@dapplets/dapplet-extension-types";
+import { IFeature, IWSConnection } from "@dapplets/dapplet-extension";
 
 import { IWidgetBuilderConfig, Context } from "./types";
 
@@ -50,7 +50,7 @@ export class WidgetBuilder {
                                 });
                             }
                         });
-                        const connection: Connection = connections[connectionName];
+                        const connection: IWSConnection = connections[connectionName];
                         const subscription = connection.subscribe(context.parsed.id, (data: any) => {
                             for (const key in settersByNames) {
                                 const setters = settersByNames[key] || [];

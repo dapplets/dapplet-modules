@@ -1,4 +1,4 @@
-import { IFeature } from "@dapplets/dapplet-extension-types";
+import { IFeature } from "@dapplets/dapplet-extension";
 
 export interface IWidgetBuilderConfig {
     containerSelector: string,

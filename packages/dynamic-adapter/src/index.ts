@@ -1,5 +1,5 @@
 import { WidgetBuilder } from './widgets';
-import { IFeature, IContentAdapter } from '@dapplets/dapplet-extension-types';
+import { IFeature, IContentAdapter } from '@dapplets/dapplet-extension';
 import { IWidgetBuilderConfig, Context, IWidget } from './types';
 import { State } from './state';
 

@@ -1,4 +1,4 @@
-import { IFeature } from '@dapplets/dapplet-extension-types'
+import { IFeature } from '@dapplets/dapplet-extension'
 import { T_TwitterFeatureConfig, ITwitterAdapter } from '@dapplets/twitter-adapter'
 import PICTURE from './picture.png';
 
