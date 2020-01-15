@@ -1,0 +1,223 @@
+// ========= file Subscription.d.ts ==================
+// common types
+type Key = string | number | symbol
+type MsgFilter = string | ((op:any, msg: any) => boolean)
+type EventDef<T extends Key> = { [key in T]: MsgFilter }
+type MsgHandler = ((op:string, msg: any) => void)
+type EventHandler= { [key in Key]: MsgHandler }
+type AutoProperty = {
+  name: string
+  set: (value:any)=>void 
+}
+type AutoProperties<T extends Key> = { [key in T ]: keyof AutoProperty }
+
+// ========= file MyConnection.ts ==================
+/*
+//  define message types
+type MsgType1 = {
+  type:'T1'
+  a:string
+}
+
+type MsgType2 = {
+  type: 'T2'
+  b:number
+}
+
+// type AllProps = keyof(MsgType2 & MsgType1)
+type MsgTypes = MsgType1 | MsgType2
+type AllProps = MsgType1 & MsgType2
+
+//  define event types
+type EventTypes = 'EVENT_ONE' | 'EVENT_TWO'
+const EVENTS: EventDef<EventTypes> = {
+    EVENT_ONE : (msg: MsgTypes) => msg.type == 'T1',
+    EVENT_TWO : 'T2' //short form: the type only
+}
+*/
+// ===============================
+// ========= file Subscription.ts / Core.ts==================
+const PROP: symbol = Symbol('auto_property') 
+const ANY_EVENT: any = Symbol('any_event')
+const TYPE_FILTER = (type:string) => (op:any, msg:any) => msg.type === type
+
+class Connection<P> {
+  public listeners: { f?: MsgFilter, h: EventHandler }[] = [] 
+  private autoProperties = new Map<number, AutoProperty>() 
+  constructor(private eventDef?: EventDef<any>) { }
+
+  send(op: any, msg: any): this {
+    // make connection dependend work
+    return this
+  }
+
+  receive(buf:any): this {
+    // make connection dependend work
+    //let { op, msg } = parseMessage(buf) 
+    let op, msg
+    this.onMessage(op, msg)
+    return this
+  }
+
+//ToDo: fix type clash: string is part of MsgFilter too
+  listen(h: EventHandler): this
+  listen(f: MsgFilter, h: MsgHandler): this
+  listen(f: MsgFilter, h: EventHandler): this
+  listen(filterOrHander: MsgFilter | EventHandler, h?: EventHandler | MsgHandler): this { 
+    if (typeof filterOrHander === 'object') { //is an EventHandler
+      this.listeners.push({ f: undefined, h: filterOrHander })
+    } else {
+      let _h = typeof h == 'function' ? { [ANY_EVENT]: h } : h!
+      this.listeners.push({ f: filterOrHander, h: _h })
+    }
+    return this
+  }
+
+  //connection with AutoProperty support added by proxy
+  static create<P>(eventsDef?:EventDef<any>): P & Connection<P> {
+    return new Proxy(new Connection<P>(eventsDef), {
+      get(conn: any, name, receiver) {
+        let idx:number=0
+        return name in conn ? conn[name] : ({
+          [PROP]: Object.defineProperty({
+            conn: conn,
+            name: name,
+            idx: 0
+          }, 'set', {
+            // if setter set, activate autoProp
+            set: function (setter) {
+              if (idx>0) conn.autoProperties.delete(idx)
+              if (setter) idx = conn.addAutoProperty(name, setter)
+              else idx = 0
+              return true
+            }
+          })
+        })
+      }
+    })
+  }
+
+  private apNum=0
+  private addAutoProperty(name: string, setter: (v: any) => void):number { 
+    this.autoProperties.set(++this.apNum, { name: name, set: setter })
+    return this.apNum
+  }
+
+  topicMatch(topic: string, pattern: string): boolean {
+    if (!pattern || pattern == topic) return true;
+    else if (!topic) return false;
+
+    let expected = pattern.split('.')
+    let actual = topic.split('.')
+    if (expected.length > actual.length) return false
+
+    for (let i = 0; i < actual.length; ++i) {
+      if (actual[i] != expected[i] && expected[i] != "*")
+        return false
+    }
+    return true
+  }
+
+  onMessage(op: any, msg: any):void {
+    const isTopicMatch = (op: any, msg: any, f: MsgFilter) =>
+                    typeof f === 'string' ? this.topicMatch(op, f) : f(op, msg)
+    this.listeners.forEach((listener) => { 
+      if (!listener.f || isTopicMatch(op, msg, listener.f)) { 
+        for (let eventId of Object.keys(listener.h)) {
+          let cond = this.eventDef ? this.eventDef[eventId]  : eventId
+          //ToDo: extract msg.type default
+          if (typeof cond === 'function' ? cond(op, msg) : msg.type == cond ) {
+            listener.h[eventId](op, msg)
+          }
+        }
+        listener.h[ANY_EVENT]?.(op, msg)
+      }
+    })
+    //push values to autoProperties
+    for (let ap of this.autoProperties.values()) {
+      ap && msg[ap.name] && ap.set(msg[ap.name])
+    }
+  }
+
+}//class Connection
+
+class Core {
+  static connect<P>(eventDef?:EventDef<any>): P & Connection<P> {
+    //ToDo: server specific
+    return Connection.create(eventDef)
+  }
+
+  static wallet<P>(eventDef?:EventDef<any>): P & Connection<P> {
+    //ToDo: wallet specific
+    return Connection.create(eventDef)
+  }
+
+  static overlay<P>(eventDef?:EventDef<any>): P & Connection<P> {
+    //ToDo: overlay specific
+    return Connection.create(eventDef)
+  }
+}
+// ========= file widgets.ts of dynamic adapter ===========
+/*
+type Ctx = {
+  id:string
+}
+
+//Context related technical runtime info
+type CtxRuntime = Ctx & {
+  //save active subscriptions in ctx
+  subs: WeakMap<Connection<any>,Subscription<any>>
+}
+
+type AutoPropertyConfig = { name: string, conn: Connection<any> }
+type State = { [key: string]: {cleanUp?:Function, value?:any} }
+
+// For ctx instance only one subscription of the same connection 
+// change widget state
+function applyState(newStateCfg: any, currentState:State, ctx: CtxRuntime) {
+  newStateCfg.entries((name: string, v: any) => {
+    currentState[name]?.cleanUp?.() //cleanup before rewrite property - remove autoprop from sub
+    if (v[PROP]) {
+      let { conn, name } = v[PROP] as AutoPropertyConfig
+      let sub = ctx.subs.get(conn)
+      if (!sub) ctx.subs.set(conn, sub = conn.subscribe(ctx.id))
+      let cleanUp = sub.addAutoProp(name, (value: any) => currentState[name].value = value)
+      currentState[name] = { cleanUp: cleanUp, value: undefined }
+    } else {
+      currentState[name] = { cleanUp: undefined, value: v }
+    }
+  })
+}
+*/
+// ========= file MyFeature.ts ==================
+const EVENTS_DEF = {
+  TX_SENT:    (op: any, m: any) => m.type === "TX_SENT",
+  WC_CONNECT: (op: any, m: any) => m.type === "WC_CONNECT",
+  SWARM_NODE: (op: any, m: any) => m.type === "SWARM_NODE",
+  SWARM_SENT: "SWARM_SENT"
+} 
+
+let _conn = Core.connect(EVENTS_DEF) //EVENTS_DEF - optional mapping
+  .send('ping', {})
+  .listen("the.topic", {
+    TX_SENT: (op: any, m: any) => { console.log("onTxSent  topic:", m.topic) },
+    WC_CONNECT: (op: any, m: any) => { console.log("onWalletConnect  topic:", m.topic) }
+  })
+  .listen({
+    SWARM_NODE: (op: any, m: any) => { console.log("onSwarmNode topic:", m.topic) },
+    SWARM_SENT: (op: any, m: any) => { console.log("onSwarmSent topic:", m.topic) }
+  })
+  .listen("swarm.*", (op: any, m: any) => { console.log("ANY_EVENT onSwarmNode topic:", m.topic)});
+
+let ap0 = (_conn as any).topic[PROP];
+ap0.set = (v: any) => console.log('SETTER_TOPIC_No1', v); //this setter gets overwritten by the next line
+ap0.set = (v: any) => console.log('SETTER_TOPIC_No2', v);
+let ap1 = (_conn as any).topic[PROP];
+ap1.set = (v: any) => console.log('SETTER_TOPIC_No3', v);
+
+
+
+_conn.onMessage('the.topic', { type: "WC_CONNECT", topic: "the.topic" })
+_conn.onMessage('the.topic', { type: "TX_SENT", topic: "the.topic" })
+_conn.onMessage('swarm.a', { type: "SWARM_NODE", topic: "swarm.topic" })
+_conn.onMessage('swarm.b', { type: "SWARM_SENT", topic: "swarm.x" })
