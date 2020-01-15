@@ -10,11 +10,9 @@ export default class TwitterFeature implements IFeature {
     public config: T_TwitterFeatureConfig;
 
     constructor() {
+        const likes = Core.connect({ url: "wss://examples.dapplets.org" });
         const { button } = this.adapter.widgets;
         this.config = {
-            connections: {
-                likes: Core.connect("wss://examples.dapplets.org")
-            },
             TWEET_SOUTH: [
                 button((ctx, setState, { likes }) => ({
                     "DEFAULT": {
@@ -22,9 +20,9 @@ export default class TwitterFeature implements IFeature {
                         img: GNOSIS_ICON,
                         disabled: false,
                         exec: () => {
-                            Core.sendWalletConnectTx('1', ctx, e => setState(({
-                                CREATED: "DEFAULT"
-                            })[e.type] || e.type))
+                            // Core.wallet({ dappletId: '1'}).send(ctx, e => setState(({
+                            //     CREATED: "DEFAULT"
+                            // })[e.type] || e.type))
                         }
                     },
                     "PENDING": { label: 'Pending', loading: true, disabled: true },

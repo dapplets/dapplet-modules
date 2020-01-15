@@ -1,10 +1,10 @@
-import { IContentAdapter, IFeature, IWSConnection } from '@dapplets/dapplet-extension'
+import { IContentAdapter, IFeature } from '@dapplets/dapplet-extension'
 
 export type T_TwitterActionFactory = any;
 
 export type T_TwitterFeatureConfig = {
     connections?: {
-        [name: string]: IWSConnection
+        [name: string]: any
     },
     TWEET_SOUTH?: T_TwitterActionFactory[],
     TWEET_COMBO?: T_TwitterActionFactory[],

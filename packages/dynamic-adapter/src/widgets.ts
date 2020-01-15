@@ -1,4 +1,4 @@
-import { IFeature, IWSConnection } from "@dapplets/dapplet-extension";
+import { IFeature } from "@dapplets/dapplet-extension";
 
 import { IWidgetBuilderConfig, Context } from "./types";
 
@@ -41,16 +41,16 @@ export class WidgetBuilder {
                     for (const connectionName in connections) {
                         const settersByNames = {}; // ToDo: memory leaks?
                         featureInfo.proxiedSubs[connectionName] = new Proxy({}, {
-                            get(target, name, receiver) {
+                            get(target, propName, receiver) {
                                 return ({
                                     datasource: (setter) => {
-                                        if (!settersByNames[name]) settersByNames[name] = [];
-                                        settersByNames[name].push(setter);
+                                        if (!settersByNames[propName]) settersByNames[propName] = [];
+                                        settersByNames[propName].push(setter);
                                     }
                                 });
                             }
                         });
-                        const connection: IWSConnection = connections[connectionName];
+                        const connection: any = connections[connectionName];
                         const subscription = connection.subscribe(context.parsed.id, (data: any) => {
                             for (const key in settersByNames) {
                                 const setters = settersByNames[key] || [];
