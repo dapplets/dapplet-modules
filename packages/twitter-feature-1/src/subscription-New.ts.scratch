@@ -9,8 +9,7 @@ type AutoProperty = {
   name: string
   set: (value:any)=>void 
 }
-type AutoProperties<T extends Key> = { [key in T ]: keyof AutoProperty }
-
+type AutoProperties<M> = { [key in keyof M]: AutoProperty }
 // ========= file MyConnection.ts ==================
 /*
 //  define message types
@@ -41,7 +40,7 @@ const PROP: symbol = Symbol('auto_property')
 const ANY_EVENT: any = Symbol('any_event')
 const TYPE_FILTER = (type:string) => (op:any, msg:any) => msg.type === type
 
-class Connection<P> {
+class Connection {
   public listeners: { f?: MsgFilter, h: EventHandler }[] = [] 
   private autoProperties = new Map<number, AutoProperty>() 
   constructor(private eventDef?: EventDef<any>) { }
@@ -74,8 +73,8 @@ class Connection<P> {
   }
 
   //connection with AutoProperty support added by proxy
-  static create<P>(eventsDef?:EventDef<any>): P & Connection<P> {
-    return new Proxy(new Connection<P>(eventsDef), {
+  static create<M>(eventsDef?:EventDef<any>): AutoProperties<M> & Connection {
+    return new Proxy(new Connection(eventsDef), {
       get(conn: any, name, receiver) {
         let idx:number=0
         return name in conn ? conn[name] : ({
@@ -142,17 +141,17 @@ class Connection<P> {
 }//class Connection
 
 class Core {
-  static connect<P>(eventDef?:EventDef<any>): P & Connection<P> {
+  static connect<M>(eventDef?:EventDef<any>): AutoProperties<M> & Connection {
     //ToDo: server specific
     return Connection.create(eventDef)
   }
 
-  static wallet<P>(eventDef?:EventDef<any>): P & Connection<P> {
+  static wallet<M>(eventDef?:EventDef<any>): AutoProperties<M> & Connection {
     //ToDo: wallet specific
     return Connection.create(eventDef)
   }
 
-  static overlay<P>(eventDef?:EventDef<any>): P & Connection<P> {
+  static overlay<M>(eventDef?:EventDef<any>): AutoProperties<M> & Connection {
     //ToDo: overlay specific
     return Connection.create(eventDef)
   }
@@ -190,6 +189,20 @@ function applyState(newStateCfg: any, currentState:State, ctx: CtxRuntime) {
 }
 */
 // ========= file MyFeature.ts ==================
+type M1 = {
+  type: string,
+  topic: string
+}
+
+type M2 = {
+  key0: string,
+  key1: string
+}
+
+
+
+
+
 const EVENTS_DEF = {
   TX_SENT:    (op: any, m: any) => m.type === "TX_SENT",
   WC_CONNECT: (op: any, m: any) => m.type === "WC_CONNECT",
@@ -197,7 +210,7 @@ const EVENTS_DEF = {
   SWARM_SENT: "SWARM_SENT"
 } 
 
-let _conn = Core.connect(EVENTS_DEF) //EVENTS_DEF - optional mapping
+let _conn = Core.connect<M1&M2>(EVENTS_DEF) //EVENTS_DEF - optional mapping
   .send('ping', {})
   .listen("the.topic", {
     TX_SENT: (op: any, m: any) => { console.log("onTxSent  topic:", m.topic) },
@@ -209,12 +222,12 @@ let _conn = Core.connect(EVENTS_DEF) //EVENTS_DEF - optional mapping
   })
   .listen("swarm.*", (op: any, m: any) => { console.log("ANY_EVENT onSwarmNode topic:", m.topic)});
 
-let ap0 = (_conn as any).topic[PROP];
-ap0.set = (v: any) => console.log('SETTER_TOPIC_No1', v); //this setter gets overwritten by the next line
-ap0.set = (v: any) => console.log('SETTER_TOPIC_No2', v);
-let ap1 = (_conn as any).topic[PROP];
-ap1.set = (v: any) => console.log('SETTER_TOPIC_No3', v);
-
+let ap0:any = _conn.topic
+ap0[PROP].set = (v: any) => console.log('SETTER_TOPIC_No1', v); //this setter gets overwritten by the next line
+ap0[PROP].set = (v: any) => console.log('SETTER_TOPIC_No2', v);
+let ap1:any = _conn.topic;
+ap1[PROP].set = (v: any) => console.log('SETTER_TOPIC_No3', v);
+let ap2:AutoProperty = _conn.topic
 
 
 _conn.onMessage('the.topic', { type: "WC_CONNECT", topic: "the.topic" })
