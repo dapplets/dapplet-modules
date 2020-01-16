@@ -7,7 +7,7 @@ interface IDynamicAdapter extends IContentAdapter {
     attachFeature(feature: IFeature): void;
     detachFeature(feature: IFeature): void;
     attachConfig(config: any[]): void;
-    createWidgetFactory<T>(Widget: any): (configCallback: (ctx: any, state: any, sub: any) => T) => (builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element, proxiedSubs: any) => any;
+    createWidgetFactory<T>(Widget: any): (config: { [state: string]: T }) => (builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element, proxiedSubs: any) => any;
 }
 
 @Injectable
@@ -92,7 +92,25 @@ class DynamicAdapter implements IDynamicAdapter {
             });
         }
 
-        function createWidget(Widget: any, builder: WidgetBuilder, insPointName: string, configCallback: Function, order: number, contextNode: Element, clazz: string, proxiedSubs: any): any {
+        // function createState(stateCfg: State<T>, ctxid: string, apSetters: { [key: string]: (v: any) => any }) {
+        //     let m = new Map<Connection, AutoProperty[]>()
+        //     Object.keys(stateCfg)
+        //         .forEach((k: any) => Object.keys(stateCfg[k])
+        //             .forEach((kk) => {
+        //                 let ap = stateCfg[k][kk][PROP]
+        //                 if (ap) {
+        //                     if (!m.has(ap.conn)) m.set(ap.conn, [ap])
+        //                     else m.get(ap.conn)!.push(ap)
+        //                 }
+        //             }))
+        //     for (let [conn, apArr] of m.entries()) {
+        //         apArr.forEach((p: any) => p[PROP].set = apSetters[p[PROP].name])
+        //         conn.send('widget_start', ctxid)
+        //             .listen(ctxid, apArr)
+        //     }
+        // }
+
+        function createWidget(Widget: any, builder: WidgetBuilder, insPointName: string, config: { [state: string]: T }, order: number, contextNode: Element, clazz: string, proxiedSubs: any): any {
             // ToDo: calculate node from insPoint & view
             const insPoint = builder.insPoints[insPointName];
             const node = contextNode.querySelector(insPoint.selector);
@@ -100,8 +118,7 @@ class DynamicAdapter implements IDynamicAdapter {
             if (node.getElementsByClassName(clazz).length > 0) return;
 
             const context = builder.contexts.get(contextNode);
-
-            const state = new State<T>((setState) => configCallback(context.parsed, setState, proxiedSubs), clazz);
+            const state = new State<T>(config, context.parsed, clazz);
             const widget = new Widget() as IWidget<T>;
             widget.state = state.state;
             state.changedHandler = () => widget.mount();
@@ -118,10 +135,10 @@ class DynamicAdapter implements IDynamicAdapter {
             return widget;
         }
 
-        return (configCallback: (ctx: any, state: any, sub: any) => T) => {
+        return (config: { [state: string]: T }) => {
             const uuid = uuidv4();
             return ((builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element, proxiedSubs: any) =>
-                createWidget(Widget, builder, insPointName, configCallback, order, contextNode, uuid, proxiedSubs)
+                createWidget(Widget, builder, insPointName, config, order, contextNode, uuid, proxiedSubs)
             );
         }
     }

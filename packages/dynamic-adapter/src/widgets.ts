@@ -38,27 +38,27 @@ export class WidgetBuilder {
                     const featureInfo = { proxiedSubs: {}, subscriptions: [] };
                     const { connections } = feature.config;
 
-                    for (const connectionName in connections) {
-                        const settersByNames = {}; // ToDo: memory leaks?
-                        featureInfo.proxiedSubs[connectionName] = new Proxy({}, {
-                            get(target, propName, receiver) {
-                                return ({
-                                    datasource: (setter) => {
-                                        if (!settersByNames[propName]) settersByNames[propName] = [];
-                                        settersByNames[propName].push(setter);
-                                    }
-                                });
-                            }
-                        });
-                        const connection: any = connections[connectionName];
-                        const subscription = connection.subscribe(context.parsed.id, (data: any) => {
-                            for (const key in settersByNames) {
-                                const setters = settersByNames[key] || [];
-                                setters.forEach(set => set(data[key]));
-                            }
-                        });
-                        featureInfo.subscriptions.push(subscription);
-                    }
+                    // for (const connectionName in connections) {
+                    //     const settersByNames = {}; // ToDo: memory leaks?
+                    //     featureInfo.proxiedSubs[connectionName] = new Proxy({}, {
+                    //         get(target, propName, receiver) {
+                    //             return ({
+                    //                 datasource: (setter) => {
+                    //                     if (!settersByNames[propName]) settersByNames[propName] = [];
+                    //                     settersByNames[propName].push(setter);
+                    //                 }
+                    //             });
+                    //         }
+                    //     });
+                    //     const connection: any = connections[connectionName];
+                    //     const subscription = connection.subscribe(context.parsed.id, (data: any) => {
+                    //         for (const key in settersByNames) {
+                    //             const setters = settersByNames[key] || [];
+                    //             setters.forEach(set => set(data[key]));
+                    //         }
+                    //     });
+                    //     featureInfo.subscriptions.push(subscription);
+                    // }
 
                     context.features.set(feature, featureInfo);
                 }

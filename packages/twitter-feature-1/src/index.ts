@@ -32,7 +32,7 @@ export default class TwitterFeature implements IFeature {
                         label: likes.like_num,
                         img: GNOSIS_ICON,
                         disabled: false,
-                        onclick: (ctx, me) => {
+                        exec: (ctx, me) => { // ToDo: rename exec() to onclick()
                             overlay
                                 .send('tweet_select', ctx)
                                 .listen('', {
@@ -56,7 +56,7 @@ export default class TwitterFeature implements IFeature {
                     },
                     "ERR": {
                         label: 'Error',
-                        onclick: (ctx, me) => me.state = 'DEFAULT'
+                        exec: (ctx, me) => me.state = 'DEFAULT'
                     }
                 })
             ],
