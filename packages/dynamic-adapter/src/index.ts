@@ -55,6 +55,7 @@ class DynamicAdapter implements IDynamicAdapter {
         this.contextBuilders.forEach(contextBuilder => {
             const container = document.querySelector(contextBuilder.containerSelector);
             if (container) {
+                // destroy contexts to removed nodes
                 const removedContexts: Context[] = []
                 mutations?.forEach(m => Array.from(m.removedNodes)
                     .filter((n: Element) => n.nodeType == Node.ELEMENT_NODE)
@@ -69,6 +70,7 @@ class DynamicAdapter implements IDynamicAdapter {
                 }
                 contextBuilder.updateContexts(this.features, container); // ToDo: think about it
             }
+            // a new container was opened, no observer attached yet
             if (container && !contextBuilder.observer) {
                 contextBuilder.observer = new MutationObserver((mutations) => {
                     contextBuilder.updateContexts(this.features, container, mutations);
@@ -78,6 +80,7 @@ class DynamicAdapter implements IDynamicAdapter {
                     subtree: true
                 });
             } else if (!container && contextBuilder.observer) {
+                // a container was destroyed, disconnect observer too
                 contextBuilder.observer.disconnect();
                 contextBuilder.observer = null;
             }
@@ -91,37 +94,20 @@ class DynamicAdapter implements IDynamicAdapter {
                 return v.toString(16);
             });
         }
-
-        // function createState(stateCfg: State<T>, ctxid: string, apSetters: { [key: string]: (v: any) => any }) {
-        //     let m = new Map<Connection, AutoProperty[]>()
-        //     Object.keys(stateCfg)
-        //         .forEach((k: any) => Object.keys(stateCfg[k])
-        //             .forEach((kk) => {
-        //                 let ap = stateCfg[k][kk][PROP]
-        //                 if (ap) {
-        //                     if (!m.has(ap.conn)) m.set(ap.conn, [ap])
-        //                     else m.get(ap.conn)!.push(ap)
-        //                 }
-        //             }))
-        //     for (let [conn, apArr] of m.entries()) {
-        //         apArr.forEach((p: any) => p[PROP].set = apSetters[p[PROP].name])
-        //         conn.send('widget_start', ctxid)
-        //             .listen(ctxid, apArr)
-        //     }
-        // }
-
+        
         function createWidget(Widget: any, builder: WidgetBuilder, insPointName: string, config: { [state: string]: T }, order: number, contextNode: Element, clazz: string, proxiedSubs: any): any {
             // ToDo: calculate node from insPoint & view
             const insPoint = builder.insPoints[insPointName];
             const node = contextNode.querySelector(insPoint.selector);
 
+            // check if a widget already exists for the insPoint
             if (node.getElementsByClassName(clazz).length > 0) return;
 
             const context = builder.contexts.get(contextNode);
             const state = new State<T>(config, context.parsed, clazz);
             const widget = new Widget() as IWidget<T>;
             widget.state = state.state;
-            state.changedHandler = () => widget.mount();
+            state.changedHandler = () => widget.mount(); // when data in state was changed, then rerender a widget
             widget.mount(); // ToDo: remove it?
             widget.el.classList.add('dapplet-widget');
 
