@@ -46,8 +46,10 @@ const ANY_EVENT: any = Symbol('any_event')
 const TYPE_FILTER = (type:string) => (op:any, msg:any) => msg.type === type
 
 class Connection {
-  public listeners: Listener[] = [] 
   private autoProperties = new Map<number, AutoProperty>() 
+  public readonly listeners = new Map<number, Listener>()
+  private nn=0 //a numeric handle counter to address listeners and autopropertes
+  
   constructor(private eventDef?: EventDef<any>) { }
 
   send(op: any, msg: any): this {
@@ -69,16 +71,15 @@ class Connection {
   listen(f: MsgFilter, h: EventHandler, ap?: AutoProperty[]): this
   listen(filterOrHander: MsgFilter | EventHandler, evtOrMsgOrAP?: EventHandler | MsgHandler | AutoProperty[], ap?:AutoProperty[]): this { 
     if (typeof filterOrHander === 'object') { //is an EventHandler
-      this.listeners.push({ f: undefined, h: filterOrHander })
+      this.listeners.set(++this.nn,{ f: undefined, h: filterOrHander })
     } else {
-      let _h, _p
       if (evtOrMsgOrAP instanceof Array) {
-        this.listeners.push({ f: filterOrHander, h: undefined, p: evtOrMsgOrAP })
+        this.listeners.set(++this.nn, { f: filterOrHander, h: undefined, p: evtOrMsgOrAP })
       } else if (typeof evtOrMsgOrAP == 'function') {
         let h = { [ANY_EVENT]: evtOrMsgOrAP }
-        this.listeners.push({ f: filterOrHander, h: h, p: ap })
+        this.listeners.set(++this.nn, { f: filterOrHander, h: h, p: ap })
       } else { 
-        this.listeners.push({ f: filterOrHander, h: evtOrMsgOrAP!, p: ap })
+        this.listeners.set(++this.nn, { f: filterOrHander, h: evtOrMsgOrAP!, p: ap })
       }
     }
     return this
@@ -96,7 +97,7 @@ class Connection {
               // if setter set, activate autoProp
               set: function (setter) {
                 if (idx>0) conn.autoProperties.delete(idx)
-                if (setter) idx = conn.addAutoProperty(name, setter)
+                if (setter) idx = conn.addAutoProperty({ name: name, set: setter })
                 else idx = 0
                 return true
               }
@@ -106,10 +107,14 @@ class Connection {
     })
   }
 
-  private apNum=0
-  private addAutoProperty(name: string, setter: (v: any) => void):number { 
-    this.autoProperties.set(++this.apNum, { name: name, set: setter })
-    return this.apNum
+  private addAutoProperty(ap: AutoProperty):number { 
+    this.autoProperties.set(++this.nn, ap)
+    return this.nn
+  }
+
+  public addAutoProperties(f: MsgFilter, ap: AutoProperty[]): number {
+    this.listeners.set(++this.nn,{ f: f, h: undefined, p: ap })
+    return this.nn
   }
 
   topicMatch(topic: string, pattern: string): boolean {
@@ -144,7 +149,6 @@ class Connection {
         }
         //push values to autoProperties
         for (let ap of listener.p || []) {
-          console.log(ap)
           ap && msg[ap.name] && ap.set(msg[ap.name])
         }
       }
@@ -189,26 +193,52 @@ type AutoPropertyConfig = { name: string, conn: Connection<any> }
 
 
 */
-type WidgetState = { [key: string] : any}
+type WidgetState = { [key: string]: any }
 
-function createState(stateCfg: WidgetState, ctxid: string, apSetters: {[key:string]:(v:any)=>any}) {
-  let m=new Map<Connection,AutoPropertyConf[]>()
-  let autoprops:AutoProperty[] = []
-  Object.keys(stateCfg)
-    .forEach((k: any) => Object.keys(stateCfg[k])
-      .forEach((kk) => {
-        let ap = stateCfg[k][kk]
-        if (ap instanceof AutoPropertyConf) {
-          if (!m.has(ap.conn)) m.set(ap.conn, [ap])
-          else m.get(ap.conn)!.push(ap)
-        }
-      }))        
+function collectAutoProps(stateCfg: WidgetState) {
+    let m = new Map<Connection, AutoPropertyConf[]>()
+    Object.keys(stateCfg)
+        .forEach((k: any) => Object.keys(stateCfg[k])
+            .forEach((kk) => {
+                let ap = stateCfg[k][kk]
+                if (ap instanceof AutoPropertyConf) {
+                    if (!m.has(ap.conn)) m.set(ap.conn, [ap])
+                    else m.get(ap.conn)!.push(ap)
+                }
+            }))
+    return m;
+}
+function createButton(stateCfg: WidgetState, ctx: any, apSetters: {[key:string]:(v:any)=>any}) {
+  let m = collectAutoProps(stateCfg)
+  if (!ctx.listeners) ctx.listeners=[]
   for (let [conn, apCfgList] of m.entries()) {
     let apList = apCfgList.map((p: any) => ({ name: p.name, set: apSetters[p.name] }))
-    conn.send('widget_start', ctxid)
-      .listen(ctxid, apList)
+    // introduce listener method
+    // separate send() from listen()
+    // make listener.remove()
+    // send() list of autoproperties to listen
+    // send() list of autoproperties to un-listen
+    let h = conn.addAutoProperties(ctx.id, apList)
+    ctx.listeners.push(h) //save handle for cleanup later
   }
 }
+
+function createContext(id: any, mm:Map<Connection,AutoPropertyConf[]>) { 
+    mm.forEach((ap, conn) => {
+        conn.send('context_start', { id:id, props: ap})
+    })
+    let ctx = { id: id, listeners:[] }
+    return ctx
+}
+
+function destroyContext(ctx:any, mm:Map<Connection,AutoPropertyConf[]>){ 
+  mm.forEach((ap, conn) => {
+    conn.send('context_end', { id: ctx.id })
+    ctx.listeners.forEach((h: any) => conn.listeners.delete(h))  
+  })
+}
+
+
 
 /*
 
@@ -269,9 +299,24 @@ let ap1:any = _conn.topic;
 ap1.set = (v: any) => console.log('CONNECTION_SET TOPIC No3', v);
 let ap2:AutoProperty = _conn.topic
 
+//==========context related Autoproperties=======================
 
+let apSetters = (n:any)=> ({
+  'p1': (v: any) => console.log(n+'[LISTENER SET.p1]',v),
+  'p2': (v: any) => console.log(n+'[LISTENER SET.p2]',v),
+  'topic': (v: any) => console.log(n+'[LISTENER SET.topic]',v),
+  'type': (v:any)=>console.log(n+'[LISTENER SET.type]',v),
+})
 
-let BTN_CONFIG = {
+let BTN1_CONFIG = {
+  DEFAULT: {
+    topic: _conn.topic,
+    p2: _conn.p2
+  }
+}
+let m1 = collectAutoProps(BTN1_CONFIG)
+
+let BTN2_CONFIG = {
   DEFAULT: {
     topic: _conn.topic,
     p2: _conn.p2
@@ -284,18 +329,37 @@ let BTN_CONFIG = {
     hello: 'abracadabra.'
   }
 }
+let m2 = collectAutoProps(BTN2_CONFIG)
+let mm=new Map([...m1, ...m2]) //all autoproperties from all widgets
 
-let apSetters = {
-  'p1': (v: any) => console.log('[LISTENER SET.p1]'),
-  'p2': (v: any) => console.log('[LISTENER SET.p2]'),
-  'topic': (v: any) => console.log('[LISTENER SET.topic]'),
-  'type': (v:any)=>console.log('[LISTENER SET.type]'),
-}
+let ctx123 = createContext('123', mm)
 
-let s = createState(BTN_CONFIG, "12345", apSetters)
+let btn11 = createButton(BTN1_CONFIG, ctx123, apSetters('btn_1_1:'))
+let btn12 = createButton(BTN1_CONFIG, ctx123, apSetters('btn_1_2:'))
 
+
+let ctx456 = createContext('456',mm)
+let btn21 = createButton(BTN2_CONFIG, ctx456, apSetters('btn_2_1:'))
+let btn22 = createButton(BTN2_CONFIG, ctx456, apSetters('btn_2_2:'))
+
+
+
+console.log('#0')
 _conn.onMessage('the.topic', { type: "WC_CONNECT", topic: "the.topic", p1:"1-1", p2:"1-2" })
-_conn.onMessage('the.topic', { type: "TX_SENT", topic: "the.topic", p1:"2-1", p2:"2-2" })
+console.log('#1')
+_conn.onMessage('the.topic', { type: "TX_SENT", topic: "the.topic", p1: "2-1", p2: "2-2" })
+console.log('#2')
 _conn.onMessage('swarm.a', { type: "SWARM_NODE", topic: "swarm.topic",p1:"3-3", p2:"3-3" })
+console.log('#4')
 _conn.onMessage('swarm.b', { type: "SWARM_SENT", topic: "swarm.x" })
-_conn.onMessage('12345', { type: "WC_CONNECT", topic: "the.topic", p1:"1-1", p2:"1-2" })
+console.log('#4')
+_conn.onMessage(ctx123.id, { type: "set_context", p1: "ctx123 1-1", p2: "ctx123 1-2" })
+console.log('#5')
+_conn.onMessage(ctx456.id, { type: "SET_CONTEXT", p1: "ctx456 1-1", p2: "ctx456 1-2" })
+console.log('#6')
+
+destroyContext(ctx123,mm)
+destroyContext(ctx456, mm)
+
+_conn.onMessage(ctx456.id, { type: "SET_CONTEXT", p1: "1-1", p2: "1-2" })
+console.log('#7')
