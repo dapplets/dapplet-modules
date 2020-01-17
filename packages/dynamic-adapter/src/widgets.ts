@@ -1,4 +1,4 @@
-import { IFeature } from "@dapplets/dapplet-extension";
+import { IFeature, IConnection } from "@dapplets/dapplet-extension";
 
 import { IWidgetBuilderConfig, Context } from "./types";
 
@@ -35,8 +35,10 @@ export class WidgetBuilder {
                 const feature = features[i];
                 const featureInfo = context.features.get(feature);
                 if (!featureInfo) {
-                    const featureInfo = { proxiedSubs: {}, subscriptions: [] };
-                    const { connections } = feature.config;
+                    const featureInfo = { proxiedSubs: {}, connections: [] };
+                    const connections: { [name: string]: IConnection } = feature.config.connections;
+
+                    console.log('connections', connections);
 
                     // for (const connectionName in connections) {
                     //     const settersByNames = {}; // ToDo: memory leaks?

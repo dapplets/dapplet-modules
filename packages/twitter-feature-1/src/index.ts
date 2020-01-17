@@ -25,6 +25,9 @@ export default class TwitterFeature implements IFeature {
 
         const { button } = this.adapter.widgets;
         this.config = {
+            connections: {
+                likes: likes
+            },
             TWEET_SOUTH: [
                 button({
                     initial: "DEFAULT",

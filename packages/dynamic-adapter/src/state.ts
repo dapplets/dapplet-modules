@@ -1,4 +1,5 @@
-const PROP = 'auto_property'
+import { IConnection } from "@dapplets/dapplet-extension";
+
 const ANY_EVENT = 'any_event'
 
 export class State<T> {
@@ -20,11 +21,17 @@ export class State<T> {
                 if (property === 'clazz') return me._clazz; // ToDo: remove it
                 const value = me._stateTemplates[me._currentStateName][property];
 
-                if (typeof value === 'object' && value[PROP]) {
-                    value[PROP].conn.send(ctx.id);
-                    value[PROP].set = (value: any) => {
-                        me.state[property] = value.toString();
+                if (typeof value === 'object' && value.constructor.name === 'AutoPropertyConf') {
+                    const conn: IConnection = value.conn;
+                    const ap = {
+                        name: value.name,
+                        set: (v: any) => {
+                            console.log(`update property ${value.name} to value ${v} in context ${ctx.id}`);
+                            me.state[property] = v.toString();
+                        }
                     };
+                    conn.addAutoProperties(ctx.id, [ap]);
+                    conn.send(ctx.id, null);
                     return undefined;
                 } else {
                     return value;

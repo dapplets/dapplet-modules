@@ -1,4 +1,4 @@
-import { IFeature } from "@dapplets/dapplet-extension";
+import { IFeature, IConnection } from "@dapplets/dapplet-extension";
 
 export interface IWidgetBuilderConfig {
     containerSelector: string,
@@ -9,7 +9,7 @@ export interface IWidgetBuilderConfig {
 
 export type Context = {
     parsed: any,
-    features: Map<IFeature, { subscriptions: any[], proxiedSubs: any }>
+    features: Map<IFeature, { connections: IConnection[], proxiedSubs: any }>
 };
 
 export interface IWidget<T> {
