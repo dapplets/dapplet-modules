@@ -18,6 +18,6 @@
   "main": "build/index.js",
   "typings": "build/index.d.ts",
   "devDependencies": {
-    "@dapplets/dapplet-extension": "^0.1.3"
+    "@dapplets/dapplet-extension": "^0.1.4"
   }
 }
