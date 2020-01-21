@@ -17,6 +17,9 @@ class DynamicAdapter implements IDynamicAdapter {
     private features: IFeature[] = [];
     private contextBuilders: WidgetBuilder[] = [];
 
+    private _contextCreatedHandlers: ((ctx?: any, type?: string) => void)[] = [];
+    private _contextDestroyedHandlers: ((ctx?: any, type?: string) => void)[] = [];
+
     public attachFeature(feature: IFeature): void { // ToDo: automate two-way dependency handling(?)
         if (this.features.find(f => f === feature)) return;
         this.features.splice(feature.orderIndex, 0, feature);
@@ -34,7 +37,7 @@ class DynamicAdapter implements IDynamicAdapter {
     }
 
     public attachConfig(config: any[]) {
-        const builders = config.map((cfg: IWidgetBuilderConfig) => new WidgetBuilder(cfg));
+        const builders = config.map((cfg: IWidgetBuilderConfig) => new WidgetBuilder(cfg, (ctx?: any, type?: string) => this._emitContextCreated(ctx, type)));
         this.contextBuilders.push(...builders);
     }
 
@@ -65,15 +68,15 @@ class DynamicAdapter implements IDynamicAdapter {
                         removedContexts.push(...contexts)
                     }))
                 if (removedContexts && removedContexts.length > 0) {
-                    //removedContexts.forEach(c => c.features.forEach(f => f.connections.forEach(conn => conn.close())));
                     Core.contextFinished(removedContexts.map(c => c.parsed));
+                    removedContexts.map(c => c.parsed).forEach(ctx => this._emitContextDestroyed(ctx));
                 }
                 contextBuilder.updateContexts(this.features, container); // ToDo: think about it
             }
             // a new container was opened, no observer attached yet
             if (container && !contextBuilder.observer) {
-                contextBuilder.observer = new MutationObserver((mutations) => {
-                    contextBuilder.updateContexts(this.features, container, mutations);
+                contextBuilder.observer = new MutationObserver(() => {
+                    contextBuilder.updateContexts(this.features, container);
                 });
                 contextBuilder.observer.observe(container, {
                     childList: true,
@@ -94,7 +97,7 @@ class DynamicAdapter implements IDynamicAdapter {
                 return v.toString(16);
             });
         }
-        
+
         function createWidget(Widget: any, builder: WidgetBuilder, insPointName: string, config: { [state: string]: T }, order: number, contextNode: Element, clazz: string, proxiedSubs: any): any {
             // ToDo: calculate node from insPoint & view
             const insPoint = builder.insPoints[insPointName];
@@ -127,6 +130,22 @@ class DynamicAdapter implements IDynamicAdapter {
                 createWidget(Widget, builder, insPointName, config, order, contextNode, uuid, proxiedSubs)
             );
         }
+    }
+
+    public onContextCreated(handler: (ctx?: any, type?: string) => void): void {
+        this._contextCreatedHandlers.push(handler);
+    }
+
+    public onContextDestroyed(handler: (ctx?: any, type?: string) => void): void {
+        this._contextDestroyedHandlers.push(handler);
+    }
+
+    private _emitContextCreated(ctx?: any, type?: string) {
+        this._contextCreatedHandlers.forEach(h => h(ctx, type));
+    }
+
+    private _emitContextDestroyed(ctx?: any, type?: string) {
+        this._contextDestroyedHandlers.forEach(h => h(ctx, type));
     }
 }
 

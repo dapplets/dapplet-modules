@@ -29,6 +29,7 @@ export default class TwitterAdapter {
                 selector: "div.js-tweet-text-container"
             }
         },
+        contextType: 'tweet', // tweet_created | tweet_destroyed
         contextBuilder: (tweetNode: any) => ({
             id: tweetNode.getAttribute('data-item-id'),
             text: tweetNode.querySelector('div.js-tweet-text-container').innerText,
@@ -69,5 +70,13 @@ export default class TwitterAdapter {
     // ToDo: refactor it
     public detachFeature(feature: IFeature): void {
         this.adapter.detachFeature(feature);
+    }
+
+    public onContextCreated(handler: (ctx?: any, insertionPoint?: string) => void): void {
+        this.adapter.onContextCreated(handler);
+    }
+
+    public onContextDestroyed(handler: (ctx?: any, insertionPoint?: string) => void): void {
+        this.adapter.onContextDestroyed(handler);
     }
 }

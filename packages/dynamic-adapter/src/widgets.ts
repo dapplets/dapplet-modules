@@ -13,7 +13,7 @@ export class WidgetBuilder {
 
     //ToDo: widgets
 
-    constructor(widgetBuilderConfig: IWidgetBuilderConfig) {
+    constructor(widgetBuilderConfig: IWidgetBuilderConfig, private _emitContextCreated: (ctx?: any, type?: string) => void) {
         return Object.assign(this, widgetBuilderConfig);
     }
 
@@ -29,7 +29,10 @@ export class WidgetBuilder {
             const context: Context = isNew ? { parsed: this.contextBuilder(contextNode), features: new Map() } : this.contexts.get(contextNode);
 
             // ToDo: refactor isNew checking
-            if (isNew) newParsedContexts.push(context.parsed);
+            if (isNew) {
+                newParsedContexts.push(context);
+                this._emitContextCreated(context.parsed);
+            }
 
             for (let i = 0; i < features.length; i++) {
                 const feature = features[i];
@@ -38,7 +41,6 @@ export class WidgetBuilder {
                     const featureInfo = { proxiedSubs: {}, connections: [] };
                     const connections: { [name: string]: IConnection } = feature.config.connections;
 
-                    console.log('connections', connections);
 
                     // for (const connectionName in connections) {
                     //     const settersByNames = {}; // ToDo: memory leaks?
@@ -88,8 +90,7 @@ export class WidgetBuilder {
             }
         }
 
-        if (newParsedContexts.length > 0) {
-            Core.contextStarted(newParsedContexts)
-        }
+        Core.contextStarted(newParsedContexts.map((ctx) => ctx.parsed));
+        return newParsedContexts;
     }
 }

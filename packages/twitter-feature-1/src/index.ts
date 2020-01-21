@@ -2,8 +2,6 @@ import { IFeature } from '@dapplets/dapplet-extension' // ToDo: import { Core } 
 import { T_TwitterFeatureConfig, ITwitterAdapter } from '@dapplets/twitter-adapter'
 import GNOSIS_ICON from './gnosis.png'
 
-declare var Core: any;
-
 const EVENTS_DEF = {
     TX_SENT: (op: any, m: any) => m.type === "TX_SENT",
     WC_CONNECT: (op: any, m: any) => m.type === "WC_CONNECT",
@@ -19,37 +17,44 @@ export default class TwitterFeature implements IFeature {
     public config: T_TwitterFeatureConfig;
 
     constructor() {
-        const overlay = Core.overlay({ url: 'https://examples.dapplets.org', title: 'Gnosis', tabId: 'tabId' });
-        const wallet = Core.wallet(EVENTS_DEF);
-        const likes = Core.connect({ url: "wss://examples.dapplets.org" });
+        const overlay = Core.overlay({ url: 'https://examples.dapplets.org', title: 'Gnosis' });
+        const wallet = Core.wallet({ dappletId: '1' }, EVENTS_DEF);
+        const server = Core.connect<{ like_num: string }>({ url: "wss://examples.dapplets.org" });
+        
+        this.adapter.onContextCreated(ctx => server.set(ctx, server.subscribe('tweetInfo', ctx)));
+        this.adapter.onContextDestroyed(ctx => server.unsubscribe(server.get(ctx)));
 
         const { button } = this.adapter.widgets;
         this.config = {
-            connections: {
-                likes: likes
-            },
+            // ON: (e) => {
+            //     server.bind(e)
+            //     if (e.type === 'tweet') { }
+            //     if (e.type === 'message') { }
+            //     if (e.type === 'profile') { }
+            // }, // ToDo: binding
             TWEET_SOUTH: [
                 button({
                     initial: "DEFAULT",
                     "DEFAULT": {
-                        label: likes.like_num,
+                        label: server.like_num,
                         img: GNOSIS_ICON,
                         disabled: false,
                         exec: (ctx, me) => { // ToDo: rename exec() to onclick()
-                            overlay
-                                .send('tweet_select', ctx)
-                                .listen('', {
-                                    'pm_attach': (op, { market, tweet }) => {
-                                        wallet.send(ctx)
-                                            .listen('', {
-                                                rejected: () => me.state = 'REJECTED',
-                                                created: () => {
-                                                    me.state = 'DEFAULT';
-                                                    overlay.send('tx_created');
-                                                }
-                                            });
-                                    }
-                                })
+                            console.log('hello', ctx);
+                            // overlay
+                            //     .send('tweet_select', ctx)
+                            //     .listen('', {
+                            //         'pm_attach': (op, { market, tweet }) => {
+                            //             wallet.send(ctx)
+                            //                 .listen('', {
+                            //                     rejected: () => me.state = 'REJECTED',
+                            //                     created: () => {
+                            //                         me.state = 'DEFAULT';
+                            //                         overlay.send('tx_created');
+                            //                     }
+                            //                 });
+                            //         }
+                            //     })
                         }
                     },
                     "PENDING": {
