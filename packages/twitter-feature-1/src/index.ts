@@ -41,20 +41,33 @@ export default class TwitterFeature implements IFeature {
                         disabled: false,
                         exec: (ctx, me) => { // ToDo: rename exec() to onclick()
                             console.log('hello', ctx);
-                            // overlay
-                            //     .send('tweet_select', ctx)
-                            //     .listen('', {
-                            //         'pm_attach': (op, { market, tweet }) => {
-                            //             wallet.send(ctx)
-                            //                 .listen('', {
-                            //                     rejected: () => me.state = 'REJECTED',
-                            //                     created: () => {
-                            //                         me.state = 'DEFAULT';
-                            //                         overlay.send('tx_created');
-                            //                     }
-                            //                 });
-                            //         }
-                            //     })
+                            overlay
+                                .send('tweet_select', ctx)
+                                .listen('', {
+                                    'pm_attach': (op, { market, tweet }) => {
+                                        wallet.send(ctx)
+                                            .listen('', {
+                                                rejected: () => me.state = 'REJECTED',
+                                                created: () => {
+                                                    me.state = 'DEFAULT';
+                                                    overlay.send('tx_created');
+                                                }
+                                            });
+                                    }
+                                })
+
+                            // overlay.subscribe('tweet', ctx, {
+                            //     'pm_attach': (op, { market, tweet }) => {
+                            //         wallet.send(ctx)
+                            //             .listen('', {
+                            //                 rejected: () => me.state = 'REJECTED',
+                            //                 created: () => {
+                            //                     me.state = 'DEFAULT';
+                            //                     overlay.send('tx_created');
+                            //                 }
+                            //             });
+                            //     }
+                            // })
                         }
                     },
                     "PENDING": {

@@ -87,19 +87,21 @@ app.ws('/', function (ws, req) {
             const [subscriptionName, ...args] = params;
 
             if (subscriptionName === "tweetInfo") {
-                const [tweetId] = args;
+                const [ctx] = args;
 
-                if (!tweetId || !(/^\d{19}$/gm.test(tweetId))) {
+                if (!ctx || !ctx.id || !(/^\d{19}$/gm.test(ctx.id))) {
                     ws.send(JSON.stringify({
                         jsonrpc: "2.0",
                         id: id,
                         error: {
                             code: null,
-                            message: "TweetId is required."
+                            message: "ctx.id is required."
                         }
                     }));
                     return;
                 }
+
+                const tweetId = ctx.id;
 
                 const subscriptionId = (++subscriptionCount).toString();
 

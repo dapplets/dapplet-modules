@@ -12,7 +12,6 @@ export class State<T> {
         const me = this;
         this.state = new Proxy({}, {
             get(target, property, receiver) {
-
                 const reflectValue = Reflect.get(target, property, receiver);
                 if (reflectValue !== undefined) return reflectValue;
 
@@ -22,7 +21,7 @@ export class State<T> {
                 if (typeof value === 'object' && value.name && value.set) {
                     const ap = value as AutoProperty;
                     me.state[property] = null;
-                    ap.set(ctx, (value: any) => me.state[property] = value);                    
+                    ap.set(ctx, (value: any) => me.state[property] = value.toString()); // ToDo: remove toString()
                     return undefined;
                 } else {
                     return value;
