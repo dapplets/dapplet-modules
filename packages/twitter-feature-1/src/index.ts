@@ -19,7 +19,7 @@ export default class TwitterFeature implements IFeature {
     constructor() {
         const overlay = Core.overlay({ url: 'https://examples.dapplets.org', title: 'Gnosis' });
         const wallet = Core.wallet({ dappletId: '1' }, EVENTS_DEF);
-        const server = Core.connect<{ like_num: string }>({ url: "wss://examples.dapplets.org" });
+        const server = Core.connect<{ like_num: string }>({ url: "wss://localhost:8080" });
         
         this.adapter.onContextCreated(ctx => server.set(ctx, server.subscribe('tweetInfo', ctx)));
         this.adapter.onContextDestroyed(ctx => server.unsubscribe(server.get(ctx)));
