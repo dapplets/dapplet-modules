@@ -20,9 +20,6 @@ export default class TwitterFeature implements IFeature {
         const overlay = Core.overlay({ url: 'https://examples.dapplets.org', title: 'Gnosis' });
         const wallet = Core.wallet({ dappletId: '1' }, EVENTS_DEF);
         const server = Core.connect<{ like_num: string }>({ url: "wss://localhost:8080" });
-        
-        //this.adapter.onContextCreated(ctx => server.set(ctx, server.subscribe('tweetInfo', ctx)));
-        //this.adapter.onContextDestroyed(ctx => server.unsubscribe(server.get(ctx)));
 
         const { button } = this.adapter.widgets;
         this.config = {
@@ -35,7 +32,7 @@ export default class TwitterFeature implements IFeature {
                         img: GNOSIS_ICON,
                         disabled: false,
                         exec: (ctx, me) => { // ToDo: rename exec() to onclick()
-                            console.log('hello', ctx);
+                            me.state = 'ERR'
                             // overlay
                             //     .send('tweet_select', ctx)
                             //     .listen('', {
@@ -72,6 +69,7 @@ export default class TwitterFeature implements IFeature {
                     },
                     "ERR": {
                         label: 'Error',
+                        img: GNOSIS_ICON,
                         exec: (ctx, me) => me.state = 'DEFAULT'
                     }
                 })

@@ -4,6 +4,7 @@ export class State<T> {
     private _stateTemplates: { [key: string]: T };
     private _currentStateName = "DEFAULT";
     public state: T;
+    private _cache: any = {};
     public changedHandler: Function;
 
     constructor(config: { [state: string]: T }, public ctx: any, private _clazz: string) {
@@ -12,10 +13,12 @@ export class State<T> {
         const me = this;
         this.state = new Proxy({}, {
             get(target, property, receiver) {
-                const reflectValue = Reflect.get(target, property, receiver);
-                if (reflectValue !== undefined) return reflectValue;
-
                 if (property === 'clazz') return me._clazz; // ToDo: remove it
+                //const reflectValue = Reflect.get(target, property, receiver);
+                if (me._cache[property] !== undefined) return me._cache[property];
+
+
+
                 const value = me._stateTemplates[me._currentStateName][property];
 
                 if (typeof value === 'object' && value.conn && value.name) {
@@ -27,11 +30,10 @@ export class State<T> {
 
 
 
-                    let listener = me.ctx.connToListenerMap.get(apConfig.conn) 
-                    
+                    let listener = me.ctx.connToListenerMap.get(apConfig.conn)
+
                     const apRuntime = {
                         set: (value: any) => me.state[property] = value.toString(), // ToDo: remove toString()
-                        // config: apConfig,
                         name: apConfig.name
                     }
 
@@ -46,10 +48,15 @@ export class State<T> {
                 }
             },
             set(target, property, value, receiver) {
-                // me._stateTemplates[me._currentStateName][property] = value;
-                const success = Reflect.set(target, property, value, receiver);
+                if (property === 'state') {
+                    me.setState(value);
+                    return true;
+                }
+                //const success = Reflect.set(target, property, value, receiver);
+                me._cache[property] = value;
                 me.changedHandler && me.changedHandler();
-                return success;
+                //return success;
+                return true;
             }
         }) as T;
     }
@@ -62,11 +69,12 @@ export class State<T> {
             return;
         }
 
+        this._cache = {};
         this._currentStateName = stateName;
         this.changedHandler && this.changedHandler();
     }
 
-    public activateAutoproperty(ap: AutoProperty) {
+    public activateAutoproperty(ap: any) {
         // let listener = this.ctx.connToListenerMap.get(ap.conn)
         // listener.p.push(ap)
         // const obj = {
@@ -77,8 +85,9 @@ export class State<T> {
 
     // ToDo: call it
     //deactivates propery if state becomes passive
-    public deactivateAutoproperty(ap: AutoProperty) {
-        let listener = this.ctx.connToListenerMap.get(ap.conn)
-        listener.p.remove(ap)   //simplified
+    public deactivateAutoproperty(ap: any) {
+        // let listener = this.ctx.connToListenerMap.get(ap.conn)
+        // listener.p.remove(ap)   //simplified
+        ap.isActive = false;
     }
 }
