@@ -18,10 +18,28 @@ export class State<T> {
                 if (property === 'clazz') return me._clazz; // ToDo: remove it
                 const value = me._stateTemplates[me._currentStateName][property];
 
-                if (typeof value === 'object' && value.name && value.set) {
-                    const ap = value as AutoProperty;
+                if (typeof value === 'object' && value.conn && value.name) {
+                    const apConfig = value as AutoProperty;
                     me.state[property] = null;
-                    ap.set(ctx, (value: any) => me.state[property] = value.toString()); // ToDo: remove toString()
+                    // apConfig.set(); 
+                    // me.activateAutoproperty(ap);
+
+
+
+
+                    let listener = me.ctx.connToListenerMap.get(apConfig.conn) 
+                    
+                    const apRuntime = {
+                        set: (value: any) => me.state[property] = value.toString(), // ToDo: remove toString()
+                        // config: apConfig,
+                        name: apConfig.name
+                    }
+
+                    listener.p.push(apRuntime)
+
+
+
+
                     return undefined;
                 } else {
                     return value;
@@ -46,5 +64,21 @@ export class State<T> {
 
         this._currentStateName = stateName;
         this.changedHandler && this.changedHandler();
+    }
+
+    public activateAutoproperty(ap: AutoProperty) {
+        // let listener = this.ctx.connToListenerMap.get(ap.conn)
+        // listener.p.push(ap)
+        // const obj = {
+        //     set: ,
+        //     config: ap
+        // }
+    }
+
+    // ToDo: call it
+    //deactivates propery if state becomes passive
+    public deactivateAutoproperty(ap: AutoProperty) {
+        let listener = this.ctx.connToListenerMap.get(ap.conn)
+        listener.p.remove(ap)   //simplified
     }
 }

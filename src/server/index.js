@@ -86,7 +86,7 @@ app.ws('/', function (ws, req) {
         if (method === "subscribe") {
             const [subscriptionName, ...args] = params;
 
-            if (subscriptionName === "tweetInfo") {
+            if (subscriptionName === "create_tweet") {
                 const [ctx] = args;
 
                 if (!ctx || !ctx.id || !(/^\d{19}$/gm.test(ctx.id))) {

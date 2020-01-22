@@ -29,7 +29,8 @@ export default class TwitterAdapter {
                 selector: "div.js-tweet-text-container"
             }
         },
-        contextType: 'tweet', // tweet_created | tweet_destroyed
+        contextType: 'tweet', // create_tweet | destroy_tweet
+        contextEvent: 'TWEET_EVENT',
         contextBuilder: (tweetNode: any) => ({
             id: tweetNode.getAttribute('data-item-id'),
             text: tweetNode.querySelector('div.js-tweet-text-container').innerText,
@@ -48,6 +49,8 @@ export default class TwitterAdapter {
                 selector: "" //ToDo
             }
         },
+        contextType: 'thread', // create_thread | destroy_thread
+        contextEvent: 'THREAD_EVENT',
         contextBuilder: (tweetNode: any) => ({
             threadId: tweetNode.getAttribute('data-thread-id'),
             lastMessageId: tweetNode.getAttribute('data-last-message-id'),

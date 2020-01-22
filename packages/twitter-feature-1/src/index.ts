@@ -21,17 +21,12 @@ export default class TwitterFeature implements IFeature {
         const wallet = Core.wallet({ dappletId: '1' }, EVENTS_DEF);
         const server = Core.connect<{ like_num: string }>({ url: "wss://localhost:8080" });
         
-        this.adapter.onContextCreated(ctx => server.set(ctx, server.subscribe('tweetInfo', ctx)));
-        this.adapter.onContextDestroyed(ctx => server.unsubscribe(server.get(ctx)));
+        //this.adapter.onContextCreated(ctx => server.set(ctx, server.subscribe('tweetInfo', ctx)));
+        //this.adapter.onContextDestroyed(ctx => server.unsubscribe(server.get(ctx)));
 
         const { button } = this.adapter.widgets;
         this.config = {
-            // ON: (e) => {
-            //     server.bind(e)
-            //     if (e.type === 'tweet') { }
-            //     if (e.type === 'message') { }
-            //     if (e.type === 'profile') { }
-            // }, // ToDo: binding
+            TWEET_EVENT: [server.sendAndListen],
             TWEET_SOUTH: [
                 button({
                     initial: "DEFAULT",
@@ -41,20 +36,20 @@ export default class TwitterFeature implements IFeature {
                         disabled: false,
                         exec: (ctx, me) => { // ToDo: rename exec() to onclick()
                             console.log('hello', ctx);
-                            overlay
-                                .send('tweet_select', ctx)
-                                .listen('', {
-                                    'pm_attach': (op, { market, tweet }) => {
-                                        wallet.send(ctx)
-                                            .listen('', {
-                                                rejected: () => me.state = 'REJECTED',
-                                                created: () => {
-                                                    me.state = 'DEFAULT';
-                                                    overlay.send('tx_created');
-                                                }
-                                            });
-                                    }
-                                })
+                            // overlay
+                            //     .send('tweet_select', ctx)
+                            //     .listen('', {
+                            //         'pm_attach': (op, { market, tweet }) => {
+                            //             wallet.send(ctx)
+                            //                 .listen('', {
+                            //                     rejected: () => me.state = 'REJECTED',
+                            //                     created: () => {
+                            //                         me.state = 'DEFAULT';
+                            //                         overlay.send('tx_created');
+                            //                     }
+                            //                 });
+                            //         }
+                            //     })
 
                             // overlay.subscribe('tweet', ctx, {
                             //     'pm_attach': (op, { market, tweet }) => {

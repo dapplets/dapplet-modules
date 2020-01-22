@@ -6,6 +6,8 @@ export type T_TwitterFeatureConfig = {
     connections?: {
         [name: string]: any
     },
+    TWEET_EVENT?: Function[],
+    THREAD_EVENT?: Function[],
     TWEET_SOUTH?: T_TwitterActionFactory[],
     TWEET_COMBO?: T_TwitterActionFactory[],
     DM_SOUTH?: T_TwitterActionFactory[],

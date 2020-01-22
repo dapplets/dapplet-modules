@@ -10,10 +10,12 @@ export class WidgetBuilder {
     observer: MutationObserver = null;
     widgets = new Map<IFeature, any[]>();
     contexts = new WeakMap<Node, Context>();
+    contextEvent: string; // 'TWEET_EVENT'
+    contextType: string; // 'tweet'
 
     //ToDo: widgets
 
-    constructor(widgetBuilderConfig: IWidgetBuilderConfig, private _emitContextCreated: (ctx?: any, type?: string) => void) {
+    constructor(widgetBuilderConfig: IWidgetBuilderConfig, private _emitContextCreated: (context: any, contextType: string, contextEvent: string) => void) {
         return Object.assign(this, widgetBuilderConfig);
     }
 
@@ -31,7 +33,7 @@ export class WidgetBuilder {
             // ToDo: refactor isNew checking
             if (isNew) {
                 newParsedContexts.push(context);
-                this._emitContextCreated(context.parsed);
+                this._emitContextCreated(context.parsed, this.contextType, this.contextEvent);
             }
 
             for (let i = 0; i < features.length; i++) {
