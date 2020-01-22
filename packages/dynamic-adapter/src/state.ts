@@ -1,5 +1,3 @@
-import { AutoProperty } from "@dapplets/dapplet-extension";
-
 export class State<T> {
     private _stateTemplates: { [key: string]: T };
     private _currentStateName = "DEFAULT";
@@ -40,7 +38,7 @@ export class State<T> {
         }) as T;
     }
 
-    public setState(stateName: string) {
+    public setState(stateName: string) {        
         const isStateExists = Object.getOwnPropertyNames(this._stateTemplates).includes(stateName);
 
         if (!isStateExists) {
@@ -48,11 +46,19 @@ export class State<T> {
             return;
         }
 
+        // deactivation of every autoprop
+        Object.entries(this._stateTemplates[this._currentStateName]).forEach(([key, value]) => {
+            if (typeof value === 'object' && value.conn && value.name) {
+                value.deactivate(this.ctx);
+            }
+        });
+
         this._cache = {};
         this._currentStateName = stateName;
         this.changedHandler && this.changedHandler();
     }
 
+    // ToDo: remove
     public activateAutoproperty(ap: any) {
         // let listener = this.ctx.connToListenerMap.get(ap.conn)
         // listener.p.push(ap)
@@ -62,6 +68,7 @@ export class State<T> {
         // }
     }
 
+    // ToDo: remove
     // ToDo: call it
     //deactivates propery if state becomes passive
     public deactivateAutoproperty(ap: any) {
