@@ -14,35 +14,15 @@ export class State<T> {
         this.state = new Proxy({}, {
             get(target, property, receiver) {
                 if (property === 'clazz') return me._clazz; // ToDo: remove it
-                //const reflectValue = Reflect.get(target, property, receiver);
                 if (me._cache[property] !== undefined) return me._cache[property];
-
-
 
                 const value = me._stateTemplates[me._currentStateName][property];
 
                 if (typeof value === 'object' && value.conn && value.name) {
-                    const apConfig = value as AutoProperty;
+                    const apConfig = value;
                     me.state[property] = null;
-                    // apConfig.set(); 
-                    // me.activateAutoproperty(ap);
-
-
-
-
-                    let listener = me.ctx.connToListenerMap.get(apConfig.conn)
-
-                    const apRuntime = {
-                        set: (value: any) => me.state[property] = value.toString(), // ToDo: remove toString()
-                        name: apConfig.name
-                    }
-
-                    listener.p.push(apRuntime)
-
-
-
-
-                    return undefined;
+                    apConfig.activate(ctx, (value: any) => me.state[property] = value.toString()); // ToDo: remove toString()
+                    return apConfig.lastValue;
                 } else {
                     return value;
                 }
@@ -50,12 +30,11 @@ export class State<T> {
             set(target, property, value, receiver) {
                 if (property === 'state') {
                     me.setState(value);
-                    return true;
+                } else {
+                    me._cache[property] = value;
+                    me.changedHandler && me.changedHandler();
                 }
-                //const success = Reflect.set(target, property, value, receiver);
-                me._cache[property] = value;
-                me.changedHandler && me.changedHandler();
-                //return success;
+
                 return true;
             }
         }) as T;

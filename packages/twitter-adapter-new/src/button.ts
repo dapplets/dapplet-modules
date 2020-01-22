@@ -29,7 +29,7 @@ export class Button implements IWidget<IButtonState> {
                         </svg>` : `<img height="18" src="${img}" class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr">`}
                         <div class="css-1dbjc4n r-sdzlij r-1p0dtai r-xoduu5 r-1d2f490 r-xf4iuw r-u8s1d r-zchlnj r-ipm5af r-o7ynqc r-6416eg"></div>
                     </div>
-                    ${label ? `<div class="css-1dbjc4n r-xoduu5 r-1udh08x">
+                    ${label?.toString() ? `<div class="css-1dbjc4n r-xoduu5 r-1udh08x">
                         <span dir="auto" class="css-901oao css-16my406 r-1qd0xha r-ad9z0x r-1n0xq6e r-bcqeeo r-d3hbe1 r-1wgg2b2 r-axxi2z r-qvutc0">
                             <span dir="auto" ${disabled ? 'style="color:#aaa;"' : ''} class="css-901oao css-16my406 r-1qd0xha r-ad9z0x r-bcqeeo r-qvutc0">${label}</span>
                         </span>

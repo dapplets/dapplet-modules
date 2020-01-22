@@ -28,7 +28,7 @@ export class Button implements IWidget<IButtonState> {
                         </circle>
                     </svg>` : `<img height="18" src="${img}">`}
                 </div>
-                ${label ? `<span class="ProfileTweet-actionCount">
+                ${label?.toString() ? `<span class="ProfileTweet-actionCount">
                     <span ${disabled ? 'style="color:#aaa;"' : ''} class="ProfileTweet-actionCountForPresentation" aria-hidden="true">${label}</span>
                 </span>` : ''}
             </button>`
