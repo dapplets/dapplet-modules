@@ -32,32 +32,18 @@ export default class TwitterFeature implements IFeature {
                         img: GNOSIS_ICON,
                         disabled: false,
                         exec: (ctx, me) => { // ToDo: rename exec() to onclick()
-                            me.state = 'ERR'
-                            // overlay
-                            //     .send('tweet_select', ctx)
-                            //     .listen('', {
-                            //         'pm_attach': (op, { market, tweet }) => {
-                            //             wallet.send(ctx)
-                            //                 .listen('', {
-                            //                     rejected: () => me.state = 'REJECTED',
-                            //                     created: () => {
-                            //                         me.state = 'DEFAULT';
-                            //                         overlay.send('tx_created');
-                            //                     }
-                            //                 });
-                            //         }
-                            //     })
-
-                            // overlay.subscribe('tweet', ctx, {
+                            me.state = 'ERR';
+                            // overlay.subscribe('tweet_select', ctx, {
                             //     'pm_attach': (op, { market, tweet }) => {
-                            //         wallet.send(ctx)
-                            //             .listen('', {
-                            //                 rejected: () => me.state = 'REJECTED',
-                            //                 created: () => {
-                            //                     me.state = 'DEFAULT';
-                            //                     overlay.send('tx_created');
-                            //                 }
-                            //             });
+                            //         console.log('pm_attach', op, { market, tweet });
+                            //         // wallet.send(ctx)
+                            //         //     .listen('', {
+                            //         //         rejected: () => me.state = 'REJECTED',
+                            //         //         created: () => {
+                            //         //             me.state = 'DEFAULT';
+                            //         //             overlay.send('tx_created');
+                            //         //         }
+                            //         //     });
                             //     }
                             // })
                         }

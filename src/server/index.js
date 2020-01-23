@@ -83,74 +83,57 @@ app.ws('/', function (ws, req) {
             return;
         }
 
-        if (method === "subscribe") {
-            const [subscriptionName, ...args] = params;
+        if (method === "create_tweet") {
+            const [ctx] = params;
 
-            if (subscriptionName === "create_tweet") {
-                const [ctx] = args;
-
-                if (!ctx || !ctx.id || !(/^\d{19}$/gm.test(ctx.id))) {
-                    ws.send(JSON.stringify({
-                        jsonrpc: "2.0",
-                        id: id,
-                        error: {
-                            code: null,
-                            message: "ctx.id is required."
-                        }
-                    }));
-                    return;
-                }
-
-                const tweetId = ctx.id;
-
-                const subscriptionId = (++subscriptionCount).toString();
-
-                ws.send(JSON.stringify({
-                    jsonrpc: "2.0",
-                    id: id,
-                    result: subscriptionId
-                }));
-
-                ws.send(JSON.stringify({
-                    jsonrpc: "2.0",
-                    method: "subscription",
-                    params: {
-                        subscription: subscriptionId,
-                        result: {
-                            like_num: store.tweets[tweetId] ? store.tweets[tweetId].length : 0
-                        }
-                    }
-                }));
-
-                const callback = ({ tweet, market }) => {
-                    if (tweet !== tweetId) return;
-
-                    ws.send(JSON.stringify({
-                        jsonrpc: "2.0",
-                        method: "subscription",
-                        params: {
-                            subscription: subscriptionId,
-                            result: {
-                                like_num: store.tweets[tweetId] ? store.tweets[tweetId].length : 0
-                            }
-                        }
-                    }));
-                }
-
-                emmiter.on('tweetAttached', callback);
-                callbackMap.set(subscriptionId, callback);
-
-            } else {
+            if (!ctx || !ctx.id || !(/^\d{19}$/gm.test(ctx.id))) {
                 ws.send(JSON.stringify({
                     jsonrpc: "2.0",
                     id: id,
                     error: {
                         code: null,
-                        message: "Invalid subscription name."
+                        message: "ctx.id is required."
                     }
-                }))
+                }));
+                return;
             }
-        } else if (method === "unsubscribe") {
+
+            const tweetId = ctx.id;
+
+            const subscriptionId = (++subscriptionCount).toString();
+
+            ws.send(JSON.stringify({
+                jsonrpc: "2.0",
+                id: id,
+                result: subscriptionId
+            }));
+
+            ws.send(JSON.stringify({
+                jsonrpc: "2.0",
+                method: subscriptionId,
+                params: [{
+                    like_num: store.tweets[tweetId] ? store.tweets[tweetId].length : 0
+                }]
+            }));
+
+            const callback = ({
+                tweet,
+                market
+            }) => {
+                if (tweet !== tweetId) return;
+
+                ws.send(JSON.stringify({
+                    jsonrpc: "2.0",
+                    method: subscriptionId,
+                    params: [{
+                        like_num: store.tweets[tweetId] ? store.tweets[tweetId].length : 0
+                    }]
+                }));
+            }
+
+            emmiter.on('tweetAttached', callback);
+            callbackMap.set(subscriptionId, callback);
+        } else if (method === "destroy_tweet") {
             const [subscriptionId] = params;
 
             const callback = callbackMap.get(subscriptionId);
