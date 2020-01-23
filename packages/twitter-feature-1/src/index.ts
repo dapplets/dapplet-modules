@@ -18,7 +18,7 @@ export default class TwitterFeature implements IFeature {
 
     constructor() {
         const overlay = Core.overlay({ url: 'https://localhost:8080', title: 'Gnosis' });
-        const wallet = Core.wallet({ dappletId: '1' }, EVENTS_DEF);
+        const wallet = Core.wallet({}, EVENTS_DEF);
         const server = Core.connect<{ like_num: string }>({ url: "wss://localhost:8080" });
 
         const { button } = this.adapter.widgets;
@@ -33,19 +33,18 @@ export default class TwitterFeature implements IFeature {
                         disabled: false,
                         exec: (ctx, me) => { // ToDo: rename exec() to onclick()
                             //me.state = 'ERR';
-                            overlay.subscribe('tweet_select', ctx, {
-                                'pm_attach': (op, { market, tweet }) => {
-                                    console.log('pm_attach', op, { market, tweet });
-                                    // wallet.send(ctx)
-                                    //     .listen('', {
-                                    //         rejected: () => me.state = 'REJECTED',
-                                    //         created: () => {
-                                    //             me.state = 'DEFAULT';
-                                    //             overlay.send('tx_created');
-                                    //         }
-                                    //     });
-                                }
-                            })
+                            // overlay.subscribe('tweet_select', ctx, {
+                            //     'pm_attach': (op, { market, tweet }) => {
+                            //         console.log('pm_attach', op, { market, tweet });
+                                    wallet.subscribe('1', ctx, {
+                                            rejected: () => me.state = 'REJECTED',
+                                            created: () => {
+                                                me.state = 'DEFAULT';
+                                                //overlay.send('tx_created');
+                                            }
+                                        });
+                             //   }
+                           // })
                         }
                     },
                     "PENDING": {
