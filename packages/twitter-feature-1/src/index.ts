@@ -17,7 +17,7 @@ export default class TwitterFeature implements IFeature {
     public config: T_TwitterFeatureConfig;
 
     constructor() {
-        const overlay = Core.overlay({ url: 'https://examples.dapplets.org', title: 'Gnosis' });
+        const overlay = Core.overlay({ url: 'https://localhost:8080', title: 'Gnosis' });
         const wallet = Core.wallet({ dappletId: '1' }, EVENTS_DEF);
         const server = Core.connect<{ like_num: string }>({ url: "wss://localhost:8080" });
 
@@ -32,20 +32,20 @@ export default class TwitterFeature implements IFeature {
                         img: GNOSIS_ICON,
                         disabled: false,
                         exec: (ctx, me) => { // ToDo: rename exec() to onclick()
-                            me.state = 'ERR';
-                            // overlay.subscribe('tweet_select', ctx, {
-                            //     'pm_attach': (op, { market, tweet }) => {
-                            //         console.log('pm_attach', op, { market, tweet });
-                            //         // wallet.send(ctx)
-                            //         //     .listen('', {
-                            //         //         rejected: () => me.state = 'REJECTED',
-                            //         //         created: () => {
-                            //         //             me.state = 'DEFAULT';
-                            //         //             overlay.send('tx_created');
-                            //         //         }
-                            //         //     });
-                            //     }
-                            // })
+                            //me.state = 'ERR';
+                            overlay.subscribe('tweet_select', ctx, {
+                                'pm_attach': (op, { market, tweet }) => {
+                                    console.log('pm_attach', op, { market, tweet });
+                                    // wallet.send(ctx)
+                                    //     .listen('', {
+                                    //         rejected: () => me.state = 'REJECTED',
+                                    //         created: () => {
+                                    //             me.state = 'DEFAULT';
+                                    //             overlay.send('tx_created');
+                                    //         }
+                                    //     });
+                                }
+                            })
                         }
                     },
                     "PENDING": {

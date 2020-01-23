@@ -12,6 +12,7 @@ export class State<T> {
         this.state = new Proxy({}, {
             get(target, property, receiver) {
                 if (property === 'clazz') return me._clazz; // ToDo: remove it
+                if (property === 'ctx') return me.ctx;
                 if (me._cache[property] !== undefined) return me._cache[property];
 
                 const value = me._stateTemplates[me._currentStateName][property];
