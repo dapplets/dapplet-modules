@@ -1,80 +1,85 @@
-export class State<T> {
-    private _stateTemplates: { [key: string]: T };
-    private _currentStateName = "DEFAULT";
-    public state: T;
-    private _cache: any = {};
-    public changedHandler: Function;
+import { AutoProperty } from "@dapplets/dapplet-extension";
 
-    constructor(config: { [state: string]: T }, public ctx: any, private _clazz: string) {
-        this._stateTemplates = config;
-        this._currentStateName = (config["initial"] as any) as string;
-        const me = this;
+const isAutoProperty = (value:any) => value && typeof value === 'object' && value.set && value.name
+const isAutoPropertyConf = (value:any) => value && typeof value === 'object' && value.conn && value.name
+export class State<T> {
+    public readonly INITIAL_STATE = "DEFAULT"
+    private _currentStateName = undefined
+    public state: T
+    private _cache: any = {}
+    public changedHandler: Function
+
+    constructor(private config: { [state: string]: T }, public ctx: any, private _clazz: string) {
+        const me = this
         this.state = new Proxy({}, {
             get(target, property, receiver) {
+                if (property == 'state') return me._currentStateName
                 if (property === 'clazz') return me._clazz; // ToDo: remove it
-                if (property === 'ctx') return me.ctx;
-                if (me._cache[property] !== undefined) return me._cache[property];
-
-                const value = me._stateTemplates[me._currentStateName][property];
-
-                if (typeof value === 'object' && value.conn && value.name) {
-                    const apConfig = value;
-                    me.state[property] = null;
-                    apConfig.activate(ctx, (value: any) => me.state[property] = value.toString()); // ToDo: remove toString()
-                    return apConfig.lastValue;
-                } else {
-                    return value;
-                }
+                if (property === 'ctx') return me.ctx
+                if (property === 'setState') return me.setState.bind(me)
+                return me._currentStateName 
+                        ? me._cache[me._currentStateName][property] 
+                        : me._cache[property]
             },
             set(target, property, value, receiver) {
                 if (property === 'state') {
-                    me.setState(value);
+                    me.setState(value)
                 } else {
-                    me._cache[property] = value;
-                    me.changedHandler && me.changedHandler();
+                    target[property]=value
+                    me.changedHandler && me.changedHandler()
                 }
-
-                return true;
+                return true
             }
-        }) as T;
+        }) as T
+        if (me.config[me.INITIAL_STATE]) me.setState(me.INITIAL_STATE)
     }
 
-    public setState(stateName: string) {        
-        const isStateExists = Object.getOwnPropertyNames(this._stateTemplates).includes(stateName);
+    public setState(stateName: string) : any {   
+        do {
+            console.log("Set state from - to: ", this._currentStateName,stateName)     
+            if (stateName == this._currentStateName) {
+                console.log(`NOP state transition "${stateName}". Skipping...`)
+                break
+            } else if (!this._cache[stateName]) {
+                this._cache[stateName] = this.createNewStateFromConfig(stateName)
+            }
+            this._currentStateName = stateName
+            stateName = this._cache[stateName].NEXT
+        } while(stateName)
+        this.changedHandler && this.changedHandler()
+        return this._cache[this._currentStateName]
+    }
 
-        if (!isStateExists) {
-            console.error(`The state template with name "${stateName}" doesn't exist. Skipping state updating...`);
-            return;
+    private createNewStateFromConfig(stateName){
+        let state = {}
+        if (!this.config[stateName]) {
+            console.error(`The state template with name "${stateName}" doesn't exist. Skipping state updating...`)
+        } else {
+            Object.entries(this.config[stateName]).forEach(([key, value]) => {
+                state[key] = isAutoPropertyConf(value)
+                            ? this.createAutoProperty(value, stateName, (v:any)=> state[key] = v).value
+                            : value
+            })
         }
+        return state
+    }
 
-        // deactivation of every autoprop
-        Object.entries(this._stateTemplates[this._currentStateName]).forEach(([key, value]) => {
-            if (typeof value === 'object' && value.conn && value.name) {
-                value.deactivate(this.ctx);
+    private createAutoProperty(apConfig, stateName, setter){
+        let me=this
+        let listener = this.ctx.connToListenerMap.get(apConfig.conn)
+        if (!listener) listener = apConfig.conn.listener('tweet_create',this.ctx.id)
+        let p
+        listener.p.push(p={
+            conn: apConfig.conn,
+            name: apConfig.name,
+            value: undefined,
+            set: (value:any) => {
+                p.value = value
+                if (stateName == this._currentStateName) setter(value)
+                me.changedHandler && me.changedHandler()
             }
-        });
-
-        this._cache = {};
-        this._currentStateName = stateName;
-        this.changedHandler && this.changedHandler();
+        })
+        return p
     }
 
-    // ToDo: remove
-    public activateAutoproperty(ap: any) {
-        // let listener = this.ctx.connToListenerMap.get(ap.conn)
-        // listener.p.push(ap)
-        // const obj = {
-        //     set: ,
-        //     config: ap
-        // }
-    }
-
-    // ToDo: remove
-    // ToDo: call it
-    //deactivates propery if state becomes passive
-    public deactivateAutoproperty(ap: any) {
-        // let listener = this.ctx.connToListenerMap.get(ap.conn)
-        // listener.p.remove(ap)   //simplified
-        ap.isActive = false;
-    }
-}
+}// class State
