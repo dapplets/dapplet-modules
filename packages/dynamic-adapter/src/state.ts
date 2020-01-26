@@ -1,4 +1,5 @@
 import { AutoProperty } from "@dapplets/dapplet-extension";
+import { Connection, Listener } from "@dapplets/dapplet-extension/lib/inpage/connection";
 
 const isAutoProperty = (value:any) => value && typeof value === 'object' && value.set && value.name
 const isAutoPropertyConf = (value:any) => value && typeof value === 'object' && value.conn && value.name
@@ -66,10 +67,16 @@ export class State<T> {
 
     private createAutoProperty(apConfig, stateName, setter){
         let me=this
+        if (!this.ctx.connToListenerMap) this.ctx.connToListenerMap = new WeakMap<Connection,Listener>()
         let listener = this.ctx.connToListenerMap.get(apConfig.conn)
-        if (!listener) listener = apConfig.conn.listener('tweet_create',this.ctx.id)
+        if (!listener) {
+            const conn = apConfig.conn
+            let listenerId = conn.listener('tweet_create',this.ctx.id)
+            listener = conn.listeners.get(listenerId)
+            this.ctx.connToListenerMap.set(conn, listener)
+        }
         let p
-        listener.p.push(p={
+        listener.p.push( p = {
             conn: apConfig.conn,
             name: apConfig.name,
             value: undefined,
