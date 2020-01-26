@@ -107,7 +107,7 @@ class DynamicAdapter implements IDynamicAdapter {
             if (node.getElementsByClassName(clazz).length > 0) return;
 
             const context = builder.contexts.get(contextNode);
-            const state = new State<T>(config, context.parsed, clazz);
+            const state = new State<T>(config, context.parsed, builder.contextType, clazz);
             const widget = new Widget() as IWidget<T>;
             widget.state = state.state;
             state.changedHandler = () => widget.mount(); // when data in state was changed, then rerender a widget

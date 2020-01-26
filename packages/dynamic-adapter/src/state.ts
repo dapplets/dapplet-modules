@@ -10,7 +10,7 @@ export class State<T> {
     private _cache: any = {}
     public changedHandler: Function
 
-    constructor(private config: { [state: string]: T }, public ctx: any, private _clazz: string) {
+    constructor(private config: { [state: string]: T }, public readonly ctx: any, public readonly contextType, private _clazz: string) {
         const me = this
         this.state = new Proxy({}, {
             get(target, property, receiver) {
@@ -66,13 +66,12 @@ export class State<T> {
     }
 
     private createAutoProperty(apConfig, stateName, setter){
-        let me=this
+        const me=this
+        const conn = apConfig.conn
         if (!this.ctx.connToListenerMap) this.ctx.connToListenerMap = new WeakMap<Connection,Listener>()
-        let listener = this.ctx.connToListenerMap.get(apConfig.conn)
+        let listener = this.ctx.connToListenerMap.get(conn)
         if (!listener) {
-            const conn = apConfig.conn
-            let listenerId = conn.listener('tweet_create',this.ctx.id)
-            listener = conn.listeners.get(listenerId)
+            listener = conn.listener(this.contextType+'_create',this.ctx.id)
             this.ctx.connToListenerMap.set(conn, listener)
         }
         let p
