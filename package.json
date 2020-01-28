@@ -29,7 +29,8 @@
     "deploy:archive": "lerna exec --concurrency 1 -- dapplet-cli deploy --archive",
     "deployswarm": "lerna exec --concurrency 1 -- dapplet-cli deploy --swarm",
     "deployswarm:archive": "lerna exec --concurrency 1 -- dapplet-cli deploy --swarm --archive",
-    "create": "node src/copyTemplate.js"
+    "create": "node src/copyTemplate.js",
+    "linktypes": "lerna exec -- npm link @dapplets/dapplet-extension"
   },
   "repository": {
     "type": "git",
