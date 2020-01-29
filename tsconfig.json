@@ -1,20 +1,11 @@
 {
     "compilerOptions": {
-        "baseUrl": ".",
-        "module": "commonjs",
-        "declaration": true,
-        "noImplicitAny": false,
-        "removeComments": false,
-        "noLib": false,
-        "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "target": "es2017",
-        "sourceMap": false,
-        "lib": [
-            "es2017", "dom"
-        ],
-        "types": [ "../../typesPatch" ],
-        "composite": true
-    },
-    "include": [ ]
+        "lib": ["es2017", "dom"],
+        "moduleResolution": "Node",
+        "outDir": "lib",
+        "noEmitHelpers": true,
+        "esModuleInterop": true
+    }
 }

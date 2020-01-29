@@ -1,4 +1,4 @@
-import {} from '@dapplets/dapplet-extension'
+import '@dapplets/dapplet-extension'
 
 @Injectable
 export default class CommonLib {

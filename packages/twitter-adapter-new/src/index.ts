@@ -1,3 +1,4 @@
+import { } from '@dapplets/dapplet-extension'
 import { DynamicAdapter } from '@dapplets/dynamic-adapter';
 import { IButtonState, Button } from './button';
 import { IPictureState, Picture } from './picture';

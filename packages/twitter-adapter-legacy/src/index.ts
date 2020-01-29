@@ -1,4 +1,4 @@
-import { IFeature } from '@dapplets/dapplet-extension';
+import { IFeature } from '@dapplets/dapplet-extension'
 import { IDynamicAdapter } from '@dapplets/dynamic-adapter';
 import { IButtonState, Button } from './button';
 import { IPictureState, Picture } from './picture';

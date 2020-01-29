@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --config webpack.dev.js",
-    "watch": "webpack -w --config webpack.dev.js",
+    "build": "rollup --config ../../rollup.config.js",
+    "watch": "rollup -w --config ../../rollup.config.js",
     "clean": "(if exist lib rd /q /s lib) & (if exist dist rd /q /s dist)"
   },
   "author": "Dapplets Team",

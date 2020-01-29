@@ -1,5 +1,5 @@
 import { WidgetBuilder } from './widgets';
-import { IFeature, IContentAdapter } from '@dapplets/dapplet-extension';
+import { IFeature, IContentAdapter } from '@dapplets/dapplet-extension'
 import { IWidgetBuilderConfig, Context, IWidget } from './types';
 import { State } from './state';
 
@@ -11,7 +11,7 @@ interface IDynamicAdapter extends IContentAdapter {
 }
 
 @Injectable
-class DynamicAdapter implements IDynamicAdapter {
+export default class DynamicAdapter implements IDynamicAdapter {
 
     private observer: MutationObserver = null;
     private features: IFeature[] = [];
