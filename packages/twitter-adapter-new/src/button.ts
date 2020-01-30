@@ -5,9 +5,10 @@ export interface IButtonState {
     label: string;
     loading: boolean;
     disabled: boolean;
-    exec: () => void;
+    exec: (ctx: any, me: IButtonState) => void;
     init: () => void;
     clazz: string;
+    ctx: any;
 }
 
 export class Button implements IWidget<IButtonState> {
@@ -49,7 +50,7 @@ export class Button implements IWidget<IButtonState> {
         this.el.classList.add(this.state.clazz, 'css-1dbjc4n', 'r-1iusvr4', 'r-18u37iz', 'r-16y2uox', 'r-1h0z5md');
         this.el.addEventListener("click", e => {
             if (!this.state.disabled) {
-                this.state.exec?.();
+                this.state.exec?.(this.state.ctx, this.state);
             }
         });
         this.mount();
