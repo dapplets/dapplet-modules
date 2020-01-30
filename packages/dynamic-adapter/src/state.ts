@@ -68,9 +68,7 @@ export class State<T> {
     private createAutoProperty(apConfig, stateName, setter){
         const me=this
         const conn = apConfig.conn
-        if (!this.ctx.connToListenerMap) this.ctx.connToListenerMap = new WeakMap<Connection,Listener>()
-        //ToDo: refactor - move connToListenerMap to conection class
-        let listener = this.ctx.connToListenerMap.get(conn)
+        let listener = conn.listenerLifecycle.get(this)
         if (!listener) {
             listener = conn.bind(            {
                 operation: 'create',
