@@ -3,9 +3,10 @@ import { IWidget } from '@dapplets/dynamic-adapter';
 export interface IPictureState {
     img: string;
     disabled: boolean;
-    exec: () => void;
+    exec: (ctx: any, me: IPictureState) => void;
     init: () => void;
     clazz: string;
+    ctx: any;
 }
 
 export class Picture implements IWidget<IPictureState> {
@@ -31,7 +32,7 @@ export class Picture implements IWidget<IPictureState> {
         this.el.classList.add(this.state.clazz);
         this.el.addEventListener("click", e => {
             if (!this.state.disabled) {
-                this.state.exec?.();
+                this.state.exec?.(this.state.ctx, this.state);
             }
         });
         this.el.style.position = 'absolute';
