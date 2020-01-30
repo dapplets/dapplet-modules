@@ -69,12 +69,18 @@ export class State<T> {
         const me=this
         const conn = apConfig.conn
         if (!this.ctx.connToListenerMap) this.ctx.connToListenerMap = new WeakMap<Connection,Listener>()
+        //ToDo: refactor - move connToListenerMap to conection class
         let listener = this.ctx.connToListenerMap.get(conn)
         if (!listener) {
-            listener = conn.listener(this.contextType+'_create',this.ctx.id)
-            this.ctx.connToListenerMap.set(conn, listener)
+            listener = conn.bind(            {
+                operation: 'create',
+                contextType: this.contextType,
+                contextId: this.ctx.id,
+                context: this.ctx
+            })
         }
         let p
+        console.log("=#2===> listener.p.push", listener)
         listener.p.push( p = {
             conn: apConfig.conn,
             name: apConfig.name,

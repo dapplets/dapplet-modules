@@ -23,7 +23,7 @@ export default class TwitterFeature implements IFeature {
 
         const { button } = this.adapter.widgets;
         this.config = {
-            TWEET_EVENT: [server.sendAndListen],
+            //TWEET_EVENT: [server.bind],
             TWEET_SOUTH: [
                 button({
                     initial: "DEFAULT",
@@ -32,7 +32,10 @@ export default class TwitterFeature implements IFeature {
                         img: GNOSIS_ICON,
                         disabled: false,
                         exec: (ctx, me) => { // ToDo: rename exec() to onclick()
-                            me.state = 'PENDING';
+                            let err = me.setState(me.state == 'DEFAULT'? 'ERR2' : 'DEFAULT')
+                            console.log('err', me.state)
+                            setTimeout(()=>err.label = "ABCD", 1000)
+                            /*
                             overlay.sendAndListen('tweet_select', ctx, {
                                 'pm_attach': (op, { market, tweet }) => {
                                     console.log('pm_attach', op, { market, tweet });
@@ -45,6 +48,7 @@ export default class TwitterFeature implements IFeature {
                                     });
                                 }
                             })
+                            */
                         }
                     },
                     "PENDING": {
@@ -55,7 +59,13 @@ export default class TwitterFeature implements IFeature {
                     "ERR": {
                         label: 'Error',
                         img: GNOSIS_ICON,
-                        exec: (ctx, me) => me.state = 'DEFAULT'
+                        exec: (ctx, me) => me.setState('DEFAULT'),
+                        NEXT: "ERR2"
+                    },
+                    "ERR2": {
+                        label: 'Error2',
+                        img: GNOSIS_ICON,
+                        exec: (ctx, me) => me.setState('DEFAULT')
                     }
                 })
             ],
