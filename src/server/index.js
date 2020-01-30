@@ -43,7 +43,7 @@ app.use('/', express.static('src/client', {
     etag: false
 }));
 
-app.ws('/', function (ws, req) {
+app.ws('/:feature', function (ws, req) {
     const callbackMap = new Map();
     let subscriptionCount = 0;
 
@@ -111,9 +111,11 @@ app.ws('/', function (ws, req) {
             ws.send(JSON.stringify({
                 jsonrpc: "2.0",
                 method: subscriptionId,
-                params: [{
-                    like_num: store.tweets[tweetId] ? store.tweets[tweetId].length : 0
-                }]
+                params: [(req.params.feature === 'feature-2') ? ({
+                    like_num: store.tweets[tweetId] || 0
+                }) : ({
+                    pm_num: store.tweets_with_PM[tweetId] ? store.tweets_with_PM[tweetId].length : 0
+                })]
             }));
 
             const callback = ({
@@ -125,9 +127,11 @@ app.ws('/', function (ws, req) {
                 ws.send(JSON.stringify({
                     jsonrpc: "2.0",
                     method: subscriptionId,
-                    params: [{
-                        like_num: store.tweets[tweetId] ? store.tweets[tweetId].length : 0
-                    }]
+                    params: [(req.params.feature === 'feature-2') ? ({
+                        like_num: store.tweets[tweetId] || 0
+                    }) : ({
+                        pm_num: store.tweets_with_PM[tweetId] ? store.tweets_with_PM[tweetId].length : 0
+                    })]
                 }));
             }
 
@@ -208,10 +212,10 @@ app.post('/api/markets/attach', function (req, res) {
         market
     } = req.body;
 
-    if (store.tweets[tweet] && store.tweets[tweet].length) {
-        store.tweets[tweet].push(market);
+    if (store.tweets_with_PM[tweet] && store.tweets_with_PM[tweet].length) {
+        store.tweets_with_PM[tweet].push(market);
     } else {
-        store.tweets[tweet] = [market];
+        store.tweets_with_PM[tweet] = [market];
     }
 
     res.status(200).end();
