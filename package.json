@@ -13,25 +13,15 @@
     "doc": "docs"
   },
   "scripts": {
-    "xxx": "rollup -w --config rollup.config.js",
     "start": "npm-run-all --parallel serve watch",
-    "ls": "lerna ls",
-    "postinstall": "lerna bootstrap",
-    "build": "lerna run build",
-    "watch": "lerna exec --parallel -- npm run watch",
+    "build": "rollup --config rollup.config.js",
+    "watch": "rollup -w --config rollup.config.js",
     "serve": "node src/server/index.js",
-    "clean": "lerna run clean",
-    "clean:node_modules": "lerna exec -- if exist node_modules rd /q /s node_modules",
-    "clean:package_lock": "lerna exec -- if exist package-lock.json del /f package-lock.json",
-    "clean:self:node_modules": "if exist node_modules rd /q /s node_modules",
-    "clean:self:package_lock": "if exist package-lock.json del /f package-lock.json",
-    "clean:all": "npm run clean && npm run clean:node_modules && npm run clean:package_lock && npm run clean:self:node_modules && npm run clean:self:package_lock",
     "deploy": "lerna exec --concurrency 1 -- dapplet-cli deploy",
     "deploy:archive": "lerna exec --concurrency 1 -- dapplet-cli deploy --archive",
     "deployswarm": "lerna exec --concurrency 1 -- dapplet-cli deploy --swarm",
     "deployswarm:archive": "lerna exec --concurrency 1 -- dapplet-cli deploy --swarm --archive",
-    "create": "node src/copyTemplate.js",
-    "linktypes": "lerna exec -- npm link @dapplets/dapplet-extension"
+    "create": "node src/copyTemplate.js"
   },
   "repository": {
     "type": "git",
@@ -42,6 +32,7 @@
   },
   "homepage": "https://github.com/dapplets/typescript-examples#readme",
   "devDependencies": {
+    "@dapplets/dapplet-extension": "^0.1.5",
     "@rollup/plugin-image": "^2.0.1",
     "@rollup/plugin-typescript": "^3.0.0",
     "chalk": "^3.0.0",
