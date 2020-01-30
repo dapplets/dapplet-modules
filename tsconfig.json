@@ -4,8 +4,12 @@
         "target": "es2017",
         "lib": ["es2017", "dom"],
         "moduleResolution": "Node",
-        "outDir": "lib",
         "noEmitHelpers": true,
-        "esModuleInterop": true
-    }
+        "esModuleInterop": true,
+        "baseUrl": "packages",
+        "paths": {
+            "@dapplets/#{package}/*": ["#{package}/src/*"]
+        }
+    },
+    "files": ["globals.d.ts"]
 }

@@ -1,12 +1,14 @@
 import typescript from '@rollup/plugin-typescript';
 import image from '@rollup/plugin-image';
+import fs from 'fs';
 
-export default [{
-    input: 'src/index.ts',
+export default fs.readdirSync('packages').map(packageName => ({
+    input: `packages/${packageName}/src/index.ts`,
     output: [{
-        file: 'build/index.js',
-        format: 'esm'
+        file: `packages/${packageName}/build/index.js`,
+        format: 'cjs',
+        exports: 'named'
     }],
     plugins: [typescript(), image()],
     external: ['@dapplets/dapplet-extension']
-}];
+}));
