@@ -19,7 +19,7 @@ export default class TwitterFeature implements IFeature {
     constructor() {
         const overlay = Core.overlay({ url: 'https://localhost:8080', title: 'Gnosis' });
         const wallet = Core.wallet({}, EVENTS_DEF);
-        const server = Core.connect<{ like_num: string }>({ url: "wss://localhost:8080" });
+        const server = Core.connect<{ pm_num: string }>({ url: "wss://localhost:8080/feature-1" });
 
         const { button } = this.adapter.widgets;
         this.config = {
@@ -28,7 +28,7 @@ export default class TwitterFeature implements IFeature {
                 button({
                     initial: "DEFAULT",
                     "DEFAULT": {
-                        label: server.like_num,
+                        label: server.pm_num,
                         img: GNOSIS_ICON,
                         disabled: false,
                         exec: (ctx, me) => { // ToDo: rename exec() to onclick()

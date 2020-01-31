@@ -11,7 +11,7 @@ export default class TwitterFeature implements IFeature {
 
     constructor() {
         const wallet = Core.wallet();
-        const server = Core.connect<{ like_num: string }>({ url: "wss://localhost:8080" });
+        const server = Core.connect<{ like_num: string }>({ url: "wss://localhost:8080/feature-2" });
 
         const { button } = this.adapter.widgets;
         this.config = {
