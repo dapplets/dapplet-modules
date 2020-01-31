@@ -1,7 +1,7 @@
 {
     "name": "common-lib.dapplet-base.eth",
     "branch": "default",
-    "version": "0.3.3",
+    "version": "0.3.2",
     "type": "LIBRARY",
     "title": "CommonLib",
     "description": "CommonLib for twitter.com",
