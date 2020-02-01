@@ -82,7 +82,7 @@ app.ws('/:feature', function (ws, req) {
             }));
             return;
         }
-        if (method === "create_tweet") {
+        if (method === "subscribe") {
             const [ctx] = params;
 
             if (!ctx || !ctx.id || !(/^\d{19}$/gm.test(ctx.id))) {
@@ -136,7 +136,7 @@ app.ws('/:feature', function (ws, req) {
 
             emmiter.on('tweetAttached', callback);
             callbackMap.set(subscriptionId, callback);
-        } else if (method === "destroy_tweet") {
+        } else if (method === "unsubscribe") {
             const [subscriptionId] = params;
 
             const callback = callbackMap.get(subscriptionId);

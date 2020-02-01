@@ -70,7 +70,7 @@ export class State<T> {
         const conn = apConfig.conn
         let listener = conn.listenerLifecycle.get(this)
         if (!listener) {
-            listener = conn.bind(            {
+            listener = conn.bind({
                 operation: 'create',
                 topic: this.ctx.id,
                 contextType: this.contextType,
