@@ -82,7 +82,6 @@ app.ws('/:feature', function (ws, req) {
             }));
             return;
         }
-
         if (method === "create_tweet") {
             const [ctx] = params;
 
@@ -141,7 +140,8 @@ app.ws('/:feature', function (ws, req) {
             const [subscriptionId] = params;
 
             const callback = callbackMap.get(subscriptionId);
-            emmiter.off('tweetAttached', callback);
+            if (callback) emmiter.off('tweetAttached', callback)
+            else console.log("ERROR: can't destroy unknown subscription. Id:",subscriptionId, callbackMap)
 
             ws.send(JSON.stringify({
                 jsonrpc: "2.0",
