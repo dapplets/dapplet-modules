@@ -153,6 +153,7 @@ class DynamicAdapter implements IDynamicAdapter {
     private _emitContextEvent(context: any, contextType: string, contextEvent: string, operation: string) {
         const event = {
             operation,
+            topic: context.id,
             contextType,
             contextId: context.id,
             context

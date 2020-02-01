@@ -72,6 +72,7 @@ export class State<T> {
         if (!listener) {
             listener = conn.bind(            {
                 operation: 'create',
+                topic: this.ctx.id,
                 contextType: this.contextType,
                 contextId: this.ctx.id,
                 context: this.ctx
