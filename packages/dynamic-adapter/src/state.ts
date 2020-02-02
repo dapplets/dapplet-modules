@@ -1,8 +1,6 @@
-import { AutoProperty } from "@dapplets/dapplet-extension";
+import { AutoProperty, AutoPropertyConf } from "@dapplets/dapplet-extension";
 import { Connection, Listener } from "@dapplets/dapplet-extension/lib/inpage/connection";
 
-const isAutoProperty = (value:any) => value && typeof value === 'object' && value.set && value.name
-const isAutoPropertyConf = (value:any) => value && typeof value === 'object' && value.conn && value.name
 export class State<T> {
     public readonly INITIAL_STATE = "DEFAULT"
     private _currentStateName = undefined
@@ -53,44 +51,27 @@ export class State<T> {
 
     private createNewStateFromConfig(stateName){
         let state = {}
-        if (!this.config[stateName]) {
-            console.error(`The state template with name "${stateName}" doesn't exist. Skipping state updating...`)
-        } else {
-            Object.entries(this.config[stateName]).forEach(([key, value]) => {
-                state[key] = isAutoPropertyConf(value)
-                            ? this.createAutoProperty(value, stateName, (v:any)=> state[key] = v).value
-                            : value
+        if (this.config[stateName]) {
+            const createAutoProperty = (apConfig: AutoPropertyConf, setter: (v:any) => void) =>
+                //ToDo: move addAutoProperty to apCpnfig? 
+                apConfig.conn.addAutoProperty(apConfig, setter, this.ctx)
+            const isAutoPropertyConf = (value:any) => 
+                value && typeof value === 'object' && value.conn && value.name
+            const me=this
+            Object.entries(this.config[stateName]).forEach(([key, valueOrApConf]) => {
+            state[key] = !isAutoPropertyConf(valueOrApConf) 
+                        ? valueOrApConf
+                        : createAutoProperty(valueOrApConf, (v:any) => {
+                            if (stateName == me._currentStateName) {
+                                state[key] = v
+                                me.changedHandler && me.changedHandler()
+                            }
+                        }).value
             })
+        } else {
+            console.error(`The state template with name "${stateName}" doesn't exist. Skipping state updating...`)
         }
         return state
-    }
-
-    private createAutoProperty(apConfig, stateName, setter){
-        const me=this
-        const conn = apConfig.conn
-        let listener = conn.listenerLifecycle.get(this)
-        if (!listener) {
-            listener = conn.bind({
-                operation: 'create',
-                topic: this.ctx.id,
-                contextType: this.contextType,
-                contextId: this.ctx.id,
-                context: this.ctx
-            })
-        }
-        let p
-        console.log("=#2===> listener.p.push", listener)
-        listener.p.push( p = {
-            conn: apConfig.conn,
-            name: apConfig.name,
-            value: undefined,
-            set: (value:any) => {
-                p.value = value
-                if (stateName == this._currentStateName) setter(value)
-                me.changedHandler && me.changedHandler()
-            }
-        })
-        return p
     }
 
 }// class State
