@@ -1,6 +1,6 @@
 {
   "name": "@dapplets/dynamic-adapter",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "",
   "scripts": {
     "build": "webpack --config webpack.dev.js",
