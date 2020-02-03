@@ -1,7 +1,7 @@
 {
     "name": "dynamic-adapter.dapplet-base.eth",
     "branch": "default",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "type": "LIBRARY",
     "title": "Dynamic Adapter",
     "description": "Dynamic Adapter",

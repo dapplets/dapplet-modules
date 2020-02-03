@@ -8,16 +8,23 @@ class Bus {
                 if (!data || !data.topic) return;
                 
                 const callbacks = this._callbacks[data.topic] || [];
-
+                
                 for (const callback of callbacks) {
-                    callback.apply({}, data.args);
+                    const result = callback.apply({}, [data.message]);
+                    if (data.id) {
+                        const msg = JSON.stringify({ 
+                            id: data.id, 
+                            result: result 
+                        });
+                        window.parent.postMessage(msg, '*');
+                    }
                 }
             } catch (ex) { }
         });
     }
 
-    publish(topic, ...args) {
-        const msg = JSON.stringify({ topic, args });
+    publish(topic, message) {
+        const msg = JSON.stringify({ topic, message });
         window.parent.postMessage(msg, '*');
     }
 
@@ -36,6 +43,7 @@ class Bus {
 
 class Index extends React.Component {
     bus = null;
+    subId = 0;
 
     constructor(props) {
         super(props);
@@ -56,6 +64,7 @@ class Index extends React.Component {
         this.bus.subscribe('tweet_select', (tweet) => {
             this.setState(state => ({ tweet }));
             this.handleChange();
+            return ++this.subId;
         });
 
         this.search = React.createRef();
@@ -95,7 +104,10 @@ class Index extends React.Component {
 
         button.disabled = true;
 
-        this.bus.publish('pm_attach', data);
+        this.bus.publish(this.subId, {
+            type: 'pm_attach',
+            message: data
+        });
         this.bus.subscribe('tx_created', async () => {
             const response = await fetch('/api/markets/attach', {
                 method: 'POST',

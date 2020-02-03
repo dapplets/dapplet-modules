@@ -11,6 +11,6 @@
   "author": "Dapplets Team",
   "license": "MIT",
   "devDependencies": {
-    "@dapplets/dapplet-extension-types": "^0.3.11"
+    "@dapplets/dapplet-extension": "^0.1.6"
   }
 }

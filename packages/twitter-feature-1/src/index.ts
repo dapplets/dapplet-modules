@@ -1,6 +1,13 @@
-import { IFeature } from '@dapplets/dapplet-extension-types'
+import { IFeature } from '@dapplets/dapplet-extension' // ToDo: import { Core } from '@dapplets/dapplet-extension'
 import { T_TwitterFeatureConfig, ITwitterAdapter } from '@dapplets/twitter-adapter'
 import GNOSIS_ICON from './gnosis.png'
+
+const EVENTS_DEF = {
+    TX_SENT: (op: any, m: any) => m.type === "TX_SENT",
+    WC_CONNECT: (op: any, m: any) => m.type === "WC_CONNECT",
+    SWARM_NODE: (op: any, m: any) => m.type === "SWARM_NODE",
+    SWARM_SENT: "SWARM_SENT"
+}
 
 @Injectable
 export default class TwitterFeature implements IFeature {
@@ -10,54 +17,57 @@ export default class TwitterFeature implements IFeature {
     public config: T_TwitterFeatureConfig;
 
     constructor() {
-        const overlay = Core.overlay('https://examples.dapplets.org', 'Gnosis');
+        const overlay = Core.overlay({ url: 'https://localhost:8080', title: 'Gnosis' });
+        const wallet = Core.wallet({}, EVENTS_DEF);
+        const server = Core.connect<{ pm_num: string }>({ url: "wss://localhost:8080/feature-1" });
 
         const { button } = this.adapter.widgets;
         this.config = {
-            connections: {
-                likes: Core.connect("wss://examples.dapplets.org")
-            },
+            //TWEET_EVENT: [server.bind],
             TWEET_SOUTH: [
-                button((ctx, setState, { likes }) => ({
+                button({
+                    initial: "DEFAULT",
                     "DEFAULT": {
-                        label: likes.like_num,
+                        label: server.pm_num,
                         img: GNOSIS_ICON,
                         disabled: false,
-                        exec: () => {
-                            overlay.open(() => overlay.publish('tweet_select', ctx));
-                            overlay.unsubscribe('pm_attach');
-                            overlay.subscribe('pm_attach',
-                                async ({ market, tweet }) => {
-                                    setState("TX_RUNNING");
-                                    Core.sendWalletConnectTx('1', ctx, (e) => {
-                                        if (e.type === "CREATED") {
-                                            overlay.publish('tx_created');
-                                            setState("DEFAULT");
-                                        } else if (e.type === "PAIRING") {
-                                            setState("PAIRING");
-                                        } else if (e.type === "REJECTED") {
-                                            setState("ERR");
+                        exec: (ctx, me) => { // ToDo: rename exec() to onclick()
+                            let err = me.setState(me.state == 'DEFAULT'? 'ERR2' : 'DEFAULT')
+                            console.log('err', me.state)
+                            setTimeout(()=>err.label = "ABCD", 1000)
+                            /*
+                            overlay.sendAndListen('tweet_select', ctx, {
+                                'pm_attach': (op, { market, tweet }) => {
+                                    console.log('pm_attach', op, { market, tweet });
+                                    wallet.sendAndListen('1', ctx, {
+                                        rejected: () => me.state = 'ERR',
+                                        created: () => {
+                                            me.state = 'DEFAULT';
+                                            overlay.send('tx_created');
                                         }
                                     });
-                                },
-                                SubscribeOptions.SINGLE_THREAD
-                            );
+                                }
+                            })
+                            */
                         }
                     },
-                    "TX_RUNNING": { 
-                        label: 'Pending', 
-                        loading: true, 
-                        disabled: true 
-                    },
-                    "PAIRING": { 
-                        label: 'Pairing', 
-                        loading: true, 
-                        disabled: true 
+                    "PENDING": {
+                        label: 'Pending',
+                        loading: true,
+                        disabled: true
                     },
                     "ERR": {
-                        label: 'Error'
+                        label: 'Error',
+                        img: GNOSIS_ICON,
+                        exec: (ctx, me) => me.setState('DEFAULT'),
+                        NEXT: "ERR2"
+                    },
+                    "ERR2": {
+                        label: 'Error2',
+                        img: GNOSIS_ICON,
+                        exec: (ctx, me) => me.setState('DEFAULT')
                     }
-                }))
+                })
             ],
             TWEET_COMBO: [],
             DM_SOUTH: []

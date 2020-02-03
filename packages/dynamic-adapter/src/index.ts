@@ -1,13 +1,13 @@
 import { WidgetBuilder } from './widgets';
-import { IFeature, IContentAdapter } from '@dapplets/dapplet-extension-types';
+import { IFeature, IContentAdapter } from '@dapplets/dapplet-extension';
 import { IWidgetBuilderConfig, Context, IWidget } from './types';
 import { State } from './state';
 
 interface IDynamicAdapter extends IContentAdapter {
     attachFeature(feature: IFeature): void;
     detachFeature(feature: IFeature): void;
-    attachConfig(config: any[]): void;
-    createWidgetFactory<T>(Widget: any): (configCallback: (ctx: any, state: any, sub: any) => T) => (builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element, proxiedSubs: any) => any;
+    attachConfig(config: IWidgetBuilderConfig[]): void;
+    createWidgetFactory<T>(Widget: any): (config: { [state: string]: T }) => (builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element, proxiedSubs: any) => any;
 }
 
 @Injectable
@@ -16,6 +16,9 @@ class DynamicAdapter implements IDynamicAdapter {
     private observer: MutationObserver = null;
     private features: IFeature[] = [];
     private contextBuilders: WidgetBuilder[] = [];
+
+    private _contextCreatedHandlers: ((ctx?: any, type?: string) => void)[] = [];
+    private _contextDestroyedHandlers: ((ctx?: any, type?: string) => void)[] = [];
 
     public attachFeature(feature: IFeature): void { // ToDo: automate two-way dependency handling(?)
         if (this.features.find(f => f === feature)) return;
@@ -33,8 +36,8 @@ class DynamicAdapter implements IDynamicAdapter {
         // ToDo: close all subscriptions and connections
     }
 
-    public attachConfig(config: any[]) {
-        const builders = config.map((cfg: IWidgetBuilderConfig) => new WidgetBuilder(cfg));
+    public attachConfig(config: IWidgetBuilderConfig[]) {
+        const builders = config.map((cfg) => new WidgetBuilder(cfg, this._emitContextCreated.bind(this)));
         this.contextBuilders.push(...builders);
     }
 
@@ -55,6 +58,7 @@ class DynamicAdapter implements IDynamicAdapter {
         this.contextBuilders.forEach(contextBuilder => {
             const container = document.querySelector(contextBuilder.containerSelector);
             if (container) {
+                // destroy contexts to removed nodes
                 const removedContexts: Context[] = []
                 mutations?.forEach(m => Array.from(m.removedNodes)
                     .filter((n: Element) => n.nodeType == Node.ELEMENT_NODE)
@@ -64,20 +68,22 @@ class DynamicAdapter implements IDynamicAdapter {
                         removedContexts.push(...contexts)
                     }))
                 if (removedContexts && removedContexts.length > 0) {
-                    removedContexts.forEach(c => c.features.forEach(f => f.subscriptions.forEach(s => s.close())));
                     Core.contextFinished(removedContexts.map(c => c.parsed));
+                    removedContexts.map(c => c.parsed).forEach(ctx => this._emitContextDestroyed(ctx, contextBuilder.contextType, contextBuilder.contextEvent));
                 }
                 contextBuilder.updateContexts(this.features, container); // ToDo: think about it
             }
+            // a new container was opened, no observer attached yet
             if (container && !contextBuilder.observer) {
-                contextBuilder.observer = new MutationObserver((mutations) => {
-                    contextBuilder.updateContexts(this.features, container, mutations);
+                contextBuilder.observer = new MutationObserver(() => {
+                    contextBuilder.updateContexts(this.features, container);
                 });
                 contextBuilder.observer.observe(container, {
                     childList: true,
                     subtree: true
                 });
             } else if (!container && contextBuilder.observer) {
+                // a container was destroyed, disconnect observer too
                 contextBuilder.observer.disconnect();
                 contextBuilder.observer = null;
             }
@@ -92,22 +98,23 @@ class DynamicAdapter implements IDynamicAdapter {
             });
         }
 
-        function createWidget(Widget: any, builder: WidgetBuilder, insPointName: string, configCallback: Function, order: number, contextNode: Element, clazz: string, proxiedSubs: any): any {
+        function createWidget(Widget: any, builder: WidgetBuilder, insPointName: string, config: { [state: string]: T }, order: number, contextNode: Element, clazz: string, proxiedSubs: any): any {
             // ToDo: calculate node from insPoint & view
             const insPoint = builder.insPoints[insPointName];
             const node = contextNode.querySelector(insPoint.selector);
 
+            // check if a widget already exists for the insPoint
             if (node.getElementsByClassName(clazz).length > 0) return;
 
             const context = builder.contexts.get(contextNode);
-
-            const state = new State<T>((setState) => configCallback(context.parsed, setState, proxiedSubs), clazz);
+            const state = new State<T>(config, context.parsed, builder.contextType, clazz);
             const widget = new Widget() as IWidget<T>;
             widget.state = state.state;
-            state.changedHandler = () => widget.mount();
+            state.changedHandler = () => widget.mount(); // when data in state was changed, then rerender a widget
             widget.mount(); // ToDo: remove it?
             widget.el.classList.add('dapplet-widget');
 
+            // ToDo: fix bug: incorrect ordering (reproduce bug on 3 buttons)
             const insertedElements = node.getElementsByClassName('dapplet-widget');
             if (insertedElements.length >= order) {
                 node.insertBefore(widget.el, insertedElements[order]);
@@ -118,11 +125,44 @@ class DynamicAdapter implements IDynamicAdapter {
             return widget;
         }
 
-        return (configCallback: (ctx: any, state: any, sub: any) => T) => {
+        return (config: { [state: string]: T }) => {
             const uuid = uuidv4();
             return ((builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element, proxiedSubs: any) =>
-                createWidget(Widget, builder, insPointName, configCallback, order, contextNode, uuid, proxiedSubs)
+                createWidget(Widget, builder, insPointName, config, order, contextNode, uuid, proxiedSubs)
             );
+        }
+    }
+
+    public onContextCreated(handler: (ctx?: any, type?: string) => void): void {
+        this._contextCreatedHandlers.push(handler);
+    }
+
+    public onContextDestroyed(handler: (ctx?: any, type?: string) => void): void {
+        this._contextDestroyedHandlers.push(handler);
+    }
+
+    private _emitContextCreated(context: any, contextType: string, contextEvent: string) {
+        this._contextCreatedHandlers.forEach(h => h(context, contextType));
+        this._emitContextEvent(context, contextType, contextEvent, 'create');
+    }
+
+    private _emitContextDestroyed(context: any, contextType: string, contextEvent: string) {
+        this._contextDestroyedHandlers.forEach(h => h(context, contextType));
+        this._emitContextEvent(context, contextType, contextEvent, 'destroy');
+    }
+
+    private _emitContextEvent(context: any, contextType: string, contextEvent: string, operation: string) {
+        const event = {
+            operation,
+            topic: context.id,
+            contextType,
+            contextId: context.id,
+            context
+        };
+        for (const feature of this.features) {
+            const handlers = feature.config[contextEvent];
+            if (!Array.isArray(handlers)) continue;
+            handlers.forEach(h => h(event));
         }
     }
 }

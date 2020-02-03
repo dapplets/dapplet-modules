@@ -1,4 +1,4 @@
-import { IFeature } from '@dapplets/dapplet-extension-types'
+import { IFeature } from '@dapplets/dapplet-extension'
 import { T_TwitterFeatureConfig, ITwitterAdapter } from '@dapplets/twitter-adapter'
 import GNOSIS_ICON from './ethereum.png'
 
@@ -10,29 +10,43 @@ export default class TwitterFeature implements IFeature {
     public config: T_TwitterFeatureConfig;
 
     constructor() {
+        const wallet = Core.wallet();
+        const server = Core.connect<{ like_num: string }>({ url: "wss://localhost:8080/feature-2" });
+
         const { button } = this.adapter.widgets;
         this.config = {
-            connections: {
-                likes: Core.connect("wss://examples.dapplets.org")
-            },
             TWEET_SOUTH: [
-                button((ctx, setState, { likes }) => ({
+                button({
+                    initial: "DEFAULT",
                     "DEFAULT": {
-                        label: likes.like_num,
+                        label: server.like_num,
                         img: GNOSIS_ICON,
                         disabled: false,
-                        exec: () => Core.sendWalletConnectTx('1', ctx, e => setState({
-                            CREATED: "DEFAULT"
-                        }[e.type] || e.type))
+                        exec: (ctx, me) => { // ToDo: rename exec() to onclick()
+                            me.state = 'PENDING';
+                            wallet.sendAndListen('1', ctx, {
+                                rejected: () => me.state = 'ERR',
+                                created: () => me.state = 'DEFAULT'
+                            });
+                        }
                     },
-                    "PENDING": { label: 'Pending', loading: true, disabled: true },
-                    "PAIRING": { label: 'Pairing', loading: true, disabled: true },
-                    "REJECTED": { label: 'Error' }
-                }))
-            ]
+                    "PENDING": {
+                        label: 'Pending',
+                        loading: true,
+                        disabled: true
+                    },
+                    "ERR": {
+                        label: 'Error',
+                        img: GNOSIS_ICON,
+                        exec: (ctx, me) => me.state = 'DEFAULT'
+                    }
+                })
+            ],
+            TWEET_COMBO: [],
+            DM_SOUTH: []
         }
     }
-
+    
     public activate() {
         this.adapter.attachFeature(this);
     }

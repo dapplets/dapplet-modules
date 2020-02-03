@@ -5,9 +5,10 @@ export interface IButtonState {
     label: string;
     loading: boolean;
     disabled: boolean;
-    exec: () => void;
+    exec: (ctx: any, me: IButtonState) => void;
     init: () => void;
     clazz: string;
+    ctx: any;
 }
 
 export class Button implements IWidget<IButtonState> {
@@ -27,7 +28,7 @@ export class Button implements IWidget<IButtonState> {
                         </circle>
                     </svg>` : `<img height="18" src="${img}">`}
                 </div>
-                ${label ? `<span class="ProfileTweet-actionCount">
+                ${label?.toString() ? `<span class="ProfileTweet-actionCount">
                     <span ${disabled ? 'style="color:#aaa;"' : ''} class="ProfileTweet-actionCountForPresentation" aria-hidden="true">${label}</span>
                 </span>` : ''}
             </button>`
@@ -44,7 +45,7 @@ export class Button implements IWidget<IButtonState> {
         this.el.classList.add(this.state.clazz, 'ProfileTweet-action');
         this.el.addEventListener("click", e => {
             if (!this.state.disabled) {
-                this.state.exec?.();
+                this.state.exec?.(this.state.ctx, this.state);
             }
         });
         this.mount();

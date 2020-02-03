@@ -3,70 +3,13 @@ var app = express();
 const fs = require('fs');
 const https = require('https');
 var bodyParser = require('body-parser');
+const EventEmitter = require('events');
 
 const IS_HTTPS = process.env.HOSTING !== "gcloud";
 
-class Emitter {
-    // Add an event listener for given event
-    on(event, fn) {
-        this._callbacks = this._callbacks || {};
-        // Create namespace for this event
-        if (!this._callbacks[event]) {
-            this._callbacks[event] = [];
-        }
-        this._callbacks[event].push(fn);
-        return this;
-    }
-
-
-    emit(event, ...args) {
-        this._callbacks = this._callbacks || {};
-        let callbacks = this._callbacks[event];
-
-        if (callbacks) {
-            for (let callback of callbacks) {
-                callback.apply(this, args);
-            }
-        }
-
-        return this;
-    }
-
-    // Remove event listener for given event. If fn is not provided, all event
-    // listeners for that event will be removed. If neither is provided, all
-    // event listeners will be removed.
-    off(event, fn) {
-        if (!this._callbacks || (arguments.length === 0)) {
-            this._callbacks = {};
-            return this;
-        }
-
-        // specific event
-        let callbacks = this._callbacks[event];
-        if (!callbacks) {
-            return this;
-        }
-
-        // remove all handlers
-        if (arguments.length === 1) {
-            delete this._callbacks[event];
-            return this;
-        }
-
-        // remove specific handler
-        for (let i = 0; i < callbacks.length; i++) {
-            let callback = callbacks[i];
-            if (callback === fn) {
-                callbacks.splice(i, 1);
-                break;
-            }
-        }
-
-        return this;
-    }
-}
-
 const store = JSON.parse(fs.readFileSync('src/server/store.json'));
+
+class Emitter extends EventEmitter {}
 
 const emmiter = new Emitter();
 
@@ -92,8 +35,6 @@ app.use(function (req, res, next) {
     next();
 });
 
-
-//app.use(express.static('src/public', { etag: false }));
 app.use('/packages', express.static('packages', {
     etag: false
 }));
@@ -102,40 +43,125 @@ app.use('/', express.static('src/client', {
     etag: false
 }));
 
-app.ws('/', function (ws, req) {
-    let msg = {
-        "0": {
-            like_num: 0
-        }
-    };
+app.ws('/:feature', function (ws, req) {
+    const callbackMap = new Map();
+    let subscriptionCount = 0;
 
-    ws.on('message', function (tweetId) {
-        if (/^\d{19}$/gm.test(tweetId)) { // is it tweet id?
-            msg[tweetId] = {
-                like_num: store.tweets[tweetId] ? store.tweets[tweetId].length : 0
-            };
+    ws.on('message', json => {
+
+        let rpc = null;
+
+        try {
+            rpc = JSON.parse(json);
+        } catch (err) {
+            ws.send(JSON.stringify({
+                jsonrpc: "2.0",
+                error: {
+                    code: -32700,
+                    message: "Parse error"
+                },
+                id: null
+            }));
+            return;
         }
-        ws.send(JSON.stringify(msg));
+
+        const {
+            id,
+            method,
+            params
+        } = rpc;
+
+        if (id === undefined || !method || !params || !(typeof params === 'object' || Array.isArray(params))) {
+            ws.send(JSON.stringify({
+                jsonrpc: "2.0",
+                error: {
+                    code: -32600,
+                    message: "Invalid JSON-RPC."
+                },
+                id: null
+            }));
+            return;
+        }
+        if (method === "subscribe") {
+            const [ctx] = params;
+
+            if (!ctx || !ctx.id || !(/^\d{19}$/gm.test(ctx.id))) {
+                ws.send(JSON.stringify({
+                    jsonrpc: "2.0",
+                    id: id,
+                    error: {
+                        code: null,
+                        message: "ctx.id is required."
+                    }
+                }));
+                return;
+            }
+
+            const tweetId = ctx.id;
+
+            const subscriptionId = (++subscriptionCount).toString();
+
+            ws.send(JSON.stringify({
+                jsonrpc: "2.0",
+                id: id,
+                result: subscriptionId
+            }));
+
+            ws.send(JSON.stringify({
+                jsonrpc: "2.0",
+                method: subscriptionId,
+                params: [(req.params.feature === 'feature-2') ? ({
+                    like_num: store.tweets[tweetId] || 0
+                }) : ({
+                    pm_num: store.tweets_with_PM[tweetId] ? store.tweets_with_PM[tweetId].length : 0
+                })]
+            }));
+
+            const callback = ({
+                tweet,
+                market
+            }) => {
+                if (tweet !== tweetId) return;
+
+                ws.send(JSON.stringify({
+                    jsonrpc: "2.0",
+                    method: subscriptionId,
+                    params: [(req.params.feature === 'feature-2') ? ({
+                        like_num: store.tweets[tweetId] || 0
+                    }) : ({
+                        pm_num: store.tweets_with_PM[tweetId] ? store.tweets_with_PM[tweetId].length : 0
+                    })]
+                }));
+            }
+
+            emmiter.on('tweetAttached', callback);
+            callbackMap.set(subscriptionId, callback);
+        } else if (method === "unsubscribe") {
+            const [subscriptionId] = params;
+
+            const callback = callbackMap.get(subscriptionId);
+            if (callback) emmiter.off('tweetAttached', callback)
+            else console.log("ERROR: can't destroy unknown subscription. Id:",subscriptionId, callbackMap)
+
+            ws.send(JSON.stringify({
+                jsonrpc: "2.0",
+                id: id,
+                result: true
+            }))
+        } else {
+            ws.send(JSON.stringify({
+                jsonrpc: "2.0",
+                id: id,
+                error: {
+                    code: -32601,
+                    message: "Procedure not found."
+                }
+            }))
+        }
     });
 
-    var callback = ({
-        tweet,
-        market
-    }) => {
-        if (msg[tweet]) {
-            msg[tweet] = {
-                like_num: store.tweets[tweet] ? store.tweets[tweet].length : 0
-            };
-            ws.send(JSON.stringify({
-                [tweet]: msg[tweet]
-            }));
-        }
-    };
-
-    emmiter.on('tweetAttached', callback);
-
     ws.on('close', () => {
-        emmiter.off('tweetAttached', callback);
+        emmiter.removeAllListeners('tweetAttached');
     })
 });
 
@@ -186,10 +212,10 @@ app.post('/api/markets/attach', function (req, res) {
         market
     } = req.body;
 
-    if (store.tweets[tweet] && store.tweets[tweet].length) {
-        store.tweets[tweet].push(market);
+    if (store.tweets_with_PM[tweet] && store.tweets_with_PM[tweet].length) {
+        store.tweets_with_PM[tweet].push(market);
     } else {
-        store.tweets[tweet] = [market];
+        store.tweets_with_PM[tweet] = [market];
     }
 
     res.status(200).end();

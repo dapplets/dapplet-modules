@@ -1,4 +1,4 @@
-import { IFeature } from '@dapplets/dapplet-extension-types';
+import { IFeature } from '@dapplets/dapplet-extension';
 import { IDynamicAdapter } from '@dapplets/dynamic-adapter';
 import { IButtonState, Button } from './button';
 import { IPictureState, Picture } from './picture';
@@ -29,6 +29,8 @@ export default class TwitterAdapter {
                 selector: "div.js-tweet-text-container"
             }
         },
+        contextType: 'tweet', // create_tweet | destroy_tweet
+        contextEvent: 'TWEET_EVENT',
         contextBuilder: (tweetNode: any) => ({
             id: tweetNode.getAttribute('data-item-id'),
             text: tweetNode.querySelector('div.js-tweet-text-container').innerText,
@@ -47,6 +49,8 @@ export default class TwitterAdapter {
                 selector: "" //ToDo
             }
         },
+        contextType: 'thread', // create_thread | destroy_thread
+        contextEvent: 'THREAD_EVENT',
         contextBuilder: (tweetNode: any) => ({
             threadId: tweetNode.getAttribute('data-thread-id'),
             lastMessageId: tweetNode.getAttribute('data-last-message-id'),
@@ -69,5 +73,13 @@ export default class TwitterAdapter {
     // ToDo: refactor it
     public detachFeature(feature: IFeature): void {
         this.adapter.detachFeature(feature);
+    }
+
+    public onContextCreated(handler: (ctx?: any, insertionPoint?: string) => void): void {
+        this.adapter.onContextCreated(handler);
+    }
+
+    public onContextDestroyed(handler: (ctx?: any, insertionPoint?: string) => void): void {
+        this.adapter.onContextDestroyed(handler);
     }
 }

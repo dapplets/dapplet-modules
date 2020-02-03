@@ -1,4 +1,4 @@
-import { IFeature } from '@dapplets/dapplet-extension-types'
+import { IFeature } from '@dapplets/dapplet-extension'
 import { T_TwitterFeatureConfig, ITwitterAdapter } from '@dapplets/twitter-adapter'
 import FAKESTAMP_PIC from './fakeStamp.png'
 
@@ -9,18 +9,16 @@ export default class TwitterFeature implements IFeature {
     public adapter: ITwitterAdapter;
     public config: T_TwitterFeatureConfig;
 
-    public contextIds: [];
-    public orderIndex: null;
-
     constructor() {
         const { picture } = this.adapter.widgets;
         this.config = {
             PICTURE: [
-                picture(() => ({
+                picture({
+                    initial: 'DEFAULT',
                     DEFAULT: {
                         img: FAKESTAMP_PIC
                     }
-                }))
+                })
             ]
         };
     }

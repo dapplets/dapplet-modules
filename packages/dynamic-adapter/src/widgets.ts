@@ -1,4 +1,4 @@
-import { IFeature } from "@dapplets/dapplet-extension-types";
+import { IFeature, IConnection } from "@dapplets/dapplet-extension";
 
 import { IWidgetBuilderConfig, Context } from "./types";
 
@@ -10,10 +10,12 @@ export class WidgetBuilder {
     observer: MutationObserver = null;
     widgets = new Map<IFeature, any[]>();
     contexts = new WeakMap<Node, Context>();
+    contextEvent: string; // 'TWEET_EVENT'
+    contextType: string; // 'tweet'
 
     //ToDo: widgets
 
-    constructor(widgetBuilderConfig: IWidgetBuilderConfig) {
+    constructor(widgetBuilderConfig: IWidgetBuilderConfig, private _emitContextCreated: (context: any, contextType: string, contextEvent: string) => void) {
         return Object.assign(this, widgetBuilderConfig);
     }
 
@@ -29,36 +31,40 @@ export class WidgetBuilder {
             const context: Context = isNew ? { parsed: this.contextBuilder(contextNode), features: new Map() } : this.contexts.get(contextNode);
 
             // ToDo: refactor isNew checking
-            if (isNew) newParsedContexts.push(context.parsed);
+            if (isNew) {
+                newParsedContexts.push(context);
+                this._emitContextCreated(context.parsed, this.contextType, this.contextEvent);
+            }
 
             for (let i = 0; i < features.length; i++) {
                 const feature = features[i];
                 const featureInfo = context.features.get(feature);
                 if (!featureInfo) {
-                    const featureInfo = { proxiedSubs: {}, subscriptions: [] };
-                    const { connections } = feature.config;
+                    const featureInfo = { proxiedSubs: {}, connections: [] };
+                    const connections: { [name: string]: IConnection } = feature.config.connections;
 
-                    for (const connectionName in connections) {
-                        const settersByNames = {}; // ToDo: memory leaks?
-                        featureInfo.proxiedSubs[connectionName] = new Proxy({}, {
-                            get(target, name, receiver) {
-                                return ({
-                                    datasource: (setter) => {
-                                        if (!settersByNames[name]) settersByNames[name] = [];
-                                        settersByNames[name].push(setter);
-                                    }
-                                });
-                            }
-                        });
-                        const connection: Connection = connections[connectionName];
-                        const subscription = connection.subscribe(context.parsed.id, (data: any) => {
-                            for (const key in settersByNames) {
-                                const setters = settersByNames[key] || [];
-                                setters.forEach(set => set(data[key]));
-                            }
-                        });
-                        featureInfo.subscriptions.push(subscription);
-                    }
+
+                    // for (const connectionName in connections) {
+                    //     const settersByNames = {}; // ToDo: memory leaks?
+                    //     featureInfo.proxiedSubs[connectionName] = new Proxy({}, {
+                    //         get(target, propName, receiver) {
+                    //             return ({
+                    //                 datasource: (setter) => {
+                    //                     if (!settersByNames[propName]) settersByNames[propName] = [];
+                    //                     settersByNames[propName].push(setter);
+                    //                 }
+                    //             });
+                    //         }
+                    //     });
+                    //     const connection: any = connections[connectionName];
+                    //     const subscription = connection.subscribe(context.parsed.id, (data: any) => {
+                    //         for (const key in settersByNames) {
+                    //             const setters = settersByNames[key] || [];
+                    //             setters.forEach(set => set(data[key]));
+                    //         }
+                    //     });
+                    //     featureInfo.subscriptions.push(subscription);
+                    // }
 
                     context.features.set(feature, featureInfo);
                 }
@@ -86,8 +92,7 @@ export class WidgetBuilder {
             }
         }
 
-        if (newParsedContexts.length > 0) {
-            Core.contextStarted(newParsedContexts)
-        }
+        Core.contextStarted(newParsedContexts.map((ctx) => ctx.parsed));
+        return newParsedContexts;
     }
 }

@@ -1,4 +1,4 @@
-import { IResolver } from '@dapplets/dapplet-extension-types';
+import { IResolver } from '@dapplets/dapplet-extension';
 import { T_TwitterFeatureConfig, ITwitterAdapter, T_TwitterActionFactory, ITwitterFeature } from './types';
 
 @Injectable
