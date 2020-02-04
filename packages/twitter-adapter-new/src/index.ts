@@ -2,6 +2,7 @@ import { IFeature } from '@dapplets/dapplet-extension';
 import { IDynamicAdapter } from '@dapplets/dynamic-adapter';
 import { IButtonState, Button } from './button';
 import { IPictureState, Picture } from './picture';
+import { IBadgeState, Badge } from './badge';
 
 @Injectable
 export default class TwitterAdapter {
@@ -12,7 +13,9 @@ export default class TwitterAdapter {
     // ToDo: refactor it
     public widgets = {
         button: this.adapter.createWidgetFactory<IButtonState>(Button),
-        picture: this.adapter.createWidgetFactory<IPictureState>(Picture)
+        picture: this.adapter.createWidgetFactory<IPictureState>(Picture),
+        badge: this.adapter.createWidgetFactory<IBadgeState>(Badge)
+        // todo: create new widget
     };
 
     public config = [{
@@ -27,6 +30,9 @@ export default class TwitterAdapter {
             },
             PICTURE: {
                 selector: "div[lang]"
+            },
+            AVATAR_BADGE: {
+                selector: "div[lang]" // todo: fill selector
             }
         },
         contextType: 'tweet', // create_tweet | destroy_tweet
