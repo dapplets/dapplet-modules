@@ -114,6 +114,7 @@ class DynamicAdapter implements IDynamicAdapter {
             widget.mount(); // ToDo: remove it?
             widget.el.classList.add('dapplet-widget');
 
+            // ToDo: fix bug: incorrect ordering (reproduce bug on 3 buttons)
             const insertedElements = node.getElementsByClassName('dapplet-widget');
             if (insertedElements.length >= order) {
                 node.insertBefore(widget.el, insertedElements[order]);

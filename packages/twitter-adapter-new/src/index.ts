@@ -38,13 +38,22 @@ export default class TwitterAdapter {
         contextType: 'tweet', // create_tweet | destroy_tweet
         contextEvent: 'TWEET_EVENT',
         // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
-        contextBuilder: (tweetNode: any) => ({
-            id: tweetNode.querySelector('a time').parentNode.href.split('/').pop(),
-            text: tweetNode.querySelector('div[lang]')?.innerText,
-            authorFullname: tweetNode.querySelector('a:nth-child(1) div span span')?.innerText,
-            authorUsername: tweetNode.querySelector('div.r-1f6r7vd > div > span')?.innerText,
-            authorImg: tweetNode.querySelector('img.css-9pa8cd')?.getAttribute('src')
-        }),
+        contextBuilder: (tweetNode: any) => {
+            // Adding of right margin to last twitter's native button
+            const classList = tweetNode.querySelector('div.css-1dbjc4n.r-1mlwlqe.r-18u37iz.r-18kxxzh.r-1h0z5md').classList;
+            classList.remove('r-18kxxzh');
+            classList.remove('r-1mlwlqe');
+            classList.add('r-1iusvr4');
+            classList.add('r-16y2uox');
+            
+            return {
+                id: tweetNode.querySelector('a time').parentNode.href.split('/').pop(),
+                text: tweetNode.querySelector('div[lang]')?.innerText,
+                authorFullname: tweetNode.querySelector('a:nth-child(1) div span span')?.innerText,
+                authorUsername: tweetNode.querySelector('div.r-1f6r7vd > div > span')?.innerText,
+                authorImg: tweetNode.querySelector('img.css-9pa8cd')?.getAttribute('src')
+            };
+        }
     }];
 
     // ToDo: refactor it

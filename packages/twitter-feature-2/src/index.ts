@@ -15,7 +15,6 @@ export default class TwitterFeature implements IFeature {
 
         const { button } = this.adapter.widgets;
         this.config = {
-            TWEET_EVENT: [console.log],
             TWEET_SOUTH: [
                 button({
                     initial: "DEFAULT",

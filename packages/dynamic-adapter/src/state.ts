@@ -35,9 +35,9 @@ export class State<T> {
 
     public setState(stateName: string) : any {   
         do {
-            console.log("Set state from - to: ", this._currentStateName,stateName)     
+            //console.log("Set state from - to: ", this._currentStateName,stateName)     
             if (stateName == this._currentStateName) {
-                console.log(`NOP state transition "${stateName}". Skipping...`)
+                //console.log(`NOP state transition "${stateName}". Skipping...`)
                 break
             } else if (!this._cache[stateName]) {
                 this._cache[stateName] = this.createNewStateFromConfig(stateName)
