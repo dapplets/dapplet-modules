@@ -24,7 +24,11 @@ export class State<T> {
                 if (property === 'state') {
                     me.setState(value)
                 } else {
-                    target[property]=value
+                    if (me._currentStateName) {
+                        me._cache[me._currentStateName][property] = value
+                    } else {
+                        me._cache[property] = value
+                    }
                     me.changedHandler && me.changedHandler()
                 }
                 return true

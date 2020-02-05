@@ -32,9 +32,10 @@ export default class TwitterFeature implements IFeature {
                         img: GNOSIS_ICON,
                         disabled: false,
                         exec: (ctx, me) => { // ToDo: rename exec() to onclick()
-                            let err = me.setState(me.state == 'DEFAULT'? 'ERR2' : 'DEFAULT')
-                            console.log('err', me.state)
-                            setTimeout(()=>err.label = "ABCD", 1000)
+                            me.label = 'abcd'
+                            //let err = me.setState(me.state == 'DEFAULT'? 'ERR2' : 'DEFAULT')
+                            //console.log('err', me.state)
+                            //setTimeout(()=>err.label = "ABCD", 1000)
                             /*
                             overlay.sendAndListen('tweet_select', ctx, {
                                 'pm_attach': (op, { market, tweet }) => {
