@@ -17,7 +17,7 @@ export default class TwitterAdapter {
 
     public config = [{
         containerSelector: "main[role=main]",
-        contextSelector: "article",
+        contextSelector: "article.css-1dbjc4n.r-1loqt21.r-1udh08x.r-o7ynqc.r-1j63xyz",
         insPoints: {
             TWEET_SOUTH: {
                 selector: "div[role=group]"
@@ -34,11 +34,13 @@ export default class TwitterAdapter {
         // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
         contextBuilder: (tweetNode: any) => {
             // Adding of right margin to last twitter's native button
-            const classList = tweetNode.querySelector('div.css-1dbjc4n.r-1mlwlqe.r-18u37iz.r-18kxxzh.r-1h0z5md').classList;
-            classList.remove('r-18kxxzh');
-            classList.remove('r-1mlwlqe');
-            classList.add('r-1iusvr4');
-            classList.add('r-16y2uox');
+            const classList = tweetNode.querySelector('div.css-1dbjc4n.r-1mlwlqe.r-18u37iz.r-18kxxzh.r-1h0z5md')?.classList;
+            if (classList) {
+                classList.remove('r-18kxxzh');
+                classList.remove('r-1mlwlqe');
+                classList.add('r-1iusvr4');
+                classList.add('r-16y2uox');
+            }
             
             return {
                 id: tweetNode.querySelector('a time').parentNode.href.split('/').pop(),
