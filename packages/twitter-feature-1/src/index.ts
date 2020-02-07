@@ -23,15 +23,6 @@ export default class TwitterFeature implements IFeature {
 
         const { button, badge } = this.adapter.widgets;
         this.config = {
-            //TWEET_EVENT: [server.bind],
-            // AVATAR_BADGE: [
-            //     badge({
-            //         initial: "DEFAULT",
-            //         "DEFAULT": {
-
-            //         }
-            //     })
-            // ],
             TWEET_SOUTH: [
                 button({
                     initial: "DEFAULT",
@@ -40,7 +31,7 @@ export default class TwitterFeature implements IFeature {
                         img: GNOSIS_ICON,
                         disabled: false,
                         exec: (ctx, me) => { // ToDo: rename exec() to onclick()
-                            console.log('tweet', ctx);
+                            //console.log('tweet', ctx);
                             // let err = me.setState(me.state == 'DEFAULT'? 'ERR2' : 'DEFAULT')
                             // console.log('err', me.state)
                             // setTimeout(()=>err.label = "ABCD", 1000)

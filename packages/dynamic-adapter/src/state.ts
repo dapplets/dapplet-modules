@@ -12,7 +12,7 @@ export class State<T> {
         const me = this
         this.state = new Proxy({}, {
             get(target, property, receiver) {
-                if (property == 'state') return me._currentStateName
+                if (property === 'state') return me._currentStateName
                 if (property === 'clazz') return me._clazz; // ToDo: remove it
                 if (property === 'ctx') return me.ctx
                 if (property === 'setState') return me.setState.bind(me)

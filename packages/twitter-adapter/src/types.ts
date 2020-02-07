@@ -8,6 +8,8 @@ export type T_TwitterFeatureConfig = {
     },
     TWEET_EVENT?: Function[],
     THREAD_EVENT?: Function[],
+    AVATAR_BADGE?: T_TwitterActionFactory[],
+    USERNAME_BADGE?: T_TwitterActionFactory[],
     TWEET_SOUTH?: T_TwitterActionFactory[],
     TWEET_COMBO?: T_TwitterActionFactory[],
     DM_SOUTH?: T_TwitterActionFactory[],
