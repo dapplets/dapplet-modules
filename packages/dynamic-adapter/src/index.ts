@@ -110,6 +110,7 @@ class DynamicAdapter implements IDynamicAdapter {
             const state = new State<T>(config, context.parsed, builder.contextType, clazz);
             const widget = new Widget() as IWidget<T>;
             widget.state = state.state;
+            widget.insPointName = insPointName;
             state.changedHandler = () => widget.mount(); // when data in state was changed, then rerender a widget
             widget.mount(); // ToDo: remove it?
             widget.el.classList.add('dapplet-widget');
