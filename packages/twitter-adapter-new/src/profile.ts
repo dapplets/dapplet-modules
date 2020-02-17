@@ -12,11 +12,13 @@ export interface IProfileState {
     horizontal: 'left' | 'right';
     vertical: 'top' | 'bottom';
     hidden: boolean;
+    insPointName: string;
 }
 
 export class Profile implements IWidget<IProfileState> {
     public el: HTMLElement;
     public state: IProfileState;
+    insPointName: string;
 
     public mount() {
         if (!this.el) this._createElement();

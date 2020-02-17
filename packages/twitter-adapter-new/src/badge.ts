@@ -13,11 +13,13 @@ export interface IBadgeState {
     vertical: 'top' | 'bottom';
     hidden: boolean;
     username: string;
+    insPointName: string;
 }
 
 export class Badge implements IWidget<IBadgeState> {
     public el: HTMLElement;
     public state: IBadgeState;
+    insPointName: string;
 
     public mount() {
         if (!this.el) this._createElement();
