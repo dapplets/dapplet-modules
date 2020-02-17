@@ -22,7 +22,7 @@ export class Badge implements IWidget<IBadgeState> {
     public mount() {
         if (!this.el) this._createElement();
         const { img, vertical, horizontal, ctx, hidden } = this.state;
-        //console.log(ctx);
+
         if (!hidden) {
             if (!this.el.firstChild) {
                 const imgTag = document.createElement('img');
@@ -50,6 +50,9 @@ export class Badge implements IWidget<IBadgeState> {
     private _createElement() {
         this.el = document.createElement('div');
         this.el.classList.add(this.state.clazz);
+        this.el.addEventListener("click", e => {
+           this.state.exec?.(this.state.ctx, this.state);
+        });
         this.mount();
         this.state.init?.(this.state.ctx, this.state);
     }
