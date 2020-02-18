@@ -101,7 +101,7 @@ class DynamicAdapter implements IDynamicAdapter {
         function createWidget(Widget: any, builder: WidgetBuilder, insPointName: string, config: { [state: string]: T }, order: number, contextNode: Element, clazz: string, proxiedSubs: any): any {
             // ToDo: calculate node from insPoint & view
             const insPoint = builder.insPoints[insPointName];
-            const node = contextNode.querySelector(insPoint.selector);
+            const node = contextNode.querySelector(insPoint.selector) as HTMLElement;
 
             // check if a widget already exists for the insPoint
             if (node.getElementsByClassName(clazz).length > 0) return;
@@ -117,10 +117,16 @@ class DynamicAdapter implements IDynamicAdapter {
 
             // ToDo: fix bug: incorrect ordering (reproduce bug on 3 buttons)
             const insertedElements = node.getElementsByClassName('dapplet-widget');
-            if (insertedElements.length >= order) {
+            if (insertedElements.length > 0 && insertedElements.length >= order) {
                 node.insertBefore(widget.el, insertedElements[order]);
             } else {
-                node.appendChild(widget.el);
+                if (insPoint.insert === undefined || insPoint.insert === 'end') {
+                    node.appendChild(widget.el);
+                } else if (insPoint.insert === 'begin') { 
+                    node.insertBefore(widget.el, node.firstChild);
+                } else {
+                    console.error('Invalid "insert" value in the insertion point config. The possible values are "begin" or "end".');
+                }
             }
 
             return widget;

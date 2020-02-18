@@ -19,11 +19,13 @@ export interface IBadgeState {
 export class Badge implements IWidget<IBadgeState> {
     public el: HTMLElement;
     public state: IBadgeState;
-    insPointName: string;
+    insPointName: string;  // TWEET_USERNAME_BADGE | TWEET_AVATAR_BADGE
 
     public mount() {
+
         if (!this.el) this._createElement();
         const { img, vertical, horizontal, ctx, hidden } = this.state;
+
 
         if (!hidden) {
             if (!this.el.firstChild) {
@@ -33,12 +35,69 @@ export class Badge implements IWidget<IBadgeState> {
 
             const imgTag: HTMLImageElement = this.el.firstChild as any;
 
-            imgTag.src = img;
-            imgTag.style.width = '24px';
-            imgTag.style.height = '24px';
-            imgTag.style.position = 'absolute';
-            imgTag.style[vertical] = '-2px';
-            imgTag.style[horizontal] = '-7px';
+            console.log(this.insPointName);
+
+            switch (this.insPointName) {
+                case 'TWEET_USERNAME_BADGE':
+
+                    imgTag.src = img;
+                    imgTag.style.width = '15px';
+                    imgTag.style.height = '15px';
+                    imgTag.style.position = 'relative';
+                    imgTag.style[vertical] = '2px';
+                    imgTag.style[horizontal] = '3px';
+
+                    break;
+
+                case 'TWEET_AVATAR_BADGE':
+
+                    imgTag.src = img;
+                    imgTag.style.width = '24px';
+                    imgTag.style.height = '24px';
+                    imgTag.style.position = 'absolute';
+                    imgTag.style[vertical] = '-2px';
+                    imgTag.style[horizontal] = '-7px';
+                    break;
+
+                case 'PROFILE_AVATAR_BADGE':
+
+                    imgTag.src = img;
+                    imgTag.style.width = '32px';
+                    imgTag.style.height = '32px';
+                    imgTag.style.position = 'absolute';
+                    imgTag.style[vertical] = '-2px';
+                    imgTag.style[horizontal] = '-7px';
+                    break;
+
+                case 'PROFILE_USERNAME_BADGE':
+
+                    imgTag.src = img;
+                    imgTag.style.width = '32px';
+                    imgTag.style.height = '32px';
+                    imgTag.style.position = 'absolute';
+                    // imgTag.style[vertical] = '-2px';
+                    //imgTag.style[horizontal] = '-7px';
+                    break;
+
+                case 'HEADING_USERNAME_BADGE':
+                    imgTag.src = img;
+                    imgTag.style.width = '24px';
+                    imgTag.style.height = '24px';
+                    imgTag.style.position = 'relative';
+                    imgTag.style[vertical] = '3px';
+                    imgTag.style[horizontal] = '1px';
+                    break;
+
+                case 'SUSPENDED_USERNAME_BADGE':
+                    imgTag.src = img;
+                    imgTag.style.width = '20px';
+                    imgTag.style.height = '20px';
+                    imgTag.style.position = 'relative';
+                    imgTag.style[vertical] = '3px';
+                    //imgTag.style[horizontal] = '-7px';
+                    break;
+
+            }
 
         } else {
             this.el.firstChild?.remove();
@@ -50,11 +109,21 @@ export class Badge implements IWidget<IBadgeState> {
     }
 
     private _createElement() {
-        this.el = document.createElement('div');
+        if (this.insPointName === 'HEADING_USERNAME_BADGE') {
+
+            this.el = document.createElement('span');
+
+        } else if (this.insPointName === 'SUSPENDED_USERNAME_BADGE') {
+
+            this.el = document.createElement('span');
+            this.el.style.margin = '2px';
+
+        } else {
+            this.el = document.createElement('div');
+        }
+        //this.el = document.createElement('div');
         this.el.classList.add(this.state.clazz);
-        this.el.addEventListener("click", e => {
-           this.state.exec?.(this.state.ctx, this.state);
-        });
+
         this.mount();
         this.state.init?.(this.state.ctx, this.state);
     }
