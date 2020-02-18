@@ -19,4 +19,5 @@ export interface IWidget<T> {
     unmount(): void;
     el: HTMLElement;
     state: T;
+    insPointName: string;
 }

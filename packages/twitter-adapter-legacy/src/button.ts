@@ -9,11 +9,13 @@ export interface IButtonState {
     init: () => void;
     clazz: string;
     ctx: any;
+    insPointName: string;   
 }
 
 export class Button implements IWidget<IButtonState> {
     public el: HTMLElement;
     public state: IButtonState;
+    insPointName: string;
 
     public mount() {
         if (!this.el) this._createElement();
