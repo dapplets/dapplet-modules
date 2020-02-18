@@ -13,7 +13,7 @@ export interface IPictureState {
 export class Picture implements IWidget<IPictureState> {
     public el: HTMLElement;
     public state: IPictureState;
-    insPointName: string;
+    public insPointName: string;
 
     public mount() {
         if (!this.el) this._createElement();

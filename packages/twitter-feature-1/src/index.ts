@@ -21,9 +21,8 @@ export default class TwitterFeature implements IFeature {
         const wallet = Core.wallet({}, EVENTS_DEF);
         const server = Core.connect<{ pm_num: string }>({ url: "wss://localhost:8080/feature-1" });
 
-        const { button } = this.adapter.widgets;
+        const { button, badge } = this.adapter.widgets;
         this.config = {
-            //TWEET_EVENT: [server.bind],
             TWEET_SOUTH: [
                 button({
                     initial: "DEFAULT",

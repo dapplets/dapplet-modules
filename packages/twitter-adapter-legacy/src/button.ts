@@ -15,7 +15,7 @@ export interface IButtonState {
 export class Button implements IWidget<IButtonState> {
     public el: HTMLElement;
     public state: IButtonState;
-    insPointName: string;
+    public insPointName: string;
 
     public mount() {
         if (!this.el) this._createElement();
