@@ -17,7 +17,7 @@ export default class CommonAdapter {
         containerSelector: "html",
         contextSelector: "body",
         insPoints: {
-            TWEET_SOUTH: {
+            BODY: {
                 selector: "*"
             }
         },

@@ -12,7 +12,7 @@ export default class Feature implements IFeature {
     constructor() {
         const { button } = this.adapter.widgets;
         this.config = {
-            TWEET_SOUTH: [
+            BODY: [
                 button({
                     "DEFAULT": {
                         disabled: false,
@@ -21,9 +21,7 @@ export default class Feature implements IFeature {
                         exec: () => alert('Hello!')
                     }
                 })
-            ],
-            TWEET_COMBO: [],
-            DM_SOUTH: []
+            ]
         }
     }
 
