@@ -3,7 +3,7 @@ import { IDynamicAdapter } from '@dapplets/dynamic-adapter';
 import { IButtonState, Button } from './button';
 import { IPictureState, Picture } from './picture';
 import { IBadgeState, Badge } from './badge';
-//import { IProfileState, Profile } from './profile';
+import { IPopupState, Popup } from './popup';
 
 @Injectable
 export default class TwitterAdapter {
@@ -127,7 +127,20 @@ export default class TwitterAdapter {
                 profileUsername: titleInfoNode.querySelector('div.css-901oao.css-bfa6kz.r-hkyrab.r-1qd0xha.r-1b6yd1w.r-vw2c0b.r-ad9z0x.r-bcqeeo.r-3s2u2q.r-qvutc0 > span > span')?.innerText,
             }
         }
-    }];
+    },
+    // {
+    //     containerSelector: "html",
+    //     contextSelector: "body",
+    //     insPoints: {
+    //         BODY: { }
+    //     },
+    //     contextType: 'tweet', // create_tweet | destroy_tweet
+    //     contextEvent: 'TWEET_EVENT',
+    //     contextBuilder: (node: any) => ({
+            
+    //     }),
+    // }
+];
 
     // ToDo: refactor it
     constructor() {

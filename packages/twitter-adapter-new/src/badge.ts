@@ -35,8 +35,6 @@ export class Badge implements IWidget<IBadgeState> {
 
             const imgTag: HTMLImageElement = this.el.firstChild as any;
 
-            console.log(this.insPointName);
-
             switch (this.insPointName) {
                 case 'TWEET_USERNAME_BADGE':
 

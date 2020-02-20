@@ -10,9 +10,9 @@ export default class Feature implements IFeature {
     public config: any;
 
     constructor() {
-        const { button } = this.adapter.widgets;
+        const { button, popup } = this.adapter.widgets;
         this.config = {
-            TWEET_SOUTH: [
+            BODY: [
                 button({
                     "DEFAULT": {
                         disabled: false,
@@ -20,10 +20,15 @@ export default class Feature implements IFeature {
                         label: 'Click me',
                         exec: () => alert('Hello!')
                     }
+                }),
+                popup({
+                    "DEFAULT": {
+                        text: 'I was banned! You can find me at Google https://google.com',
+                        img: PICTURE,
+                        link: 'https://google.com'
+                    }
                 })
-            ],
-            TWEET_COMBO: [],
-            DM_SOUTH: []
+            ]
         }
     }
 

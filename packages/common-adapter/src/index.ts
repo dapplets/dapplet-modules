@@ -1,6 +1,8 @@
 import { IFeature } from '@dapplets/dapplet-extension';
 import { IDynamicAdapter } from '@dapplets/dynamic-adapter';
 import { IButtonState, Button } from './button';
+import { IPopupState, Popup } from './popup';
+
 
 @Injectable
 export default class CommonAdapter {
@@ -10,16 +12,15 @@ export default class CommonAdapter {
 
     // ToDo: refactor it
     public widgets = {
-        button: this.adapter.createWidgetFactory<IButtonState>(Button)
+        button: this.adapter.createWidgetFactory<IButtonState>(Button),
+        popup: this.adapter.createWidgetFactory<IPopupState>(Popup)
     };
 
     public config = [{
         containerSelector: "html",
         contextSelector: "body",
         insPoints: {
-            TWEET_SOUTH: {
-                selector: "*"
-            }
+            BODY: { }
         },
         contextType: 'tweet', // create_tweet | destroy_tweet
         contextEvent: 'TWEET_EVENT',
