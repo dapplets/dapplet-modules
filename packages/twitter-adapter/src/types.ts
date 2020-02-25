@@ -12,6 +12,7 @@ export type T_TwitterFeatureConfig = {
     TWEET_USERNAME_BADGE?: T_TwitterActionFactory[],
     PROFILE_USERNAME_BADGE?: T_TwitterActionFactory[],
     PROFILE_AVATAR_BADGE?: T_TwitterActionFactory[],
+    PROFILE_BUTTON_GROUP?: T_TwitterActionFactory[],
     HEADING_USERNAME_BADGE?: T_TwitterActionFactory[],
     SUSPENDED_USERNAME_BADGE?: T_TwitterActionFactory[],
     TWEET_SOUTH?: T_TwitterActionFactory[],
