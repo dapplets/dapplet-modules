@@ -10,7 +10,7 @@ export default class Feature implements IFeature {
     public config: any;
 
     constructor() {
-        const { button } = this.adapter.widgets;
+        const { button, popup } = this.adapter.widgets;
         this.config = {
             BODY: [
                 button({
@@ -19,6 +19,13 @@ export default class Feature implements IFeature {
                         img: PICTURE,
                         label: 'Click me',
                         exec: () => alert('Hello!')
+                    }
+                }),
+                popup({
+                    "DEFAULT": {
+                        text: 'I was banned! You can find me at Google https://google.com',
+                        img: PICTURE,
+                        link: 'https://google.com'
                     }
                 })
             ]

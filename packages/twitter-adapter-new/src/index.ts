@@ -3,7 +3,7 @@ import { IDynamicAdapter } from '@dapplets/dynamic-adapter';
 import { IButtonState, Button } from './button';
 import { IPictureState, Picture } from './picture';
 import { IBadgeState, Badge } from './badge';
-//import { IProfileState, Profile } from './profile';
+//import { IPopupState, Popup } from './popup';
 
 @Injectable
 export default class TwitterAdapter {
@@ -17,10 +17,10 @@ export default class TwitterAdapter {
         picture: this.adapter.createWidgetFactory<IPictureState>(Picture),
         badge: this.adapter.createWidgetFactory<IBadgeState>(Badge),
         //profile: this.adapter.createWidgetFactory<IProfileState>(Profile)
-        // todo: create new widget
     };
 
-    public config = [{
+    public config = [
+    {
         containerSelector: "main[role=main]",
         contextSelector: "article.css-1dbjc4n.r-1loqt21.r-1udh08x.r-o7ynqc.r-1j63xyz",
         insPoints: {
@@ -53,7 +53,13 @@ export default class TwitterAdapter {
                 classList.add('r-1iusvr4');
                 classList.add('r-16y2uox');
             }
-            
+
+            // Adding  twitter's native styles for hovered buttons
+            // const styleTag: HTMLStyleElement = document.createElement('style');
+            // styleTag.type = 'text/css';
+            // styleTag.innerText = '.dapplet-widget > div[role="button"] > div:hover > .css-1dbjc4n.r-xoduu5 > .r-sdzlij {background-color: rgba(29, 161, 242, 0.1); transition-property: background-color, box-shadow; transition-duration: 0.2s;} .dapplet-widget > div[role="button"] > div:hover {color:rgba(29,161,242,1.00);}';
+            // document.head.appendChild(styleTag);
+
             return {
                 id: tweetNode.querySelector('a time').parentNode.href.split('/').pop(),
                 text: tweetNode.querySelector('div[lang]')?.innerText,
@@ -72,9 +78,13 @@ export default class TwitterAdapter {
                 insert: 'end' // end
             },
             PROFILE_USERNAME_BADGE: {
-                selector: "div.css-1dbjc4n.r-15d164r.r-1g94qm0",
-                insert: "begin"
+                selector: "div.css-1dbjc4n.r-15d164r.r-1g94qm0 div.css-901oao.r-hkyrab.r-1qd0xha.r-1b6yd1w.r-1vr29t4.r-ad9z0x.r-bcqeeo.r-qvutc0",
+                insert: "end"
                 //selector: "div.css-901oao.css-bfa6kz.r-1re7ezh.r-18u37iz.r-1qd0xha.r-a023e6.r-16dba41.r-ad9z0x.r-bcqeeo.r-qvutc0"
+            },
+            PROFILE_BUTTON_GROUP: {
+                selector: "div.css-1dbjc4n.r-obd0qt.r-18u37iz.r-1w6e6rj.r-1h0z5md.r-dnmrzs",
+                insert: "begin"
             }
         },
         contextType: 'profile', // create_tweet | destroy_tweet
@@ -127,7 +137,20 @@ export default class TwitterAdapter {
                 profileUsername: titleInfoNode.querySelector('div.css-901oao.css-bfa6kz.r-hkyrab.r-1qd0xha.r-1b6yd1w.r-vw2c0b.r-ad9z0x.r-bcqeeo.r-3s2u2q.r-qvutc0 > span > span')?.innerText,
             }
         }
-    }];
+    },
+    // {
+    //     containerSelector: "html",
+    //     contextSelector: "body",
+    //     insPoints: {
+    //         BODY: { }
+    //     },
+    //     contextType: 'tweet', // create_tweet | destroy_tweet
+    //     contextEvent: 'TWEET_EVENT',
+    //     contextBuilder: (node: any) => ({
+            
+    //     }),
+    // }
+];
 
     // ToDo: refactor it
     constructor() {

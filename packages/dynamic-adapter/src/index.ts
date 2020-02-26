@@ -101,9 +101,10 @@ class DynamicAdapter implements IDynamicAdapter {
         function createWidget(Widget: any, builder: WidgetBuilder, insPointName: string, config: { [state: string]: T }, order: number, contextNode: Element, clazz: string, proxiedSubs: any): any {
             // ToDo: calculate node from insPoint & view
             const insPoint = builder.insPoints[insPointName];
-            const node = contextNode.querySelector(insPoint.selector) as HTMLElement;
+            const node = (insPoint.selector) ? contextNode.querySelector(insPoint.selector) as HTMLElement : contextNode;
 
             // check if a widget already exists for the insPoint
+            if (!node) return;
             if (node.getElementsByClassName(clazz).length > 0) return;
 
             const context = builder.contexts.get(contextNode);

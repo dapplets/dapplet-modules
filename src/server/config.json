@@ -17,6 +17,12 @@
     },
     "dapplets.github.io": {
       "dapplets-org-feature-1.dapplet-base.eth": "0.1.1"
+    },
+    "forum.dapplets.org": {
+      "dapplets-org-feature-1.dapplet-base.eth": "0.1.1"
+    },
+    "youtube.com": {
+      "dapplets-org-feature-1.dapplet-base.eth": "0.1.1"
     }
   }
 }
