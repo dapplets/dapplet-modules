@@ -8,7 +8,6 @@ export interface IPopupState {
     //disabled: boolean;
     exec: (ctx: any, me: IPopupState) => void;
     init: () => void;
-    clazz: string;
     ctx: any;
     text: string;
     link: string;
@@ -101,8 +100,6 @@ export class Popup implements IWidget<IPopupState> {
 
     private _createElement() {
         this.el = document.createElement('div');
-        this.el.classList.add(this.state.clazz, 'ProfileTweet-action');
-
         this.el.addEventListener("click", e => {
             const target = e.target as HTMLElement;
             if (!target.classList.contains('dapplet-widget-close-icon')) return; 

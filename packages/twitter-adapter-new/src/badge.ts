@@ -7,7 +7,6 @@ export interface IBadgeState {
     disabled: boolean;
     exec: (ctx: any, me: IBadgeState) => void;
     init: (tx: any, me: IBadgeState) => void;
-    clazz: string;
     ctx: any;
     horizontal: 'left' | 'right';
     vertical: 'top' | 'bottom';
@@ -140,8 +139,7 @@ export class Badge implements IWidget<IBadgeState> {
             default:
                 this.el = document.createElement('div');
         }
-        this.el.classList.add(this.state.clazz);
-
+        
         this.mount();
         this.state.init?.(this.state.ctx, this.state);
     }

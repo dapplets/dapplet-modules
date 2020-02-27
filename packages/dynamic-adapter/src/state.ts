@@ -8,12 +8,11 @@ export class State<T> {
     private _cache: any = {}
     public changedHandler: Function
 
-    constructor(private config: { [state: string]: T }, public readonly ctx: any, public readonly contextType, private _clazz: string) {
+    constructor(private config: { [state: string]: T }, public readonly ctx: any, public readonly contextType) {
         const me = this
         this.state = new Proxy({}, {
             get(target, property, receiver) {
                 if (property === 'state') return me._currentStateName
-                if (property === 'clazz') return me._clazz; // ToDo: remove it
                 if (property === 'ctx') return me.ctx
                 if (property === 'setState') return me.setState.bind(me)
                 return me._currentStateName 

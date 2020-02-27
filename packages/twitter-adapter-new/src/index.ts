@@ -3,7 +3,6 @@ import { IDynamicAdapter } from '@dapplets/dynamic-adapter';
 import { IButtonState, Button } from './button';
 import { IPictureState, Picture } from './picture';
 import { IBadgeState, Badge } from './badge';
-//import { IPopupState, Popup } from './popup';
 
 @Injectable
 export default class TwitterAdapter {

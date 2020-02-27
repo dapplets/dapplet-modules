@@ -43,29 +43,6 @@ export class WidgetBuilder {
                     const featureInfo = { proxiedSubs: {}, connections: [] };
                     const connections: { [name: string]: IConnection } = feature.config.connections;
 
-
-                    // for (const connectionName in connections) {
-                    //     const settersByNames = {}; // ToDo: memory leaks?
-                    //     featureInfo.proxiedSubs[connectionName] = new Proxy({}, {
-                    //         get(target, propName, receiver) {
-                    //             return ({
-                    //                 datasource: (setter) => {
-                    //                     if (!settersByNames[propName]) settersByNames[propName] = [];
-                    //                     settersByNames[propName].push(setter);
-                    //                 }
-                    //             });
-                    //         }
-                    //     });
-                    //     const connection: any = connections[connectionName];
-                    //     const subscription = connection.subscribe(context.parsed.id, (data: any) => {
-                    //         for (const key in settersByNames) {
-                    //             const setters = settersByNames[key] || [];
-                    //             setters.forEach(set => set(data[key]));
-                    //         }
-                    //     });
-                    //     featureInfo.subscriptions.push(subscription);
-                    // }
-
                     context.features.set(feature, featureInfo);
                 }
             }
@@ -81,7 +58,7 @@ export class WidgetBuilder {
                         const contextIds = feature.contextIds || [];
 
                         if (contextIds.length === 0 || contextIds.indexOf(context.parsed.id) !== -1) {
-                            const insertedWidget = widgetConstructor(this, insPointName, i, contextNode, context.features.get(feature).proxiedSubs);
+                            const insertedWidget = widgetConstructor(this, insPointName, feature.orderIndex, contextNode, context.features.get(feature).proxiedSubs);
                             if (!insertedWidget) continue;
                             const registeredWidgets = this.widgets.get(feature) || [];
                             registeredWidgets.push(insertedWidget);

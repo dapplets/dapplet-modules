@@ -7,7 +7,6 @@ export interface IButtonState {
     disabled: boolean;
     exec: (ctx: any, me: IButtonState) => void;
     init: () => void;
-    clazz: string;
     ctx: any;
     insPointName: string;
 }
@@ -49,7 +48,7 @@ export class Button implements IWidget<IButtonState> {
 
     private _createElement() {
         this.el = document.createElement('div');
-        this.el.classList.add(this.state.clazz, 'css-1dbjc4n', 'r-1iusvr4', 'r-18u37iz', 'r-16y2uox', 'r-1h0z5md');
+        this.el.classList.add('css-1dbjc4n', 'r-1iusvr4', 'r-18u37iz', 'r-16y2uox', 'r-1h0z5md');
         this.el.addEventListener("click", e => {
             if (!this.state.disabled) {
                 this.state.exec?.(this.state.ctx, this.state);

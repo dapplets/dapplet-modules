@@ -5,7 +5,6 @@ export interface IPictureState {
     disabled: boolean;
     exec: (ctx: any, me: IPictureState) => void;
     init: () => void;
-    clazz: string;
     ctx: any;
     insPointName: string;
 }
@@ -31,7 +30,6 @@ export class Picture implements IWidget<IPictureState> {
 
     private _createElement() {
         this.el = document.createElement('div');
-        this.el.classList.add(this.state.clazz);
         this.el.addEventListener("click", e => {
             if (!this.state.disabled) {
                 this.state.exec?.(this.state.ctx, this.state);

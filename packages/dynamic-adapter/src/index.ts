@@ -99,34 +99,68 @@ class DynamicAdapter implements IDynamicAdapter {
         }
 
         function createWidget(Widget: any, builder: WidgetBuilder, insPointName: string, config: { [state: string]: T }, order: number, contextNode: Element, clazz: string, proxiedSubs: any): any {
-            // ToDo: calculate node from insPoint & view
+            if (order === undefined || order === null) {
+                console.error('Empty order!');
+                order = 0;
+            }
+
             const insPoint = builder.insPoints[insPointName];
+            if (!insPoint) {
+                console.error(`Invalid insertion point name: ${insPointName}`);
+                return;
+            }
+
             const node = (insPoint.selector) ? contextNode.querySelector(insPoint.selector) as HTMLElement : contextNode;
+            if (!node) return;
 
             // check if a widget already exists for the insPoint
-            if (!node) return;
             if (node.getElementsByClassName(clazz).length > 0) return;
 
             const context = builder.contexts.get(contextNode);
-            const state = new State<T>(config, context.parsed, builder.contextType, clazz);
+            const state = new State<T>(config, context.parsed, builder.contextType);
             const widget = new Widget() as IWidget<T>;
             widget.state = state.state;
             widget.insPointName = insPointName;
             state.changedHandler = () => widget.mount(); // when data in state was changed, then rerender a widget
             widget.mount(); // ToDo: remove it?
-            widget.el.classList.add('dapplet-widget');
+            widget.el.classList.add('dapplet-widget', clazz);
 
-            // ToDo: fix bug: incorrect ordering (reproduce bug on 3 buttons)
-            const insertedElements = node.getElementsByClassName('dapplet-widget');
-            if (insertedElements.length > 0 && insertedElements.length >= order) {
-                node.insertBefore(widget.el, insertedElements[order]);
-            } else {
-                if (insPoint.insert === undefined || insPoint.insert === 'end') {
+            widget.el.setAttribute('data-dapplet-order', order.toString());
+
+            const insertTo: 'begin' | 'end' = (insPoint.insert === undefined) ? 'end' : insPoint.insert;
+
+            const insertedElements = node.querySelectorAll(':scope > .dapplet-widget');
+
+            if (insertedElements.length === 0) {
+                if (insertTo === 'end') { 
                     node.appendChild(widget.el);
-                } else if (insPoint.insert === 'begin') { 
+                } else if (insertTo === 'begin') {
                     node.insertBefore(widget.el, node.firstChild);
                 } else {
-                    console.error('Invalid "insert" value in the insertion point config. The possible values are "begin" or "end".');
+                    console.error('Invalid "insert" value in the insertion point config. The valid values are "begin" or "end".');
+                }
+            } else {
+                let targetElementIndex = null;
+
+                // ToDo: find an element with the same order to throw the error
+                // searching for an element index before which need to be inserted.
+                for (let i = 0; i < insertedElements.length; i++) {
+                    const element = insertedElements[i];
+                    const elementOrder = parseInt(element.getAttribute('data-dapplet-order'));
+                    if (targetElementIndex === null && elementOrder > order) {
+                        targetElementIndex = i;
+                    }
+                    // if (elementOrder === order) {
+                    //     console.error('A widget with such an order index already inserted.');
+                    // }
+                }
+
+                if (targetElementIndex === null) {
+                    const lastNode = insertedElements[insertedElements.length - 1];
+                    lastNode.parentNode.insertBefore(widget.el, lastNode.nextSibling); // insert after lastNode
+                } else {
+                    const targetNode = insertedElements[targetElementIndex];
+                    targetNode.parentNode.insertBefore(widget.el, targetNode); // insert before targetNode
                 }
             }
 
