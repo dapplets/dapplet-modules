@@ -13,7 +13,7 @@ class DappletEngine {
         return null;
     }
 
-    private async loadDappletConfig(id: string): Promise<DappletConfig> {
+    private async loadSowaConfig(id: string): Promise<DappletConfig> {
         const buf = await this.loadResource(id)
         const json = String.fromCharCode.apply(null, new Uint16Array(buf))
         return JSON.parse(json) as DappletConfig
@@ -42,7 +42,7 @@ class DappletEngine {
     async onRequest(dappletRequest: DappletRequest): Promise<void> {
         for (const frame of dappletRequest.frames) {
             // will be loaded consistently!
-            const dappletCfg = await this.loadDappletConfig(frame.dappletPid); 
+            const dappletCfg = await this.loadSowaConfig(frame.dappletPid); 
             const data = this.parseRequestData(frame.payload, frame.parserPid, dappletCfg.variables);
             const dapplet = this.createDapplet(dappletCfg, data)
             this.loadedDapplets.push(dapplet)
