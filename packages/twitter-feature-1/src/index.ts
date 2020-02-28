@@ -31,7 +31,8 @@ export default class TwitterFeature implements IFeature {
                         img: GNOSIS_ICON,
                         disabled: false,
                         exec: (ctx, me) => { // ToDo: rename exec() to onclick()
-                            me.label = 'abcd'
+                            // me.label = 'abcd'
+                            console.log(ctx);
                             //let err = me.setState(me.state == 'DEFAULT'? 'ERR2' : 'DEFAULT')
                             //console.log('err', me.state)
                             //setTimeout(()=>err.label = "ABCD", 1000)

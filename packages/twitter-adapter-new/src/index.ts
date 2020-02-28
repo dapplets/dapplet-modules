@@ -63,7 +63,7 @@ export default class TwitterAdapter {
                 id: tweetNode.querySelector('a time').parentNode.href.split('/').pop(),
                 text: tweetNode.querySelector('div[lang]')?.innerText,
                 authorFullname: tweetNode.querySelector('a:nth-child(1) div span span')?.innerText,
-                authorUsername: tweetNode.querySelector('span.css-901oao.css-16my406.r-1qd0xha.r-ad9z0x.r-bcqeeo.r-qvutc0')?.innerText,
+                authorUsername: tweetNode.querySelector('div.css-901oao.css-bfa6kz.r-1re7ezh.r-18u37iz.r-1qd0xha.r-a023e6.r-16dba41.r-ad9z0x.r-bcqeeo.r-qvutc0 > span.css-901oao.css-16my406.r-1qd0xha.r-ad9z0x.r-bcqeeo.r-qvutc0')?.innerText,
                 authorImg: tweetNode.querySelector('img.css-9pa8cd')?.getAttribute('src')
             };
         }
