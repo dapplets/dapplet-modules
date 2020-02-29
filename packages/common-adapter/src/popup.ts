@@ -48,9 +48,9 @@ export class Popup implements IWidget<IPopupState> {
             .dapplet-widget-close-icon {
                 width: 18px;
                 height: 18px;
-                position: relative;
-                left: 192px;
-                bottom: 12px;
+                position: absolute;
+                right: 12px;
+                top: 12px;
                 cursor: pointer;
             }
             .dapplet-widget-mascot-img img {
