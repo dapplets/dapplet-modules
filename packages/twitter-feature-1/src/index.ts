@@ -18,7 +18,7 @@ export default class TwitterFeature implements IFeature {
 
     constructor() {
         const wallet = Core.wallet();
-        const server = Core.connect<{ pm_num: string }>({ url: "wss://localhost:8080/feature-1" });
+        const server = Core.connect<{ pm_num: string }>({ url: "wss://examples.dapplets.org/feature-1" });
 
         const { button, badge } = this.adapter.widgets;
         this.config = {
@@ -30,7 +30,7 @@ export default class TwitterFeature implements IFeature {
                         img: GNOSIS_ICON,
                         disabled: false,
                         exec: (ctx, me) => {
-                            const overlay = Core.overlay({ url: 'https://localhost:8080', title: 'Gnosis' });
+                            const overlay = Core.overlay({ url: 'https://examples.dapplets.org', title: 'Gnosis' });
                             overlay.sendAndListen('tweet_select', ctx, {
                                 'pm_attach': (op, { market, tweet }) => {
                                     me.state = 'PENDING';

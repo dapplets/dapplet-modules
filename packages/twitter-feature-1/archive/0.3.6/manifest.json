@@ -1,7 +1,7 @@
 {
     "name": "twitter-feature-1.dapplet-base.eth",
     "branch": "default",
-    "version": "0.3.7",
+    "version": "0.3.6",
     "type": "FEATURE",
     "title": "GNOSIS",
     "description": "Fake news tracking for Twitter",
