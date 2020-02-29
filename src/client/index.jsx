@@ -104,7 +104,7 @@ class Index extends React.Component {
 
         button.disabled = true;
 
-        this.bus.publish(this.subId, {
+        this.bus.publish(this.subId.toString(), {
             type: 'pm_attach',
             message: data
         });
