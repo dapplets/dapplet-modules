@@ -1,13 +1,13 @@
 {
     "name": "twitter-adapter.dapplet-base.eth",
     "branch": "legacy",
-    "version": "0.3.6",
+    "version": "0.3.5",
     "type": "ADAPTER",
     "title": "TwitterAdapter",
     "description": "Adapter for twitter.com",
     "author": "Dapplets Team",
     "dist": "index.js",
     "dependencies": {
-        "dynamic-adapter.dapplet-base.eth": "0.3.6"
+        "dynamic-adapter.dapplet-base.eth": "0.3.5"
     }
 }

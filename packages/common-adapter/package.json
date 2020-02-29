@@ -1,6 +1,6 @@
 {
   "name": "@dapplets/common-adapter",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Description of new feature",
   "scripts": {
     "build": "webpack --config webpack.dev.js",
@@ -12,7 +12,7 @@
   "main": "build/index.js",
   "typings": "build/index.d.ts",
   "devDependencies": {
-    "@dapplets/dapplet-extension": "^0.1.6",
-    "@dapplets/dynamic-adapter": "^0.3.4"
+    "@dapplets/dapplet-extension": "latest",
+    "@dapplets/dynamic-adapter": "^0.3.6"
   }
 }
