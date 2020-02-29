@@ -81,10 +81,10 @@ class Index extends React.Component {
         let markets = [];
 
         if (searchType == 'Tweet') {
-            markets = json.markets.filter(m => json.tweets[this.state.tweet.id] && json.tweets[this.state.tweet.id].indexOf(m.id) != -1);
+            markets = json.markets.filter(m => json.tweets_with_PM[this.state.tweet.id] && json.tweets_with_PM[this.state.tweet.id].indexOf(m.id) != -1);
         } else {
             markets = json.markets.map(m => {
-                const mapping = json.tweets[this.state.tweet.id];
+                const mapping = json.tweets_with_PM[this.state.tweet.id];
                 m.isAttached = !!mapping && mapping.indexOf(m.id) != -1;
                 return m;
             });
