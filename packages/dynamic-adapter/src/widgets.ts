@@ -15,7 +15,7 @@ export class WidgetBuilder {
 
     //ToDo: widgets
 
-    constructor(widgetBuilderConfig: IWidgetBuilderConfig, private _emitContextCreated: (context: any, contextType: string, contextEvent: string) => void) {
+    constructor(widgetBuilderConfig: IWidgetBuilderConfig) {
         return Object.assign(this, widgetBuilderConfig);
     }
 
@@ -33,7 +33,6 @@ export class WidgetBuilder {
             // ToDo: refactor isNew checking
             if (isNew) {
                 newParsedContexts.push(context);
-                this._emitContextCreated(context.parsed, this.contextType, this.contextEvent);
             } else {
                 Object.assign(context.parsed, this.contextBuilder(contextNode)); // Refreshing of context without link destroying
             }

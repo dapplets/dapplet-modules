@@ -136,19 +136,7 @@ export default class TwitterAdapter {
                 profileUsername: titleInfoNode.querySelector('div.css-901oao.css-bfa6kz.r-hkyrab.r-1qd0xha.r-1b6yd1w.r-vw2c0b.r-ad9z0x.r-bcqeeo.r-3s2u2q.r-qvutc0 > span > span')?.innerText,
             }
         }
-    },
-    // {
-    //     containerSelector: "html",
-    //     contextSelector: "body",
-    //     insPoints: {
-    //         BODY: { }
-    //     },
-    //     contextType: 'tweet', // create_tweet | destroy_tweet
-    //     contextEvent: 'TWEET_EVENT',
-    //     contextBuilder: (node: any) => ({
-            
-    //     }),
-    // }
+    }
 ];
 
     // ToDo: refactor it
@@ -164,13 +152,5 @@ export default class TwitterAdapter {
     // ToDo: refactor it
     public detachFeature(feature: IFeature): void {
         this.adapter.detachFeature(feature);
-    }
-
-    public onContextCreated(handler: (ctx?: any, insertionPoint?: string) => void): void {
-        this.adapter.onContextCreated(handler);
-    }
-
-    public onContextDestroyed(handler: (ctx?: any, insertionPoint?: string) => void): void {
-        this.adapter.onContextDestroyed(handler);
     }
 }

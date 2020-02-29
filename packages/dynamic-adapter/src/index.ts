@@ -17,9 +17,6 @@ class DynamicAdapter implements IDynamicAdapter {
     private features: IFeature[] = [];
     private contextBuilders: WidgetBuilder[] = [];
 
-    private _contextCreatedHandlers: ((ctx?: any, type?: string) => void)[] = [];
-    private _contextDestroyedHandlers: ((ctx?: any, type?: string) => void)[] = [];
-
     public attachFeature(feature: IFeature): void { // ToDo: automate two-way dependency handling(?)
         if (this.features.find(f => f === feature)) return;
         this.features.splice(feature.orderIndex, 0, feature);
@@ -37,7 +34,7 @@ class DynamicAdapter implements IDynamicAdapter {
     }
 
     public attachConfig(config: IWidgetBuilderConfig[]) {
-        const builders = config.map((cfg) => new WidgetBuilder(cfg, this._emitContextCreated.bind(this)));
+        const builders = config.map((cfg) => new WidgetBuilder(cfg));
         this.contextBuilders.push(...builders);
     }
 
@@ -69,7 +66,6 @@ class DynamicAdapter implements IDynamicAdapter {
                     }))
                 if (removedContexts && removedContexts.length > 0) {
                     Core.contextFinished(removedContexts.map(c => c.parsed));
-                    removedContexts.map(c => c.parsed).forEach(ctx => this._emitContextDestroyed(ctx, contextBuilder.contextType, contextBuilder.contextEvent));
                 }
                 contextBuilder.updateContexts(this.features, container); // ToDo: think about it
             }
@@ -172,44 +168,6 @@ class DynamicAdapter implements IDynamicAdapter {
             return ((builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element, proxiedSubs: any) =>
                 createWidget(Widget, builder, insPointName, config, order, contextNode, uuid, proxiedSubs)
             );
-        }
-    }
-
-    // ToDo: remove
-    public onContextCreated(handler: (ctx?: any, type?: string) => void): void {
-        this._contextCreatedHandlers.push(handler);
-    }
-
-    // ToDo: remove
-    public onContextDestroyed(handler: (ctx?: any, type?: string) => void): void {
-        this._contextDestroyedHandlers.push(handler);
-    }
-
-    // ToDo: remove
-    private _emitContextCreated(context: any, contextType: string, contextEvent: string) {
-        this._contextCreatedHandlers.forEach(h => h(context, contextType));
-        this._emitContextEvent(context, contextType, contextEvent, 'create');
-    }
-
-    // ToDo: remove
-    private _emitContextDestroyed(context: any, contextType: string, contextEvent: string) {
-        this._contextDestroyedHandlers.forEach(h => h(context, contextType));
-        this._emitContextEvent(context, contextType, contextEvent, 'destroy');
-    }
-
-    // ToDo: remove
-    private _emitContextEvent(context: any, contextType: string, contextEvent: string, operation: string) {
-        const event = {
-            operation,
-            topic: context.id,
-            contextType,
-            contextId: context.id,
-            context
-        };
-        for (const feature of this.features) {
-            const handlers = feature.config[contextEvent];
-            if (!Array.isArray(handlers)) continue;
-            handlers.forEach(h => h(event));
         }
     }
 }
