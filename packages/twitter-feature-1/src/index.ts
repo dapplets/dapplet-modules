@@ -18,7 +18,7 @@ export default class TwitterFeature implements IFeature {
 
     constructor() {
         const overlay = Core.overlay({ url: 'https://localhost:8080', title: 'Gnosis' });
-        const wallet = Core.wallet({}, EVENTS_DEF);
+        const wallet = Core.wallet();
         const server = Core.connect<{ pm_num: string }>({ url: "wss://localhost:8080/feature-1" });
 
         const { button, badge } = this.adapter.widgets;
@@ -30,16 +30,10 @@ export default class TwitterFeature implements IFeature {
                         label: server.pm_num,
                         img: GNOSIS_ICON,
                         disabled: false,
-                        exec: (ctx, me) => { // ToDo: rename exec() to onclick()
-                            // me.label = 'abcd'
-                            console.log(ctx);
-                            //let err = me.setState(me.state == 'DEFAULT'? 'ERR2' : 'DEFAULT')
-                            //console.log('err', me.state)
-                            //setTimeout(()=>err.label = "ABCD", 1000)
-                            /*
+                        exec: (ctx, me) => {
                             overlay.sendAndListen('tweet_select', ctx, {
                                 'pm_attach': (op, { market, tweet }) => {
-                                    console.log('pm_attach', op, { market, tweet });
+                                    me.state = 'PENDING';
                                     wallet.sendAndListen('1', ctx, {
                                         rejected: () => me.state = 'ERR',
                                         created: () => {
@@ -48,8 +42,7 @@ export default class TwitterFeature implements IFeature {
                                         }
                                     });
                                 }
-                            })
-                            */
+                            });
                         }
                     },
                     "PENDING": {
@@ -60,13 +53,7 @@ export default class TwitterFeature implements IFeature {
                     "ERR": {
                         label: 'Error',
                         img: GNOSIS_ICON,
-                        exec: (ctx, me) => me.setState('DEFAULT'),
-                        NEXT: "ERR2"
-                    },
-                    "ERR2": {
-                        label: 'Error2',
-                        img: GNOSIS_ICON,
-                        exec: (ctx, me) => me.setState('DEFAULT')
+                        exec: (ctx, me) => me.state = 'DEFAULT'
                     }
                 })
             ],
