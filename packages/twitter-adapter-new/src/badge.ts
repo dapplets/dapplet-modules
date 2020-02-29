@@ -132,7 +132,9 @@ export class Badge implements IWidget<IBadgeState> {
                 this.el.classList.add("dapplet-widget-profile-button", "css-18t94o4", "css-1dbjc4n", "r-1niwhzg", "r-1xl5njo", "r-sdzlij", "r-1phboty", "r-rs99b7", "r-1w2pmg", "r-15d164r", "r-zso239", "r-1vuscfd", "r-53xb7h", "r-mk0yit", "r-o7ynqc", "r-6416eg", "r-lrvibr");
                 const styleTag: HTMLStyleElement = document.createElement('style');
                 styleTag.type = 'text/css';
-                styleTag.innerText = '.dapplet-widget-profile-button:hover {background-color: rgba(244, 93, 34, 0.1)} .dapplet-widget > div[role="button"] > div:hover > .css-1dbjc4n.r-xoduu5 > .r-sdzlij {background-color: rgba(29, 161, 242, 0.1); transition-property: background-color, box-shadow; transition-duration: 0.2s;} .dapplet-widget > div[role="button"] > div:hover {color:rgba(29,161,242,1.00);}';
+                styleTag.innerText = `.dapplet-widget-profile-button:hover {
+                        background-color: rgba(244, 93, 34, 0.1)
+                    }`;
                 document.head.appendChild(styleTag);
                 break;
 

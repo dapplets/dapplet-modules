@@ -55,6 +55,18 @@ export class Button implements IWidget<IButtonState> {
                 this.state.exec?.(this.state.ctx, this.state);
             }
         });
+        const styleTag: HTMLStyleElement = document.createElement('style');
+        styleTag.type = 'text/css';
+        styleTag.innerText = `
+            .dapplet-widget > div[role="button"] > div:hover > .css-1dbjc4n.r-xoduu5 > .r-sdzlij {
+                background-color: rgba(29, 161, 242, 0.1); 
+                transition-property: background-color, box-shadow; 
+                transition-duration: 0.2s;
+            }
+            .dapplet-widget > div[role="button"] > div:hover {
+                color:rgba(29,161,242,1.00);
+            }`;
+        document.head.appendChild(styleTag);
         this.mount();
         this.state.init?.();
     }
