@@ -20,7 +20,7 @@ export class WidgetBuilder {
     }
 
     // `updateContexts()` is called when new context is found.
-    public updateContexts(features: IFeature[], container: Element, mutations?: MutationRecord[]) {
+    public updateContexts(features: IFeature[], container: Element) {
         const contextNodes = Array.from(container?.querySelectorAll(this.contextSelector) || []);
         if (contextNodes.length === 0) return;
 
@@ -34,6 +34,8 @@ export class WidgetBuilder {
             if (isNew) {
                 newParsedContexts.push(context);
                 this._emitContextCreated(context.parsed, this.contextType, this.contextEvent);
+            } else {
+                Object.assign(context.parsed, this.contextBuilder(contextNode)); // Refreshing of context without link destroying
             }
 
             for (let i = 0; i < features.length; i++) {
@@ -41,7 +43,7 @@ export class WidgetBuilder {
                 const featureInfo = context.features.get(feature);
                 if (!featureInfo) {
                     const featureInfo = { proxiedSubs: {}, connections: [] };
-                    const connections: { [name: string]: IConnection } = feature.config.connections;
+                    const connections: { [name: string]: IConnection } = feature.config.connections; // ToDo: remove
 
                     context.features.set(feature, featureInfo);
                 }
@@ -58,7 +60,7 @@ export class WidgetBuilder {
                         const contextIds = feature.contextIds || [];
 
                         if (contextIds.length === 0 || contextIds.indexOf(context.parsed.id) !== -1) {
-                            const insertedWidget = widgetConstructor(this, insPointName, feature.orderIndex, contextNode, context.features.get(feature).proxiedSubs);
+                            const insertedWidget = widgetConstructor(this, insPointName, feature.orderIndex, contextNode, context.features.get(feature).proxiedSubs); // ToDo: remove proxiedSubs
                             if (!insertedWidget) continue;
                             const registeredWidgets = this.widgets.get(feature) || [];
                             registeredWidgets.push(insertedWidget);

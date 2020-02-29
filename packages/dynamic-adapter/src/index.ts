@@ -175,24 +175,29 @@ class DynamicAdapter implements IDynamicAdapter {
         }
     }
 
+    // ToDo: remove
     public onContextCreated(handler: (ctx?: any, type?: string) => void): void {
         this._contextCreatedHandlers.push(handler);
     }
 
+    // ToDo: remove
     public onContextDestroyed(handler: (ctx?: any, type?: string) => void): void {
         this._contextDestroyedHandlers.push(handler);
     }
 
+    // ToDo: remove
     private _emitContextCreated(context: any, contextType: string, contextEvent: string) {
         this._contextCreatedHandlers.forEach(h => h(context, contextType));
         this._emitContextEvent(context, contextType, contextEvent, 'create');
     }
 
+    // ToDo: remove
     private _emitContextDestroyed(context: any, contextType: string, contextEvent: string) {
         this._contextDestroyedHandlers.forEach(h => h(context, contextType));
         this._emitContextEvent(context, contextType, contextEvent, 'destroy');
     }
 
+    // ToDo: remove
     private _emitContextEvent(context: any, contextType: string, contextEvent: string, operation: string) {
         const event = {
             operation,
