@@ -17,7 +17,6 @@ export default class TwitterFeature implements IFeature {
     public config: T_TwitterFeatureConfig;
 
     constructor() {
-        const overlay = Core.overlay({ url: 'https://localhost:8080', title: 'Gnosis' });
         const wallet = Core.wallet();
         const server = Core.connect<{ pm_num: string }>({ url: "wss://localhost:8080/feature-1" });
 
@@ -31,6 +30,7 @@ export default class TwitterFeature implements IFeature {
                         img: GNOSIS_ICON,
                         disabled: false,
                         exec: (ctx, me) => {
+                            const overlay = Core.overlay({ url: 'https://localhost:8080', title: 'Gnosis' });
                             overlay.sendAndListen('tweet_select', ctx, {
                                 'pm_attach': (op, { market, tweet }) => {
                                     me.state = 'PENDING';
