@@ -32,7 +32,8 @@ export class Popup implements IWidget<IPopupState> {
                 width: 380px;
                 min-height: 60px;
                 top: 80px;
-                right: 500px;
+                left: 50%;
+                margin-left: -212px;
                 padding: 20px;
                 background-color: #fff;
                 color: #d10019;
