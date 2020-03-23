@@ -83,9 +83,9 @@ export class Button implements IWidget<IButtonState> {
 
         } else if (this.insPointName === 'PROFILE_BUTTON_GROUP') {
 
-            this.el.classList.add("dapplet-widget-profile-button", "css-18t94o4", "css-1dbjc4n", "r-1niwhzg", "r-1xl5njo", "r-sdzlij", "r-1phboty", "r-rs99b7", "r-1w2pmg", "r-15d164r", "r-zso239", "r-1vuscfd", "r-53xb7h", "r-mk0yit", "r-o7ynqc", "r-6416eg", "r-lrvibr");
+            this.el.classList.add("dapplet-widget-profile-button", "css-18t94o4", "css-1dbjc4n", "r-1niwhzg", "r-1xl5njo", "r-sdzlij", "r-1phboty", "r-rs99b7", "r-1w2pmg", "r-15d164r", "r-zso239", "r-1vuscfd", "r-53xb7h", "r-mk0yit", "r-o7ynqc", "r-6416eg", "r-lrvibr", "r-p1n3y5");
             styleTag.innerText = `.dapplet-widget-profile-button:hover {
-                background-color: rgba(244, 93, 34, 0.1)
+                background-color: rgba(29, 161, 242, 0.1)
             }`;
         }
 
