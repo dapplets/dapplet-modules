@@ -7,6 +7,7 @@ import { IPopupState, Popup } from './popup';
 @Injectable
 export default class CommonAdapter {
 
+    //ToDo: should we really have a dep to DynamicAdapter ?
     @Inject("dynamic-adapter.dapplet-base.eth")
     private adapter: IDynamicAdapter;
 
