@@ -22,6 +22,7 @@ export default class CommonAdapter {
         insPoints: {
             BODY: { }
         },
+        //ToDo: remove any twitter dependencies
         contextType: 'tweet', // create_tweet | destroy_tweet
         contextEvent: 'TWEET_EVENT',
         contextBuilder: (node: any) => ({
@@ -44,3 +45,4 @@ export default class CommonAdapter {
         this.adapter.detachFeature(feature);
     }
 }
+ 
