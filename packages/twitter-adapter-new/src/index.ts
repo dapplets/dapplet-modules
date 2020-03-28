@@ -20,7 +20,7 @@ export default class TwitterAdapter {
 
     public config = [{
         containerSelector: "main[role=main]",
-        contextSelector: "article.css-1dbjc4n.r-1loqt21.r-1udh08x.r-o7ynqc.r-1j63xyz",
+        contextSelector: "article.css-1dbjc4n",
         insPoints: {
             TWEET_SOUTH: {
                 selector: "div[role=group]"
