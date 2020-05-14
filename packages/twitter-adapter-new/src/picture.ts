@@ -3,8 +3,9 @@ import { IWidget } from '@dapplets/dynamic-adapter';
 export interface IPictureState {
     img: string;
     disabled: boolean;
+    hidden: boolean;
     exec: (ctx: any, me: IPictureState) => void;
-    init: () => void;
+    init: (ctx: any, me: IPictureState) => void;
     ctx: any;
     insPointName: string;
 }
@@ -17,11 +18,14 @@ export class Picture implements IWidget<IPictureState> {
     public mount() {
         if (!this.el) this._createElement();
 
-        const { img, disabled } = this.state;
+        const { img, disabled, hidden } = this.state;
 
-        const htmlString = `<img src="${img}" />`
-
-        this.el.innerHTML = htmlString;
+        if (hidden) {
+            const htmlString = `<img src="${img}" />`
+            this.el.innerHTML = htmlString;
+        } else {
+            this.el.innerHTML = '';
+        }
     }
 
     public unmount() {
@@ -40,6 +44,6 @@ export class Picture implements IWidget<IPictureState> {
         this.el.style.right = '15px';
         this.el.style.zIndex = '3';
         this.mount();
-        this.state.init?.();
+        this.state.init?.(this.state.ctx, this.state);
     }
 }

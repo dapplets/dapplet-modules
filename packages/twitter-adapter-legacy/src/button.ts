@@ -5,8 +5,9 @@ export interface IButtonState {
     label: string;
     loading: boolean;
     disabled: boolean;
+    hidden: boolean;
     exec: (ctx: any, me: IButtonState) => void;
-    init: () => void;
+    init: (ctx: any, me: IButtonState) => void;
     ctx: any;
     insPointName: string;   
 }
@@ -19,7 +20,12 @@ export class Button implements IWidget<IButtonState> {
     public mount() {
         if (!this.el) this._createElement();
         
-        const { img, label, loading, disabled } = this.state;
+        const { img, label, loading, disabled, hidden } = this.state;
+
+        if (hidden) {
+            this.el.innerHTML = '';
+            return;
+        }
 
         const htmlString = `<button class="ProfileTweet-actionButton" type="button">
                 <div class="IconContainer">
@@ -50,6 +56,6 @@ export class Button implements IWidget<IButtonState> {
             }
         });
         this.mount();
-        this.state.init?.();
+        this.state.init?.(this.state.ctx, this.state);
     }
 }

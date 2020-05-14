@@ -1,6 +1,6 @@
 {
   "name": "@dapplets/common-adapter",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "description": "Description of new feature",
   "scripts": {
     "build": "webpack --config webpack.dev.js",

@@ -4,7 +4,7 @@ export interface IPictureState {
     img: string;
     disabled: boolean;
     exec: (ctx: any, me: IPictureState) => void;
-    init: () => void;
+    init: (ctx: any, me: IPictureState) => void;
     ctx: any;
     insPointName: string;
 }
@@ -40,6 +40,6 @@ export class Picture implements IWidget<IPictureState> {
         this.el.style.right = '15px';
         this.el.style.zIndex = '3';
         this.mount();
-        this.state.init?.();
+        this.state.init?.(this.state.ctx, this.state);
     }
 }

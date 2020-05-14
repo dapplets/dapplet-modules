@@ -6,7 +6,7 @@ export interface IButtonState {
     loading: boolean;
     disabled: boolean;
     exec: (ctx: any, me: IButtonState) => void;
-    init: () => void;
+    init: (ctx: any, me: IButtonState) => void;
     ctx: any;
 }
 
@@ -51,6 +51,6 @@ export class Button implements IWidget<IButtonState> {
             }
         });
         this.mount();
-        this.state.init?.();
+        this.state.init?.(this.state.ctx, this.state);
     }
 }
