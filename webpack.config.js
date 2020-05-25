@@ -28,19 +28,19 @@ module.exports = function (dir) {
     },
     module: {
       rules: [{
-          exclude: /node_modules/,
-          test: /\.ts$/,
-          use: "ts-loader"
-        },
-        {
-          test: /\.(png|jp(e*)g|svg)$/,
-          use: [{
-            loader: 'url-loader',
-            options: {
-              limit: 50 * 1024 // Convert images < 50kb to base64 strings
-            }
-          }]
-        }
+        exclude: /node_modules/,
+        test: /\.ts$/,
+        use: "ts-loader"
+      },
+      {
+        test: /\.(png|jp(e*)g|svg)$/,
+        use: [{
+          loader: 'url-loader',
+          options: {
+            limit: 50 * 1024 // Convert images < 50kb to base64 strings
+          }
+        }]
+      }
       ]
     },
     plugins: [
@@ -82,7 +82,7 @@ module.exports = function (dir) {
         }
         callback();
       }, ['watch-run']),
-      new CopyWebpackPlugin([MANIFEST_NAME])
+      new CopyWebpackPlugin({ patterns: [MANIFEST_NAME] })
     ],
     //mode: "production",
     //devtool: "inline-source-map",
