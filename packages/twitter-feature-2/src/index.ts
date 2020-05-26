@@ -1,6 +1,6 @@
 import { IFeature } from '@dapplets/dapplet-extension'
 import { T_TwitterFeatureConfig, ITwitterAdapter } from '@dapplets/twitter-adapter'
-import GNOSIS_ICON from './ethereum.png'
+import ETHEREUM_ICON from './ethereum.png'
 
 @Injectable
 export default class TwitterFeature implements IFeature {
@@ -15,12 +15,20 @@ export default class TwitterFeature implements IFeature {
 
         const { button } = this.adapter.widgets;
         this.config = {
+            TWEET_STARTER: [ 
+                {
+                    label: 'Add tweet to the Ethereum registry',
+                    exec: (ctx, me) => {
+                        wallet.sendAndListen('1', ctx, {});
+                    }
+                }
+            ],
             TWEET_SOUTH: [
                 button({
                     initial: "DEFAULT",
                     "DEFAULT": {
                         label: server.like_num,
-                        img: GNOSIS_ICON,
+                        img: ETHEREUM_ICON,
                         disabled: false,
                         exec: (ctx, me) => { // ToDo: rename exec() to onclick()
                             me.state = 'PENDING';
@@ -37,7 +45,7 @@ export default class TwitterFeature implements IFeature {
                     },
                     "ERR": {
                         label: 'Error',
-                        img: GNOSIS_ICON,
+                        img: ETHEREUM_ICON,
                         exec: (ctx, me) => me.state = 'DEFAULT'
                     }
                 })

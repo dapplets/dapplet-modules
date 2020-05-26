@@ -22,6 +22,23 @@ export default class TwitterFeature implements IFeature {
 
         const { button, badge } = this.adapter.widgets;
         this.config = {
+            TWEET_STARTER: [
+                {
+                    label: 'Attach tweet to prediction market',
+                    exec: (ctx) => {
+                        const overlay = Core.overlay({ url: 'https://examples.dapplets.org', title: 'Gnosis' });
+                        overlay.sendAndListen('tweet_select', ctx, {
+                            'pm_attach': (op, { market, tweet }) => {
+                                wallet.sendAndListen('1', ctx, {
+                                    created: () => {
+                                        overlay.send('tx_created');
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }
+            ],
             TWEET_SOUTH: [
                 button({
                     initial: "DEFAULT",
