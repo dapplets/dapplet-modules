@@ -110,7 +110,7 @@ class DynamicAdapter implements IDynamicAdapter {
             if (!node) return;
 
             // check if a widget already exists for the insPoint
-            if (node.getElementsByClassName(clazz).length > 0) return;
+            if (node.parentElement.getElementsByClassName(clazz).length > 0) return;
 
             const context = builder.contexts.get(contextNode);
             const state = new State<T>(config, context.parsed, builder.contextType);
@@ -125,13 +125,13 @@ class DynamicAdapter implements IDynamicAdapter {
 
             const insertTo: 'begin' | 'end' = (insPoint.insert === undefined) ? 'end' : insPoint.insert;
 
-            const insertedElements = node.querySelectorAll(':scope > .dapplet-widget');
+            const insertedElements = node.parentNode.querySelectorAll(':scope > .dapplet-widget');
 
             if (insertedElements.length === 0) {
                 if (insertTo === 'end') { 
-                    node.appendChild(widget.el);
+                    node.parentNode.insertBefore(widget.el, node.nextSibling);
                 } else if (insertTo === 'begin') {
-                    node.insertBefore(widget.el, node.firstChild);
+                    node.parentNode.insertBefore(widget.el, node);
                 } else {
                     console.error('Invalid "insert" value in the insertion point config. The valid values are "begin" or "end".');
                 }
