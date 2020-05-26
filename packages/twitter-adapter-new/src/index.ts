@@ -23,19 +23,19 @@ export default class TwitterAdapter {
         contextSelector: "article.css-1dbjc4n",
         insPoints: {
             TWEET_SOUTH: {
-                selector: "div[role=group]"
+                selector: "div[role=group] > *:last-child"
             },
             TWEET_COMBO: {
                 selector: "" //ToDo
             },
             PICTURE: {
-                selector: "div[lang]"
+                selector: "div[lang] > *:last-child"
             },
             TWEET_AVATAR_BADGE: {
-                selector: "div.css-1dbjc4n.r-18kxxzh.r-1wbh5a2.r-13qz1uu"
+                selector: "div.css-1dbjc4n.r-18kxxzh.r-1wbh5a2.r-13qz1uu > *:last-child"
             },
             TWEET_USERNAME_BADGE: {
-                selector: "div.css-1dbjc4n.r-18u37iz.r-1wbh5a2.r-1f6r7vd",
+                selector: "div.css-1dbjc4n.r-18u37iz.r-1wbh5a2.r-1f6r7vd > *:first-child",
                 insert: 'begin' // end
             }
         },
@@ -65,15 +65,15 @@ export default class TwitterAdapter {
         contextSelector: "div.css-1dbjc4n.r-ku1wi2.r-1j3t67a.r-m611by",
         insPoints: {
             PROFILE_AVATAR_BADGE: {
-                selector: "div.css-1dbjc4n.r-obd0qt.r-18u37iz.r-1w6e6rj.r-1wtj0ep",
+                selector: "div.css-1dbjc4n.r-obd0qt.r-18u37iz.r-1w6e6rj.r-1wtj0ep > *:last-child",
                 insert: 'end'
             },
             PROFILE_USERNAME_BADGE: {
-                selector: "div.css-1dbjc4n.r-15d164r.r-1g94qm0 div.css-901oao.r-hkyrab.r-1qd0xha.r-1b6yd1w.r-1vr29t4.r-ad9z0x.r-bcqeeo.r-qvutc0",
+                selector: "div.css-1dbjc4n.r-15d164r.r-1g94qm0 div.css-901oao.r-hkyrab.r-1qd0xha.r-1b6yd1w.r-1vr29t4.r-ad9z0x.r-bcqeeo.r-qvutc0 > *:last-child",
                 insert: "end"
             },
             PROFILE_BUTTON_GROUP: {
-                selector: "div.css-1dbjc4n.r-obd0qt.r-18u37iz.r-1w6e6rj.r-1h0z5md.r-dnmrzs",
+                selector: "div.css-1dbjc4n.r-obd0qt.r-18u37iz.r-1w6e6rj.r-1h0z5md.r-dnmrzs > *:first-child",
                 insert: "begin"
             }
         },
@@ -97,7 +97,7 @@ export default class TwitterAdapter {
         contextSelector: "div.css-1dbjc4n.r-aqfbo4.r-14lw9ot.r-my5ep6.r-rull8r.r-qklmqi.r-gtdqiz.r-ipm5af.r-1g40b8q",
         insPoints: {
             HEADING_USERNAME_BADGE: {
-                selector: "h2[role=heading] div.r-18u37iz  > div.css-1dbjc4n.r-1awozwy.r-xoduu5.r-18u37iz.r-dnmrzs",
+                selector: "h2[role=heading] div.r-18u37iz  > div.css-1dbjc4n.r-1awozwy.r-xoduu5.r-18u37iz.r-dnmrzs > *:last-child",
                 insert: "end"
             }
         },
@@ -116,7 +116,7 @@ export default class TwitterAdapter {
         contextSelector: "div.css-1dbjc4n.r-1mi0q7o.r-1j3t67a.r-m611by",
         insPoints: {
             SUSPENDED_USERNAME_BADGE: {
-                selector: "div.css-901oao.css-bfa6kz.r-hkyrab.r-1qd0xha.r-1b6yd1w.r-vw2c0b.r-ad9z0x.r-bcqeeo.r-3s2u2q.r-qvutc0",
+                selector: "div.css-901oao.css-bfa6kz.r-hkyrab.r-1qd0xha.r-1b6yd1w.r-vw2c0b.r-ad9z0x.r-bcqeeo.r-3s2u2q.r-qvutc0 > *:last-child",
                 insert: "end"
             }
         },

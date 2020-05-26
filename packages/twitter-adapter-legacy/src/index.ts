@@ -20,13 +20,13 @@ export default class TwitterAdapter {
         contextSelector: "[id^=stream-item-tweet-]",
         insPoints: {
             TWEET_SOUTH: {
-                selector: "div.js-actions"
+                selector: "div.js-actions > *:last-child"
             },
             TWEET_COMBO: {
                 selector: "" //ToDo
             },
             PICTURE: {
-                selector: "div.js-tweet-text-container"
+                selector: "div.js-tweet-text-container > *:last-child"
             }
         },
         contextType: 'tweet', // create_tweet | destroy_tweet
@@ -43,7 +43,7 @@ export default class TwitterAdapter {
         contextSelector: "li.DMInbox-conversationItem",
         insPoints: {
             DM_SOUTH: {
-                selector: "div.DMInboxItem"
+                selector: "div.DMInboxItem > *:last-child"
             },
             DM_EAST: {
                 selector: "" //ToDo
