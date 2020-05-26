@@ -96,7 +96,7 @@ class DynamicAdapter implements IDynamicAdapter {
 
         function createWidget(Widget: any, builder: WidgetBuilder, insPointName: string, config: { [state: string]: T }, order: number, contextNode: Element, clazz: string, proxiedSubs: any): any {
             if (order === undefined || order === null) {
-                console.error('Empty order!');
+                //console.error('Empty order!');
                 order = 0;
             }
 

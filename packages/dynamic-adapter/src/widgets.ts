@@ -59,6 +59,10 @@ export class WidgetBuilder {
                         const contextIds = feature.contextIds || [];
 
                         if (contextIds.length === 0 || contextIds.indexOf(context.parsed.id) !== -1) {
+                            if (typeof widgetConstructor !== 'function') {
+                                console.error(`Invalid widget configuration in the insertion point "${insPointName}". It must be WidgetConstructor instance.`);
+                                continue;
+                            }
                             const insertedWidget = widgetConstructor(this, insPointName, feature.orderIndex, contextNode, context.features.get(feature).proxiedSubs); // ToDo: remove proxiedSubs
                             if (!insertedWidget) continue;
                             const registeredWidgets = this.widgets.get(feature) || [];
