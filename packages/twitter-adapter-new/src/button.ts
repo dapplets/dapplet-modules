@@ -46,7 +46,7 @@ export class Button implements IWidget<IButtonState> {
                             </div>` : ''}
                     </div>
                 </div>`;
-            
+
             this.el.innerHTML = htmlString;
 
         } else if (this.insPointName === 'PROFILE_BUTTON_GROUP') {
@@ -57,10 +57,19 @@ export class Button implements IWidget<IButtonState> {
                 imgTag.style.height = '18px';
                 imgTag.style.position = 'relative';
                 imgTag.style.top = '9px';
-                imgTag.style.left= '10px';
+                imgTag.style.left = '10px';
                 this.el.appendChild(imgTag);
             }
-
+        } else if (this.insPointName === 'TWEET_STARTER') {
+            const htmlString = `<div style="margin: 0 10px" aria-haspopup="true" aria-label="More" role="button" data-focusable="true" tabindex="0" class="css-18t94o4 css-1dbjc4n r-1777fci r-11cpok1 r-1ny4l3l r-bztko3 r-lrvibr" data-testid="caret">
+                    <div dir="ltr" class="css-901oao r-1awozwy r-1re7ezh r-6koalj r-1qd0xha r-a023e6 r-16dba41 r-1h0z5md r-ad9z0x r-bcqeeo r-o7ynqc r-clp7b1 r-3s2u2q r-qvutc0">
+                    <div class="css-1dbjc4n r-xoduu5">
+                        <div class="css-1dbjc4n r-1niwhzg r-sdzlij r-1p0dtai r-xoduu5 r-1d2f490 r-podbf7 r-u8s1d r-zchlnj r-ipm5af r-o7ynqc r-6416eg"></div>
+                        <img height="25" src="${img}" class="r-4qtqp9 r-yyyyoo r-ip8ujx r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-27tl0q">
+                    </div>
+                    </div>
+                </div>`;
+            this.el.innerHTML = htmlString;
         }
     }
 
@@ -76,7 +85,7 @@ export class Button implements IWidget<IButtonState> {
 
         if (this.insPointName === 'TWEET_SOUTH') {
             this.el.classList.add('css-1dbjc4n', 'r-1iusvr4', 'r-18u37iz', 'r-16y2uox', 'r-1h0z5md');
-            
+
             styleTag.innerText = `
                 .dapplet-widget > div[role="button"] > div:hover > .css-1dbjc4n.r-xoduu5 > .r-sdzlij {
                     background-color: rgba(29, 161, 242, 0.1); 

@@ -3,12 +3,14 @@ import { IDynamicAdapter } from '@dapplets/dynamic-adapter';
 import { IButtonState, Button } from './button';
 import { IPictureState, Picture } from './picture';
 import { IBadgeState, Badge } from './badge';
+import Starter from './starter';
 
 @Injectable
 export default class TwitterAdapter {
 
     @Inject("dynamic-adapter.dapplet-base.eth")
     private adapter: IDynamicAdapter;
+    private starter: Starter;
 
     // ToDo: refactor it
     public widgets = {
@@ -37,6 +39,10 @@ export default class TwitterAdapter {
             TWEET_USERNAME_BADGE: {
                 selector: "div.css-1dbjc4n.r-18u37iz.r-1wbh5a2.r-1f6r7vd > *:first-child",
                 insert: 'begin' // end
+            },
+            TWEET_STARTER: {
+                selector: "div.css-1dbjc4n.r-18u37iz.r-1h0z5md.r-1joea0r > *:first-child",
+                insert: 'begin'
             }
         },
         contextType: 'tweet', // create_tweet | destroy_tweet
@@ -105,7 +111,6 @@ export default class TwitterAdapter {
         contextEvent: 'HEADING_EVENT',
         // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
         contextBuilder: (titleInfoNode: any) => {
-
             return {
                 profileFullname: titleInfoNode.querySelector('span.css-901oao.css-16my406.r-1qd0xha.r-ad9z0x.r-bcqeeo.r-qvutc0 > span > span')?.innerText.replace('@', ''),
             }
@@ -133,15 +138,19 @@ export default class TwitterAdapter {
     // ToDo: refactor it
     constructor() {
         this.adapter.attachConfig(this.config);
+        this.starter = new Starter(this);
+        this.adapter.attachFeature(this.starter);
     }
 
     // ToDo: refactor it
     public attachFeature(feature: IFeature): void { // ToDo: automate two-way dependency handling(?)
+        this.starter.attachFeature(feature);
         this.adapter.attachFeature(feature);
     }
 
     // ToDo: refactor it
     public detachFeature(feature: IFeature): void {
+        this.starter.detachFeature(feature);
         this.adapter.detachFeature(feature);
     }
 }

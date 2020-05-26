@@ -20,6 +20,7 @@ export type T_TwitterFeatureConfig = {
     DM_SOUTH?: T_TwitterActionFactory[],
     PICTURE?: T_TwitterActionFactory[],
     BODY?: T_TwitterActionFactory[],
+    TWEET_STARTER?: T_TwitterActionFactory[]
 }
 
 export interface ITwitterAdapter extends IContentAdapter {  //ToDo: eliminate excessive interfaces and use ambient module instead
