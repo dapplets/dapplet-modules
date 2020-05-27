@@ -46,6 +46,34 @@ export default class TwitterAdapter {
                 insert: 'begin'
             }
         },
+        events: {
+            like: (node: any, ctx: any, emit: Function) => {
+                const likeBtn = node.querySelector('div.css-1dbjc4n.r-18u37iz.r-1wtj0ep.r-156q2ks.r-1mdbhws div[role=button][data-testid*="like"]');
+                likeBtn.addEventListener('click', () => {
+                    if (likeBtn.getAttribute('data-testid') === 'like') emit(ctx);
+                });
+            },
+            unlike: (node: any, ctx: any, emit: Function) => {
+                const likeBtn = node.querySelector('div.css-1dbjc4n.r-18u37iz.r-1wtj0ep.r-156q2ks.r-1mdbhws div[role=button][data-testid*="like"]');
+                likeBtn.addEventListener('click', () => {
+                    if (likeBtn.getAttribute('data-testid') === 'unlike') emit(ctx);
+                });
+            },
+            starter: (node: any, ctx: any, emit: Function) => {
+                node.parentNode.style.overflow = 'hidden';
+                const slideout = new Slideout({
+                    'panel': node,
+                    'menu': document.createElement('div'),
+                    'padding': 150,
+                    'tolerance': 70
+                });
+                slideout.on('open', () => {
+                    //this.starter.openStarter(ctx);
+                    emit(ctx);
+                    slideout.close();
+                });
+            }
+        },
         contextType: 'tweet', // create_tweet | destroy_tweet
         contextEvent: 'TWEET_EVENT',
         // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
@@ -58,28 +86,14 @@ export default class TwitterAdapter {
                 classList.add('r-1iusvr4');
                 classList.add('r-16y2uox');
             }
-            tweetNode.parentNode.style.overflow = 'hidden';
 
-            const ctx = {
+            return ({
                 id: tweetNode.querySelector('a time').parentNode.href.split('/').pop(),
                 text: tweetNode.querySelector('div[lang]')?.innerText,
                 authorFullname: tweetNode.querySelector('a:nth-child(1) div span span')?.innerText,
                 authorUsername: tweetNode.querySelector('div.css-901oao.css-bfa6kz.r-1re7ezh.r-18u37iz.r-1qd0xha.r-a023e6.r-16dba41.r-ad9z0x.r-bcqeeo.r-qvutc0 > span.css-901oao.css-16my406.r-1qd0xha.r-ad9z0x.r-bcqeeo.r-qvutc0')?.innerText.replace('@', ''),
                 authorImg: tweetNode.querySelector('div.css-1dbjc4n.r-1awozwy.r-18kxxzh.r-5f2r5o img')?.getAttribute('src')
-            };
-
-            const slideout = new Slideout({
-                'panel': tweetNode,
-                'menu': document.createElement('div'),
-                'padding': 150,
-                'tolerance': 70
             });
-            slideout.on('open', () => {
-                this.starter.openStarter(ctx);
-                slideout.close();
-            });
-
-            return ctx;
         }
     },
     {
