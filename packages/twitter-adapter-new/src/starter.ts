@@ -21,6 +21,7 @@ export default class Starter implements IFeature {
         const { button } = this.adapter.widgets;
         this.config = {
             TWEET_STARTER: [
+                // ToDo: think how to insert buttons without "virtual feature"
                 button({
                     "DEFAULT": {
                         img: ICON_DAPPLET,
