@@ -1,0 +1,10 @@
+{
+    "name": "dynamic-adapter.dapplet-base.eth",
+    "branch": "default",
+    "version": "0.3.8",
+    "type": "LIBRARY",
+    "title": "Dynamic Adapter",
+    "description": "Dynamic Adapter",
+    "author": "Dapplets Team",
+    "dist": "index.js"
+}
