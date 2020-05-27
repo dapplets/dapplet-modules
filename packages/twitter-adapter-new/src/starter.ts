@@ -15,28 +15,30 @@ export default class Starter implements IFeature {
     }[] = [];
     private _buttonId = 0;
 
+    private _overlay = Core.overlay({ url: chrome.extension.getURL('starter.html'), title: 'Identity Management' });
+
     constructor(public adapter: any) {
         const { button } = this.adapter.widgets;
-        const overlay = Core.overlay({ url: chrome.extension.getURL('starter.html'), title: 'Identity Management' });
-
         this.config = {
             TWEET_STARTER: [
                 button({
                     "DEFAULT": {
                         img: ICON_DAPPLET,
-                        exec: (ctx) => {
-                            overlay.sendAndListen('ctx', { ctx, buttons: this.widgets }, {
-                                'button_clicked': (op, { type, message }) => {
-                                    const id = message;
-                                    const button = this.widgets.find(b => b.id === id);
-                                    button?.exec?.(ctx);
-                                }
-                            })
-                        }
+                        exec: (ctx) => this.openStarter(ctx)
                     }
                 })
             ]
         };
+    }
+
+    public openStarter(ctx: any) {
+        this._overlay.sendAndListen('ctx', { ctx, buttons: this.widgets }, {
+            'button_clicked': (op, { type, message }) => {
+                const id = message;
+                const button = this.widgets.find(b => b.id === id);
+                button?.exec?.(ctx);
+            }
+        })
     }
 
     public activate() {

@@ -4,6 +4,7 @@ import { IButtonState, Button } from './button';
 import { IPictureState, Picture } from './picture';
 import { IBadgeState, Badge } from './badge';
 import Starter from './starter';
+import Slideout from 'slideout';
 
 @Injectable
 export default class TwitterAdapter {
@@ -57,13 +58,28 @@ export default class TwitterAdapter {
                 classList.add('r-1iusvr4');
                 classList.add('r-16y2uox');
             }
-            return {
+            tweetNode.parentNode.style.overflow = 'hidden';
+
+            const ctx = {
                 id: tweetNode.querySelector('a time').parentNode.href.split('/').pop(),
                 text: tweetNode.querySelector('div[lang]')?.innerText,
                 authorFullname: tweetNode.querySelector('a:nth-child(1) div span span')?.innerText,
                 authorUsername: tweetNode.querySelector('div.css-901oao.css-bfa6kz.r-1re7ezh.r-18u37iz.r-1qd0xha.r-a023e6.r-16dba41.r-ad9z0x.r-bcqeeo.r-qvutc0 > span.css-901oao.css-16my406.r-1qd0xha.r-ad9z0x.r-bcqeeo.r-qvutc0')?.innerText.replace('@', ''),
                 authorImg: tweetNode.querySelector('div.css-1dbjc4n.r-1awozwy.r-18kxxzh.r-5f2r5o img')?.getAttribute('src')
             };
+
+            const slideout = new Slideout({
+                'panel': tweetNode,
+                'menu': document.createElement('div'),
+                'padding': 150,
+                'tolerance': 70
+            });
+            slideout.on('open', () => {
+                this.starter.openStarter(ctx);
+                slideout.close();
+            });
+
+            return ctx;
         }
     },
     {

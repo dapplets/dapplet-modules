@@ -19,7 +19,11 @@
   "typings": "lib/index.d.ts",
   "devDependencies": {
     "@dapplets/dapplet-extension": "latest",
+    "@dapplets/dynamic-adapter": "^0.3.7",
     "@dapplets/twitter-adapter": "^0.3.7",
-    "@dapplets/dynamic-adapter": "^0.3.7"
+    "@types/slideout": "^0.1.19"
+  },
+  "dependencies": {
+    "slideout": "^1.0.1"
   }
 }
