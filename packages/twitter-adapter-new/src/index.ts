@@ -65,7 +65,8 @@ export default class TwitterAdapter {
                     'panel': node,
                     'menu': document.createElement('div'),
                     'padding': 150,
-                    'tolerance': 70
+                    'tolerance': 70,
+                    'side': 'right'
                 });
                 slideout.on('open', () => {
                     //this.starter.openStarter(ctx);
