@@ -7,7 +7,7 @@
     "description": "Feature adds tweets to Ethereum contract",
     "author": "Dapplets Team",
     "dist": "index.js",
-    "icon": "src/icon.png",
+    "icon": "icon.png",
     "dependencies": {
         "twitter-adapter.dapplet-base.eth": "0.3.7"
     }

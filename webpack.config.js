@@ -14,6 +14,9 @@ module.exports = function (dir) {
 
   const bundleName = manifest.dist || DEFAULT_BUNDLE_NAME;
 
+  const filesToCopy = [MANIFEST_NAME];
+  if (manifest.icon) filesToCopy.push('src/' + manifest.icon);
+
   return {
     entry: path.join(dir, "src/index.ts"),
     output: {
@@ -82,7 +85,7 @@ module.exports = function (dir) {
         }
         callback();
       }, ['watch-run']),
-      new CopyWebpackPlugin({ patterns: [MANIFEST_NAME] })
+      new CopyWebpackPlugin({ patterns: filesToCopy })
     ],
     //mode: "production",
     //devtool: "inline-source-map",
