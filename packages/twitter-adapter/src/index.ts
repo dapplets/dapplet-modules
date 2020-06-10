@@ -3,6 +3,7 @@ import { T_TwitterFeatureConfig, ITwitterAdapter, T_TwitterActionFactory, ITwitt
 
 @Injectable
 export default class implements IResolver {
+    // ToDo: unify interfaces of resolvers and adapters
     getBranch() {
         return (!!document.getElementById('react-root')) ? 'new' : 'legacy';
     }
