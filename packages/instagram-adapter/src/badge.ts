@@ -18,7 +18,7 @@ export interface IBadgeState {
 export class Badge implements IWidget<IBadgeState> {
     public el: HTMLElement;
     public state: IBadgeState;
-    insPointName: string;  // TWEET_USERNAME_BADGE | TWEET_AVATAR_BADGE
+    insPointName: string;  // POST_USERNAME_BADGE | POST_AVATAR_BADGE
 
     public mount() {
 
@@ -35,7 +35,7 @@ export class Badge implements IWidget<IBadgeState> {
             const imgTag: HTMLImageElement = this.el.firstChild as any;
 
             switch (this.insPointName) {
-                case 'TWEET_AVATAR_BADGE':
+                case 'POST_AVATAR_BADGE':
                     imgTag.src = img;
                     imgTag.style.width = '16px';
                     imgTag.style.height = '16px';
@@ -75,7 +75,7 @@ export class Badge implements IWidget<IBadgeState> {
                 this.el.style[this.state.horizontal] = '6px';
                 break;
 
-            case 'TWEET_AVATAR_BADGE':
+            case 'POST_AVATAR_BADGE':
                 this.el = document.createElement('div');
                 this.el.style.position = 'absolute';
                 this.el.style[this.state.vertical] = '-3px';

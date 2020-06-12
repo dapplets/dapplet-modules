@@ -12,7 +12,7 @@ export default class TwitterFeature implements IFeature {
     constructor() {
         const { picture } = this.adapter.widgets;
         this.config = {
-            PICTURE: [
+            POST_PICTURE: [
                 picture({
                     initial: 'DEFAULT',
                     DEFAULT: {

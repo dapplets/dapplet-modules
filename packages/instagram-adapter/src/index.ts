@@ -19,10 +19,10 @@ export default class TwitterAdapter {
         containerSelector: "main[role=main]",
         contextSelector: "article._8Rm4L.M9sTE.L_LMM.SgTZ1.ePUX4",
         insPoints: {
-            TWEET_SOUTH: {
+            POST_SOUTH: {
                 selector: "section.ltpMr.Slqrh > *:nth-last-child(2)"
             },
-            TWEET_AVATAR_BADGE: {
+            POST_AVATAR_BADGE: {
                 selector: "header canvas"
             }
         },
@@ -52,7 +52,8 @@ export default class TwitterAdapter {
         contextEvent: 'PROFILE_EVENT',
         contextBuilder: (h: any) => ({
             authorUsername: h.querySelector('h2')?.innerText,
-            authorImg: h.querySelector('div.RR-M- img')?.getAttribute('src')
+            authorFullname: h.querySelector('h2')?.innerText,
+            authorImg: h.querySelector('img.be6sR')?.getAttribute('src')
         })
     }];
 

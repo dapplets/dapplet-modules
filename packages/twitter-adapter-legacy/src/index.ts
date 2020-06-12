@@ -19,18 +19,18 @@ export default class TwitterAdapter {
         containerSelector: "#timeline",
         contextSelector: "[id^=stream-item-tweet-]",
         insPoints: {
-            TWEET_SOUTH: {
+            POST_SOUTH: {
                 selector: "div.js-actions > *:last-child"
             },
-            TWEET_COMBO: {
+            POST_COMBO: {
                 selector: "" //ToDo
             },
-            PICTURE: {
+            POST_PICTURE: {
                 selector: "div.js-tweet-text-container > *:last-child"
             }
         },
-        contextType: 'tweet', // create_tweet | destroy_tweet
-        contextEvent: 'TWEET_EVENT',
+        contextType: 'post', // create_tweet | destroy_tweet
+        contextEvent: 'POST_EVENT',
         contextBuilder: (tweetNode: any) => ({
             id: tweetNode.getAttribute('data-item-id'),
             text: tweetNode.querySelector('div.js-tweet-text-container').innerText,

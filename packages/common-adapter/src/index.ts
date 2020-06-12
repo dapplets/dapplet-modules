@@ -24,8 +24,8 @@ export default class CommonAdapter {
             BODY: { }
         },
         //ToDo: remove any twitter dependencies
-        contextType: 'tweet', // create_tweet | destroy_tweet
-        contextEvent: 'TWEET_EVENT',
+        contextType: 'post', // create_tweet | destroy_tweet
+        contextEvent: 'POST_EVENT',
         contextBuilder: (node: any) => ({
             
         }),

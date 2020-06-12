@@ -27,7 +27,7 @@ export class Button implements IWidget<IButtonState> {
             return;
         }
 
-        if (this.insPointName === 'TWEET_SOUTH') {
+        if (this.insPointName === 'POST_SOUTH') {
             const htmlString = `<div aria-haspopup="false" role="button" data-focusable="true" tabindex="0" class="css-18t94o4 css-1dbjc4n r-1777fci r-11cpok1 r-1ny4l3l r-bztko3 r-lrvibr">
                     <div dir="ltr" class="css-901oao r-1awozwy r-1re7ezh r-6koalj r-1qd0xha r-a023e6 r-16dba41 r-1h0z5md r-ad9z0x r-bcqeeo r-o7ynqc r-clp7b1 r-3s2u2q r-qvutc0">
                         <div class="css-1dbjc4n r-xoduu5">
@@ -60,7 +60,7 @@ export class Button implements IWidget<IButtonState> {
                 imgTag.style.left = '10px';
                 this.el.appendChild(imgTag);
             }
-        } else if (this.insPointName === 'TWEET_STARTER') {
+        } else if (this.insPointName === 'POST_STARTER') {
             const htmlString = `<div style="margin: 0 10px" aria-haspopup="true" aria-label="More" role="button" data-focusable="true" tabindex="0" class="css-18t94o4 css-1dbjc4n r-1777fci r-11cpok1 r-1ny4l3l r-bztko3 r-lrvibr" data-testid="caret">
                     <div dir="ltr" class="css-901oao r-1awozwy r-1re7ezh r-6koalj r-1qd0xha r-a023e6 r-16dba41 r-1h0z5md r-ad9z0x r-bcqeeo r-o7ynqc r-clp7b1 r-3s2u2q r-qvutc0">
                     <div class="css-1dbjc4n r-xoduu5">
@@ -83,7 +83,7 @@ export class Button implements IWidget<IButtonState> {
         styleTag.type = 'text/css';
         this.el = document.createElement('div');
 
-        if (this.insPointName === 'TWEET_SOUTH') {
+        if (this.insPointName === 'POST_SOUTH') {
             this.el.classList.add('css-1dbjc4n', 'r-1iusvr4', 'r-18u37iz', 'r-16y2uox', 'r-1h0z5md');
 
             styleTag.innerText = `

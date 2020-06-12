@@ -25,29 +25,29 @@ export default class TwitterAdapter {
         containerSelector: "main[role=main]",
         contextSelector: "article.css-1dbjc4n",
         insPoints: {
-            TWEET_SOUTH: {
+            POST_SOUTH: {
                 selector: "div[role=group] > *:last-child"
             },
-            TWEET_COMBO: {
+            POST_COMBO: {
                 selector: "" //ToDo
             },
-            PICTURE: {
+            POST_PICTURE: {
                 selector: "div[lang] > *:last-child"
             },
-            TWEET_AVATAR_BADGE: {
+            POST_AVATAR_BADGE: {
                 selector: "div.css-1dbjc4n.r-18kxxzh.r-1wbh5a2.r-13qz1uu > *:last-child"
             },
-            TWEET_USERNAME_BADGE: {
+            POST_USERNAME_BADGE: {
                 selector: "div.css-1dbjc4n.r-18u37iz.r-1wbh5a2.r-1f6r7vd > *:first-child",
                 insert: 'begin' // end
             },
-            TWEET_STARTER: {
+            POST_STARTER: {
                 selector: "div.css-1dbjc4n.r-18u37iz.r-1h0z5md.r-1joea0r > *:first-child",
                 insert: 'begin'
             }
         },
-        contextType: 'tweet', // create_tweet | destroy_tweet
-        contextEvent: 'TWEET_EVENT',
+        contextType: 'post', // create_tweet | destroy_tweet
+        contextEvent: 'POST_EVENT',
         // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
         contextBuilder: (tweetNode: any) => {
             // Adding of right margin to last twitter's native button

@@ -20,7 +20,7 @@ export default class Starter implements IFeature {
     constructor(public adapter: any) {
         const { button } = this.adapter.widgets;
         this.config = {
-            TWEET_STARTER: [
+            POST_STARTER: [
                 // ToDo: think how to insert buttons without "virtual feature"
                 button({
                     "DEFAULT": {
@@ -51,8 +51,8 @@ export default class Starter implements IFeature {
     }
 
     public attachFeature(feature: IFeature) {
-        this.widgets.push(...(feature.config.TWEET_STARTER || []).map(c => ({ ...c, feature, id: ++this._buttonId })));
-        delete feature.config.TWEET_STARTER;
+        this.widgets.push(...(feature.config.POST_STARTER || []).map(c => ({ ...c, feature, id: ++this._buttonId })));
+        delete feature.config.POST_STARTER;
     }
 
     public detachFeature(feature: IFeature) {

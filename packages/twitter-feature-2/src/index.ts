@@ -15,7 +15,7 @@ export default class TwitterFeature implements IFeature {
 
         const { button } = this.adapter.widgets;
         this.config = {
-            TWEET_STARTER: [ 
+            POST_STARTER: [ 
                 {
                     label: 'Add tweet to the Ethereum registry',
                     exec: (ctx, me) => {
@@ -23,7 +23,7 @@ export default class TwitterFeature implements IFeature {
                     }
                 }
             ],
-            TWEET_SOUTH: [
+            POST_SOUTH: [
                 button({
                     initial: "DEFAULT",
                     "DEFAULT": {
@@ -50,7 +50,7 @@ export default class TwitterFeature implements IFeature {
                     }
                 })
             ],
-            TWEET_COMBO: [],
+            POST_COMBO: [],
             DM_SOUTH: []
         }
     }
