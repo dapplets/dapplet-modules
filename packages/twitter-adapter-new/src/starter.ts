@@ -20,8 +20,14 @@ export default class Starter implements IFeature {
     constructor(public adapter: any) {
         const { button } = this.adapter.widgets;
         this.config = {
+            events: {
+                started: (ctx) => console.log('context started', ctx),
+                finished: (ctx) => console.log('context finished', ctx),
+                like: (ctx) => console.log('context like', ctx),
+                unlike: (ctx) => console.log('context unlike', ctx),
+                starter: (ctx) => this.openStarter(ctx)
+            },
             POST_STARTER: [
-                // ToDo: think how to insert buttons without "virtual feature"
                 button({
                     "DEFAULT": {
                         img: ICON_DAPPLET,

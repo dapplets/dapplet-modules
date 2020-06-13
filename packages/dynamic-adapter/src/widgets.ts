@@ -6,6 +6,7 @@ export class WidgetBuilder {
     containerSelector: string;
     contextSelector: string;
     insPoints: { [key: string]: any };
+    events: { [key: string]: (node: any, ctx: any, emitter: Function) => void };
     contextBuilder: (tweetNode: any) => any;
     observer: MutationObserver = null;
     widgets = new Map<IFeature, any[]>();
@@ -17,6 +18,10 @@ export class WidgetBuilder {
 
     constructor(widgetBuilderConfig: IWidgetBuilderConfig) {
         return Object.assign(this, widgetBuilderConfig);
+    }
+
+    public emitEvent(event: string, context: Context, args: any[]) {
+        context.features.forEach((value, feature) => feature.config?.events?.[event]?.(...args))
     }
 
     // `updateContexts()` is called when new context is found.
@@ -50,6 +55,9 @@ export class WidgetBuilder {
 
             if (isNew) {
                 this.contexts.set(contextNode, context);
+                for (const event in this.events) {
+                    this.events[event](contextNode, context.parsed, (...args) => this.emitEvent(event, context, args));
+                }
             }
 
             for (let i = 0; i < features.length; i++) {
@@ -75,6 +83,7 @@ export class WidgetBuilder {
         }
 
         Core.contextStarted(newParsedContexts.map((ctx) => ctx.parsed));
+        newParsedContexts.forEach(ctx => this.emitEvent('started', ctx, [ctx.parsed]));
         return newParsedContexts;
     }
 }

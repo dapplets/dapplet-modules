@@ -66,6 +66,7 @@ class DynamicAdapter implements IDynamicAdapter {
                     }))
                 if (removedContexts && removedContexts.length > 0) {
                     Core.contextFinished(removedContexts.map(c => c.parsed));
+                    removedContexts.forEach(ctx => contextBuilder.emitEvent('finished', ctx, [ctx.parsed]));
                 }
                 contextBuilder.updateContexts(this.features, container); // ToDo: think about it
             }
