@@ -1,0 +1,18 @@
+{
+  "name": "@dapplets/social-feature-1.dapplet-base.eth",
+  "version": "0.1.0",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "webpack --config webpack.dev.js",
+    "watch": "webpack -w --config webpack.dev.js",
+    "clean": "(if exist lib rd /q /s lib) & (if exist dist rd /q /s dist)"
+  },
+  "author": "Dapplets Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@dapplets/dapplet-extension": "latest",
+    "@dapplets/twitter-adapter": "^0.3.6"
+  },
+  "dependencies": {}
+}

@@ -55,7 +55,7 @@ export default class TwitterAdapter {
                     if (likeBtn.getAttribute('data-testid') === 'like') emit(ctx);
                 });
             },
-            unlike: (node: any, ctx: any, emit: Function) => {
+            dislike: (node: any, ctx: any, emit: Function) => {
                 const likeBtn = node.querySelector('div.css-1dbjc4n.r-18u37iz.r-1wtj0ep.r-156q2ks.r-1mdbhws div[role=button][data-testid*="like"]');
                 likeBtn.addEventListener('click', () => {
                     if (likeBtn.getAttribute('data-testid') === 'unlike') emit(ctx);

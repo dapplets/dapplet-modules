@@ -36,7 +36,7 @@ module.exports = function (dir) {
         use: "ts-loader"
       },
       {
-        test: /\.(png|jp(e*)g|svg)$/,
+        test: /\.(png|jp(e*)g|svg|html)$/,
         use: [{
           loader: 'url-loader',
           options: {
