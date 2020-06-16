@@ -1,7 +1,7 @@
 {
     "name": "social-feature-1.dapplet-base.eth",
     "branch": "default",
-    "version": "0.1.1",
+    "version": "0.1.0",
     "type": "FEATURE",
     "title": "Likes Interception",
     "description": "Interception of native events like and dislike",
