@@ -9,7 +9,7 @@
     "twitter-feature-2.dapplet-base.eth": ["twitter-adapter.dapplet-base.eth"],
     "twitter-feature-3.dapplet-base.eth": ["twitter.com/1153830517105713152"],
     "dapplets-org-feature-1.dapplet-base.eth": ["common-adapter.dapplet-base.eth"],
-    "social-feature-1.dapplet-base.eth": ["twitter-adapter.dapplet-base.eth"]
+    "social-feature-1.dapplet-base.eth": ["identity-adapter.dapplet-base.eth"]
   },
   "interfaces": {
     "instagram-adapter.dapplet-base.eth": ["identity-adapter.dapplet-base.eth"],

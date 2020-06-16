@@ -5,7 +5,7 @@ import OVERLAY_HTML from './overlay.html'
 @Injectable
 export default class TwitterFeature implements IFeature {
 
-    @Inject("twitter-adapter.dapplet-base.eth")
+    @Inject("identity-adapter.dapplet-base.eth")
     public adapter: ITwitterAdapter;
     public config: any;
 

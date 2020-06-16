@@ -9,6 +9,6 @@
     "dist": "index.js",
     "icon": "icon.png",
     "dependencies": {
-        "twitter-adapter.dapplet-base.eth": "0.4.0"
+        "identity-adapter.dapplet-base.eth": "0.1.0"
     }
 }
