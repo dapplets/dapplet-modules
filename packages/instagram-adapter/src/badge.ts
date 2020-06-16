@@ -21,10 +21,8 @@ export class Badge implements IWidget<IBadgeState> {
     insPointName: string;  // POST_USERNAME_BADGE | POST_AVATAR_BADGE
 
     public mount() {
-
         if (!this.el) this._createElement();
         const { img, vertical, horizontal, hidden } = this.state;
-
 
         if (!hidden) {
             if (!this.el.firstChild) {
@@ -46,15 +44,6 @@ export class Badge implements IWidget<IBadgeState> {
                     imgTag.style.width = '32px';
                     imgTag.style.height = '32px';
                     break;
-
-                case 'PROFILE_BUTTON_GROUP':
-                    imgTag.src = img;
-                    imgTag.style.width = '18px';
-                    imgTag.style.height = '18px';
-                    imgTag.style.position = 'relative';
-                    imgTag.style[vertical] = '9px';
-                    imgTag.style[horizontal] = '10px';
-                    break;
             }
 
         } else {
@@ -67,24 +56,23 @@ export class Badge implements IWidget<IBadgeState> {
     }
 
     private _createElement() {
+        const { img, vertical, horizontal, hidden } = this.state;
+
+        this.el = document.createElement('div');
         switch (this.insPointName) {
             case 'PROFILE_AVATAR_BADGE':
-                this.el = document.createElement('div');
+                this.el.style.cssText = '';
                 this.el.style.position = 'absolute';
-                this.el.style[this.state.vertical] = '6px';
-                this.el.style[this.state.horizontal] = '6px';
+                this.el.style[vertical] = '1px';
+                this.el.style[horizontal] = '1px';
                 break;
-
             case 'POST_AVATAR_BADGE':
-                this.el = document.createElement('div');
+                this.el.style.cssText = '';
                 this.el.style.position = 'absolute';
-                this.el.style[this.state.vertical] = '-3px';
-                this.el.style[this.state.horizontal] = '-3px';
-                this.el.style['zIndex'] = '1';
+                this.el.style.zIndex = '1';
+                this.el.style[vertical] = '-2px';
+                this.el.style[horizontal] = '-2px';
                 break;
-
-            default:
-                this.el = document.createElement('div');
         }
 
         this.mount();

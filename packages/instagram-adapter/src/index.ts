@@ -16,8 +16,8 @@ export default class TwitterAdapter {
     };
 
     public config = [{
-        containerSelector: "main[role=main]",
-        contextSelector: "article._8Rm4L.M9sTE.L_LMM.SgTZ1.ePUX4",
+        containerSelector: 'div[role="dialog"]',
+        contextSelector: "article",
         insPoints: {
             POST_SOUTH: {
                 selector: "section.ltpMr.Slqrh > *:nth-last-child(2)"
@@ -28,6 +28,22 @@ export default class TwitterAdapter {
         },
         contextType: 'post', // ToDo: remove it (deprecated)
         contextEvent: 'POST_EVENT', // ToDo: remove it (deprecated)
+        events: {
+            like: (node: any, ctx: any, emit: Function) => {
+                const likeBtn = node.querySelector('section.ltpMr.Slqrh svg[aria-label*="ike"]').parentElement.parentElement;
+                likeBtn.addEventListener('click', (e) => {
+                    console.log('likeBtn', likeBtn.querySelector('svg').getAttribute('aria-label'));
+                    if (likeBtn.querySelector('svg').getAttribute('aria-label') === 'Like') emit(ctx);
+                });
+            },
+            dislike: (node: any, ctx: any, emit: Function) => {
+                const likeBtn = node.querySelector('section.ltpMr.Slqrh svg[aria-label*="ike"]').parentElement.parentElement;
+                likeBtn.addEventListener('click', (e) => {
+                    console.log('likeBtn', likeBtn.querySelector('svg').getAttribute('aria-label'));
+                    if (likeBtn.querySelector('svg').getAttribute('aria-label') === 'Unlike') emit(ctx);
+                });
+            }
+        },
         contextBuilder: (p: any) => ({
             id: p.querySelector('div.eo2As a.c-Yi7')?.getAttribute('href').split('/')[2],
             authorUsername: p.querySelector('header a.sqdOP')?.innerText,
