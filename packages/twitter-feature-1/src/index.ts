@@ -12,14 +12,13 @@ const EVENTS_DEF = {
 @Injectable
 export default class TwitterFeature implements IFeature {
 
-    @Inject("twitter-adapter.dapplet-base.eth")
+    @Inject("twitter-adapter.dapplet-base.eth") // { optional: true }
     public adapter: ITwitterAdapter;
     public config: T_TwitterFeatureConfig;
 
     constructor() {
         const wallet = Core.wallet();
         const server = Core.connect<{ pm_num: string }>({ url: "wss://examples.dapplets.org/feature-1" });
-
         const { button, badge } = this.adapter.widgets;
         this.config = {
             POST_STARTER: [
@@ -77,13 +76,5 @@ export default class TwitterFeature implements IFeature {
             POST_COMBO: [],
             DM_SOUTH: []
         }
-    }
-
-    public activate() {
-        this.adapter.attachFeature(this);
-    }
-
-    public deactivate() {
-        this.adapter.detachFeature(this);
     }
 }

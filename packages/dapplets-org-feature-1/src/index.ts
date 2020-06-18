@@ -31,12 +31,4 @@ export default class Feature implements IFeature {
             ]
         }
     }
-
-    public activate() {
-        this.adapter.attachFeature(this);
-    }
-
-    public deactivate() {
-        this.adapter.detachFeature(this);
-    }
 }

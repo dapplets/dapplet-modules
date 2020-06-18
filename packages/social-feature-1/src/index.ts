@@ -20,12 +20,4 @@ export default class TwitterFeature implements IFeature {
             }
         };
     }
-
-    public activate() {
-        this.adapter.attachFeature(this);
-    }
-
-    public deactivate() {
-        this.adapter.detachFeature(this);
-    }
 }

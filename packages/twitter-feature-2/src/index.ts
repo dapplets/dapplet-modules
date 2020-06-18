@@ -54,12 +54,4 @@ export default class TwitterFeature implements IFeature {
             DM_SOUTH: []
         }
     }
-    
-    public activate() {
-        this.adapter.attachFeature(this);
-    }
-
-    public deactivate() {
-        this.adapter.detachFeature(this);
-    }
 }

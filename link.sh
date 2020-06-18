@@ -3,6 +3,18 @@ cd packages
 cd dynamic-adapter
 npm link @dapplets/dapplet-extension
 cd ..
+cd dapplets-org-feature-1
+npm link @dapplets/dapplet-extension
+cd ..
+cd instagram-adapter
+npm link @dapplets/dapplet-extension
+cd ..
+cd social-feature-1
+npm link @dapplets/dapplet-extension
+cd ..
+cd twitter-adapter
+npm link @dapplets/dapplet-extension
+cd ..
 cd twitter-adapter-new
 npm link @dapplets/dapplet-extension
 cd ..
