@@ -3,7 +3,7 @@ import { IFeature, IContentAdapter } from '@dapplets/dapplet-extension';
 import { IWidgetBuilderConfig, Context, IWidget } from './types';
 import { State } from './state';
 
-interface IDynamicAdapter extends IContentAdapter {
+interface IDynamicAdapter<IConfig> extends IContentAdapter<IConfig> {
     attachFeature(feature: IFeature): void;
     detachFeature(feature: IFeature): void;
     attachConfig(config: IWidgetBuilderConfig[]): void;
@@ -11,11 +11,15 @@ interface IDynamicAdapter extends IContentAdapter {
 }
 
 @Injectable
-class DynamicAdapter implements IDynamicAdapter {
+class DynamicAdapter<IConfig> implements IDynamicAdapter<IConfig> {
 
     private observer: MutationObserver = null;
     private features: IFeature[] = [];
     private contextBuilders: WidgetBuilder[] = [];
+
+    public addFeature(config: IConfig, feature: IFeature) {
+        
+    }
 
     public attachFeature(feature: IFeature): void { // ToDo: automate two-way dependency handling(?)
         if (this.features.find(f => f === feature)) return;
