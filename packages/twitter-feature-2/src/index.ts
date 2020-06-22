@@ -48,6 +48,22 @@ export default class TwitterFeature implements IFeature {
                         img: ETHEREUM_ICON,
                         exec: (ctx, me) => me.state = 'DEFAULT'
                     }
+                }),
+                button({
+                    initial: "DEFAULT",
+                    "DEFAULT": {
+                        img: ETHEREUM_ICON,
+                        label: "LOADING...",
+                        init: async (ctx, me) => {
+                            const counter = (await Core.storage.get(ctx.id)) ?? 0;
+                            me.label = counter;
+                        },
+                        exec: async (ctx, me) => {
+                            let counter = (await Core.storage.get(ctx.id)) ?? 0;
+                            await Core.storage.set(ctx.id, ++counter);
+                            me.label = counter;
+                        }
+                    }
                 })
             ],
             POST_COMBO: [],
