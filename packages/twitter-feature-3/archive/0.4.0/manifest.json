@@ -1,0 +1,14 @@
+{
+    "name": "twitter-feature-3.dapplet-base.eth",
+    "branch": "default",
+    "version": "0.4.0",
+    "type": "FEATURE",
+    "title": "Fake News Stamp",
+    "description": "Feature adds fake news stamp to tweets",
+    "author": "Dapplets Team",
+    "dist": "index.js",
+    "icon": "icon.png",
+    "dependencies": {
+        "twitter-adapter.dapplet-base.eth": "0.4.0"
+    }
+}

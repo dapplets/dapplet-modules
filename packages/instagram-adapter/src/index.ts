@@ -6,9 +6,6 @@ import { IBadgeState, Badge } from './badge';
 @Injectable
 export default class TwitterAdapter {
 
-    @Inject("dynamic-adapter.dapplet-base.eth")
-    private adapter: IDynamicAdapter;
-
     // ToDo: refactor it
     public widgets = {
         button: this.adapter.createWidgetFactory<IButtonState>(Button),
@@ -32,14 +29,12 @@ export default class TwitterAdapter {
             like: (node: any, ctx: any, emit: Function) => {
                 const likeBtn = node.querySelector('section.ltpMr.Slqrh svg[aria-label*="ike"]').parentElement.parentElement;
                 likeBtn.addEventListener('click', (e) => {
-                    console.log('likeBtn', likeBtn.querySelector('svg').getAttribute('aria-label'));
                     if (likeBtn.querySelector('svg').getAttribute('aria-label') === 'Like') emit(ctx);
                 });
             },
             dislike: (node: any, ctx: any, emit: Function) => {
                 const likeBtn = node.querySelector('section.ltpMr.Slqrh svg[aria-label*="ike"]').parentElement.parentElement;
                 likeBtn.addEventListener('click', (e) => {
-                    console.log('likeBtn', likeBtn.querySelector('svg').getAttribute('aria-label'));
                     if (likeBtn.querySelector('svg').getAttribute('aria-label') === 'Unlike') emit(ctx);
                 });
             }
@@ -73,18 +68,20 @@ export default class TwitterAdapter {
         })
     }];
 
-    // ToDo: refactor it
-    constructor() {
-        this.adapter.attachConfig(this.config);
+    constructor(
+        @Inject("dynamic-adapter.dapplet-base.eth")
+        private adapter: IDynamicAdapter
+    ) {
+        this.adapter.configure(this.config);
     }
 
     // ToDo: refactor it
-    public attachFeature(feature: IFeature): void { // ToDo: automate two-way dependency handling(?)
-        this.adapter.attachFeature(feature);
+    public attachConfig(feature: IFeature): void { // ToDo: automate two-way dependency handling(?)
+        this.adapter.attachConfig(feature);
     }
 
     // ToDo: refactor it
-    public detachFeature(feature: IFeature): void {
-        this.adapter.detachFeature(feature);
+    public detachConfig(feature: IFeature): void {
+        this.adapter.detachConfig(feature);
     }
 }

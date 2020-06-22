@@ -6,7 +6,7 @@
         "noImplicitAny": false,
         "removeComments": false,
         "noLib": false,
-        "emitDecoratorMetadata": true,
+        "emitDecoratorMetadata": false,
         "experimentalDecorators": true,
         "target": "es2017",
         "sourceMap": false,

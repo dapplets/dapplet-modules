@@ -1,6 +1,6 @@
 {
   "name": "@dapplets/twitter-adapter-new",
-  "version": "0.3.12",
+  "version": "0.5.0",
   "description": "",
   "scripts": {
     "build": "webpack --config webpack.dev.js",
@@ -19,8 +19,8 @@
   "typings": "lib/index.d.ts",
   "devDependencies": {
     "@dapplets/dapplet-extension": "latest",
-    "@dapplets/dynamic-adapter": "^0.3.7",
-    "@dapplets/twitter-adapter": "^0.3.7",
+    "@dapplets/dynamic-adapter": "^0.4.0",
+    "@dapplets/twitter-adapter": "^0.5.0",
     "@types/slideout": "^0.1.19"
   },
   "dependencies": {

@@ -1,0 +1,14 @@
+{
+    "name": "dapplets-org-feature-1.dapplet-base.eth",
+    "branch": "default",
+    "version": "0.1.3",
+    "type": "FEATURE",
+    "title": "Floating Button and Popup",
+    "description": "Feature using the common adapter",
+    "author": "Dapplets Project",
+    "dist": "index.js",
+    "icon": "icon.png",
+    "dependencies": {
+        "common-adapter.dapplet-base.eth": "0.1.3"
+    }
+}

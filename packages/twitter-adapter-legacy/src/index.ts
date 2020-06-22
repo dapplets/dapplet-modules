@@ -1,13 +1,11 @@
-import { IFeature } from '@dapplets/dapplet-extension';
+import { IContentAdapter } from '@dapplets/dapplet-extension';
 import { IDynamicAdapter } from '@dapplets/dynamic-adapter';
+import { T_TwitterFeatureConfig } from '@dapplets/twitter-adapter';
 import { IButtonState, Button } from './button';
 import { IPictureState, Picture } from './picture';
 
 @Injectable
-export default class TwitterAdapter {
-
-    @Inject("dynamic-adapter.dapplet-base.eth")
-    private adapter: IDynamicAdapter;
+export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureConfig> {
 
     // ToDo: refactor it
     public widgets = {
@@ -60,18 +58,20 @@ export default class TwitterAdapter {
         })
     }];
 
-    // ToDo: refactor it
-    constructor() {
-        this.adapter.attachConfig(this.config);
+    constructor(
+        @Inject("dynamic-adapter.dapplet-base.eth")
+        private adapter: IDynamicAdapter
+    ) {
+        this.adapter.configure(this.config);
     }
 
     // ToDo: refactor it
-    public attachFeature(feature: IFeature): void { // ToDo: automate two-way dependency handling(?)
-        this.adapter.attachFeature(feature);
+    public attachConfig(config: T_TwitterFeatureConfig): void { // ToDo: automate two-way dependency handling(?)
+        this.adapter.attachConfig(config);
     }
 
     // ToDo: refactor it
-    public detachFeature(feature: IFeature): void {
-        this.adapter.detachFeature(feature);
+    public detachConfig(config: T_TwitterFeatureConfig): void {
+        this.adapter.detachConfig(config);
     }
 }

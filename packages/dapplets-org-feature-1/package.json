@@ -1,6 +1,6 @@
 {
   "name": "@dapplets/dapplets-org-feature-1",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Description of new feature",
   "scripts": {
     "build": "webpack --config webpack.dev.js",
@@ -13,6 +13,6 @@
   "typings": "build/index.d.ts",
   "devDependencies": {
     "@dapplets/dapplet-extension": "latest",
-    "@dapplets/common-adapter": "^0.1.2"
+    "@dapplets/common-adapter": "^0.2.0"
   }
 }

@@ -11,7 +11,7 @@ export interface IWidgetBuilderConfig {
 
 export type Context = {
     parsed: any,
-    features: Map<IFeature, { connections: IConnection[], proxiedSubs: any }>
+    featureConfigs: Map<any, { connections: IConnection[], proxiedSubs: any }>
 };
 
 export interface IWidget<T> {

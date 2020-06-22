@@ -23,7 +23,7 @@ export type T_TwitterFeatureConfig = {
     POST_STARTER?: T_TwitterActionFactory[]
 }
 
-export interface ITwitterAdapter extends IContentAdapter {  //ToDo: eliminate excessive interfaces and use ambient module instead
+export interface ITwitterAdapter extends IContentAdapter<T_TwitterFeatureConfig> {  //ToDo: eliminate excessive interfaces and use ambient module instead
     widgets: { [key: string]: Function };
 }
 

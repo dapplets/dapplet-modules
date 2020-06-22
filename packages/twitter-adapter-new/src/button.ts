@@ -24,7 +24,10 @@ export class Button implements IWidget<IButtonState> {
 
         if (hidden) {
             this.el.innerHTML = '';
+            this.el.style.display = 'none';
             return;
+        } else {
+            this.el.style.removeProperty('display');
         }
 
         if (this.insPointName === 'POST_SOUTH') {

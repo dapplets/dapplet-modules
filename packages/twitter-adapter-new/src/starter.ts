@@ -3,7 +3,7 @@ import ICON_DAPPLET from './dapplet.png';
 
 declare var chrome;
 
-export default class Starter implements IFeature {
+export default class Starter {
     public config: any;
     public widgets: {
         id: string;
@@ -11,7 +11,7 @@ export default class Starter implements IFeature {
         label: string;
         order: number;
         exec: (ctx) => void;
-        feature: IFeature;
+        config: any;
     }[] = [];
     private _buttonId = 0;
 
@@ -32,6 +32,7 @@ export default class Starter implements IFeature {
                 })
             ]
         };
+        this.adapter.attachConfig(this.config);
     }
 
     public openStarter(ctx: any) {
@@ -44,20 +45,12 @@ export default class Starter implements IFeature {
         })
     }
 
-    public activate() {
-        this.adapter.attachFeature(this);
+    public attachConfig(config: any) {
+        this.widgets.push(...(config.POST_STARTER || []).map(c => ({ ...c, config, id: ++this._buttonId })));
+        delete config.POST_STARTER;
     }
 
-    public deactivate() {
-        this.adapter.detachFeature(this);
-    }
-
-    public attachFeature(feature: IFeature) {
-        this.widgets.push(...(feature.config.POST_STARTER || []).map(c => ({ ...c, feature, id: ++this._buttonId })));
-        delete feature.config.POST_STARTER;
-    }
-
-    public detachFeature(feature: IFeature) {
-        this.widgets = this.widgets.filter(w => w.feature !== feature);
+    public detachConfig(config: any) {
+        this.widgets = this.widgets.filter(w => w.config !== config);
     }
 }

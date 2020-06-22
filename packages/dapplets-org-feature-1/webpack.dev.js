@@ -3,5 +3,6 @@ const common = require("../../webpack.config.js");
 
 module.exports = merge(common(__dirname), {
   mode: "development",
-  devtool: "inline-source-map"
+  devtool: "inline-source-map",
+  //externals: ['@dapplets/common-adapter']
 });

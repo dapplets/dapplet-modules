@@ -2,17 +2,13 @@ import { IWidget } from '@dapplets/dynamic-adapter';
 import CLOSE_ICON from './close_cross.svg';
 
 export interface IPopupState {
-    //img: string;
-    //label: string;
-    //loading: boolean;
-    //disabled: boolean;
-    exec: (ctx: any, me: IPopupState) => void;
-    init: () => void;
-    ctx: any;
-    text: string;
-    link: string;
-    img: string;
-    closed: boolean;
+    exec?: (ctx: any, me: IPopupState) => void;
+    init?: () => void;
+    ctx?: any;
+    text?: string;
+    link?: string;
+    img?: string;
+    closed?: boolean;
 }
 
 export class Popup implements IWidget<IPopupState> {

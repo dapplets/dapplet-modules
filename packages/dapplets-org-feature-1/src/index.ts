@@ -1,17 +1,16 @@
 import { IFeature } from '@dapplets/dapplet-extension'
-//import { } from '@dapplets/common-adapter'
+import CommonAdapter from '@dapplets/common-adapter'
 import PICTURE from './picture.png';
 
 @Injectable
-export default class Feature implements IFeature {
+export default class Feature {
+    constructor(
+        @Inject("common-adapter.dapplet-base.eth")
+        adapter: CommonAdapter // ToDo: error of class CommonAdapter is included to bundle
+    ) {
+        const { button, popup } = adapter.widgets;
 
-    @Inject("common-adapter.dapplet-base.eth")
-    public adapter: any;
-    public config: any;
-
-    constructor() {
-        const { button, popup } = this.adapter.widgets;
-        this.config = {
+        adapter.attachConfig({
             BODY: [
                 button({
                     "DEFAULT": {
@@ -29,14 +28,6 @@ export default class Feature implements IFeature {
                     }
                 })
             ]
-        }
-    }
-
-    public activate() {
-        this.adapter.attachFeature(this);
-    }
-
-    public deactivate() {
-        this.adapter.detachFeature(this);
+        });
     }
 }

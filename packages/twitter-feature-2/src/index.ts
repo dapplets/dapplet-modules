@@ -3,13 +3,13 @@ import { T_TwitterFeatureConfig, ITwitterAdapter } from '@dapplets/twitter-adapt
 import ETHEREUM_ICON from './ethereum.png'
 
 @Injectable
-export default class TwitterFeature implements IFeature {
-
-    @Inject("twitter-adapter.dapplet-base.eth")
-    public adapter: ITwitterAdapter;
+export default class TwitterFeature {
     public config: T_TwitterFeatureConfig;
 
-    constructor() {
+    constructor(
+        @Inject("twitter-adapter.dapplet-base.eth")
+        public adapter: ITwitterAdapter
+    ) {
         const wallet = Core.wallet();
         const server = Core.connect<{ like_num: string }>({ url: "wss://examples.dapplets.org/feature-2" });
 
@@ -69,13 +69,7 @@ export default class TwitterFeature implements IFeature {
             POST_COMBO: [],
             DM_SOUTH: []
         }
-    }
-    
-    public async activate() {
-        this.adapter.attachFeature(this);
-    }
 
-    public deactivate() {
-        this.adapter.detachFeature(this);
+        this.adapter.attachConfig(this.config);
     }
 }

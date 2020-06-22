@@ -1,15 +1,15 @@
 import { IFeature } from '@dapplets/dapplet-extension'
-import { T_TwitterFeatureConfig, ITwitterAdapter } from '@dapplets/twitter-adapter'
+import { ITwitterAdapter } from '@dapplets/twitter-adapter'
 import OVERLAY_HTML from './overlay.html'
 
 @Injectable
-export default class TwitterFeature implements IFeature {
+export default class TwitterFeature { // implements IFeature
+    private config: any;
 
-    @Inject("identity-adapter.dapplet-base.eth")
-    public adapter: ITwitterAdapter;
-    public config: any;
-
-    constructor() {
+    constructor(
+        @Inject("identity-adapter.dapplet-base.eth")
+        public adapter: ITwitterAdapter
+    ) {
         const overlay = Core.overlay({ url: OVERLAY_HTML, title: 'Likes' });
         this.config = {
             events: {
@@ -19,13 +19,7 @@ export default class TwitterFeature implements IFeature {
                 dislike: (ctx) => (overlay.send('dislike', ctx), console.log('dislike', ctx))
             }
         };
-    }
 
-    public activate() {
-        this.adapter.attachFeature(this);
-    }
-
-    public deactivate() {
-        this.adapter.detachFeature(this);
+        this.adapter.attachConfig(this.config);
     }
 }

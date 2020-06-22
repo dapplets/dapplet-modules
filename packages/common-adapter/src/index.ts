@@ -1,16 +1,23 @@
-import { IFeature } from '@dapplets/dapplet-extension';
+import { IFeature, IContentAdapter} from '@dapplets/dapplet-extension';
 import { IDynamicAdapter } from '@dapplets/dynamic-adapter';
 import { IButtonState, Button } from './button';
 import { IPopupState, Popup } from './popup';
 
+interface ICommonAdapterConfig {
+    events?: { [event: string]: Function },
+    BODY?: any[]
+}
 
 @Injectable
-export default class CommonAdapter {
+export default class CommonAdapter implements IContentAdapter<ICommonAdapterConfig> {
 
-    //ToDo: should we really have a dep to DynamicAdapter ?
-    @Inject("dynamic-adapter.dapplet-base.eth")
-    private adapter: IDynamicAdapter;
-
+    constructor(
+        @Inject("dynamic-adapter.dapplet-base.eth")
+        private adapter: IDynamicAdapter
+    ) {
+        this.adapter.configure(this.config);
+    }
+ 
     // ToDo: refactor it
     public widgets = {
         button: this.adapter.createWidgetFactory<IButtonState>(Button),
@@ -32,18 +39,13 @@ export default class CommonAdapter {
     }];
 
     // ToDo: refactor it
-    constructor() {
-        this.adapter.attachConfig(this.config);
+    public attachConfig(config: ICommonAdapterConfig): void { // ToDo: automate two-way dependency handling(?)
+        this.adapter.attachConfig(config);
     }
 
     // ToDo: refactor it
-    public attachFeature(feature: IFeature): void { // ToDo: automate two-way dependency handling(?)
-        this.adapter.attachFeature(feature);
-    }
-
-    // ToDo: refactor it
-    public detachFeature(feature: IFeature): void {
-        this.adapter.detachFeature(feature);
+    public detachConfig(feature: ICommonAdapterConfig): void {
+        this.adapter.detachConfig(feature);
     }
 }
  

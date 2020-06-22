@@ -1,6 +1,6 @@
 {
   "name": "@dapplets/instagram-adapter",
-  "version": "0.1.1",
+  "version": "0.3.0",
   "description": "",
   "scripts": {
     "build": "webpack --config webpack.dev.js",
@@ -19,6 +19,6 @@
   "typings": "lib/index.d.ts",
   "devDependencies": {
     "@dapplets/dapplet-extension": "latest",
-    "@dapplets/dynamic-adapter": "^0.3.6"
+    "@dapplets/dynamic-adapter": "^0.4.0"
   }
 }

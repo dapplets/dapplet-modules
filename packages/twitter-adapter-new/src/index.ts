@@ -1,5 +1,6 @@
-import { IFeature } from '@dapplets/dapplet-extension';
+import { IContentAdapter } from '@dapplets/dapplet-extension';
 import { IDynamicAdapter } from '@dapplets/dynamic-adapter';
+import { T_TwitterFeatureConfig } from '@dapplets/twitter-adapter';
 import { IButtonState, Button } from './button';
 import { IPictureState, Picture } from './picture';
 import { IBadgeState, Badge } from './badge';
@@ -7,10 +8,8 @@ import Starter from './starter';
 import Slideout from 'slideout';
 
 @Injectable
-export default class TwitterAdapter {
+export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureConfig> {
 
-    @Inject("dynamic-adapter.dapplet-base.eth")
-    private adapter: IDynamicAdapter;
     private starter: Starter;
 
     // ToDo: refactor it
@@ -165,22 +164,24 @@ export default class TwitterAdapter {
         }
     }];
 
-    // ToDo: refactor it
-    constructor() {
-        this.adapter.attachConfig(this.config);
-        this.starter = new Starter(this);
-        this.adapter.attachFeature(this.starter);
+    constructor(
+        @Inject("dynamic-adapter.dapplet-base.eth")
+        private adapter: IDynamicAdapter
+    ) {
+        this.adapter.configure(this.config);
     }
 
     // ToDo: refactor it
-    public attachFeature(feature: IFeature): void { // ToDo: automate two-way dependency handling(?)
-        this.starter.attachFeature(feature);
-        this.adapter.attachFeature(feature);
+    public attachConfig(config: T_TwitterFeatureConfig): void { // ToDo: automate two-way dependency handling(?)
+        //if (!this.starter) this.starter = new Starter(this);
+        //this.starter.attachConfig(config);
+        delete config.POST_STARTER;
+        this.adapter.attachConfig(config);
     }
 
     // ToDo: refactor it
-    public detachFeature(feature: IFeature): void {
-        this.starter.detachFeature(feature);
-        this.adapter.detachFeature(feature);
+    public detachConfig(config: T_TwitterFeatureConfig): void {
+        //this.starter.detachConfig(config);
+        this.adapter.detachConfig(config);
     }
 }

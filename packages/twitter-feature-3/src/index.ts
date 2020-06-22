@@ -3,13 +3,13 @@ import { T_TwitterFeatureConfig, ITwitterAdapter } from '@dapplets/twitter-adapt
 import FAKESTAMP_PIC from './fakeStamp.png'
 
 @Injectable
-export default class TwitterFeature implements IFeature {
-
-    @Inject("twitter-adapter.dapplet-base.eth")
-    public adapter: ITwitterAdapter;
+export default class TwitterFeature {
     public config: T_TwitterFeatureConfig;
 
-    constructor() {
+    constructor(
+        @Inject("twitter-adapter.dapplet-base.eth")
+        public adapter: ITwitterAdapter
+    ) {
         const { picture } = this.adapter.widgets;
         this.config = {
             POST_PICTURE: [
@@ -21,13 +21,7 @@ export default class TwitterFeature implements IFeature {
                 })
             ]
         };
-    }
 
-    public activate() {
-        this.adapter.attachFeature(this);
-    }
-
-    public deactivate() {
-        this.adapter.detachFeature(this);
+        this.adapter.attachConfig(this.config);
     }
 }
