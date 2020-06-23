@@ -166,22 +166,21 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
 
     constructor(
         @Inject("dynamic-adapter.dapplet-base.eth")
-        private adapter: IDynamicAdapter
+        readonly adapter: IDynamicAdapter
     ) {
         this.adapter.configure(this.config);
+        this.starter = new Starter(this);
     }
 
     // ToDo: refactor it
     public attachConfig(config: T_TwitterFeatureConfig): void { // ToDo: automate two-way dependency handling(?)
-        //if (!this.starter) this.starter = new Starter(this);
-        //this.starter.attachConfig(config);
-        delete config.POST_STARTER;
+        this.starter.attachConfig(config);
         this.adapter.attachConfig(config);
     }
 
     // ToDo: refactor it
     public detachConfig(config: T_TwitterFeatureConfig): void {
-        //this.starter.detachConfig(config);
+        this.starter.detachConfig(config);
         this.adapter.detachConfig(config);
     }
 }

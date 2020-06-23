@@ -1,15 +1,15 @@
 import { IWidget } from '@dapplets/dynamic-adapter';
 
 export interface IButtonState {
-    img: string;
-    label: string;
-    loading: boolean;
-    disabled: boolean;
-    hidden: boolean;
-    exec: (ctx: any, me: IButtonState) => void;
-    init: (ctx: any, me: IButtonState) => void;
-    ctx: any;
-    insPointName: string;
+    img?: string;
+    label?: string;
+    loading?: boolean;
+    disabled?: boolean;
+    hidden?: boolean;
+    exec?: (ctx: any, me: IButtonState) => void;
+    init?: (ctx: any, me: IButtonState) => void;
+    ctx?: any;
+    insPointName?: string;
 }
 
 export class Button implements IWidget<IButtonState> {
