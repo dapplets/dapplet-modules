@@ -1,7 +1,7 @@
 {
-  "name": "@dapplets/identity-adapter",
+  "name": "identity-adapter.dapplet-base.eth",
   "version": "0.2.0",
-  "description": "",
+  "description": "Identity interface for social networks",
   "scripts": {
     "build": "webpack --config webpack.dev.js",
     "watch": "webpack -w --config webpack.dev.js",
@@ -15,6 +15,11 @@
   "files": [
     "lib"
   ],
-  "main": "./lib/index.js",
-  "typings": "./lib/index.d.ts"
+  "main": "./build/index.js",
+  "typings": "./lib/index.d.ts",
+  "dapplets": {
+    "name": "identity-adapter.dapplet-base.eth",
+    "branch": "default",
+    "type": "INTERFACE"
+  }
 }

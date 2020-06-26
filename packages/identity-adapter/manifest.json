@@ -1,7 +1,0 @@
-{
-    "name": "identity-adapter.dapplet-base.eth",
-    "branch": "default",
-    "version": "0.2.0",
-    "type": "INTERFACE",
-    "description": "Identity interface for social networks"
-}

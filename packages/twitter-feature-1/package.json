@@ -1,8 +1,8 @@
 {
-  "name": "@dapplets/twitter-feature-1",
+  "name": "twitter-feature-1.dapplet-base.eth",
   "version": "0.4.1",
-  "description": "",
-  "main": "lib/index.js",
+  "description": "Fake news tracking for Twitter",
+  "main": "build/index.js",
   "scripts": {
     "build": "webpack --config webpack.dev.js",
     "watch": "webpack -w --config webpack.dev.js",
@@ -12,6 +12,15 @@
   "license": "MIT",
   "devDependencies": {
     "@dapplets/dapplet-extension": "latest",
-    "@dapplets/twitter-adapter": "^0.5.0"
+    "twitter-adapter.dapplet-base.eth": "^0.5.0"
+  },
+  "dapplets": {
+    "branch": "default",
+    "type": "FEATURE",
+    "title": "GNOSIS",
+    "icon": "src/icon.png",
+    "dependencies": {
+      "twitter-adapter.dapplet-base.eth": "0.5.0"
+    }
   }
 }

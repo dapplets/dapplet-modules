@@ -1,8 +1,8 @@
 {
-  "name": "@dapplets/twitter-feature-3",
+  "name": "twitter-feature-3.dapplet-base.eth",
   "version": "0.4.1",
-  "description": "",
-  "main": "lib/index.js",
+  "description": "Feature adds fake news stamp to tweets",
+  "main": "build/index.js",
   "scripts": {
     "build": "webpack --config webpack.dev.js",
     "watch": "webpack -w --config webpack.dev.js",
@@ -12,7 +12,16 @@
   "license": "MIT",
   "devDependencies": {
     "@dapplets/dapplet-extension": "latest",
-    "@dapplets/twitter-adapter": "^0.5.0"
+    "twitter-adapter.dapplet-base.eth": "^0.5.0"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "dapplets": {
+    "branch": "default",
+    "type": "FEATURE",
+    "title": "Fake News Stamp",
+    "icon": "src/icon.png",
+    "dependencies": {
+      "twitter-adapter.dapplet-base.eth": "0.5.0"
+    }
+  }
 }

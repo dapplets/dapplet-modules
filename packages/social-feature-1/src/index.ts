@@ -1,5 +1,5 @@
 import { IFeature } from '@dapplets/dapplet-extension'
-import { ITwitterAdapter } from '@dapplets/twitter-adapter'
+import { ITwitterAdapter } from 'twitter-adapter.dapplet-base.eth'
 import OVERLAY_HTML from './overlay.html'
 
 @Injectable

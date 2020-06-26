@@ -1,8 +1,8 @@
 {
-  "name": "@dapplets/social-feature-1.dapplet-base.eth",
-  "version": "0.1.0",
-  "description": "",
-  "main": "lib/index.js",
+  "name": "social-feature-1.dapplet-base.eth",
+  "version": "0.1.1",
+  "description": "Interception of native events like and dislike",
+  "main": "build/index.js",
   "scripts": {
     "build": "webpack --config webpack.dev.js",
     "watch": "webpack -w --config webpack.dev.js",
@@ -12,7 +12,16 @@
   "license": "MIT",
   "devDependencies": {
     "@dapplets/dapplet-extension": "latest",
-    "@dapplets/twitter-adapter": "^0.5.0"
+    "twitter-adapter.dapplet-base.eth": "^0.5.0"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "dapplets": {
+    "branch": "default",
+    "type": "FEATURE",
+    "title": "Likes Interception",
+    "icon": "src/icon.png",
+    "dependencies": {
+      "identity-adapter.dapplet-base.eth": "0.2.0"
+    }
+  }
 }

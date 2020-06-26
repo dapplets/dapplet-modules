@@ -1,6 +1,6 @@
 import { IContentAdapter } from '@dapplets/dapplet-extension';
-import { IDynamicAdapter } from '@dapplets/dynamic-adapter';
-import { T_TwitterFeatureConfig } from '@dapplets/twitter-adapter';
+import { IDynamicAdapter } from 'dynamic-adapter.dapplet-base.eth';
+import { T_TwitterFeatureConfig } from 'twitter-adapter.dapplet-base.eth';
 import { IButtonState, Button } from './button';
 import { IPictureState, Picture } from './picture';
 import { IBadgeState, Badge } from './badge';

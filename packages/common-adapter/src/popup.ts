@@ -1,4 +1,4 @@
-import { IWidget } from '@dapplets/dynamic-adapter';
+import { IWidget } from 'dynamic-adapter.dapplet-base.eth';
 import CLOSE_ICON from './close_cross.svg';
 
 export interface IPopupState {

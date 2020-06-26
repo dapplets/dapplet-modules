@@ -1,7 +1,7 @@
 {
-  "name": "@dapplets/dynamic-adapter",
+  "name": "dynamic-adapter.dapplet-base.eth",
   "version": "0.4.0",
-  "description": "",
+  "description": "Dynamic Adapter",
   "scripts": {
     "build": "webpack --config webpack.dev.js",
     "watch": "webpack -w --config webpack.dev.js",
@@ -19,5 +19,10 @@
   "typings": "build/index.d.ts",
   "devDependencies": {
     "@dapplets/dapplet-extension": "latest"
+  },
+  "dapplets": {
+    "branch": "default",
+    "type": "LIBRARY",
+    "title": "Dynamic Adapter"
   }
 }

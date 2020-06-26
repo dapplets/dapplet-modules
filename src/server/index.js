@@ -176,24 +176,23 @@ app.get('/index.json', function (req, res) {
 
         const packages = fs.readdirSync(packagesPath);
         for (const package of packages) {
-            const manifest = fs.readFileSync(packagesPath + '/' + package + '/manifest.json', 'utf8');
-            let {
-                name,
-                branch,
-                version
-            } = JSON.parse(manifest);
+            const manifestJson = fs.readFileSync(packagesPath + '/' + package + '/package.json', 'utf8');
+            const manifest = JSON.parse(manifestJson);
+            let name = manifest.dapplets.name || manifest.name;
+            let branch = manifest.dapplets.branch;
+            let version = manifest.version;
             if (!branch) branch = "default";
             if (!config[scriptsPath][name]) config[scriptsPath][name] = {};
             if (!config[scriptsPath][name][branch]) config[scriptsPath][name][branch] = {};
 
-            if (fs.existsSync(packagesPath + '/' + package + '/archive')) {
-                const versions = fs.readdirSync(packagesPath + '/' + package + '/archive');
-                for (const version of versions) {
-                    config[scriptsPath][name][branch][version] = `packages/${package}/archive/${version}/manifest.json`;
-                }
-            }
+            // if (fs.existsSync(packagesPath + '/' + package + '/archive')) {
+            //     const versions = fs.readdirSync(packagesPath + '/' + package + '/archive');
+            //     for (const version of versions) {
+            //         config[scriptsPath][name][branch][version] = `packages/${package}/archive/${version}/manifest.json`;
+            //     }
+            // }
 
-            config[scriptsPath][name][branch][version] = `packages/${package}/build/manifest.json`;
+            config[scriptsPath][name][branch][version] = `packages/${package}/package.json`;
         }
 
         res.setHeader('Content-Type', 'application/json');

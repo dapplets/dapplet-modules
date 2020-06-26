@@ -1,7 +1,7 @@
 {
-  "name": "@dapplets/twitter-adapter-legacy",
+  "name": "legacy.twitter-adapter.dapplet-base.eth",
   "version": "0.5.0",
-  "description": "",
+  "description": "Adapter for twitter.com",
   "scripts": {
     "build": "webpack --config webpack.dev.js",
     "watch": "webpack -w --config webpack.dev.js",
@@ -15,11 +15,23 @@
   "files": [
     "lib"
   ],
-  "main": "lib/index.js",
+  "main": "build/index.js",
   "typings": "lib/index.d.ts",
   "devDependencies": {
     "@dapplets/dapplet-extension": "latest",
-    "@dapplets/twitter-adapter": "^0.5.0",
-    "@dapplets/dynamic-adapter": "^0.4.0"
+    "twitter-adapter.dapplet-base.eth": "^0.5.0",
+    "dynamic-adapter.dapplet-base.eth": "^0.4.0"
+  },
+  "dapplets": {
+    "name": "twitter-adapter.dapplet-base.eth",
+    "branch": "legacy",
+    "type": "ADAPTER",
+    "title": "TwitterAdapter",
+    "dependencies": {
+      "dynamic-adapter.dapplet-base.eth": "0.4.0"
+    },
+    "interfaces": {
+      "identity-adapter.dapplet-base.eth": "0.2.0"
+    }
   }
 }

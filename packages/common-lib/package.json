@@ -1,8 +1,9 @@
 {
-  "name": "@dapplets/common-lib",
-  "version": "0.3.1",
-  "description": "",
-  "main": "index.js",
+  "name": "common-lib.dapplet-base.eth",
+  "version": "0.3.3",
+  "description": "CommonLib for twitter.com",
+  "main": "build/index.js",
+  "typings": "build/index.d.ts",
   "scripts": {
     "build": "webpack --config webpack.dev.js",
     "watch": "webpack -w --config webpack.dev.js",
@@ -12,5 +13,10 @@
   "license": "MIT",
   "devDependencies": {
     "@dapplets/dapplet-extension": "^0.1.6"
+  },
+  "dapplets": {
+    "branch": "default",
+    "type": "LIBRARY",
+    "title": "CommonLib"
   }
 }

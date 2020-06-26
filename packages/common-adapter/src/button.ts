@@ -1,4 +1,4 @@
-import { IWidget } from '@dapplets/dynamic-adapter';
+import { IWidget } from 'dynamic-adapter.dapplet-base.eth';
 
 export interface IButtonState {
     img?: string;

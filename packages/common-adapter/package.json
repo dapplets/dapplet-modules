@@ -1,7 +1,7 @@
 {
-  "name": "@dapplets/common-adapter",
+  "name": "common-adapter.dapplet-base.eth",
   "version": "0.2.0",
-  "description": "Description of new feature",
+  "description": "Generic adapter for all sites",
   "scripts": {
     "build": "webpack --config webpack.dev.js",
     "watch": "webpack -w --config webpack.dev.js",
@@ -13,6 +13,14 @@
   "typings": "build/index.d.ts",
   "devDependencies": {
     "@dapplets/dapplet-extension": "latest",
-    "@dapplets/dynamic-adapter": "^0.4.0"
+    "dynamic-adapter.dapplet-base.eth": "^0.4.0"
+  },
+  "dapplets": {
+    "branch": "default",
+    "type": "ADAPTER",
+    "title": "Common Adapter",
+    "dependencies": {
+      "dynamic-adapter.dapplet-base.eth": "0.4.0"
+    }
   }
 }

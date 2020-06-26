@@ -1,5 +1,5 @@
 import { IFeature, IContentAdapter} from '@dapplets/dapplet-extension';
-import { IDynamicAdapter } from '@dapplets/dynamic-adapter';
+import { IDynamicAdapter } from 'dynamic-adapter.dapplet-base.eth';
 import { IButtonState, Button } from './button';
 import { IPopupState, Popup } from './popup';
 

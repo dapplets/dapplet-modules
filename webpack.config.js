@@ -2,26 +2,27 @@ const fs = require('fs');
 const path = require("path");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const WebpackBeforeBuildPlugin = require('before-build-webpack');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const DEFAULT_BUNDLE_NAME = "index.js";
 const BUILD_DIRECTORY = "build";
 const ARCHIVE_DIRECTORY = "archive";
-const MANIFEST_NAME = "manifest.json";
+const MANIFEST_NAME = "package.json";
 
 module.exports = function (dir) {
   const json = fs.readFileSync(path.join(dir, MANIFEST_NAME), "utf8");
   const manifest = JSON.parse(json);
 
-  const bundleName = manifest.dist || DEFAULT_BUNDLE_NAME;
+  const bundleName = manifest.main || DEFAULT_BUNDLE_NAME;
 
   const filesToCopy = [MANIFEST_NAME];
-  if (manifest.icon) filesToCopy.push('src/' + manifest.icon);
+  //if (manifest.icon) filesToCopy.push('src/' + manifest.icon);
 
   return {
     entry: path.join(dir, "src/index.ts"),
     output: {
       path: path.join(dir, BUILD_DIRECTORY),
-      filename: bundleName,
+      filename: 'index.js',
       libraryTarget: 'umd',
       umdNamedDefine: true,
       globalObject: 'this'
@@ -47,45 +48,46 @@ module.exports = function (dir) {
       ]
     },
     plugins: [
-      new WebpackBeforeBuildPlugin(function (stats, callback) {
-        // Archiving previous bundles
-        if (fs.existsSync(path.join(dir, BUILD_DIRECTORY)) &&
-          fs.existsSync(path.join(dir, BUILD_DIRECTORY, MANIFEST_NAME))) {
+      // new WebpackBeforeBuildPlugin(function (stats, callback) {
+      //   // Archiving previous bundles
+      //   if (fs.existsSync(path.join(dir, BUILD_DIRECTORY)) &&
+      //     fs.existsSync(path.join(dir, BUILD_DIRECTORY, MANIFEST_NAME))) {
 
-          const currentJson = fs.readFileSync(path.join(dir, MANIFEST_NAME), "utf8");
-          const currentManifest = JSON.parse(currentJson);
+      //     const currentJson = fs.readFileSync(path.join(dir, MANIFEST_NAME), "utf8");
+      //     const currentManifest = JSON.parse(currentJson);
 
-          const previousJson = fs.readFileSync(path.join(dir, BUILD_DIRECTORY, MANIFEST_NAME), "utf8");
-          const previousManifest = JSON.parse(previousJson);
+      //     const previousJson = fs.readFileSync(path.join(dir, BUILD_DIRECTORY, MANIFEST_NAME), "utf8");
+      //     const previousManifest = JSON.parse(previousJson);
 
-          if (previousManifest.version !== currentManifest.version &&
-            fs.existsSync(path.join(dir, BUILD_DIRECTORY, previousManifest.dist || DEFAULT_BUNDLE_NAME))) {
+      //     if (previousManifest.version !== currentManifest.version &&
+      //       fs.existsSync(path.join(dir, BUILD_DIRECTORY, previousManifest.main || DEFAULT_BUNDLE_NAME))) {
 
-            if (!fs.existsSync(path.join(dir, ARCHIVE_DIRECTORY)))
-              fs.mkdirSync(path.join(dir, ARCHIVE_DIRECTORY));
+      //       if (!fs.existsSync(path.join(dir, ARCHIVE_DIRECTORY)))
+      //         fs.mkdirSync(path.join(dir, ARCHIVE_DIRECTORY));
 
-            if (!fs.existsSync(path.join(dir, ARCHIVE_DIRECTORY, previousManifest.version))) {
-              fs.mkdirSync(path.join(dir, ARCHIVE_DIRECTORY, previousManifest.version));
+      //       if (!fs.existsSync(path.join(dir, ARCHIVE_DIRECTORY, previousManifest.version))) {
+      //         fs.mkdirSync(path.join(dir, ARCHIVE_DIRECTORY, previousManifest.version));
 
-              fs.copyFileSync(
-                path.join(dir, BUILD_DIRECTORY, MANIFEST_NAME),
-                path.join(dir, ARCHIVE_DIRECTORY, previousManifest.version, MANIFEST_NAME)
-              );
+      //         fs.copyFileSync(
+      //           path.join(dir, BUILD_DIRECTORY, MANIFEST_NAME),
+      //           path.join(dir, ARCHIVE_DIRECTORY, previousManifest.version, MANIFEST_NAME)
+      //         );
 
-              fs.copyFileSync(
-                path.join(dir, BUILD_DIRECTORY, previousManifest.dist || DEFAULT_BUNDLE_NAME),
-                path.join(dir, ARCHIVE_DIRECTORY, previousManifest.version, previousManifest.dist || DEFAULT_BUNDLE_NAME)
-              );
+      //         fs.copyFileSync(
+      //           path.join(dir, BUILD_DIRECTORY, previousManifest.main || DEFAULT_BUNDLE_NAME),
+      //           path.join(dir, ARCHIVE_DIRECTORY, previousManifest.version, previousManifest.main || DEFAULT_BUNDLE_NAME)
+      //         );
 
-              console.log(`Version ${previousManifest.version} has been archived.`);
-            } else {
-              console.log(`Skipping archiving... The archive of ${previousManifest.version} version exists already.`);
-            }
-          }
-        }
-        callback();
-      }, ['watch-run']),
-      new CopyWebpackPlugin({ patterns: filesToCopy })
+      //         console.log(`Version ${previousManifest.version} has been archived.`);
+      //       } else {
+      //         console.log(`Skipping archiving... The archive of ${previousManifest.version} version exists already.`);
+      //       }
+      //     }
+      //   }
+      //   callback();
+      // }, ['watch-run']),
+      new CleanWebpackPlugin(),
+      //new CopyWebpackPlugin({ patterns: filesToCopy })
     ],
     //mode: "production",
     //devtool: "inline-source-map",

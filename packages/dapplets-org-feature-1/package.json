@@ -1,7 +1,7 @@
 {
-  "name": "@dapplets/dapplets-org-feature-1",
+  "name": "dapplets-org-feature-1.dapplet-base.eth",
   "version": "0.1.4",
-  "description": "Description of new feature",
+  "description": "Feature using the common adapter",
   "scripts": {
     "build": "webpack --config webpack.dev.js",
     "watch": "webpack -w --config webpack.dev.js",
@@ -13,6 +13,15 @@
   "typings": "build/index.d.ts",
   "devDependencies": {
     "@dapplets/dapplet-extension": "latest",
-    "@dapplets/common-adapter": "^0.2.0"
+    "common-adapter.dapplet-base.eth": "^0.2.0"
+  },
+  "dapplets": {
+    "branch": "default",
+    "type": "FEATURE",
+    "icon": "src/icon.png",
+    "title": "Floating Button and Popup",
+    "dependencies": {
+      "common-adapter.dapplet-base.eth": "0.2.0"
+    }
   }
 }
