@@ -19,10 +19,5 @@
   "typings": "build/index.d.ts",
   "devDependencies": {
     "@dapplets/dapplet-extension": "latest"
-  },
-  "dapplets": {
-    "branch": "default",
-    "type": "LIBRARY",
-    "title": "Dynamic Adapter"
   }
 }

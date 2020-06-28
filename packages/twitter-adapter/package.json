@@ -19,14 +19,5 @@
   "typings": "lib/index.d.ts",
   "devDependencies": {
     "@dapplets/dapplet-extension": "latest"
-  },
-  "dapplets": {
-    "branch": "default",
-    "type": "ADAPTER",
-    "title": "TwitterAdapter",
-    "contextIds": ["twitter.com", "www.twitter.com", "mobile.twitter.com"],
-    "interfaces": {
-      "identity-adapter.dapplet-base.eth": "0.2.0"
-    }
   }
 }

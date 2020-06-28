@@ -13,10 +13,5 @@
   "license": "MIT",
   "devDependencies": {
     "@dapplets/dapplet-extension": "^0.1.6"
-  },
-  "dapplets": {
-    "branch": "default",
-    "type": "LIBRARY",
-    "title": "CommonLib"
   }
 }

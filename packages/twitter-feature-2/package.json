@@ -14,15 +14,5 @@
     "@dapplets/dapplet-extension": "latest",
     "twitter-adapter.dapplet-base.eth": "^0.5.0"
   },
-  "dependencies": {},
-  "dapplets": {
-    "branch": "default",
-    "type": "FEATURE",
-    "title": "Ethereum Contract Example",
-    "icon": "src/icon.png",
-    "contextIds": ["twitter-adapter.dapplet-base.eth"],
-    "dependencies": {
-      "twitter-adapter.dapplet-base.eth": "0.5.0"
-    }
-  }
+  "dependencies": {}
 }

@@ -14,14 +14,5 @@
   "devDependencies": {
     "@dapplets/dapplet-extension": "latest",
     "dynamic-adapter.dapplet-base.eth": "^0.4.0"
-  },
-  "dapplets": {
-    "branch": "default",
-    "type": "ADAPTER",
-    "title": "Common Adapter",
-    "contextIds": ["dapplets.org", "127.0.0.1", "forum.dapplets.org", "youtube.com", "twitter.com", "mobile.twitter.com"],
-    "dependencies": {
-      "dynamic-adapter.dapplet-base.eth": "0.4.0"
-    }
   }
 }

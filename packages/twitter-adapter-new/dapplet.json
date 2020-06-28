@@ -1,0 +1,15 @@
+{
+    "name": "twitter-adapter.dapplet-base.eth",
+    "branch": "new",
+    "version": { "$ref": "package.json#/version" },
+    "type": "ADAPTER",
+    "title": "TwitterAdapter",
+    "description": { "$ref": "package.json#/description" },
+    "main": { "$ref": "package.json#/main" },
+    "dependencies": {
+      "dynamic-adapter.dapplet-base.eth": "0.4.0"
+    },
+    "interfaces": {
+      "identity-adapter.dapplet-base.eth": "0.2.0"
+    }
+}

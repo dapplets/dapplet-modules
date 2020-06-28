@@ -1,0 +1,16 @@
+{
+    "name": { "$ref": "package.json#/name" },
+    "branch": "default",
+    "version": { "$ref": "package.json#/version" },
+    "type": "ADAPTER",
+    "title": "InstagramAdapter",
+    "description": { "$ref": "package.json#/description" },
+    "main": { "$ref": "package.json#/main" },
+    "contextIds": ["instagram.com", "www.instagram.com"],
+    "dependencies": {
+      "dynamic-adapter.dapplet-base.eth": "0.4.0"
+    },
+    "interfaces": {
+      "identity-adapter.dapplet-base.eth": "0.2.0"
+    }
+}

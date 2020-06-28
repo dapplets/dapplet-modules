@@ -1,0 +1,9 @@
+{
+    "name": { "$ref": "package.json#/name" },
+    "version": { "$ref": "package.json#/version" },
+    "description": { "$ref": "package.json#/description" },
+    "main": { "$ref": "package.json#/main" },
+    "branch": "default",
+    "type": "LIBRARY",
+    "title": "Dynamic Adapter"
+}

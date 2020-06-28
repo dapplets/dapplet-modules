@@ -13,15 +13,5 @@
   "devDependencies": {
     "@dapplets/dapplet-extension": "latest",
     "twitter-adapter.dapplet-base.eth": "^0.5.0"
-  },
-  "dapplets": {
-    "branch": "default",
-    "type": "FEATURE",
-    "title": "GNOSIS",
-    "icon": "src/icon.png",
-    "contextIds": ["twitter-adapter.dapplet-base.eth"],
-    "dependencies": {
-      "twitter-adapter.dapplet-base.eth": "0.5.0"
-    }
   }
 }

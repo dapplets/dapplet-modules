@@ -16,10 +16,5 @@
     "lib"
   ],
   "main": "./build/index.js",
-  "typings": "./lib/index.d.ts",
-  "dapplets": {
-    "name": "identity-adapter.dapplet-base.eth",
-    "branch": "default",
-    "type": "INTERFACE"
-  }
+  "typings": "./lib/index.d.ts"
 }
