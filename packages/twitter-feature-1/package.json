@@ -19,6 +19,7 @@
     "type": "FEATURE",
     "title": "GNOSIS",
     "icon": "src/icon.png",
+    "contextIds": ["twitter-adapter.dapplet-base.eth"],
     "dependencies": {
       "twitter-adapter.dapplet-base.eth": "0.5.0"
     }

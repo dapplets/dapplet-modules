@@ -20,6 +20,7 @@
     "type": "FEATURE",
     "title": "Likes Interception",
     "icon": "src/icon.png",
+    "contextIds": ["identity-adapter.dapplet-base.eth"],
     "dependencies": {
       "identity-adapter.dapplet-base.eth": "0.2.0"
     }

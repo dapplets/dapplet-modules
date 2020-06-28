@@ -1,18 +1,1 @@
-{
-  "contextIds": {
-    "common-adapter.dapplet-base.eth": ["dapplets.org", "127.0.0.1", "forum.dapplets.org", "youtube.com", "twitter.com", "mobile.twitter.com"],
-    "common-lib.dapplet-base.eth": [],
-    "dynamic-adapter.dapplet-base.eth": [],
-    "instagram-adapter.dapplet-base.eth": ["instagram.com", "www.instagram.com"],
-    "twitter-adapter.dapplet-base.eth": ["twitter.com", "www.twitter.com", "mobile.twitter.com"],
-    "twitter-feature-1.dapplet-base.eth": ["twitter-adapter.dapplet-base.eth"],
-    "twitter-feature-2.dapplet-base.eth": ["twitter-adapter.dapplet-base.eth"],
-    "twitter-feature-3.dapplet-base.eth": ["twitter.com/1153830517105713152"],
-    "dapplets-org-feature-1.dapplet-base.eth": ["common-adapter.dapplet-base.eth"],
-    "social-feature-1.dapplet-base.eth": ["identity-adapter.dapplet-base.eth"]
-  },
-  "interfaces": {
-    "instagram-adapter.dapplet-base.eth": ["identity-adapter.dapplet-base.eth"],
-    "twitter-adapter.dapplet-base.eth": ["identity-adapter.dapplet-base.eth"]
-  }
-}
+{ }

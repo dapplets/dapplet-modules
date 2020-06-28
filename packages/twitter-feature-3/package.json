@@ -20,6 +20,7 @@
     "type": "FEATURE",
     "title": "Fake News Stamp",
     "icon": "src/icon.png",
+    "contextIds": ["twitter.com/1153830517105713152"],
     "dependencies": {
       "twitter-adapter.dapplet-base.eth": "0.5.0"
     }
