@@ -9,7 +9,7 @@ const IS_HTTPS = process.env.HOSTING !== "gcloud";
 
 const store = JSON.parse(fs.readFileSync('src/server/store.json'));
 
-class Emitter extends EventEmitter {}
+class Emitter extends EventEmitter { }
 
 const emmiter = new Emitter();
 
@@ -141,7 +141,7 @@ app.ws('/:feature', function (ws, req) {
 
             const callback = callbackMap.get(subscriptionId);
             if (callback) emmiter.off('tweetAttached', callback)
-            else console.log("ERROR: can't destroy unknown subscription. Id:",subscriptionId, callbackMap)
+            else console.log("ERROR: can't destroy unknown subscription. Id:", subscriptionId, callbackMap)
 
             ws.send(JSON.stringify({
                 jsonrpc: "2.0",
@@ -167,37 +167,9 @@ app.ws('/:feature', function (ws, req) {
 
 app.get('/index.json', function (req, res) {
     const packagesPath = './packages';
-    const indexPath = './src/server/config.json';
-    const scriptsPath = 'modules';
-
-    fs.readFile(indexPath, (err, data) => {
-        let config = JSON.parse(data);
-        config[scriptsPath] = {};
-
-        const packages = fs.readdirSync(packagesPath);
-        for (const package of packages) {
-            const manifestJson = fs.readFileSync(packagesPath + '/' + package + '/package.json', 'utf8');
-            const manifest = JSON.parse(manifestJson);
-            let name = manifest.dapplets.name || manifest.name;
-            let branch = manifest.dapplets.branch;
-            let version = manifest.version;
-            if (!branch) branch = "default";
-            if (!config[scriptsPath][name]) config[scriptsPath][name] = {};
-            if (!config[scriptsPath][name][branch]) config[scriptsPath][name][branch] = {};
-
-            // if (fs.existsSync(packagesPath + '/' + package + '/archive')) {
-            //     const versions = fs.readdirSync(packagesPath + '/' + package + '/archive');
-            //     for (const version of versions) {
-            //         config[scriptsPath][name][branch][version] = `packages/${package}/archive/${version}/manifest.json`;
-            //     }
-            // }
-
-            config[scriptsPath][name][branch][version] = `packages/${package}/package.json`;
-        }
-
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify(config, null, 3));
-    });
+    const urls = fs.readdirSync(packagesPath).map(package => `packages/${package}/package.json`);
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify(urls, null, 3));
 });
 
 app.get('/api/markets', function (req, res) {
