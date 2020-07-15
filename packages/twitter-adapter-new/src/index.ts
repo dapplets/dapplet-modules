@@ -117,11 +117,11 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
         events: {
             profile_shown: (node: any, ctx: any, emit: Function, on: Function) => on('started', emit),
             // ToDo: context finished doesn't emit
-            profile_hidden: (node: any, ctx: any, emit: Function, on: Function) => on('finished', emit)
+            profile_hidden: (node: any, ctx: any, emit: Function, on: Function) => on('finished', emit),
+            profile_changed: (node: any, ctx: any, emit: Function, on: Function) => on('context_changed', emit)
         },
         // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
         contextBuilder: (titleInfoNode: any) => {
-
             // Adding of left margin to username in title
             titleInfoNode.querySelector('div.css-1dbjc4n.r-15d164r.r-1g94qm0 > div.css-1dbjc4n.r-1wbh5a2.r-dnmrzs.r-1ny4l3l').style.margin = '0px 0px 0px 32px';
 

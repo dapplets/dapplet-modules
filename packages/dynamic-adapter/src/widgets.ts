@@ -26,6 +26,13 @@ export class WidgetBuilder {
         this.eventHandlers[event]?.forEach(h => h(...args));
     }
 
+    private _compareObjects(a: any, b: any) {
+        for (const key in a) {
+            if (a[key] !== b[key]) return false;
+        }
+        return true;
+    }
+
     // `updateContexts()` is called when new context is found.
     public updateContexts(featureConfigs: any[], container: Element) {
         const contextNodes = Array.from(container?.querySelectorAll(this.contextSelector) || []);
@@ -41,9 +48,15 @@ export class WidgetBuilder {
             if (isNew) {
                 newParsedContexts.push(context);
             } else {
-                Object.assign(context.parsed, this.contextBuilder(contextNode)); // Refreshing of context without link destroying
+                const newContext = this.contextBuilder(contextNode);
+                if (!this._compareObjects(context.parsed, newContext)) {
+                    const oldContext = Object.assign({}, context.parsed);
+                    Object.assign(context.parsed, newContext); // Refreshing of context without link destroying
+                    this.emitEvent('context_changed', context, [newContext, oldContext]);
+                }
             }
 
+            // ToDo: remove it?
             for (let i = 0; i < featureConfigs.length; i++) {
                 const featureConfig = featureConfigs[i];
                 const featureInfo = context.featureConfigs.get(featureConfig);
@@ -62,9 +75,11 @@ export class WidgetBuilder {
                     const onHandler = (event, handler) => {
                         if (!this.eventHandlers[event]) this.eventHandlers[event] = [];
                         this.eventHandlers[event].push(handler);
+                        // ToDo: unsubscribe event handler
                     }
                     this.events[event](contextNode, context.parsed, emitHandler, onHandler);
                 }
+                this.emitEvent('context_changed', context, [context.parsed, null]);
             }
 
             for (let i = 0; i < featureConfigs.length; i++) {
