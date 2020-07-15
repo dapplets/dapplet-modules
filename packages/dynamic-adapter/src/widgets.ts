@@ -6,13 +6,14 @@ export class WidgetBuilder {
     containerSelector: string;
     contextSelector: string;
     insPoints: { [key: string]: any };
-    events: { [key: string]: (node: any, ctx: any, emitter: Function) => void };
+    events: { [key: string]: (node: any, ctx: any, emitter: Function, on?: Function) => void };
     contextBuilder: (tweetNode: any) => any;
     observer: MutationObserver = null;
     widgets = new Map<IFeature, any[]>();
     contexts = new WeakMap<Node, Context>();
     contextEvent: string; // 'POST_EVENT'
     contextType: string; // 'tweet'
+    eventHandlers: { [event: string]: Function[] } = {};
 
     //ToDo: widgets
 
@@ -21,7 +22,8 @@ export class WidgetBuilder {
     }
 
     public emitEvent(event: string, context: Context, args: any[]) {
-        context.featureConfigs.forEach((value, feature) => feature.config?.events?.[event]?.(...args))
+        context.featureConfigs.forEach((value, feature) => feature?.events?.[event]?.(...args));
+        this.eventHandlers[event]?.forEach(h => h(...args));
     }
 
     // `updateContexts()` is called when new context is found.
@@ -56,7 +58,12 @@ export class WidgetBuilder {
             if (isNew) {
                 this.contexts.set(contextNode, context);
                 for (const event in this.events) {
-                    this.events[event](contextNode, context.parsed, (...args) => this.emitEvent(event, context, args));
+                    const emitHandler = (...args) => this.emitEvent(event, context, args);
+                    const onHandler = (event, handler) => {
+                        if (!this.eventHandlers[event]) this.eventHandlers[event] = [];
+                        this.eventHandlers[event].push(handler);
+                    }
+                    this.events[event](contextNode, context.parsed, emitHandler, onHandler);
                 }
             }
 

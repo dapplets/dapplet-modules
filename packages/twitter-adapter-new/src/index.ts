@@ -50,13 +50,13 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
         events: {
             like: (node: any, ctx: any, emit: Function) => {
                 const likeBtn = node.querySelector('div.css-1dbjc4n.r-18u37iz.r-1wtj0ep.r-156q2ks.r-1mdbhws div[role=button][data-testid*="like"]');
-                likeBtn.addEventListener('click', () => {
+                likeBtn?.addEventListener('click', () => {
                     if (likeBtn.getAttribute('data-testid') === 'like') emit(ctx);
                 });
             },
             dislike: (node: any, ctx: any, emit: Function) => {
                 const likeBtn = node.querySelector('div.css-1dbjc4n.r-18u37iz.r-1wtj0ep.r-156q2ks.r-1mdbhws div[role=button][data-testid*="like"]');
-                likeBtn.addEventListener('click', () => {
+                likeBtn?.addEventListener('click', () => {
                     if (likeBtn.getAttribute('data-testid') === 'unlike') emit(ctx);
                 });
             },
@@ -114,6 +114,11 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
         },
         contextType: 'profile', // create_tweet | destroy_tweet
         contextEvent: 'PROFILE_EVENT',
+        events: {
+            profile_shown: (node: any, ctx: any, emit: Function, on: Function) => on('started', emit),
+            // ToDo: context finished doesn't emit
+            profile_hidden: (node: any, ctx: any, emit: Function, on: Function) => on('finished', emit)
+        },
         // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
         contextBuilder: (titleInfoNode: any) => {
 

@@ -2,6 +2,7 @@ import { IFeature, IContentAdapter} from '@dapplets/dapplet-extension';
 import { IDynamicAdapter } from 'dynamic-adapter.dapplet-base.eth';
 import { IButtonState, Button } from './button';
 import { IPopupState, Popup } from './popup';
+import { StatusLine } from './statusLine';
 
 interface ICommonAdapterConfig {
     events?: { [event: string]: Function },
@@ -24,9 +25,11 @@ export default class CommonAdapter implements IContentAdapter<ICommonAdapterConf
         popup: this.adapter.createWidgetFactory<IPopupState>(Popup)
     };
 
+    public statusLine = new StatusLine();
+
     public config = [{
         containerSelector: "html",
-        contextSelector: "body",
+        contextSelector: "body > *:nth-last-child(2)",
         insPoints: {
             BODY: { }
         },
