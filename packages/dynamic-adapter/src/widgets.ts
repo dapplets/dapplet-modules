@@ -11,8 +11,6 @@ export class WidgetBuilder {
     observer: MutationObserver = null;
     widgets = new Map<IFeature, any[]>();
     contexts = new WeakMap<Node, Context>();
-    contextEvent: string; // 'POST_EVENT'
-    contextType: string; // 'tweet' // ToDo: remove it
     eventHandler: (event: string, args: any[]) => void = null;
 
     //ToDo: widgets

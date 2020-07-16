@@ -8,7 +8,7 @@ export class State<T> {
     private _cache: any = {}
     public changedHandler: Function
 
-    constructor(private config: { [state: string]: T }, public readonly ctx: any, public readonly contextType) {
+    constructor(private config: { [state: string]: T }, public readonly ctx: any) {
         const me = this
         this.state = new Proxy({}, {
             get(target, property, receiver) {

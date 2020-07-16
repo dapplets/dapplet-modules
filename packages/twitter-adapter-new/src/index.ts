@@ -45,8 +45,6 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                 insert: 'begin'
             }
         },
-        contextType: 'post', // create_tweet | destroy_tweet
-        contextEvent: 'POST_EVENT',
         events: {
             like: (node: any, ctx: any, emit: Function) => {
                 const likeBtn = node.querySelector('div.css-1dbjc4n.r-18u37iz.r-1wtj0ep.r-156q2ks.r-1mdbhws div[role=button][data-testid*="like"]');
@@ -112,8 +110,6 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                 insert: "begin"
             }
         },
-        contextType: 'profile', // create_tweet | destroy_tweet
-        contextEvent: 'PROFILE_EVENT',
         events: {
             profile_shown: (node: any, ctx: any, emit: Function, on: Function) => on('started', emit),
             // ToDo: context finished doesn't emit
@@ -141,8 +137,6 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                 insert: "end"
             }
         },
-        contextType: 'heading', // create_tweet | destroy_tweet
-        contextEvent: 'HEADING_EVENT',
         // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
         contextBuilder: (titleInfoNode: any) => {
             return {
@@ -159,8 +153,6 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                 insert: "end"
             }
         },
-        contextType: 'suspended', // create_tweet | destroy_tweet
-        contextEvent: 'SUSPENDED_EVENT',
         // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
         contextBuilder: (titleInfoNode: any) => {
             return {

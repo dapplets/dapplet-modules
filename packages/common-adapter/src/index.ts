@@ -34,8 +34,6 @@ export default class CommonAdapter implements IContentAdapter<ICommonAdapterConf
             BODY: { }
         },
         //ToDo: remove any twitter dependencies
-        contextType: 'post', // create_tweet | destroy_tweet
-        contextEvent: 'POST_EVENT',
         contextBuilder: (node: any) => ({
             
         }),

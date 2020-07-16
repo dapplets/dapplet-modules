@@ -23,8 +23,6 @@ export default class TwitterAdapter {
                 selector: "header canvas"
             }
         },
-        contextType: 'post', // ToDo: remove it (deprecated)
-        contextEvent: 'POST_EVENT', // ToDo: remove it (deprecated)
         events: {
             like: (node: any, ctx: any, emit: Function) => {
                 const likeBtn = node.querySelector('section.ltpMr.Slqrh svg[aria-label*="ike"]').parentElement.parentElement;
@@ -59,8 +57,6 @@ export default class TwitterAdapter {
                 insert: "begin"
             }
         },
-        contextType: 'profile',
-        contextEvent: 'PROFILE_EVENT',
         contextBuilder: (h: any) => ({
             authorUsername: h.querySelector('h2')?.innerText,
             authorFullname: h.querySelector('h2')?.innerText,

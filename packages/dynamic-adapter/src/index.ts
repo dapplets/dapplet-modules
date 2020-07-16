@@ -116,7 +116,7 @@ class DynamicAdapter implements IDynamicAdapter {
             if (node.parentElement.getElementsByClassName(clazz).length > 0) return;
 
             const context = builder.contexts.get(contextNode);
-            const state = new State<T>(config, context.parsed, builder.contextType);
+            const state = new State<T>(config, context.parsed);
             const widget = new Widget() as IWidget<T>;
             widget.state = state.state;
             widget.insPointName = insPointName;

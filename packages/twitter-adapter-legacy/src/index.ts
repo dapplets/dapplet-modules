@@ -27,8 +27,6 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                 selector: "div.js-tweet-text-container > *:last-child"
             }
         },
-        contextType: 'post', // create_tweet | destroy_tweet
-        contextEvent: 'POST_EVENT',
         contextBuilder: (tweetNode: any) => ({
             id: tweetNode.getAttribute('data-item-id'),
             text: tweetNode.querySelector('div.js-tweet-text-container').innerText,
@@ -47,8 +45,6 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                 selector: "" //ToDo
             }
         },
-        contextType: 'thread', // create_thread | destroy_thread
-        contextEvent: 'THREAD_EVENT',
         contextBuilder: (tweetNode: any) => ({
             threadId: tweetNode.getAttribute('data-thread-id'),
             lastMessageId: tweetNode.getAttribute('data-last-message-id'),

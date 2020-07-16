@@ -5,8 +5,6 @@ export interface IWidgetBuilderConfig {
     contextSelector: string,
     insPoints: { [key: string]: any },
     contextBuilder: (tweetNode: any) => any,
-    contextType: string,
-    contextEvent: string
 }
 
 export type Context = {
