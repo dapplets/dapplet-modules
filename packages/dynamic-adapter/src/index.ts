@@ -5,7 +5,7 @@ import { State } from './state';
 
 interface IDynamicAdapter extends IContentAdapter<any> {
     configure(config: IWidgetBuilderConfig[]): void;
-    createWidgetFactory<T>(Widget: any): (config: { [state: string]: T }) => (builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element, proxiedSubs: any) => any;
+    createWidgetFactory<T>(Widget: any): (config: { [state: string]: T }) => (builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element) => any;
 }
 
 @Injectable
@@ -14,12 +14,14 @@ class DynamicAdapter implements IDynamicAdapter {
     private featureConfigs: any[] = [];
     private contextBuilders: WidgetBuilder[] = [];
 
+    // Config from feature
     public attachConfig(config: any): void { // ToDo: automate two-way dependency handling(?)
         if (this.featureConfigs.find(f => f === config)) return;
         this.featureConfigs.splice(config['orderIndex'], 0, config);
         this.updateObservers();
     }
 
+    // Config from feature
     public detachConfig(config: any): void {
         this.featureConfigs = this.featureConfigs.filter(f => f !== config);
         this.contextBuilders.forEach(wb => {
@@ -30,8 +32,10 @@ class DynamicAdapter implements IDynamicAdapter {
         // ToDo: close all subscriptions and connections
     }
 
+    // Config from adapter
     public configure(config: IWidgetBuilderConfig[]) {
         const builders = config.map((cfg) => new WidgetBuilder(cfg));
+        builders.forEach(b => b.eventHandler = (event, args) => this.featureConfigs.forEach(config => config?.events?.[event]?.(...args)));
         this.contextBuilders.push(...builders);
     }
 
@@ -93,7 +97,7 @@ class DynamicAdapter implements IDynamicAdapter {
             });
         }
 
-        function createWidget(Widget: any, builder: WidgetBuilder, insPointName: string, config: { [state: string]: T }, order: number, contextNode: Element, clazz: string, proxiedSubs: any): any {
+        function createWidget(Widget: any, builder: WidgetBuilder, insPointName: string, config: { [state: string]: T }, order: number, contextNode: Element, clazz: string): any {
             if (order === undefined || order === null) {
                 //console.error('Empty order!');
                 order = 0;
@@ -164,8 +168,8 @@ class DynamicAdapter implements IDynamicAdapter {
 
         return (config: { [state: string]: T }) => {
             const uuid = uuidv4();
-            return ((builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element, proxiedSubs: any) =>
-                createWidget(Widget, builder, insPointName, config, order, contextNode, uuid, proxiedSubs)
+            return ((builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element) =>
+                createWidget(Widget, builder, insPointName, config, order, contextNode, uuid)
             );
         }
     }

@@ -12,7 +12,8 @@ export class WidgetBuilder {
     widgets = new Map<IFeature, any[]>();
     contexts = new WeakMap<Node, Context>();
     contextEvent: string; // 'POST_EVENT'
-    contextType: string; // 'tweet'
+    contextType: string; // 'tweet' // ToDo: remove it
+    eventHandler: (event: string, args: any[]) => void = null;
 
     //ToDo: widgets
 
@@ -21,7 +22,7 @@ export class WidgetBuilder {
     }
 
     public emitEvent(event: string, context: Context, args: any[]) {
-        context.featureConfigs.forEach((value, feature) => feature?.events?.[event]?.(...args));
+        this.eventHandler?.(event, args);
         context.eventHandlers[event]?.forEach(h => h(...args));
     }
 
@@ -41,7 +42,7 @@ export class WidgetBuilder {
 
         for (const contextNode of contextNodes) {
             const isNew = !this.contexts.has(contextNode);
-            const context: Context = isNew ? { parsed: this.contextBuilder(contextNode), featureConfigs: new Map(), eventHandlers: {} } : this.contexts.get(contextNode);
+            const context: Context = isNew ? { parsed: this.contextBuilder(contextNode), eventHandlers: {} } : this.contexts.get(contextNode);
 
             // ToDo: refactor isNew checking
             if (isNew) {
@@ -52,18 +53,6 @@ export class WidgetBuilder {
                     const oldContext = Object.assign({}, context.parsed);
                     Object.assign(context.parsed, newContext); // Refreshing of context without link destroying
                     this.emitEvent('context_changed', context, [newContext, oldContext]);
-                }
-            }
-
-            // ToDo: remove it?
-            for (let i = 0; i < featureConfigs.length; i++) {
-                const featureConfig = featureConfigs[i];
-                const featureInfo = context.featureConfigs.get(featureConfig);
-                if (!featureInfo) {
-                    const featureInfo = { proxiedSubs: {}, connections: [] };
-                    const connections: { [name: string]: IConnection } = featureConfig.connections; // ToDo: remove
-
-                    context.featureConfigs.set(featureConfig, featureInfo);
                 }
             }
 
@@ -91,7 +80,7 @@ export class WidgetBuilder {
                                 console.error(`Invalid widget configuration in the insertion point "${insPointName}". It must be WidgetConstructor instance.`);
                                 continue;
                             }
-                            const insertedWidget = widgetConstructor(this, insPointName, featureConfig.orderIndex, contextNode, context.featureConfigs.get(featureConfig).proxiedSubs); // ToDo: remove proxiedSubs
+                            const insertedWidget = widgetConstructor(this, insPointName, featureConfig.orderIndex, contextNode);
                             if (!insertedWidget) continue;
                             const registeredWidgets = this.widgets.get(featureConfig) || [];
                             registeredWidgets.push(insertedWidget);
