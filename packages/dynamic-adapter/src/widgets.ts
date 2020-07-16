@@ -13,7 +13,6 @@ export class WidgetBuilder {
     contexts = new WeakMap<Node, Context>();
     contextEvent: string; // 'POST_EVENT'
     contextType: string; // 'tweet'
-    eventHandlers: { [event: string]: Function[] } = {};
 
     //ToDo: widgets
 
@@ -23,7 +22,7 @@ export class WidgetBuilder {
 
     public emitEvent(event: string, context: Context, args: any[]) {
         context.featureConfigs.forEach((value, feature) => feature?.events?.[event]?.(...args));
-        this.eventHandlers[event]?.forEach(h => h(...args));
+        context.eventHandlers[event]?.forEach(h => h(...args));
     }
 
     private _compareObjects(a: any, b: any) {
@@ -42,7 +41,7 @@ export class WidgetBuilder {
 
         for (const contextNode of contextNodes) {
             const isNew = !this.contexts.has(contextNode);
-            const context: Context = isNew ? { parsed: this.contextBuilder(contextNode), featureConfigs: new Map() } : this.contexts.get(contextNode);
+            const context: Context = isNew ? { parsed: this.contextBuilder(contextNode), featureConfigs: new Map(), eventHandlers: {} } : this.contexts.get(contextNode);
 
             // ToDo: refactor isNew checking
             if (isNew) {
@@ -73,9 +72,8 @@ export class WidgetBuilder {
                 for (const event in this.events) {
                     const emitHandler = (...args) => this.emitEvent(event, context, args);
                     const onHandler = (event, handler) => {
-                        if (!this.eventHandlers[event]) this.eventHandlers[event] = [];
-                        this.eventHandlers[event].push(handler);
-                        // ToDo: unsubscribe event handler
+                        if (!context.eventHandlers[event]) context.eventHandlers[event] = [];
+                        context.eventHandlers[event].push(handler);
                     }
                     this.events[event](contextNode, context.parsed, emitHandler, onHandler);
                 }

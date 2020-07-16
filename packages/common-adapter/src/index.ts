@@ -48,6 +48,7 @@ export default class CommonAdapter implements IContentAdapter<ICommonAdapterConf
 
     // ToDo: refactor it
     public detachConfig(feature: ICommonAdapterConfig): void {
+        // ToDo: detach statusLine messages
         this.adapter.detachConfig(feature);
     }
 }

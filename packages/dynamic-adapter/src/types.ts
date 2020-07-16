@@ -12,6 +12,7 @@ export interface IWidgetBuilderConfig {
 export type Context = {
     parsed: any,
     featureConfigs: Map<any, { connections: IConnection[], proxiedSubs: any }>
+    eventHandlers: { [event: string]: Function[] };
 };
 
 export interface IWidget<T> {
