@@ -7,10 +7,10 @@ import { IBadgeState, Badge } from './badge';
 export default class TwitterAdapter {
 
     // ToDo: refactor it
-    public widgets = {
+    public exports = featureId => ({
         button: this.adapter.createWidgetFactory<IButtonState>(Button),
         badge: this.adapter.createWidgetFactory<IBadgeState>(Badge)
-    };
+    });
 
     public config = [{
         containerSelector: 'div[role="dialog"]',

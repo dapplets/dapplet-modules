@@ -12,15 +12,14 @@ type Msg = {
 export default class Feature {
     constructor(
         @Inject("common-adapter.dapplet-base.eth")
-        commonAdapter: CommonAdapter, // ToDo: error of class CommonAdapter is included to bundle
+        commonAdapter: any,
 
         @Inject("identity-adapter.dapplet-base.eth")
-        identityAdapter: any // ToDo: error of class CommonAdapter is included to bundle
+        identityAdapter: any
     ) {
-        const { button } = commonAdapter.widgets;
-        const { statusLine } = commonAdapter;
+        // ToDo: exports in CommonAdapter type is function, but in runtime it's object.
+        const { button, statusLine } = commonAdapter.exports;
         const overlay = Core.overlay({ url: 'https://localhost:8080', title: 'Test' });
-
         const activeMessageIds = [];
 
         identityAdapter.attachConfig({
@@ -58,15 +57,15 @@ export default class Feature {
     getMessages(p: string): Promise<Msg[]> {
         if (p !== 'Ethernian') return Promise.resolve([]);
         const msgs: Msg[] = [{
-            uuid: 'fb99ef73-a43c-41c8-b7de-a0c445729434',
+            uuid: 'fb99ef73-a43c-41c8-b7de-a0c445729437',
             text: 'I was banned! You can find me at https://google.com',
             type: 0
         }, {
-            uuid: 'fb99ef73-a43c-41c8-b7de-a0c445729435',
+            uuid: 'fb99ef73-a43c-41c8-b7de-a0c445729438',
             text: 'Hello, World!',
             type: 0
         }, {
-            uuid: 'fb99ef73-a43c-41c8-b7de-a0c445729436',
+            uuid: 'fb99ef73-a43c-41c8-b7de-a0c445729439',
             text: 'Message without any menu.',
             type: 1
         }];

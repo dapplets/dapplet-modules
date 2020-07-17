@@ -24,7 +24,7 @@ export type T_TwitterFeatureConfig = {
 }
 
 export interface ITwitterAdapter extends IContentAdapter<T_TwitterFeatureConfig> {  //ToDo: eliminate excessive interfaces and use ambient module instead
-    widgets: { [key: string]: Function };
+    // exports: (featureId: any) => ({ [key: string]: Function });
 }
 
 export interface ITwitterFeature extends IFeature {

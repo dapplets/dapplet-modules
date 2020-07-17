@@ -9,6 +9,7 @@ type Message = {
 
 export class StatusLine {
     widget: StatusLineWidget;
+    uuidsByFeatureId: { [featureId: string]: string[] } = {};
 
     constructor() {
         const widget = new StatusLineWidget();
@@ -24,15 +25,32 @@ export class StatusLine {
         this.widget = widget;
     }
 
-    addMessage(message: Message) {
+    addMessage(message: Message, featureId: string) {
+        if (!this.uuidsByFeatureId[featureId]) this.uuidsByFeatureId[featureId] = [];
+        this.uuidsByFeatureId[featureId].push(message.uuid);
         this.widget.addMessage(message);
     }
 
-    removeMessage(messageId: string | string[]) {
+    removeMessage(messageId: string | string[], featureId: string) {
+        if (!this.uuidsByFeatureId[featureId]) this.uuidsByFeatureId[featureId] = [];
         if (Array.isArray(messageId)) {
+            this.uuidsByFeatureId[featureId] = this.uuidsByFeatureId[featureId].filter(u => messageId.indexOf(u) === -1);
             messageId.forEach(id => this.widget.removeMessage(id));
         } else {
+            this.uuidsByFeatureId[featureId] = this.uuidsByFeatureId[featureId].filter(u => u !== messageId);
             this.widget.removeMessage(messageId);
+        }
+    }
+
+    removeAll(featureId: string) {
+        if (!this.uuidsByFeatureId[featureId]) this.uuidsByFeatureId[featureId] = [];
+        this.uuidsByFeatureId[featureId].forEach(u => this.removeMessage(u, featureId));
+    }
+
+    forFeature(featureId: string) {
+        return {
+            addMessage: (message: Message) => this.addMessage(message, featureId),
+            removeMessage: (messageId: string | string[]) => this.removeMessage(messageId, featureId)
         }
     }
 }

@@ -19,7 +19,7 @@ export default class Starter {
     private _overlay = Core.overlay({ url: chrome.extension.getURL('starter.html'), title: 'Identity Management' });
 
     constructor(public adapter: TwitterAdapter) {
-        const { button } = this.adapter.widgets;
+        const { button } = this.adapter.exports("twitter-adapter.dapplet-base.eth");
         this.config = {
             events: {
                 starter: (ctx) => this.openStarter(ctx)
@@ -55,7 +55,7 @@ export default class Starter {
         delete config.POST_STARTER;
     }
 
-    public detachConfig(config: any) {
+    public detachConfig(config: any, featureId: string) {
         this.widgets = this.widgets.filter(w => w.config !== config);
         if (this.widgets.length === 0) this.adapter.adapter.detachConfig(this.config);
     }

@@ -22,7 +22,7 @@ class DynamicAdapter implements IDynamicAdapter {
     }
 
     // Config from feature
-    public detachConfig(config: any): void {
+    public detachConfig(config: any, featureId: string) {
         this.featureConfigs = this.featureConfigs.filter(f => f !== config);
         this.contextBuilders.forEach(wb => {
             const widgets = wb.widgets.get(config);

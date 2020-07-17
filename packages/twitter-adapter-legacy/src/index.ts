@@ -8,10 +8,10 @@ import { IPictureState, Picture } from './picture';
 export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureConfig> {
 
     // ToDo: refactor it
-    public widgets = {
+    public exports = featureId => ({
         button: this.adapter.createWidgetFactory<IButtonState>(Button),
         picture: this.adapter.createWidgetFactory<IPictureState>(Picture)
-    };
+    });
 
     public config = [{
         containerSelector: "#timeline",
@@ -67,7 +67,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
     }
 
     // ToDo: refactor it
-    public detachConfig(config: T_TwitterFeatureConfig): void {
-        this.adapter.detachConfig(config);
+    public detachConfig(config: T_TwitterFeatureConfig, featureId?: string): void {
+        this.adapter.detachConfig(config, featureId);
     }
 }

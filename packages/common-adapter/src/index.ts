@@ -1,4 +1,4 @@
-import { IFeature, IContentAdapter} from '@dapplets/dapplet-extension';
+import { IFeature, IContentAdapter } from '@dapplets/dapplet-extension';
 import { IDynamicAdapter } from 'dynamic-adapter.dapplet-base.eth';
 import { IButtonState, Button } from './button';
 import { IPopupState, Popup } from './popup';
@@ -14,16 +14,17 @@ export default class CommonAdapter implements IContentAdapter<ICommonAdapterConf
 
     constructor(
         @Inject("dynamic-adapter.dapplet-base.eth")
-        private adapter: IDynamicAdapter
+        private dynamicAdapter: IDynamicAdapter
     ) {
-        this.adapter.configure(this.config);
+        this.dynamicAdapter.configure(this.config);
     }
- 
+
     // ToDo: refactor it
-    public widgets = {
-        button: this.adapter.createWidgetFactory<IButtonState>(Button),
-        popup: this.adapter.createWidgetFactory<IPopupState>(Popup)
-    };
+    public exports = featureId => ({
+        button: this.dynamicAdapter.createWidgetFactory<IButtonState>(Button),
+        popup: this.dynamicAdapter.createWidgetFactory<IPopupState>(Popup),
+        statusLine: this.statusLine.forFeature(featureId)
+    });
 
     public statusLine = new StatusLine();
 
@@ -31,23 +32,25 @@ export default class CommonAdapter implements IContentAdapter<ICommonAdapterConf
         containerSelector: "html",
         contextSelector: "body > *:nth-last-child(2)",
         insPoints: {
-            BODY: { }
+            BODY: {}
         },
         //ToDo: remove any twitter dependencies
         contextBuilder: (node: any) => ({
-            
+
         }),
     }];
 
     // ToDo: refactor it
-    public attachConfig(config: ICommonAdapterConfig): void { // ToDo: automate two-way dependency handling(?)
-        this.adapter.attachConfig(config);
+    public attachConfig(config: ICommonAdapterConfig, featureId?: string): void { // ToDo: automate two-way dependency handling(?)
+        this.dynamicAdapter.attachConfig(config);
     }
 
     // ToDo: refactor it
-    public detachConfig(feature: ICommonAdapterConfig): void {
+    // feature deactivation
+    // ToDo: detachConfig uses config and featureId as the key of the feature. Refactor to use only one key.
+    public detachConfig(config: ICommonAdapterConfig, featureId?: string) {
         // ToDo: detach statusLine messages
-        this.adapter.detachConfig(feature);
+        this.dynamicAdapter.detachConfig(config, featureId);
+        this.statusLine.removeAll(featureId);
     }
 }
- 

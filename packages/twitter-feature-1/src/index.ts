@@ -15,12 +15,13 @@ export default class TwitterFeature {
 
     constructor(
         @Inject("twitter-adapter.dapplet-base.eth")
-        public adapter: ITwitterAdapter
+        public adapter: any
     ) {
         const wallet = Core.wallet();
         const server = Core.connect<{ pm_num: string }>({ url: "wss://examples.dapplets.org/feature-1" });
 
-        const { button, badge } = this.adapter.widgets;
+        // ToDo: exports in ITwitterAdapter type is function, but in runtime it's object.
+        const { button, badge } = this.adapter.exports;
         this.config = {
             POST_STARTER: [
                 {

@@ -13,12 +13,12 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
     private starter: Starter;
 
     // ToDo: refactor it
-    public widgets = {
+    public exports = featureId => ({
         button: this.adapter.createWidgetFactory<IButtonState>(Button),
         picture: this.adapter.createWidgetFactory<IPictureState>(Picture),
         badge: this.adapter.createWidgetFactory<IBadgeState>(Badge),
         //profile: this.adapter.createWidgetFactory<IProfileState>(Profile)
-    };
+    });
 
     public config = [{
         containerSelector: "main[role=main]",
@@ -176,8 +176,8 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
     }
 
     // ToDo: refactor it
-    public detachConfig(config: T_TwitterFeatureConfig): void {
-        this.starter.detachConfig(config);
-        this.adapter.detachConfig(config);
+    public detachConfig(config: T_TwitterFeatureConfig, featureId?: string): void {
+        this.starter.detachConfig(config, featureId);
+        this.adapter.detachConfig(config, featureId);
     }
 }
