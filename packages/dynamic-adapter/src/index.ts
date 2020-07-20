@@ -35,7 +35,13 @@ class DynamicAdapter implements IDynamicAdapter {
     // Config from adapter
     public configure(config: IWidgetBuilderConfig[]) {
         const builders = config.map((cfg) => new WidgetBuilder(cfg));
-        builders.forEach(b => b.eventHandler = (event, args) => this.featureConfigs.forEach(config => config?.events?.[event]?.(...args)));
+        builders.forEach(b => b.eventHandler = (event, args, target) => {
+            if (target) {
+                target?.events?.[event]?.(...args);
+            } else {
+                this.featureConfigs.forEach(config => config?.events?.[event]?.(...args));
+            }
+        });
         this.contextBuilders.push(...builders);
     }
 
@@ -67,8 +73,8 @@ class DynamicAdapter implements IDynamicAdapter {
                     }))
                 if (removedContexts && removedContexts.length > 0) {
                     Core.contextFinished(removedContexts.map(c => c.parsed));
-                    removedContexts.forEach(ctx => contextBuilder.emitEvent('finished', ctx, [ctx.parsed]));
-                    removedContexts.forEach(ctx => contextBuilder.emitEvent('context_changed', ctx, [null, ctx.parsed]));
+                    removedContexts.forEach(ctx => contextBuilder.emitEvent(null, 'finished', ctx, [ctx.parsed]));
+                    //removedContexts.forEach(ctx => contextBuilder.emitEvent('context_changed', ctx, [null, ctx.parsed]));
                 }
                 contextBuilder.updateContexts(this.featureConfigs, container); // ToDo: think about it
             }

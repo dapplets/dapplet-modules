@@ -12,35 +12,37 @@ type Msg = {
 export default class Feature {
     constructor(
         @Inject("common-adapter.dapplet-base.eth")
-        commonAdapter: any,
+        viewportAdapter: any,
 
         @Inject("identity-adapter.dapplet-base.eth")
         identityAdapter: any
     ) {
         // ToDo: exports in CommonAdapter type is function, but in runtime it's object.
-        const { button, statusLine } = commonAdapter.exports;
+        const { button, statusLine } = viewportAdapter.exports;
         const overlay = Core.overlay({ url: 'https://localhost:8080', title: 'Test' });
         const activeMessageIds = [];
 
         identityAdapter.attachConfig({
             events: {
-                profile_changed: (after, before) => {
+                profile_changed: async (after, before) => {
                     if (!before || !after || after.authorUsername !== before.authorUsername) {
                         statusLine.removeMessage(activeMessageIds);
-                        after && this.getMessages(after.authorUsername).then((messages: Msg[]) => messages.forEach(m => {
+                        if (!after) return;
+                        const messages: Msg[] = await this.getMessages(after.authorUsername);
+                        messages.forEach(m => {
                             statusLine.addMessage({
                                 uuid: m.uuid, 
                                 text: m.text,
                                 menu: (m.type === 0) ? () => overlay.send('test', {}) : null
                             });
                             activeMessageIds.push(m.uuid);
-                        }));
+                        });
                     }
                 }
             }
         });
 
-        commonAdapter.attachConfig({
+        viewportAdapter.attachConfig({
             BODY: [
                 button({
                     "DEFAULT": {

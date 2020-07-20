@@ -11,7 +11,7 @@ export class WidgetBuilder {
     observer: MutationObserver = null;
     widgets = new Map<IFeature, any[]>();
     contexts = new WeakMap<Node, Context>();
-    eventHandler: (event: string, args: any[]) => void = null;
+    eventHandler: (event: string, args: any[], target: any) => void = null;
 
     //ToDo: widgets
 
@@ -19,8 +19,8 @@ export class WidgetBuilder {
         return Object.assign(this, widgetBuilderConfig);
     }
 
-    public emitEvent(event: string, context: Context, args: any[]) {
-        this.eventHandler?.(event, args);
+    public emitEvent(target: any, event: string, context: Context, args: any[]) {
+        this.eventHandler?.(event, args, target);
         context.eventHandlers[event]?.forEach(h => h(...args));
     }
 
@@ -31,44 +31,59 @@ export class WidgetBuilder {
         return true;
     }
 
+    // public getContexts() {
+    //     const container = document.querySelector(this.containerSelector);
+    //     const contextNodes = Array.from(container?.querySelectorAll(this.contextSelector) || []);
+    //     const contexts = contextNodes.map(cn => this.contexts.get(cn)?.parsed).filter(cn => !!cn);
+    //     return contexts;
+    // }
+
     // `updateContexts()` is called when new context is found.
     public updateContexts(featureConfigs: any[], container: Element) {
         const contextNodes = Array.from(container?.querySelectorAll(this.contextSelector) || []);
         if (contextNodes.length === 0) return;
 
         const newParsedContexts = [];
+        const newFeatureConfigs = [];
 
         for (const contextNode of contextNodes) {
-            const isNew = !this.contexts.has(contextNode);
-            const context: Context = isNew ? { parsed: this.contextBuilder(contextNode), eventHandlers: {} } : this.contexts.get(contextNode);
+            const isNewContext = !this.contexts.has(contextNode);
+            const context: Context = isNewContext ? { parsed: this.contextBuilder(contextNode), eventHandlers: {} } : this.contexts.get(contextNode);
 
             // ToDo: refactor isNew checking
-            if (isNew) {
+            if (isNewContext) {
                 newParsedContexts.push(context);
             } else {
                 const newContext = this.contextBuilder(contextNode);
                 if (!this._compareObjects(context.parsed, newContext)) {
                     const oldContext = Object.assign({}, context.parsed);
                     Object.assign(context.parsed, newContext); // Refreshing of context without link destroying
-                    this.emitEvent('context_changed', context, [newContext, oldContext]);
+                    this.emitEvent(null, 'context_changed', context, [newContext, oldContext]);
                 }
             }
 
-            if (isNew) {
+            if (isNewContext) {
                 this.contexts.set(contextNode, context);
                 for (const event in this.events) {
-                    const emitHandler = (...args) => this.emitEvent(event, context, args);
+                    const emitHandler = (target, ...args) => this.emitEvent(target, event, context, args);
                     const onHandler = (event, handler) => {
                         if (!context.eventHandlers[event]) context.eventHandlers[event] = [];
                         context.eventHandlers[event].push(handler);
                     }
-                    this.events[event](contextNode, context.parsed, emitHandler, onHandler);
+                    this.events[event].apply(this, [contextNode, context.parsed, emitHandler, onHandler]);
                 }
-                this.emitEvent('context_changed', context, [context.parsed, null]);
+                //this.emitEvent('context_changed', context, [context.parsed, null]);
             }
 
             for (let i = 0; i < featureConfigs.length; i++) {
                 const featureConfig = featureConfigs[i];
+
+                // is new feature?
+                if (this.widgets.get(featureConfig) === undefined) {
+                    this.widgets.set(featureConfig, []);
+                    newFeatureConfigs.push(featureConfig);
+                }
+
                 for (const insPointName in this.insPoints) {
                     for (const widgetConstructor of featureConfig[insPointName] || []) {
                         const contextIds = featureConfig.contextIds || [];
@@ -80,7 +95,7 @@ export class WidgetBuilder {
                             }
                             const insertedWidget = widgetConstructor(this, insPointName, featureConfig.orderIndex, contextNode);
                             if (!insertedWidget) continue;
-                            const registeredWidgets = this.widgets.get(featureConfig) || [];
+                            const registeredWidgets = this.widgets.get(featureConfig);
                             registeredWidgets.push(insertedWidget);
                             this.widgets.set(featureConfig, registeredWidgets);
                         }
@@ -90,7 +105,11 @@ export class WidgetBuilder {
         }
 
         Core.contextStarted(newParsedContexts.map((ctx) => ctx.parsed));
-        newParsedContexts.forEach(ctx => this.emitEvent('started', ctx, [ctx.parsed]));
+        newParsedContexts.forEach(ctx => this.emitEvent(null, 'started', ctx, [ctx.parsed, null]));
+
+        const allContexts = contextNodes.map(cn => this.contexts.get(cn)).filter(cn => !!cn);
+        newFeatureConfigs.forEach(fc => allContexts.forEach(ctx => newParsedContexts.indexOf(ctx) === -1 && this.emitEvent(fc, 'started', ctx, [ctx.parsed, fc])));
+
         return newParsedContexts;
     }
 }
