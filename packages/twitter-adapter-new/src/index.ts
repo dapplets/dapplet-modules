@@ -112,11 +112,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
         },
         events: {
             // calls for every new context
-            profile_changed: (node: any, ctx: any, emit: Function, on: Function) => {
-                on('started', (ctx, target) => emit(target, ctx, null));
-                on('context_changed', (a, b) => emit(null, a, b));
-                on('finished', ctx => emit(null, null, ctx));
-            }
+            profile_changed: (node: any, ctx: any, emit: Function, on: Function) => on('context_changed', emit)
         },
         // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
         contextBuilder: (titleInfoNode: any) => {

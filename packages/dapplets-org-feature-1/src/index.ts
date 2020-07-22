@@ -37,6 +37,12 @@ export default class Feature {
                             });
                             activeMessageIds.push(m.uuid);
                         });
+
+                        // messages.map(m => ({ ...m, menu: map[m.type] })).forEach(m => statusLine.addMessage(m));
+
+                        // statusLine.addMessages(this.getMessages, { 
+                        //     0: overlay.send('test', {}) 
+                        // });
                     }
                 }
             }

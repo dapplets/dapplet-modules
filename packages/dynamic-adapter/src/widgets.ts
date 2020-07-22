@@ -58,7 +58,7 @@ export class WidgetBuilder {
                 if (!this._compareObjects(context.parsed, newContext)) {
                     const oldContext = Object.assign({}, context.parsed);
                     Object.assign(context.parsed, newContext); // Refreshing of context without link destroying
-                    this.emitEvent(null, 'context_changed', context, [newContext, oldContext]);
+                    this.emitEvent(null, 'context_changed', context, [null, newContext, oldContext]);
                 }
             }
 
@@ -72,7 +72,6 @@ export class WidgetBuilder {
                     }
                     this.events[event].apply(this, [contextNode, context.parsed, emitHandler, onHandler]);
                 }
-                //this.emitEvent('context_changed', context, [context.parsed, null]);
             }
 
             for (let i = 0; i < featureConfigs.length; i++) {
@@ -105,10 +104,10 @@ export class WidgetBuilder {
         }
 
         Core.contextStarted(newParsedContexts.map((ctx) => ctx.parsed));
-        newParsedContexts.forEach(ctx => this.emitEvent(null, 'started', ctx, [ctx.parsed, null]));
+        newParsedContexts.forEach(ctx => this.emitEvent(null, 'context_changed', ctx, [null, ctx.parsed, null]));
 
         const allContexts = contextNodes.map(cn => this.contexts.get(cn)).filter(cn => !!cn);
-        newFeatureConfigs.forEach(fc => allContexts.forEach(ctx => newParsedContexts.indexOf(ctx) === -1 && this.emitEvent(fc, 'started', ctx, [ctx.parsed, fc])));
+        newFeatureConfigs.forEach(fc => allContexts.forEach(ctx => newParsedContexts.indexOf(ctx) === -1 && this.emitEvent(fc, 'context_changed', ctx, [fc, ctx.parsed, null])));
 
         return newParsedContexts;
     }
