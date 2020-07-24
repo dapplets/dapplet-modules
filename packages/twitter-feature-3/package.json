@@ -1,6 +1,6 @@
 {
   "name": "twitter-feature-3.dapplet-base.eth",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Feature adds fake news stamp to tweets",
   "main": "build/index.js",
   "scripts": {

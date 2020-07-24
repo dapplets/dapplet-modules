@@ -1,6 +1,6 @@
 {
   "name": "twitter-feature-2.dapplet-base.eth",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "Feature adds tweets to Ethereum contract",
   "main": "build/index.js",
   "scripts": {
