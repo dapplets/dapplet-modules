@@ -1,5 +1,6 @@
 import { IWidget } from 'dynamic-adapter.dapplet-base.eth';
 import MENU_ICON from './icons/bars-solid.svg';
+import EYE_ICON from './icons/eye-slash-solid.svg';
 import LEFT_ICON from './icons/caret-left-solid.svg';
 import RIGHT_ICON from './icons/caret-right-solid.svg';
 import DOTS_ICON from './icons/ellipsis-h-solid.svg';
@@ -23,6 +24,7 @@ export interface IStatusLineState {
     closed?: boolean;
     currentIndex?: number;
     messages?: Message[];
+    hidden?: boolean;
 }
 
 export class StatusLineWidget implements IWidget<IStatusLineState> {
@@ -32,7 +34,7 @@ export class StatusLineWidget implements IWidget<IStatusLineState> {
 
     public mount() {
         if (!this.el) this._createElement();
-        const { text, link, img, closed, currentIndex, messages: items } = this.state;
+        const { text, link, img, closed, currentIndex, hidden, messages: items } = this.state;
 
         if (this.state.currentIndex === undefined && this.state.messages && this.state.messages.length > 0) this.state.currentIndex = this.state.messages.length - 1;
         const isNoItems = !this.state.messages || this.state.messages.length === 0;
@@ -69,13 +71,14 @@ export class StatusLineWidget implements IWidget<IStatusLineState> {
                 opacity: 1;               
             }
         </style>
-        <div class="dapplet-widget-basic-container ${closed || isNoItems ? 'no-displayed' : 'displayed'} ">
+        <div class="dapplet-widget-basic-container ${closed || hidden || isNoItems ? 'no-displayed' : 'displayed'} ">
             <div>
                 <div style="width: 20px; margin-left: 8px;"><img class="dapplet-widget-btn dapplet-widget-btn-left" src=${LEFT_ICON} style="height: 18px;"/></div>
                 <div style="width: 40px;" class="dapplet-widget-counter">${currentIndex + 1}/${items?.length}</div>
                 <div style="width: 20px;"><img class="dapplet-widget-btn dapplet-widget-btn-right" src=${RIGHT_ICON} style="height: 18px;"/></div>
                 <div style="width: 100%;" class="dapplet-widget-text">${this._linkify(items?.[currentIndex]?.text)}</div>
                 ${(items?.[currentIndex]?.menu) ? `<div style="width: 30px;"><img class="dapplet-widget-btn dapplet-widget-btn-dots" src=${DOTS_ICON} style="height: 18px;"/></div>` : ''}
+                <div style="width: 30px; margin-right: 8px;"><img class="dapplet-widget-btn dapplet-widget-btn-hide" src=${EYE_ICON} style="height: 18px;"/></div>
                 <div style="width: 30px; margin-right: 8px;"><img class="dapplet-widget-btn dapplet-widget-btn-close" src=${CLOSE_ICON} style="height: 18px;"/></div>
             </div>
         </div>`
@@ -88,6 +91,7 @@ export class StatusLineWidget implements IWidget<IStatusLineState> {
         this.el.getElementsByClassName('dapplet-widget-btn-right')[0]?.addEventListener("click", () => this._onRightClick());
         // this.el.getElementsByClassName('dapplet-widget-btn-menu')[0]?.addEventListener("click", () => this._onMenuClick());
         this.el.getElementsByClassName('dapplet-widget-btn-dots')[0]?.addEventListener("click", () => this._onDotsClick());
+        this.el.getElementsByClassName('dapplet-widget-btn-hide')[0]?.addEventListener("click", () => this._onHideClick());
         this.el.getElementsByClassName('dapplet-widget-btn-close')[0]?.addEventListener("click", () => this._onCloseClick());
     }
 
@@ -124,6 +128,11 @@ export class StatusLineWidget implements IWidget<IStatusLineState> {
     private _onDotsClick() {
         const item = this.state.messages[this.state.currentIndex];
         item.menu?.(item);
+    }
+
+    private _onHideClick() {
+        this.state.hidden = true;
+        setTimeout(() => this.state.hidden = false, 3000);
     }
 
     private async _onCloseClick() {
