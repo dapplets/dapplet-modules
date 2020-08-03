@@ -16,7 +16,7 @@
     "start": "npm-run-all --parallel serve watch",
     "ls": "lerna ls",
     "postinstall": "lerna bootstrap",
-    "build": "lerna run build",
+    "build": "",
     "watch": "lerna exec --parallel -- npm run watch",
     "serve": "node src/server/index.js",
     "clean": "lerna run clean",
