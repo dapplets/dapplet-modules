@@ -17,68 +17,72 @@ export default class TwitterFeature {
         @Inject("twitter-adapter.dapplet-base.eth")
         public adapter: any
     ) {
-        const wallet = Core.wallet();
-        const server = Core.connect<{ pm_num: string }>({ url: "wss://examples.dapplets.org/feature-1" });
+        Core.storage.get('serverUrl').then(serverUrl => {
+            const wallet = Core.wallet();
+            const server = Core.connect<{ pm_num: string }>({ url: serverUrl });
 
-        // ToDo: exports in ITwitterAdapter type is function, but in runtime it's object.
-        const { button, badge } = this.adapter.exports;
-        this.config = {
-            POST_STARTER: [
-                {
-                    label: 'Attach tweet to prediction market',
-                    exec: (ctx) => {
-                        const overlay = Core.overlay({ url: 'https://examples.dapplets.org', title: 'Gnosis' });
-                        overlay.sendAndListen('tweet_select', ctx, {
-                            'pm_attach': (op, { market, tweet }) => {
-                                wallet.sendAndListen('1', ctx, {
-                                    created: () => {
-                                        overlay.send('tx_created');
-                                    }
-                                });
-                            }
-                        });
-                    }
-                }
-            ],
-            POST_SOUTH: [
-                button({
-                    initial: "DEFAULT",
-                    "DEFAULT": {
-                        label: server.pm_num,
-                        img: GNOSIS_ICON,
-                        disabled: false,
-                        exec: (ctx, me) => {
-                            const overlay = Core.overlay({ url: 'https://examples.dapplets.org', title: 'Gnosis' });
+            // ToDo: exports in ITwitterAdapter type is function, but in runtime it's object.
+            const { button, badge } = this.adapter.exports;
+            this.config = {
+                POST_STARTER: [
+                    {
+                        label: 'Attach tweet to prediction market',
+                        exec: async (ctx) => {
+                            const overlayUrl = await Core.storage.get('overlayUrl');
+                            const overlay = Core.overlay({ url: overlayUrl, title: 'Gnosis' });
                             overlay.sendAndListen('tweet_select', ctx, {
                                 'pm_attach': (op, { market, tweet }) => {
-                                    me.state = 'PENDING';
                                     wallet.sendAndListen('1', ctx, {
-                                        rejected: () => me.state = 'ERR',
                                         created: () => {
-                                            me.state = 'DEFAULT';
                                             overlay.send('tx_created');
                                         }
                                     });
                                 }
                             });
                         }
-                    },
-                    "PENDING": {
-                        label: 'Pending',
-                        loading: true,
-                        disabled: true
-                    },
-                    "ERR": {
-                        label: 'Error',
-                        img: GNOSIS_ICON,
-                        exec: (ctx, me) => me.state = 'DEFAULT'
                     }
-                })
-            ],
-            POST_COMBO: [],
-            DM_SOUTH: []
-        }
+                ],
+                POST_SOUTH: [
+                    button({
+                        initial: "DEFAULT",
+                        "DEFAULT": {
+                            label: server.pm_num,
+                            img: GNOSIS_ICON,
+                            disabled: false,
+                            exec: async (ctx, me) => {
+                                const overlayUrl = await Core.storage.get('overlayUrl');
+                                const overlay = Core.overlay({ url: overlayUrl, title: 'Gnosis' });
+                                overlay.sendAndListen('tweet_select', ctx, {
+                                    'pm_attach': (op, { market, tweet }) => {
+                                        me.state = 'PENDING';
+                                        wallet.sendAndListen('1', ctx, {
+                                            rejected: () => me.state = 'ERR',
+                                            created: () => {
+                                                me.state = 'DEFAULT';
+                                                overlay.send('tx_created');
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        },
+                        "PENDING": {
+                            label: 'Pending',
+                            loading: true,
+                            disabled: true
+                        },
+                        "ERR": {
+                            label: 'Error',
+                            img: GNOSIS_ICON,
+                            exec: (ctx, me) => me.state = 'DEFAULT'
+                        }
+                    })
+                ],
+                POST_COMBO: [],
+                DM_SOUTH: []
+            }
 
-        this.adapter.attachConfig(this.config);
+            this.adapter.attachConfig(this.config);
+        });
     }
 }

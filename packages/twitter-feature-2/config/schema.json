@@ -1,0 +1,12 @@
+{
+    "type": "object",
+    "required": [
+        "serverUrl"
+    ],
+    "properties": {
+        "serverUrl": {
+            "type": "string",
+            "title": "WebSocket Server URL"
+        }
+    }
+}

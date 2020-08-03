@@ -1,6 +1,6 @@
 {
   "name": "twitter-feature-1.dapplet-base.eth",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "Fake news tracking for Twitter",
   "main": "build/index.js",
   "scripts": {
