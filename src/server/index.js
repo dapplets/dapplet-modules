@@ -6,6 +6,7 @@ var bodyParser = require('body-parser');
 const EventEmitter = require('events');
 
 const IS_HTTPS = process.env.HOSTING !== "gcloud";
+const PORT = process.env.PORT || 8080;
 
 const store = JSON.parse(fs.readFileSync('src/server/store.json'));
 
@@ -197,7 +198,7 @@ app.post('/api/markets/attach', function (req, res) {
 });
 
 if (server) {
-    server.listen(8080);
+    server.listen(PORT);
 } else {
-    app.listen(8080);
+    app.listen(PORT);
 }
