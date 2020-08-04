@@ -7,9 +7,8 @@
     "type": "FEATURE",
     "icon": "src/icon.png",
     "title": "Floating Button and Popup",
-    "contextIds": ["common-adapter.dapplet-base.eth", "identity-adapter.dapplet-base.eth"],
+    "contextIds": ["common-adapter.dapplet-base.eth"],
     "dependencies": {
-      "common-adapter.dapplet-base.eth": "0.2.1",
-      "identity-adapter.dapplet-base.eth": "0.2.0"
+      "common-adapter.dapplet-base.eth": "0.2.1"
     }
 }
