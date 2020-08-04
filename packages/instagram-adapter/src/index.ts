@@ -66,7 +66,7 @@ export default class TwitterAdapter {
 
     constructor(
         @Inject("dynamic-adapter.dapplet-base.eth")
-        private adapter: IDynamicAdapter
+        readonly adapter: IDynamicAdapter
     ) {
         this.adapter.configure(this.config);
     }
