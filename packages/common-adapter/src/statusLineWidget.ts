@@ -47,6 +47,7 @@ export class StatusLineWidget implements IWidget<IStatusLineState> {
                 width: 100%;
                 padding: 8px 0;
                 text-align: center;
+                z-index: 9999;
             }
             .dapplet-widget-basic-container > div { 
                 display: inline-flex;
