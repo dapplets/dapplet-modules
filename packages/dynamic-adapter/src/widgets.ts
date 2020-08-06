@@ -7,7 +7,7 @@ export class WidgetBuilder {
     contextSelector: string;
     insPoints: { [key: string]: any };
     events: { [key: string]: (node: any, ctx: any, emitter: Function, on?: Function) => void };
-    contextBuilder: (tweetNode: any) => any;
+    contextBuilder: (node: any) => any;
     observer: MutationObserver = null;
     widgets = new Map<IFeature, any[]>();
     contexts = new WeakMap<Node, Context>();
@@ -31,12 +31,15 @@ export class WidgetBuilder {
         return true;
     }
 
-    // public getContexts() {
-    //     const container = document.querySelector(this.containerSelector);
-    //     const contextNodes = Array.from(container?.querySelectorAll(this.contextSelector) || []);
-    //     const contexts = contextNodes.map(cn => this.contexts.get(cn)?.parsed).filter(cn => !!cn);
-    //     return contexts;
-    // }
+    private _tryParseContext(el: Element) {
+         try {
+            return this.contextBuilder(el);
+        } catch (err) {
+            // ToDo: what need to do in this cases?
+            console.warn("Cannot parse context");
+            return {};
+        }
+    }
 
     // `updateContexts()` is called when new context is found.
     public updateContexts(featureConfigs: any[], container: Element) {
@@ -48,13 +51,13 @@ export class WidgetBuilder {
 
         for (const contextNode of contextNodes) {
             const isNewContext = !this.contexts.has(contextNode);
-            const context: Context = isNewContext ? { parsed: this.contextBuilder(contextNode), eventHandlers: {} } : this.contexts.get(contextNode);
+            const context: Context = isNewContext ? { parsed: this._tryParseContext(contextNode), eventHandlers: {} } : this.contexts.get(contextNode);
 
             // ToDo: refactor isNew checking
             if (isNewContext) {
                 newParsedContexts.push(context);
             } else {
-                const newContext = this.contextBuilder(contextNode);
+                const newContext = this._tryParseContext(contextNode);
                 if (!this._compareObjects(context.parsed, newContext)) {
                     const oldContext = Object.assign({}, context.parsed);
                     Object.assign(context.parsed, newContext); // Refreshing of context without link destroying
