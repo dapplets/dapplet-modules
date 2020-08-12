@@ -32,7 +32,7 @@ export class WidgetBuilder {
     }
 
     private _tryParseContext(el: Element) {
-         try {
+        try {
             return this.contextBuilder(el);
         } catch (err) {
             // ToDo: what need to do in this cases?
