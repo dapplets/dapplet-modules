@@ -6,6 +6,7 @@ import { IPictureState, Picture } from './picture';
 import { IBadgeState, Badge } from './badge';
 import Starter from './starter';
 import Slideout from 'slideout';
+import { ILabelState, Label } from './label';
 
 @Injectable
 export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureConfig> {
@@ -17,7 +18,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
         button: this.adapter.createWidgetFactory<IButtonState>(Button),
         picture: this.adapter.createWidgetFactory<IPictureState>(Picture),
         badge: this.adapter.createWidgetFactory<IBadgeState>(Badge),
-        //profile: this.adapter.createWidgetFactory<IProfileState>(Profile)
+        label: this.adapter.createWidgetFactory<ILabelState>(Label)
     });
 
     public config = [{
@@ -39,6 +40,10 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
             POST_USERNAME_BADGE: {
                 selector: "div.css-1dbjc4n.r-18u37iz.r-1wbh5a2.r-1f6r7vd > *:first-child",
                 insert: 'begin' // end
+            },
+            POST_USERNAME_LABEL: {
+                selector: "div.css-1dbjc4n.r-1d09ksm.r-18u37iz.r-1wbh5a2 > *:last-child",
+                insert: 'end' // end
             },
             POST_STARTER: {
                 selector: "div.css-1dbjc4n.r-18u37iz.r-1h0z5md.r-1joea0r > *:first-child",
