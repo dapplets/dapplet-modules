@@ -87,7 +87,7 @@ export class Button implements IWidget<IButtonState> {
         this.el = document.createElement('div');
 
         if (this.insPointName === 'POST_SOUTH') {
-            this.el.classList.add('css-1dbjc4n', 'r-1iusvr4', 'r-18u37iz', 'r-16y2uox', 'r-1h0z5md');
+            this.el.classList.add('css-1dbjc4n', 'r-18u37iz', 'r-1h0z5md');
 
             styleTag.innerText = `
                 .dapplet-widget > div[role="button"] > div:hover > .css-1dbjc4n.r-xoduu5 > .r-sdzlij {

@@ -88,7 +88,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                 classList.add('r-1iusvr4');
                 classList.add('r-16y2uox');
             }
-            
+
             return ({
                 id: tweetNode.querySelector('a time').parentNode.href.split('/').pop(),
                 text: tweetNode.querySelector('div[lang]')?.innerText,
@@ -182,5 +182,14 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
     public detachConfig(config: T_TwitterFeatureConfig, featureId?: string): void {
         this.starter.detachConfig(config, featureId);
         this.adapter.detachConfig(config, featureId);
+    }
+
+    public getCurrentUser() {
+        if (!document.querySelector('[data-testid=SideNav_AccountSwitcher_Button]')) return null;
+        return ({
+            username: document.querySelector('[data-testid=SideNav_AccountSwitcher_Button] > div:nth-child(2) > div > div:nth-child(2)')['innerText'].replace('@', ''),
+            fullname: document.querySelector('[data-testid=SideNav_AccountSwitcher_Button] > div:nth-child(2) > div > div:nth-child(1)')['innerText'],
+            img: document.querySelector('[data-testid=SideNav_AccountSwitcher_Button] > div:nth-child(1) img').getAttribute('src')
+        })
     }
 }
