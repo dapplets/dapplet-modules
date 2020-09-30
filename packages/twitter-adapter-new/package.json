@@ -1,6 +1,6 @@
 {
   "name": "new.twitter-adapter.dapplet-base.eth",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Adapter for twitter.com",
   "scripts": {
     "build": "webpack --config webpack.dev.js",
