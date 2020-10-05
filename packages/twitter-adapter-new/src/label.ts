@@ -9,6 +9,7 @@ export interface ILabelState {
     hidden: boolean;
     insPointName: string;
     img: string;
+    postfix?: string;
 }
 
 export class Label implements IWidget<ILabelState> {
@@ -41,14 +42,26 @@ export class Label implements IWidget<ILabelState> {
 
         if (this.state.text) {
             if (!this.el.querySelector('span')) {
-                const imgTag = document.createElement('span');
-                imgTag.innerText = text;
-                this.el.appendChild(imgTag);
+                const textTag = document.createElement('span');
+                textTag.innerText = text;
+                this.el.appendChild(textTag);
             }
-            const imgTag: HTMLSpanElement = this.el.querySelector('span') as any;
-            imgTag.innerText = this.state.text;
+            const textTag: HTMLSpanElement = this.el.querySelector('span') as any;
+            textTag.innerText = this.state.text;
         } else {
             this.el.querySelector('span')?.remove();
+        }
+
+        if (this.state.postfix) {
+            if (!this.el.querySelector('div')) {
+                const postfixTag = document.createElement('div');
+                postfixTag.innerText = this.state.postfix;
+                this.el.appendChild(postfixTag);
+            }
+            const postfixTag: HTMLImageElement = this.el.querySelector('div') as any;
+            postfixTag.innerText = this.state.postfix;
+        } else {
+            this.el.querySelector('div')?.remove();
         }
     }
 
@@ -83,6 +96,15 @@ export class Label implements IWidget<ILabelState> {
             }
             .dapplet-widget-label:hover {
                 background: rgb(26, 145, 218);
+            }
+
+            .dapplet-widget-label > div {
+                background: rgb(24, 121, 181);
+                margin: -2px -4px;
+                display: inline-block;
+                margin-left: 10px;
+                padding: 6px 10px 3px 10px;
+                border-radius: 0 4px 4px 0;
             }
         `;
         document.head.appendChild(styleTag);
