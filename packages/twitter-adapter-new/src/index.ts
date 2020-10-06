@@ -42,7 +42,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                 insert: 'begin' // end
             },
             POST_USERNAME_LABEL: {
-                selector: "div.css-1dbjc4n.r-1d09ksm.r-18u37iz.r-1wbh5a2 > *:last-child",
+                selector: "div.css-1dbjc4n.r-1d09ksm.r-18u37iz.r-1wbh5a2 > *:last-child, div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-dnmrzs > *:last-child",
                 insert: 'end' // end
             },
             POST_STARTER: {
@@ -88,14 +88,14 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                 classList.add('r-1iusvr4');
                 classList.add('r-16y2uox');
             }
-
+            
             return ({
-                id: tweetNode.querySelector('a time').parentNode.href.split('/').pop(),
+                id: tweetNode.querySelector('a time')?.parentNode?.href?.split('/')?.pop() || document.location.href.substr(document.location.href.lastIndexOf('status/') + 7),
                 text: tweetNode.querySelector('div[lang]')?.innerText,
                 authorFullname: tweetNode.querySelector('a:nth-child(1) div span span')?.innerText,
-                authorUsername: tweetNode.querySelector('div.css-901oao.css-bfa6kz.r-1re7ezh.r-18u37iz.r-1qd0xha.r-a023e6.r-16dba41.r-ad9z0x.r-bcqeeo.r-qvutc0 > span.css-901oao.css-16my406.r-1qd0xha.r-ad9z0x.r-bcqeeo.r-qvutc0')?.innerText.replace('@', '').toLowerCase(),
+                authorUsername: tweetNode.querySelector('div.css-901oao.css-bfa6kz.r-1re7ezh.r-18u37iz.r-1qd0xha.r-a023e6.r-16dba41.r-ad9z0x.r-bcqeeo.r-qvutc0 > span.css-901oao.css-16my406.r-1qd0xha.r-ad9z0x.r-bcqeeo.r-qvutc0')?.innerText?.replace('@', '')?.toLowerCase(),
                 authorImg: tweetNode.querySelector('img.css-9pa8cd')?.getAttribute('src')
-            });
+            })
         }
     },
     {
