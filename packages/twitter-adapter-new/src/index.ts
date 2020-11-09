@@ -207,7 +207,9 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                 return x.innerText;
             } else {
                 // unicode emoji
-                return x.querySelector('img').getAttribute('alt');
+                const url = x.querySelector('img').getAttribute('src');
+                const code = url.substr(url.lastIndexOf('/') + 1, url.indexOf('.svg') - url.lastIndexOf('/') - 1);
+                return String.fromCodePoint(...(code.split('-').map(x => '0x'+ x)));
             }
         });
         return strings.join('');
