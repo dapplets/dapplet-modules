@@ -96,11 +96,11 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
             }
 
             return ({
-                id: tweetNode.querySelector('a time')?.parentNode?.href?.split('/')?.pop() || document.location.href.substr(document.location.href.lastIndexOf('status/') + 7),
-                text: tweetNode.querySelector('div[lang]')?.innerText,
-                authorFullname: tweetNode.querySelector('a:nth-child(1) div span span')?.innerText,
-                authorUsername: tweetNode.querySelector('div.css-901oao.css-bfa6kz.r-1re7ezh.r-18u37iz.r-1qd0xha.r-a023e6.r-16dba41.r-ad9z0x.r-bcqeeo.r-qvutc0 > span.css-901oao.css-16my406.r-1qd0xha.r-ad9z0x.r-bcqeeo.r-qvutc0')?.innerText?.replace('@', '')?.toLowerCase(),
-                authorImg: tweetNode.querySelector('img.css-9pa8cd')?.getAttribute('src')
+                id: tweetNode.querySelector('div[data-testid=tweet] a time')?.parentNode?.href?.split('/')?.pop() || document.location.href.substr(document.location.href.lastIndexOf('status/') + 7),
+                text: tweetNode.querySelector('div[data-testid=tweet] div[lang]')?.innerText,
+                authorFullname: this._parseAuthorFullname(tweetNode.querySelector('div[data-testid=tweet] > div:nth-child(2) > div:nth-child(1) a > div > div:nth-child(1) > div:nth-child(1) > span')),
+                authorUsername: tweetNode.querySelector('div[data-testid=tweet] div.css-901oao.css-bfa6kz.r-1re7ezh.r-18u37iz.r-1qd0xha.r-a023e6.r-16dba41.r-ad9z0x.r-bcqeeo.r-qvutc0 > span.css-901oao.css-16my406.r-1qd0xha.r-ad9z0x.r-bcqeeo.r-qvutc0')?.innerText?.replace('@', '')?.toLowerCase(),
+                authorImg: tweetNode.querySelector('div[data-testid=tweet] img.css-9pa8cd')?.getAttribute('src')
             })
         }
     },
@@ -131,7 +131,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
             titleInfoNode.querySelector('div.css-1dbjc4n.r-15d164r.r-1g94qm0 > div.css-1dbjc4n.r-1wbh5a2.r-dnmrzs.r-1ny4l3l').style.margin = '0px 0px 0px 32px';
 
             return {
-                authorFullname: titleInfoNode.querySelector('div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-dnmrzs > div > span:nth-child(1) > span')?.innerText,
+                authorFullname: this._parseAuthorFullname(titleInfoNode.querySelector('div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-dnmrzs > div > span:nth-child(1) > span')),
                 authorUsername: titleInfoNode.querySelector('div.css-901oao.css-bfa6kz.r-1re7ezh.r-18u37iz.r-1qd0xha.r-a023e6.r-16dba41.r-ad9z0x.r-bcqeeo.r-qvutc0 span')?.innerText.replace('@', '').toLowerCase(),
                 authorImg: titleInfoNode.querySelector('a > div.css-1dbjc4n.r-1adg3ll.r-1udh08x > div.r-1p0dtai.r-1pi2tsx.r-1d2f490.r-u8s1d.r-ipm5af.r-13qz1uu > div > img')?.getAttribute('src')
             }
@@ -197,5 +197,21 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
             fullname: document.querySelector('[data-testid=SideNav_AccountSwitcher_Button] > div:nth-child(1) img').getAttribute('alt'),
             img: document.querySelector('[data-testid=SideNav_AccountSwitcher_Button] > div:nth-child(1) img').getAttribute('src')
         })
+    }
+
+    private _parseAuthorFullname(node: any): string {
+        if (!node) return null;
+        const strings = [...node.childNodes].map(x => {
+            if (x.innerText.length > 0) {
+                // plain text
+                return x.innerText;
+            } else {
+                // unicode emoji
+                const url = x.querySelector('img').getAttribute('src');
+                const code = url.substr(url.indexOf('.svg') - 4, 4);
+                return String.fromCharCode(('0x' + code) as any);
+            }
+        });
+        return strings.join('');
     }
 }
