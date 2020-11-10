@@ -128,10 +128,10 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
         // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
         contextBuilder: (titleInfoNode: any) => {
             // Adding of left margin to username in title
-            titleInfoNode.querySelector('div.css-1dbjc4n.r-15d164r.r-1g94qm0 > div.css-1dbjc4n.r-1wbh5a2.r-dnmrzs.r-1ny4l3l').style.margin = '0px 0px 0px 32px';
+            //titleInfoNode.querySelector('div.css-1dbjc4n.r-15d164r.r-1g94qm0 > div.css-1dbjc4n.r-1wbh5a2.r-dnmrzs.r-1ny4l3l').style.margin = '0px 0px 0px 32px';
 
             return {
-                authorFullname: this._parseAuthorFullname(titleInfoNode.querySelector('div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-dnmrzs > div > span:nth-child(1) > span')),
+                authorFullname: this._parseAuthorFullname(titleInfoNode.querySelector('div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-dnmrzs > div > span:nth-child(1)')),
                 authorUsername: titleInfoNode.querySelector('div.css-901oao.css-bfa6kz.r-1re7ezh.r-18u37iz.r-1qd0xha.r-a023e6.r-16dba41.r-ad9z0x.r-bcqeeo.r-qvutc0 span')?.innerText.replace('@', '').toLowerCase(),
                 authorImg: titleInfoNode.querySelector('a > div.css-1dbjc4n.r-1adg3ll.r-1udh08x > div.r-1p0dtai.r-1pi2tsx.r-1d2f490.r-u8s1d.r-ipm5af.r-13qz1uu > div > img')?.getAttribute('src')
             }
@@ -202,10 +202,10 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
     private _parseAuthorFullname(node: any): string {
         if (!node) return null;
         const strings = [...node.childNodes].map(x => {
-            if (x.innerText.length > 0) {
+            if (x.innerText && x.innerText.length > 0) {
                 // plain text
                 return x.innerText;
-            } else {
+            } else if (!!x.querySelector('img')) {
                 // unicode emoji
                 const url = x.querySelector('img').getAttribute('src');
                 const code = url.substr(url.lastIndexOf('/') + 1, url.indexOf('.svg') - url.lastIndexOf('/') - 1);
