@@ -15,10 +15,6 @@ export class Picture implements IWidget<IPictureState> {
     public state: IPictureState;
     insPointName: string;
 
-    constructor() {
-        console.log('picture');
-    }
-
     public mount() {
         if (!this.el) this._createElement();
 
@@ -30,8 +26,6 @@ export class Picture implements IWidget<IPictureState> {
             const htmlString = `<img src="${img}" />`
             this.el.innerHTML = htmlString;
         }
-
-        console.log('picture mount', this.el);
     }
 
     public unmount() {
