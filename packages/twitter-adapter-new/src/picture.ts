@@ -15,17 +15,23 @@ export class Picture implements IWidget<IPictureState> {
     public state: IPictureState;
     insPointName: string;
 
+    constructor() {
+        console.log('picture');
+    }
+
     public mount() {
         if (!this.el) this._createElement();
 
         const { img, disabled, hidden } = this.state;
 
         if (hidden) {
+            this.el.innerHTML = '';
+        } else {
             const htmlString = `<img src="${img}" />`
             this.el.innerHTML = htmlString;
-        } else {
-            this.el.innerHTML = '';
         }
+
+        console.log('picture mount', this.el);
     }
 
     public unmount() {

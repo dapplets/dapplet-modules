@@ -34,7 +34,8 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                 selector: "" //ToDo
             },
             POST_PICTURE: {
-                selector: "div[lang] > *:last-child"
+                selector: "div[data-testid=tweet] > div:nth-child(2) > div:nth-child(2)",
+                insert: 'inside'
             },
             POST_AVATAR_BADGE: {
                 selector: "div.css-1dbjc4n.r-18kxxzh.r-1wbh5a2.r-13qz1uu > *:last-child"
