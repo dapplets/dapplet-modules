@@ -3,6 +3,6 @@
     "branch": "default",
     "version": { "$ref": "package.json#/version" },
     "type": "INTERFACE",
-    "title": "Identity Management",
+    "title": "Identity Adapter",
     "description": { "$ref": "package.json#/description" }
 }
