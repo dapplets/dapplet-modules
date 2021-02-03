@@ -1,23 +1,35 @@
 import { AutoProperty, AutoPropertyConf } from "@dapplets/dapplet-extension";
 import { Connection, Listener } from "@dapplets/dapplet-extension/lib/inpage/connection";
 
+export type WidgetConfig<T> = ({
+    [key: string]: T;
+} & {
+    id?: string;
+    initial?: string;
+});
+
 export class State<T> {
-    public readonly INITIAL_STATE = "DEFAULT"
+    public readonly INITIAL_STATE;
     private _currentStateName = undefined
     public state: T
     private _cache: any = {}
     public changedHandler: Function
+    public id: string;
 
-    constructor(private config: { [state: string]: T }, public readonly ctx: any) {
+    constructor(private config: WidgetConfig<T>, public readonly ctx: any) {
         const me = this
+        this.id = config.id;
+        this.INITIAL_STATE = config.initial || "DEFAULT";
         this.state = new Proxy({}, {
             get(target, property, receiver) {
                 if (property === 'state') return me._currentStateName
                 if (property === 'ctx') return me.ctx
                 if (property === 'setState') return me.setState.bind(me)
-                return me._currentStateName 
-                        ? me._cache[me._currentStateName][property] 
-                        : me._cache[property]
+                if (property === 'id') return me.id
+                
+                return me._currentStateName
+                    ? me._cache[me._currentStateName][property]
+                    : me._cache[property]
             },
             set(target, property, value, receiver) {
                 if (property === 'state') {
@@ -36,7 +48,7 @@ export class State<T> {
         if (me.config[me.INITIAL_STATE]) me.setState(me.INITIAL_STATE)
     }
 
-    public setState(stateName: string) : any {   
+    public setState(stateName: string): any {
         do {
             //console.log("Set state from - to: ", this._currentStateName,stateName)     
             if (stateName == this._currentStateName) {
@@ -47,29 +59,29 @@ export class State<T> {
             }
             this._currentStateName = stateName
             stateName = this._cache[stateName].NEXT
-        } while(stateName)
+        } while (stateName)
         this.changedHandler && this.changedHandler()
         return this._cache[this._currentStateName]
     }
 
-    private createNewStateFromConfig(stateName){
+    private createNewStateFromConfig(stateName) {
         let state = {}
         if (this.config[stateName]) {
-            const createAutoProperty = (apConfig: AutoPropertyConf, setter: (v:any) => void) =>
+            const createAutoProperty = (apConfig: AutoPropertyConf, setter: (v: any) => void) =>
                 //ToDo: move addAutoProperty to apCpnfig? 
                 apConfig.conn.addAutoProperty(apConfig, setter, this.ctx)
-            const isAutoPropertyConf = (value:any) => 
+            const isAutoPropertyConf = (value: any) =>
                 value && typeof value === 'object' && value.conn && value.name
-            const me=this
+            const me = this
             Object.entries(this.config[stateName]).forEach(([key, valueOrApConf]) => {
-            state[key] = !isAutoPropertyConf(valueOrApConf) 
-                        ? valueOrApConf
-                        : createAutoProperty(valueOrApConf, (v:any) => {
-                            if (stateName == me._currentStateName) {
-                                state[key] = v
-                                me.changedHandler && me.changedHandler()
-                            }
-                        }).value
+                state[key] = !isAutoPropertyConf(valueOrApConf)
+                    ? valueOrApConf
+                    : createAutoProperty(valueOrApConf, (v: any) => {
+                        if (stateName == me._currentStateName) {
+                            state[key] = v
+                            me.changedHandler && me.changedHandler()
+                        }
+                    }).value
             })
         } else {
             console.error(`The state template with name "${stateName}" doesn't exist. Skipping state updating...`)

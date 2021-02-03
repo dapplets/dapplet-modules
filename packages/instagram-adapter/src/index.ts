@@ -73,7 +73,7 @@ export default class TwitterAdapter {
 
     // ToDo: refactor it
     public attachConfig(feature: IFeature): void { // ToDo: automate two-way dependency handling(?)
-        this.adapter.attachConfig(feature);
+        return this.adapter.attachConfig(feature);
     }
 
     // ToDo: refactor it

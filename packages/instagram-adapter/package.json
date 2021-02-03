@@ -1,6 +1,6 @@
 {
   "name": "instagram-adapter.dapplet-base.eth",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Adapter for instagram.com",
   "scripts": {
     "build": "webpack --config webpack.dev.js",

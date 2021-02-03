@@ -16,7 +16,7 @@ export default class TwitterFeature {
 
             // ToDo: exports in ITwitterAdapter type is function, but in runtime it's object.
             const { button } = this.adapter.exports;
-            this.config = {
+            const { $ } = this.adapter.attachConfig({
                 POST_STARTER: [
                     {
                         label: 'Add tweet to the Ethereum registry',
@@ -27,6 +27,7 @@ export default class TwitterFeature {
                 ],
                 POST_SOUTH: [
                     button({
+                        id: 'first_button',
                         initial: "DEFAULT",
                         "DEFAULT": {
                             label: server.like_num,
@@ -52,6 +53,7 @@ export default class TwitterFeature {
                         }
                     }),
                     button({
+                        id: 'second_button',
                         initial: "DEFAULT",
                         "DEFAULT": {
                             img: ETHEREUM_ICON,
@@ -64,15 +66,14 @@ export default class TwitterFeature {
                                 let counter = (await Core.storage.get(ctx.id)) ?? 0;
                                 await Core.storage.set(ctx.id, ++counter);
                                 me.label = counter;
+                                $(ctx, 'first_button').state = 'ERR';
                             }
                         }
                     })
                 ],
                 POST_COMBO: [],
                 DM_SOUTH: []
-            }
-
-            this.adapter.attachConfig(this.config);
+            });
         });
     }
 }

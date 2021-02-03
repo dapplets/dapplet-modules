@@ -180,9 +180,9 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
     }
 
     // ToDo: refactor it
-    public attachConfig(config: T_TwitterFeatureConfig): void { // ToDo: automate two-way dependency handling(?)
+    public attachConfig(config: T_TwitterFeatureConfig) { // ToDo: automate two-way dependency handling(?)
         this.starter.attachConfig(config);
-        this.adapter.attachConfig(config);
+        return this.adapter.attachConfig(config);
     }
 
     // ToDo: refactor it

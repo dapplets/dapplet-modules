@@ -1,7 +1,7 @@
 import { WidgetBuilder } from './widgets';
 import { IFeature, IContentAdapter } from '@dapplets/dapplet-extension';
 import { IWidgetBuilderConfig, Context, IWidget } from './types';
-import { State } from './state';
+import { State, WidgetConfig } from './state';
 
 interface IDynamicAdapter extends IContentAdapter<any> {
     configure(config: IWidgetBuilderConfig[]): void;
@@ -15,10 +15,16 @@ class DynamicAdapter implements IDynamicAdapter {
     private contextBuilders: WidgetBuilder[] = [];
 
     // Config from feature
-    public attachConfig(config: any): void { // ToDo: automate two-way dependency handling(?)
+    public attachConfig(config: any) { // ToDo: automate two-way dependency handling(?)
         if (this.featureConfigs.find(f => f === config)) return;
         this.featureConfigs.splice(config['orderIndex'], 0, config);
         this.updateObservers();
+
+        return {
+            $: (ctx: any, id: string) => {
+                return this.contextBuilders.map(wb => wb.widgets.get(config)?.filter(x => x.state.ctx === ctx && x.state.id === id).map(x => x.state) || []).flat(1)[0];
+            }
+        }
     }
 
     // Config from feature
@@ -173,7 +179,7 @@ class DynamicAdapter implements IDynamicAdapter {
             return widget;
         }
 
-        return (config: { [state: string]: T }) => {
+        return (config: WidgetConfig<T>) => {
             const uuid = uuidv4();
             return ((builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element) =>
                 createWidget(Widget, builder, insPointName, config, order, contextNode, uuid)

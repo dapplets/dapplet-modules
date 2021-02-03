@@ -41,8 +41,8 @@ export default class CommonAdapter implements IContentAdapter<ICommonAdapterConf
     }];
 
     // ToDo: refactor it
-    public attachConfig(config: ICommonAdapterConfig, featureId?: string): void { // ToDo: automate two-way dependency handling(?)
-        this.dynamicAdapter.attachConfig(config);
+    public attachConfig(config: ICommonAdapterConfig, featureId?: string) { // ToDo: automate two-way dependency handling(?)
+        return this.dynamicAdapter.attachConfig(config);
     }
 
     // ToDo: refactor it

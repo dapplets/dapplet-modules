@@ -8,10 +8,10 @@
         "noLib": false,
         "emitDecoratorMetadata": false,
         "experimentalDecorators": true,
-        "target": "es2017",
+        "target": "es2019",
         "sourceMap": false,
         "lib": [
-            "es2017", "dom"
+            "es2019", "dom"
         ],
         "types": [ "../../typesPatch" ],
         "composite": true
