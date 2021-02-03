@@ -5,12 +5,12 @@ import ETHEREUM_ICON from './ethereum.png'
 @Injectable
 export default class TwitterFeature {
     public config: T_TwitterFeatureConfig;
+    private wallet = Core.wallet();
 
     constructor(
         @Inject("twitter-adapter.dapplet-base.eth")
         public adapter: any
     ) {
-        const wallet = Core.wallet();
         Core.storage.get('serverUrl').then(serverUrl => {
             const server = Core.connect<{ like_num: string }>({ url: serverUrl });
 
@@ -20,8 +20,8 @@ export default class TwitterFeature {
                 POST_STARTER: [
                     {
                         label: 'Add tweet to the Ethereum registry',
-                        exec: (ctx, me) => {
-                            wallet.sendAndListen('1', ctx, {});
+                        exec: async (ctx, me) => {
+                            this.wallet.then(w => w.sendAndListen('1', ctx, {}));
                         }
                     }
                 ],
@@ -34,10 +34,10 @@ export default class TwitterFeature {
                             disabled: false,
                             exec: (ctx, me) => { // ToDo: rename exec() to onclick()
                                 me.state = 'PENDING';
-                                wallet.sendAndListen('1', ctx, {
+                                this.wallet.then(w => w.sendAndListen('1', ctx, {
                                     rejected: () => me.state = 'ERR',
                                     created: () => me.state = 'DEFAULT'
-                                });
+                                }));
                             }
                         },
                         "PENDING": {
