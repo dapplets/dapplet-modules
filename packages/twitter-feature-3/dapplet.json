@@ -7,8 +7,8 @@
     "description": { "$ref": "package.json#/description" },
     "main": { "$ref": "package.json#/main" },
     "icon": "src/icon.png",
-    "contextIds": ["twitter.com/1153830517105713152"],
+    "contextIds": ["twitter.com/1286589472797229056", "twitter.com/1333863108465582087", "twitter.com/1342410937081483265", "twitter.com/1346093004537425927"],
     "dependencies": {
-      "twitter-adapter.dapplet-base.eth": "0.5.0"
+      "twitter-adapter.dapplet-base.eth": "0.5.1"
     }
 }

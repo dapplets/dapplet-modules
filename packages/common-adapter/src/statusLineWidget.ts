@@ -155,6 +155,7 @@ export class StatusLineWidget implements IWidget<IStatusLineState> {
     }
 
     public removeMessage(messageId: string) {
+        if (!this.state.messages || this.state.messages.length === 0) return;
         this.state.messages = this.state.messages.filter(x => x.uuid !== messageId);
         if (this.state.currentIndex > this.state.messages.length - 1) this.state.currentIndex = this.state.messages.length - 1;
         this.mount();

@@ -21,10 +21,10 @@ export class Picture implements IWidget<IPictureState> {
         const { img, disabled, hidden } = this.state;
 
         if (hidden) {
+            this.el.innerHTML = '';
+        } else {
             const htmlString = `<img src="${img}" />`
             this.el.innerHTML = htmlString;
-        } else {
-            this.el.innerHTML = '';
         }
     }
 

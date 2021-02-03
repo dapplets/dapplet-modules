@@ -13,6 +13,6 @@
   "typings": "build/index.d.ts",
   "devDependencies": {
     "@dapplets/dapplet-extension": "latest",
-    "common-adapter.dapplet-base.eth": "^0.2.1"
+    "common-adapter.dapplet-base.eth": "^0.2.4"
   }
 }

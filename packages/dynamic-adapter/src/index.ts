@@ -140,6 +140,8 @@ class DynamicAdapter implements IDynamicAdapter {
                     node.parentNode.insertBefore(widget.el, node.nextSibling);
                 } else if (insertTo === 'begin') {
                     node.parentNode.insertBefore(widget.el, node);
+                } else if (insertTo === 'inside') {
+                    node.appendChild(widget.el);
                 } else {
                     console.error('Invalid "insert" value in the insertion point config. The valid values are "begin" or "end".');
                 }
