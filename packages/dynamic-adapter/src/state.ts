@@ -34,6 +34,8 @@ export class State<T> {
             set(target, property, value, receiver) {
                 if (property === 'state') {
                     me.setState(value)
+                } else if (property === 'newState') {
+                    me.setState(value, true)
                 } else {
                     if (me._currentStateName) {
                         me._cache[me._currentStateName][property] = value
@@ -48,13 +50,13 @@ export class State<T> {
         if (me.config[me.INITIAL_STATE]) me.setState(me.INITIAL_STATE)
     }
 
-    public setState(stateName: string): any {
+    public setState(stateName: string, resetState: boolean = false): any {
         do {
             //console.log("Set state from - to: ", this._currentStateName,stateName)     
             if (stateName == this._currentStateName) {
                 //console.log(`NOP state transition "${stateName}". Skipping...`)
                 break
-            } else if (!this._cache[stateName]) {
+            } else if (!this._cache[stateName] || resetState) {
                 this._cache[stateName] = this.createNewStateFromConfig(stateName)
             }
             this._currentStateName = stateName

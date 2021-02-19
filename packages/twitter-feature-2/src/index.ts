@@ -69,6 +69,25 @@ export default class TwitterFeature {
                                 $(ctx, 'first_button').state = 'ERR';
                             }
                         }
+                    }),
+                    button({
+                        initial: "ON",
+                        "ON": {
+                            img: ETHEREUM_ICON,
+                            label: "ON",
+                            exec: async (ctx, me) => {
+                                me.label = "ON2";
+                                me.newState = 'OFF';
+                            }
+                        },
+                        "OFF": {
+                            img: ETHEREUM_ICON,
+                            label: "OFF",
+                            exec: async (ctx, me) => {
+                                me.label = "OFF2";
+                                me.setState("ON", true);
+                            }
+                        }
                     })
                 ],
                 POST_COMBO: [],
