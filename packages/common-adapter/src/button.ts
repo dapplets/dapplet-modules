@@ -2,9 +2,8 @@ import { IWidget } from 'dynamic-adapter.dapplet-base.eth';
 
 export interface IButtonState {
     img?: string;
-    label?: string;
-    loading?: boolean;
     disabled?: boolean;
+    tooltip?: string;
     exec?: (ctx: any, me: IButtonState) => void;
     init?: (ctx: any, me: IButtonState) => void;
     ctx?: any;
@@ -18,7 +17,7 @@ export class Button implements IWidget<IButtonState> {
     public mount() {
         if (!this.el) this._createElement();
 
-        const { img, label, loading, disabled } = this.state;
+        const { img, tooltip } = this.state;
 
         const htmlString = `
             <div style="
@@ -41,6 +40,7 @@ export class Button implements IWidget<IButtonState> {
             </div>
         `
 
+        this.el.title = tooltip;
         this.el.innerHTML = htmlString;
     }
 

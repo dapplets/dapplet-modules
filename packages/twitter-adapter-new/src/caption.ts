@@ -9,6 +9,7 @@ export interface ICaptionState {
     hidden: boolean;
     insPointName: string;
     img: string;
+    tooltip?: string;
 }
 
 export class Caption implements IWidget<ICaptionState> {
@@ -19,7 +20,8 @@ export class Caption implements IWidget<ICaptionState> {
     public mount() {
         if (!document.getElementById('dapplet-widget-caption-styles')) this._injectStyles();
         if (!this.el) this._createElement();
-        const { text, hidden, img } = this.state;
+        
+        const { text, hidden, img, tooltip } = this.state;
 
         this.el.style.display = (hidden) ? 'none' : null;
 
@@ -39,6 +41,8 @@ export class Caption implements IWidget<ICaptionState> {
                 </div>
             </div>
         `;
+
+        this.el.title = tooltip;
     }
 
     public unmount() {

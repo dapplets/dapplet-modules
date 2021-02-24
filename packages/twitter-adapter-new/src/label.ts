@@ -10,6 +10,7 @@ export interface ILabelState {
     insPointName: string;
     img: string;
     postfix?: string;
+    tooltip?: string;
 }
 
 export class Label implements IWidget<ILabelState> {
@@ -20,7 +21,8 @@ export class Label implements IWidget<ILabelState> {
     public mount() {
         if (!document.getElementById('dapplet-widget-label-styles')) this._injectStyles();
         if (!this.el) this._createElement();
-        const { text, hidden } = this.state;
+
+        const { text, hidden, tooltip } = this.state;
         
         this.el.style.display = (hidden) ? 'none' : null;
 
@@ -63,6 +65,8 @@ export class Label implements IWidget<ILabelState> {
         } else {
             this.el.querySelector('div')?.remove();
         }
+        
+        this.el.title = tooltip;
     }
 
     public unmount() {

@@ -6,6 +6,7 @@ export interface IButtonState {
     loading: boolean;
     disabled: boolean;
     hidden: boolean;
+    tooltip?: string;
     exec: (ctx: any, me: IButtonState) => void;
     init: (ctx: any, me: IButtonState) => void;
     ctx: any;
@@ -20,7 +21,7 @@ export class Button implements IWidget<IButtonState> {
     public mount() {
         if (!this.el) this._createElement();
 
-        const { img, label, loading, disabled, hidden } = this.state;
+        const { img, label, loading, disabled, hidden, tooltip } = this.state;
 
         if (hidden) {
             this.el.innerHTML = '';
@@ -45,6 +46,8 @@ export class Button implements IWidget<IButtonState> {
             
             this.el.innerHTML = htmlString;
         }
+        
+        this.el.title = tooltip;
     }
 
     public unmount() {

@@ -4,6 +4,7 @@ export interface IPictureState {
     img: string;
     disabled: boolean;
     hidden: boolean;
+    tooltip?: string;
     exec: (ctx: any, me: IPictureState) => void;
     init: (ctx: any, me: IPictureState) => void;
     ctx: any;
@@ -18,7 +19,7 @@ export class Picture implements IWidget<IPictureState> {
     public mount() {
         if (!this.el) this._createElement();
 
-        const { img, disabled, hidden } = this.state;
+        const { img, disabled, hidden, tooltip } = this.state;
 
         if (hidden) {
             this.el.innerHTML = '';
@@ -26,6 +27,8 @@ export class Picture implements IWidget<IPictureState> {
             const htmlString = `<img src="${img}" />`
             this.el.innerHTML = htmlString;
         }
+        
+        this.el.title = tooltip;
     }
 
     public unmount() {

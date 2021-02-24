@@ -5,6 +5,7 @@ export interface IBadgeState {
     label: string;
     loading: boolean;
     disabled: boolean;
+    tooltip?: string;
     exec: (ctx: any, me: IBadgeState) => void;
     init: (tx: any, me: IBadgeState) => void;
     ctx: any;
@@ -22,7 +23,7 @@ export class Badge implements IWidget<IBadgeState> {
 
     public mount() {
         if (!this.el) this._createElement();
-        const { img, vertical, horizontal, hidden } = this.state;
+        const { img, vertical, horizontal, hidden, tooltip } = this.state;
 
         if (!hidden) {
             if (!this.el.firstChild) {
@@ -46,6 +47,7 @@ export class Badge implements IWidget<IBadgeState> {
                     break;
             }
 
+            this.el.title = tooltip;
         } else {
             this.el.firstChild?.remove();
         }
