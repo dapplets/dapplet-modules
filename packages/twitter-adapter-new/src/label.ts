@@ -66,7 +66,7 @@ export class Label implements IWidget<ILabelState> {
             this.el.querySelector('div')?.remove();
         }
         
-        this.el.title = tooltip;
+        this.el.title = tooltip ?? '';
     }
 
     public unmount() {

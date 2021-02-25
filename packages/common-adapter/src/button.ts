@@ -40,7 +40,7 @@ export class Button implements IWidget<IButtonState> {
             </div>
         `
 
-        this.el.title = tooltip;
+        this.el.title = tooltip ?? '';
         this.el.innerHTML = htmlString;
     }
 

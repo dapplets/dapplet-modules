@@ -47,7 +47,7 @@ export class Button implements IWidget<IButtonState> {
             this.el.innerHTML = htmlString;
         }
         
-        this.el.title = tooltip;
+        this.el.title = tooltip ?? '';
     }
 
     public unmount() {

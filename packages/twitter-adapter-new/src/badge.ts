@@ -102,7 +102,7 @@ export class Badge implements IWidget<IBadgeState> {
 
             }
 
-            this.el.title = tooltip;
+            this.el.title = tooltip ?? '';
         } else {
             this.el.firstChild?.remove();
         }

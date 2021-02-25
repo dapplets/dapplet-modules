@@ -54,16 +54,16 @@ export class Button implements IWidget<IButtonState> {
             this.el.innerHTML = htmlString;
 
         } else if (this.insPointName === 'PROFILE_BUTTON_GROUP') {
-            if (!this.el.firstChild) {
-                const imgTag = document.createElement('img');
-                imgTag.src = img;
-                imgTag.style.width = '18px';
-                imgTag.style.height = '18px';
-                imgTag.style.position = 'relative';
-                imgTag.style.top = '9px';
-                imgTag.style.left = '10px';
-                this.el.appendChild(imgTag);
-            }
+            this.el.innerHTML = `
+                <img style="
+                    width: 18px;
+                    height: 18px;
+                    position: relative;
+                    top: 3px;
+                    ${label ? 'margin-right: 6px;' : ''}
+                " src="${img}" />
+                <span>${label}</span>
+            `;
         } else if (this.insPointName === 'POST_STARTER') {
             const htmlString = `<div style="margin: 0 10px" aria-haspopup="true" aria-label="More" role="button" data-focusable="true" tabindex="0" class="css-18t94o4 css-1dbjc4n r-1777fci r-11cpok1 r-1ny4l3l r-bztko3 r-lrvibr" data-testid="caret">
                     <div dir="ltr" class="css-901oao r-1awozwy r-1re7ezh r-6koalj r-1qd0xha r-a023e6 r-16dba41 r-1h0z5md r-ad9z0x r-bcqeeo r-o7ynqc r-clp7b1 r-3s2u2q r-qvutc0">
@@ -75,8 +75,8 @@ export class Button implements IWidget<IButtonState> {
                 </div>`;
             this.el.innerHTML = htmlString;
         }
-        
-        this.el.title = tooltip;
+
+        this.el.title = tooltip ?? '';
     }
 
     public unmount() {
@@ -104,10 +104,28 @@ export class Button implements IWidget<IButtonState> {
 
         } else if (this.insPointName === 'PROFILE_BUTTON_GROUP') {
 
-            this.el.classList.add("dapplet-widget-profile-button", "css-18t94o4", "css-1dbjc4n", "r-1niwhzg", "r-1xl5njo", "r-sdzlij", "r-1phboty", "r-rs99b7", "r-1w2pmg", "r-15d164r", "r-zso239", "r-1vuscfd", "r-53xb7h", "r-mk0yit", "r-o7ynqc", "r-6416eg", "r-lrvibr", "r-p1n3y5");
-            styleTag.innerText = `.dapplet-widget-profile-button:hover {
-                background-color: rgba(29, 161, 242, 0.1)
-            }`;
+            this.el.classList.add("dapplet-widget-profile-button");
+            styleTag.innerText = `
+                .dapplet-widget-profile-button {
+                    border: 1px solid #1da1f2;
+                    padding: 0 15px;
+                    height: 40px;
+                    cursor: pointer;
+                    border-radius: 9999px;
+                    margin-bottom: 12px;
+                    font-weight: 700;
+                    color: #1da1f2;
+                    box-sizing: border-box;
+                    font-size: 15px;
+                    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+                    line-height: 38px;
+                    margin-right: 5px;
+                }
+                
+                .dapplet-widget-profile-button:hover {
+                    background-color: rgba(29, 161, 242, 0.1);
+                }
+            `;
         }
 
         this.el.addEventListener("click", e => {

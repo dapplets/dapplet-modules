@@ -28,7 +28,7 @@ export class Picture implements IWidget<IPictureState> {
             this.el.innerHTML = htmlString;
         }
         
-        this.el.title = tooltip;
+        this.el.title = tooltip ?? '';
     }
 
     public unmount() {

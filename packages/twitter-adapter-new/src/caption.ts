@@ -42,7 +42,7 @@ export class Caption implements IWidget<ICaptionState> {
             </div>
         `;
 
-        this.el.title = tooltip;
+        this.el.title = tooltip ?? '';
     }
 
     public unmount() {
