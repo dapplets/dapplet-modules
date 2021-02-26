@@ -13,6 +13,7 @@ class DynamicAdapter implements IDynamicAdapter {
     private observer: MutationObserver = null;
     private featureConfigs: any[] = [];
     private contextBuilders: WidgetBuilder[] = [];
+    private stateStorage = new Map<string, any>();
 
     // Config from feature
     public attachConfig(config: any) { // ToDo: automate two-way dependency handling(?)
@@ -101,6 +102,8 @@ class DynamicAdapter implements IDynamicAdapter {
     }
 
     public createWidgetFactory<T>(Widget: any) {
+        const me = this;
+
         function uuidv4() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
                 var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -127,7 +130,25 @@ class DynamicAdapter implements IDynamicAdapter {
             if (node.parentElement.getElementsByClassName(clazz).length > 0) return;
 
             const context = builder.contexts.get(contextNode);
-            const state = new State<T>(config, context.parsed);
+
+            // widget state restoring
+            const state = (() => {
+                const hasId = context.parsed.id !== undefined;
+                if (!hasId) {
+                    console.error('Warning: Each parsed context should have a unique “id” prop. Restoring of widget states will be unavailable.')
+                    return new State<T>(config, context.parsed);
+                }
+
+                const key = clazz + '/' + context.parsed.id;
+
+                if (!me.stateStorage.has(key)) {
+                    const state = new State<T>(config, context.parsed);
+                    me.stateStorage.set(key, state);
+                }
+
+                return me.stateStorage.get(key);
+            })();
+
             const widget = new Widget() as IWidget<T>;
             widget.state = state.state;
             widget.insPointName = insPointName;
