@@ -108,18 +108,17 @@ export class Button implements IWidget<IButtonState> {
             styleTag.innerText = `
                 .dapplet-widget-profile-button {
                     border: 1px solid #1da1f2;
-                    padding: 0 15px;
+                    padding: 0 10px;
                     height: 40px;
                     cursor: pointer;
                     border-radius: 9999px;
-                    margin-bottom: 12px;
+                    margin: 0 12px 12px 0;
                     font-weight: 700;
                     color: #1da1f2;
                     box-sizing: border-box;
                     font-size: 15px;
                     font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
                     line-height: 38px;
-                    margin-right: 5px;
                 }
                 
                 .dapplet-widget-profile-button:hover {
