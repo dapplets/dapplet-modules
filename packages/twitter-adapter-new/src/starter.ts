@@ -16,7 +16,7 @@ export default class Starter {
     }[] = [];
     private _buttonId = 0;
 
-    private _overlay = Core.overlay({ url: chrome.extension.getURL('starter.html'), title: 'Identity Management' });
+    private _overlay = Core.overlay({ url: chrome.extension.getURL('starter.html'), title: 'Starter' });
 
     constructor(public adapter: TwitterAdapter) {
         const { button } = this.adapter.exports("twitter-adapter.dapplet-base.eth");
