@@ -55,28 +55,7 @@ $/
 
 During `npm run start`, connect to Dev Server via Extension Dev Tab
 
-Dev Config URL: `http://localhost:8080/index.json`
-
-### How to create a new module?
-
-1. `npm run create` to run the wizard of new module creation from templates.
-2. Answer the questions of CLI.
-3. You can find new module in `packages\<name_of_your_module>` directory.
-
-### How to publish modules?
-
-Run command:
-
-```
-set DAPPLET_CLI_REGISTRY=https://test.dapplets.org && set DAPPLET_CLI_ACCOUNT=dapplet-base && set DAPPLET_CLI_KEY=<YOUR_SECRET_KEY> && npm run deploy
-```
-
-Where instead of `npm run deploy` you can use the following commands:
-
-* `npm run deploy` for deployment of modules from `build` folders to the Test Registry.
-* `npm run deploy:archive` for deployment of modules from `build` and `archive` folders to the Test Registry.
-* `npm run deployswarm` for deployment of modules from `build` folders to the Swarm.
-* `npm run deployswarm:archive` for deployment of modules from `build` and `archive` folders to the Swarm.
+Dev Config URL: `https://localhost:8080/index.json`
 
 ## Built With
 
