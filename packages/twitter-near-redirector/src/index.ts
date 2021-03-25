@@ -11,7 +11,7 @@ export default class TwitterFeature {
     public adapter: any;
 
     async activate() {
-        
+
         const contract: any = await Core.near.contract('dev-1615369741028-1922063', {
             viewMethods: ['get'],
             changeMethods: ['add']
@@ -22,18 +22,51 @@ export default class TwitterFeature {
             POST_SOUTH: [
                 button({
                     "DEFAULT": {
+                        loading: true,
+                        init: async (ctx, me) => {
+                            const url = `https://twitter.com/${ctx.authorUsername}/status/${ctx.id}`;
+                            const hash = Core.utils.keccak256(Core.utils.toUtf8Bytes(url));
+                            const redirections = await contract.get({ key: hash });
+                            if (redirections.length > 0) {
+                                me.state = 'HAS_REDIRECT';
+                            } else {
+                                me.state = 'NO_REDIRECT';
+                            }
+                        }
+                    },
+                    "HAS_REDIRECT": {
                         img: NEAR_ICON,
-                        label: 'NEAR',
-                        exec: async () => {
+                        label: 'Redirect',
+                        exec: async (ctx) => {
+                            const url = `https://twitter.com/${ctx.authorUsername}/status/${ctx.id}`;
+                            const hash = Core.utils.keccak256(Core.utils.toUtf8Bytes(url));
+                            const redirections = await contract.get({ key: hash });
+                            if (redirections.length === 0) return;
+                            const { targetURL, message } = redirections[0];
 
-                            const result = await contract.add({ key: '0x0', target: 'test', message: 'test' });
-                            console.log(result);
+                            if (confirm(`Redirect to ${targetURL}?\nMessage: ${message}`)) {
+                                window.location = targetURL;
+                            }
+                        }
+                    },
+                    "NO_REDIRECT": {
+                        img: NEAR_ICON,
+                        label: 'Create',
+                        exec: async (ctx) => {
+                            const url = `https://twitter.com/${ctx.authorUsername}/status/${ctx.id}`;
+                            const target = prompt(`You are creating a redirect from ${url}\nEnter a target URL:`);
+                            if (!target) return;
+                            const message = prompt(`Enter a message:`);
+
+                            if (target) {
+                                const hash = Core.utils.keccak256(Core.utils.toUtf8Bytes(url));
+                                await contract.add({ key: hash, target: target, message: message ?? '' });
+                                alert('Redirect created.')
+                            }
                         }
                     }
                 })
-            ],
-            POST_COMBO: [],
-            DM_SOUTH: []
+            ]
         });
     }
 }
