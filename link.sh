@@ -48,3 +48,7 @@ cd ..
 cd twitter-feature-3
 npm link @dapplets/dapplet-extension
 cd ..
+
+cd twitter-near-redirector
+npm link @dapplets/dapplet-extension
+cd ..

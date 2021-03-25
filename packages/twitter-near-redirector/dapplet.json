@@ -1,0 +1,14 @@
+{
+    "name": { "$ref": "package.json#/name" },
+    "branch": "default",
+    "version": { "$ref": "package.json#/version" },
+    "type": "FEATURE",
+    "title": "Twitter NEAR Redirector",
+    "description": { "$ref": "package.json#/description" },
+    "main": { "$ref": "package.json#/main" },
+    "icon": "src/near.svg",
+    "contextIds": ["twitter-adapter.dapplet-base.eth"],
+    "dependencies": {
+      "twitter-adapter.dapplet-base.eth": "0.5.1"
+    }
+}
