@@ -1,10 +1,11 @@
 const path = require("path");
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const BUILD_DIRECTORY = "build";
 
 module.exports = function (dir) {
   return {
+    mode: "development",
+    devtool: "inline-source-map",
     entry: path.join(dir, "src/index.ts"),
     output: {
       path: path.join(dir, BUILD_DIRECTORY),
@@ -32,9 +33,6 @@ module.exports = function (dir) {
         }]
       }
       ]
-    },
-    plugins: [
-      new CleanWebpackPlugin()
-    ]
+    }
   };
 }
