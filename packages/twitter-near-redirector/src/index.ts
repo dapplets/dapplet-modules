@@ -1,17 +1,14 @@
-import { IFeature } from '@dapplets/dapplet-extension'
 import { T_TwitterFeatureConfig } from 'twitter-adapter.dapplet-base.eth'
 import NEAR_ICON from './near.svg';
 
 @Injectable
 export default class TwitterFeature {
     public config: T_TwitterFeatureConfig;
-    private wallet = Core.wallet();
 
     @Inject("twitter-adapter.dapplet-base.eth")
     public adapter: any;
 
     async activate() {
-
         const contract: any = await Core.near.contract('dev-1615369741028-1922063', {
             viewMethods: ['get'],
             changeMethods: ['add']
@@ -52,7 +49,7 @@ export default class TwitterFeature {
                     "NO_REDIRECT": {
                         img: NEAR_ICON,
                         label: 'Create',
-                        exec: async (ctx) => {
+                        exec: async (ctx, me) => {
                             const url = `https://twitter.com/${ctx.authorUsername}/status/${ctx.id}`;
                             const target = prompt(`You are creating a redirect from ${url}\nEnter a target URL:`);
                             if (!target) return;
@@ -61,6 +58,7 @@ export default class TwitterFeature {
                             if (target) {
                                 const hash = Core.utils.keccak256(Core.utils.toUtf8Bytes(url));
                                 await contract.add({ key: hash, target: target, message: message ?? '' });
+                                me.state = 'HAS_REDIRECT';
                                 alert('Redirect created.')
                             }
                         }
