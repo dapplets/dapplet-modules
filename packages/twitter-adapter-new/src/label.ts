@@ -11,6 +11,7 @@ export interface ILabelState {
     img: string;
     postfix?: string;
     tooltip?: string;
+    basic?: boolean;
 }
 
 export class Label implements IWidget<ILabelState> {
@@ -19,10 +20,11 @@ export class Label implements IWidget<ILabelState> {
     insPointName: string;  // POST_USERNAME_BADGE | POST_AVATAR_BADGE
 
     public mount() {
-        if (!document.getElementById('dapplet-widget-label-styles')) this._injectStyles();
+        this._injectStyles();
         if (!this.el) this._createElement();
 
         const { text, hidden, tooltip } = this.state;
+        const basic = !!this.state.basic;
         
         this.el.style.display = (hidden) ? 'none' : null;
 
@@ -33,6 +35,7 @@ export class Label implements IWidget<ILabelState> {
                 imgTag.style.height = '18px';
                 imgTag.style.position = 'relative';
                 imgTag.style.top = '2px';
+                imgTag.style.left = '2px';
                 imgTag.style.marginRight = '4px';
                 this.el.appendChild(imgTag);
             }
@@ -65,6 +68,9 @@ export class Label implements IWidget<ILabelState> {
         } else {
             this.el.querySelector('div')?.remove();
         }
+
+        this.el.classList.toggle('dapplet-widget-label', !basic);
+        this.el.classList.toggle('dapplet-widget-label-basic', basic);
         
         this.el.title = tooltip ?? '';
     }
@@ -75,7 +81,6 @@ export class Label implements IWidget<ILabelState> {
 
     private _createElement() {
         this.el = document.createElement('div');
-        this.el.classList.add("dapplet-widget-label");
         this.el.addEventListener('click', (e) => {
             this.state.exec?.(this.state.ctx, this.state);
             e.preventDefault();
@@ -86,6 +91,8 @@ export class Label implements IWidget<ILabelState> {
     }
 
     private _injectStyles() {
+        if (!!document.getElementById('dapplet-widget-label-styles')) return;
+
         const styleTag: HTMLStyleElement = document.createElement('style');
         styleTag.id = 'dapplet-widget-label-styles';
         styleTag.type = 'text/css';
@@ -98,6 +105,7 @@ export class Label implements IWidget<ILabelState> {
                 margin-left: 6px;
                 font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
             }
+
             .dapplet-widget-label:hover {
                 background: rgb(26, 145, 218);
             }
@@ -109,6 +117,15 @@ export class Label implements IWidget<ILabelState> {
                 margin-left: 10px;
                 padding: 6px 10px 3px 10px;
                 border-radius: 0 4px 4px 0;
+            }
+
+            .dapplet-widget-label-basic {
+                margin-left: 6px;
+                border-radius: 50%;
+            }
+
+            .dapplet-widget-label-basic:hover {
+                background: rgba(0,0,0, 0.10);
             }
         `;
         document.head.appendChild(styleTag);

@@ -23,9 +23,10 @@ export class Badge implements IWidget<IBadgeState> {
 
     public mount() {
 
+        this._injectStyles();
         if (!this.el) this._createElement();
-        const { img, vertical, horizontal, hidden, tooltip } = this.state;
 
+        const { img, vertical, horizontal, hidden, tooltip } = this.state;
 
         if (!hidden) {
             if (!this.el.firstChild) {
@@ -91,7 +92,7 @@ export class Badge implements IWidget<IBadgeState> {
                     break;
 
                 case 'PROFILE_BUTTON_GROUP':
-                    
+
                     imgTag.src = img;
                     imgTag.style.width = '18px';
                     imgTag.style.height = '18px';
@@ -132,19 +133,38 @@ export class Badge implements IWidget<IBadgeState> {
             case 'PROFILE_BUTTON_GROUP':
                 this.el = document.createElement('div');
                 this.el.classList.add("dapplet-widget-profile-button", "css-18t94o4", "css-1dbjc4n", "r-1niwhzg", "r-1xl5njo", "r-sdzlij", "r-1phboty", "r-rs99b7", "r-1w2pmg", "r-15d164r", "r-zso239", "r-1vuscfd", "r-53xb7h", "r-mk0yit", "r-o7ynqc", "r-6416eg", "r-lrvibr");
-                const styleTag: HTMLStyleElement = document.createElement('style');
-                styleTag.type = 'text/css';
-                styleTag.innerText = `.dapplet-widget-profile-button:hover {
-                        background-color: rgba(244, 93, 34, 0.1)
-                    }`;
-                document.head.appendChild(styleTag);
                 break;
 
             default:
                 this.el = document.createElement('div');
         }
-        
+
+        this.el.addEventListener('click', (e) => {
+            this.state.exec?.(this.state.ctx, this.state);
+            e.preventDefault();
+            return false;
+        });
+
+        this.el.classList.add('dapplet-widget-badge');
         this.mount();
         this.state.init?.(this.state.ctx, this.state);
+    }
+
+    private _injectStyles() {
+        if (!!document.getElementById('dapplet-widget-badge-styles')) return;
+
+        const styleTag: HTMLStyleElement = document.createElement('style');
+        styleTag.id = 'dapplet-widget-badge-styles';
+        styleTag.type = 'text/css';
+        styleTag.innerText = `
+            .dapplet-widget-badge > img:hover {
+                filter: brightness(0.9);
+            }
+
+            .dapplet-widget-profile-button:hover {
+                background-color: rgba(244, 93, 34, 0.1)
+            }
+        `;
+        document.head.appendChild(styleTag);
     }
 }
