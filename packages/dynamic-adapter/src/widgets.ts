@@ -12,6 +12,7 @@ export class WidgetBuilder {
     widgets = new Map<IFeature, any[]>();
     contexts = new WeakMap<Node, Context>();
     eventHandler: (event: string, args: any[], target: any) => void = null;
+    executedNodes = new WeakMap<Node, WeakSet<any>>();
 
     //ToDo: widgets
 
@@ -80,6 +81,11 @@ export class WidgetBuilder {
             for (let i = 0; i < featureConfigs.length; i++) {
                 const featureConfig = featureConfigs[i];
 
+                // Prevent multiple execution of featureConfig on one context
+                if (!this.executedNodes.has(contextNode)) this.executedNodes.set(contextNode, new WeakSet());
+                if (this.executedNodes.get(contextNode).has(featureConfig)) continue;
+                this.executedNodes.get(contextNode).add(featureConfig);
+
                 // is new feature?
                 if (this.widgets.get(featureConfig) === undefined) {
                     this.widgets.set(featureConfig, []);
@@ -87,20 +93,19 @@ export class WidgetBuilder {
                 }
 
                 for (const insPointName in this.insPoints) {
-                    for (const widgetConstructor of featureConfig[insPointName] || []) {
-                        const contextIds = featureConfig.contextIds || [];
+                    if (featureConfig[insPointName] === undefined) continue;
 
-                        if (contextIds.length === 0 || contextIds.indexOf(context.parsed.id) !== -1) {
-                            if (typeof widgetConstructor !== 'function') {
-                                console.error(`Invalid widget configuration in the insertion point "${insPointName}". It must be WidgetConstructor instance.`);
-                                continue;
-                            }
-                            const insertedWidget = widgetConstructor(this, insPointName, featureConfig.orderIndex, contextNode);
-                            if (!insertedWidget) continue;
-                            const registeredWidgets = this.widgets.get(featureConfig);
-                            registeredWidgets.push(insertedWidget);
-                            this.widgets.set(featureConfig, registeredWidgets);
-                        }
+                    const insPointConfig = featureConfig[insPointName];
+
+                    if (Array.isArray(insPointConfig)) {
+                        this._insertWidgets(insPointConfig, featureConfig, insPointName, context, contextNode);
+                    } else if (typeof insPointConfig === 'function') {
+                        const arr = insPointConfig(context.parsed);
+                        const insert = (arr) => this._insertWidgets(arr, featureConfig, insPointName, context, contextNode);
+                        (arr instanceof Promise) ? arr.then(insert) : insert(arr);
+                    } else {
+                        featureConfig[insPointName] = undefined;
+                        console.error(`Invalid configuration of "${insPointName}" insertion point. It must be an array of widgets or function.`);
                     }
                 }
             }
@@ -113,5 +118,29 @@ export class WidgetBuilder {
         newFeatureConfigs.forEach(fc => allContexts.forEach(ctx => newParsedContexts.indexOf(ctx) === -1 && this.emitEvent(fc, 'context_changed', ctx, [fc, ctx.parsed, null])));
 
         return newParsedContexts;
+    }
+
+    private _insertWidgets(insPointConfig: any, featureConfig: any, insPointName: string, context: Context, contextNode: Element) {
+        if (insPointConfig === null || insPointConfig === undefined) return;
+        if (!Array.isArray(insPointConfig)) {
+            console.error(`Config function of "${insPointName}" insertion point must return an array of widgets.`);
+            return;
+        }
+        
+        for (const widgetConstructor of insPointConfig) {
+            const contextIds = featureConfig.contextIds || [];
+
+            if (contextIds.length === 0 || contextIds.indexOf(context.parsed.id) !== -1) {
+                if (typeof widgetConstructor !== 'function') {
+                    console.error(`Invalid widget configuration in the insertion point "${insPointName}". It must be WidgetConstructor instance.`);
+                    continue;
+                }
+                const insertedWidget = widgetConstructor(this, insPointName, featureConfig.orderIndex, contextNode);
+                if (!insertedWidget) continue;
+                const registeredWidgets = this.widgets.get(featureConfig);
+                registeredWidgets.push(insertedWidget);
+                this.widgets.set(featureConfig, registeredWidgets);
+            }
+        }
     }
 }
