@@ -24,16 +24,20 @@ class DynamicAdapter implements IDynamicAdapter {
         return {
             $: (ctx: any, id: string) => {
                 return this.contextBuilders.map(wb => wb.widgets.get(config)?.filter(x => x.state.ctx === ctx && x.state.id === id).map(x => x.state) || []).flat(1)[0];
+            },
+            reset: () => {
+                this.detachConfig(config);
+                this.attachConfig(config);
             }
         }
     }
 
     // Config from feature
-    public detachConfig(config: any, featureId: string) {
+    public detachConfig(config: any) {
         this.featureConfigs = this.featureConfigs.filter(f => f !== config);
         this.contextBuilders.forEach(wb => {
             const widgets = wb.widgets.get(config);
-            if (!widgets) return;
+            if (!widgets || widgets.length === 0) return;
             widgets.forEach(w => w.unmount());
         });
         // ToDo: close all subscriptions and connections
