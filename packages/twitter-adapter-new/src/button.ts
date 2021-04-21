@@ -21,7 +21,7 @@ export class Button implements IWidget<IButtonState> {
     public mount() {
         if (!this.el) this._createElement();
 
-        const { img, label, loading, disabled, hidden, tooltip } = this.state;
+        const { img, label = '', loading, disabled, hidden, tooltip } = this.state;
 
         if (hidden) {
             this.el.innerHTML = '';
@@ -107,14 +107,14 @@ export class Button implements IWidget<IButtonState> {
             this.el.classList.add("dapplet-widget-profile-button");
             styleTag.innerText = `
                 .dapplet-widget-profile-button {
-                    border: 1px solid #1da1f2;
+                    border: 1px solid rgb(196, 207, 214);
                     padding: 0 10px;
                     height: 40px;
                     cursor: pointer;
                     border-radius: 9999px;
                     margin: 0 12px 12px 0;
                     font-weight: 700;
-                    color: #1da1f2;
+                    color: rgb(196, 207, 214);
                     box-sizing: border-box;
                     font-size: 15px;
                     font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -122,7 +122,7 @@ export class Button implements IWidget<IButtonState> {
                 }
                 
                 .dapplet-widget-profile-button:hover {
-                    background-color: rgba(29, 161, 242, 0.1);
+                    background-color: rgba(15, 20, 25, 0.1);
                 }
             `;
         }

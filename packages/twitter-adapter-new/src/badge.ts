@@ -127,6 +127,7 @@ export class Badge implements IWidget<IBadgeState> {
 
             case 'PROFILE_AVATAR_BADGE':
                 this.el = document.createElement('div');
+                this.el.classList.add("dapplet-widget-profile-avatar-badge");
                 this.el.style.position = 'absolute';
                 break;
 
@@ -162,7 +163,11 @@ export class Badge implements IWidget<IBadgeState> {
             }
 
             .dapplet-widget-profile-button:hover {
-                background-color: rgba(244, 93, 34, 0.1)
+                background-color: rgba(15, 20, 25, 0.1);
+            }
+
+            .dapplet-widget-profile-avatar-badge {
+                cursor: pointer;
             }
         `;
         document.head.appendChild(styleTag);
