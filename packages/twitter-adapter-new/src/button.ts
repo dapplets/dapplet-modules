@@ -112,7 +112,7 @@ export class Button implements IWidget<IButtonState> {
                     height: 40px;
                     cursor: pointer;
                     border-radius: 9999px;
-                    margin: 0 12px 12px 0;
+                    margin: 0 8px 12px 0;
                     font-weight: 700;
                     color: rgb(196, 207, 214);
                     box-sizing: border-box;
