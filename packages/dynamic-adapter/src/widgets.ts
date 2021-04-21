@@ -13,6 +13,7 @@ export class WidgetBuilder {
     contexts = new WeakMap<Node, Context>();
     eventHandler: (event: string, args: any[], target: any) => void = null;
     executedNodes = new WeakMap<Node, WeakSet<any>>();
+    widgetsByContextId = new Map<string, Set<any>>();
 
     //ToDo: widgets
 
@@ -60,6 +61,12 @@ export class WidgetBuilder {
             } else {
                 const newContext = this._tryParseContext(contextNode);
                 if (!this._compareObjects(context.parsed, newContext)) {
+                    
+                    if (newContext.id !== context.parsed.id) {
+                        this.executedNodes.delete(contextNode);
+                        this.widgetsByContextId.get(context.parsed.id)?.forEach(x => x.unmount());
+                    }
+
                     const oldContext = Object.assign({}, context.parsed);
                     Object.assign(context.parsed, newContext); // Refreshing of context without link destroying
                     this.emitEvent(null, 'context_changed', context, [null, newContext, oldContext]);
@@ -135,9 +142,15 @@ export class WidgetBuilder {
                 }
                 const insertedWidget = widgetConstructor(this, insPointName, featureConfig.orderIndex, contextNode);
                 if (!insertedWidget) continue;
+                
                 const registeredWidgets = this.widgets.get(featureConfig);
                 registeredWidgets.push(insertedWidget);
                 this.widgets.set(featureConfig, registeredWidgets);
+
+                if (context.parsed.id !== undefined) {
+                    if (!this.widgetsByContextId.has(context.parsed.id)) this.widgetsByContextId.set(context.parsed.id, new Set<any>());
+                    if (!this.widgetsByContextId.get(context.parsed.id).has(insertedWidget)) this.widgetsByContextId.get(context.parsed.id).add(insertedWidget);
+                }
             }
         }
     }
