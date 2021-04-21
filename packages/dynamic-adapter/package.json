@@ -1,6 +1,6 @@
 {
   "name": "dynamic-adapter.dapplet-base.eth",
-  "version": "0.5.6",
+  "version": "0.5.7",
   "description": "Dynamic Adapter",
   "scripts": {
     "build": "webpack --config webpack.dev.js",

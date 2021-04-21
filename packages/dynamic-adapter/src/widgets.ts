@@ -122,12 +122,10 @@ export class WidgetBuilder {
 
     private _insertWidgets(insPointConfig: any, featureConfig: any, insPointName: string, context: Context, contextNode: Element) {
         if (insPointConfig === null || insPointConfig === undefined) return;
-        if (!Array.isArray(insPointConfig)) {
-            console.error(`Config function of "${insPointName}" insertion point must return an array of widgets.`);
-            return;
-        }
         
-        for (const widgetConstructor of insPointConfig) {
+        const widgetConstructors = Array.isArray(insPointConfig) ? insPointConfig : [insPointConfig];
+        
+        for (const widgetConstructor of widgetConstructors) {
             const contextIds = featureConfig.contextIds || [];
 
             if (contextIds.length === 0 || contextIds.indexOf(context.parsed.id) !== -1) {
