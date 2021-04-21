@@ -139,7 +139,7 @@ class DynamicAdapter implements IDynamicAdapter {
             const state = (() => {
                 const hasId = context.parsed.id !== undefined;
                 if (!hasId) {
-                    console.error('Warning: Each parsed context should have a unique “id” prop. Restoring of widget states will be unavailable.')
+                    console.error('Warning: Each parsed context in an adapter should have a unique "id" property. Restoring of widget states will be unavailable.')
                     return new State<T>(config, context.parsed);
                 }
 
