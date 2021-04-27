@@ -9,10 +9,7 @@ export default class TwitterFeature {
     public adapter: any;
 
     async activate() {
-        const contract: any = await Core.near.contract('dev-1615369741028-1922063', {
-            viewMethods: ['get'],
-            changeMethods: ['add']
-        });
+        const contract: any = Core.contract('near', 'dev-1615369741028-1922063', { viewMethods: ['get'], changeMethods: ['add'] });
 
         const { button } = this.adapter.exports;
         this.adapter.attachConfig({

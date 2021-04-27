@@ -17,7 +17,7 @@ export default class TwitterFeature {
 
     async activate() {
         const serverUrl = await Core.storage.get('serverUrl');
-        const wallet = Core.wallet();
+        const wallet = await Core.wallet({ type: 'ethereum', network: 'rinkeby' });
         const server = Core.connect<{ pm_num: string }>({ url: serverUrl });
 
         // ToDo: exports in ITwitterAdapter type is function, but in runtime it's object.

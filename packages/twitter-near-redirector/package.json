@@ -1,6 +1,6 @@
 {
   "name": "twitter-near-redirector.dapplet-base.eth",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Add redirections for tweets",
   "main": "build/index.js",
   "scripts": {
