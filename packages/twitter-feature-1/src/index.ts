@@ -32,11 +32,11 @@ export default class TwitterFeature {
                         const overlay = Core.overlay({ url: overlayUrl, title: 'Gnosis' });
                         overlay.sendAndListen('tweet_select', ctx, {
                             'pm_attach': (op, { market, tweet }) => {
-                                wallet.then(w => w.sendAndListen('1', ctx, {
+                                wallet.sendAndListen('1', ctx, {
                                     created: () => {
                                         overlay.send('tx_created');
                                     }
-                                }));
+                                });
                             }
                         });
                     }
@@ -55,13 +55,13 @@ export default class TwitterFeature {
                             overlay.sendAndListen('tweet_select', ctx, {
                                 'pm_attach': (op, { market, tweet }) => {
                                     me.state = 'PENDING';
-                                    wallet.then(w => w.sendAndListen('1', ctx, {
+                                    wallet.sendAndListen('1', ctx, {
                                         rejected: () => me.state = 'ERR',
                                         created: () => {
                                             me.state = 'DEFAULT';
                                             overlay.send('tx_created');
                                         }
-                                    }));
+                                    });
                                 }
                             });
                         }
