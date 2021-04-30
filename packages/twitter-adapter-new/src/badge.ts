@@ -62,6 +62,9 @@ export class Badge implements IWidget<IBadgeState> {
                     imgTag.src = img;
                     imgTag.style.width = '32px';
                     imgTag.style.height = '32px';
+                    imgTag.style.position = 'absolute';
+                    imgTag.style.right = (horizontal === 'right') ? '-125px' : '-40px';
+                    imgTag.style.bottom = (vertical === 'bottom') ? '0px' : '106px';
                     break;
 
                 case 'PROFILE_USERNAME_BADGE':
