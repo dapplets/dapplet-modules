@@ -11,6 +11,7 @@ export interface IButtonState {
     init?: (ctx: any, me: IButtonState) => void;
     ctx?: any;
     insPointName?: string;
+    theme?: string;
 }
 
 export class Button implements IWidget<IButtonState> {
@@ -21,7 +22,7 @@ export class Button implements IWidget<IButtonState> {
     public mount() {
         if (!this.el) this._createElement();
 
-        const { img, label = '', loading, disabled, hidden, tooltip } = this.state;
+        const { label = '', img, loading, disabled, hidden, tooltip } = this.state;
 
         if (hidden) {
             this.el.innerHTML = '';

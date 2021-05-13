@@ -14,6 +14,7 @@ export class WidgetBuilder {
     eventHandler: (event: string, args: any[], target: any) => void = null;
     executedNodes = new WeakMap<Node, WeakSet<any>>();
     widgetsByContextId = new Map<string, Set<any>>();
+    theme: undefined | (() => string) = null;
 
     //ToDo: widgets
 

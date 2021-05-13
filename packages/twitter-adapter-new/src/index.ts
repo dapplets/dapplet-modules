@@ -103,7 +103,8 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                 authorUsername: el.querySelector('div[data-testid=tweet] > div:nth-child(2) > div:nth-child(1) a > div > div:nth-child(2) span')?.innerText?.replace('@', '')?.toLowerCase(),
                 authorImg: el.querySelector('div[data-testid=tweet] img.css-9pa8cd')?.getAttribute('src')
             });
-        }
+        },
+        theme: this._getTheme
     },
     {
         containerSelector: "main[role=main]",
@@ -132,7 +133,8 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
             authorFullname: this._parseAuthorFullname(el.querySelector('div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-dnmrzs > div > span:nth-child(1)')),
             authorUsername: el.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x > div > div > div:nth-child(2) span')?.innerText.replace('@', '').toLowerCase(),
             authorImg: el.querySelector('a > div.css-1dbjc4n.r-1adg3ll.r-1udh08x > div.r-1p0dtai.r-1pi2tsx.r-1d2f490.r-u8s1d.r-ipm5af.r-13qz1uu > div > img')?.getAttribute('src')
-        })
+        }),
+        theme: this._getTheme
     },
     {
         containerSelector: "main[role=main]",
@@ -146,7 +148,8 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
         // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
         contextBuilder: (el: any) => ({
             profileFullname: el.querySelector('span.css-901oao.css-16my406.r-1qd0xha.r-ad9z0x.r-bcqeeo.r-qvutc0 > span > span')?.innerText.replace('@', ''),
-        })
+        }),
+        theme: this._getTheme
     },
     {
         containerSelector: "main[role=main]",
@@ -160,7 +163,8 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
         // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
         contextBuilder: (el: any) => ({
             profileUsername: el.querySelector('div.css-901oao.css-bfa6kz.r-hkyrab.r-1qd0xha.r-1b6yd1w.r-vw2c0b.r-ad9z0x.r-bcqeeo.r-3s2u2q.r-qvutc0 > span > span')?.innerText.toLowerCase(),
-        })
+        }),
+        theme: this._getTheme
     }];
 
     constructor(
@@ -206,5 +210,12 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
             }
         });
         return strings.join('');
+    }
+
+    private _getTheme() {
+        if (document.body.style.backgroundColor === "rgb(255, 255, 255)") return "LIGHT";
+        if (document.body.style.backgroundColor === "rgb(21, 32, 43)") return "DARK";
+        if (document.body.style.backgroundColor === "rgb(0, 0, 0)") return "DARK";
+        return "LIGHT";
     }
 }

@@ -16,7 +16,7 @@ export class State<T> {
     public changedHandler: Function
     public id: string;
 
-    constructor(private config: WidgetConfig<T>, public readonly ctx: any) {
+    constructor(private config: WidgetConfig<T>, public readonly ctx: any, private getTheme: () => string) {
         const me = this
         this.id = config.id;
         this.INITIAL_STATE = config.initial || "DEFAULT";
@@ -26,10 +26,19 @@ export class State<T> {
                 if (property === 'ctx') return me.ctx
                 if (property === 'setState') return me.setState.bind(me)
                 if (property === 'id') return me.id
+                if (property === 'theme') return me.getTheme?.()
+
+                const theme = me.getTheme?.();
                 
-                return me._currentStateName
+                const value = me._currentStateName
                     ? me._cache[me._currentStateName][property]
                     : me._cache[property]
+
+                if (theme) {
+                    return (typeof value === 'object' && value[theme]) ? value[theme] : value
+                } else {
+                    return value
+                }
             },
             set(target, property, value, receiver) {
                 if (property === 'state') {

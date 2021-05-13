@@ -1,5 +1,5 @@
 import { T_TwitterFeatureConfig } from 'twitter-adapter.dapplet-base.eth'
-import NEAR_ICON from './near.png';
+import NEAR_ICON from './icons/near';
 
 @Injectable
 export default class TwitterFeature {
