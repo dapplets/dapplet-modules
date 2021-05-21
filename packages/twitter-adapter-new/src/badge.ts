@@ -21,6 +21,11 @@ export class Badge implements IWidget<IBadgeState> {
     public state: IBadgeState;
     insPointName: string;  // POST_USERNAME_BADGE | POST_AVATAR_BADGE
 
+    public static contextInsPoints = {
+      PROFILE: 'AVATAR_BADGE',
+      TWEET: 'AVATAR_BADGE',
+    }
+
     public mount() {
 
         this._injectStyles();
@@ -47,6 +52,7 @@ export class Badge implements IWidget<IBadgeState> {
                     imgTag.style[horizontal] = '3px';
                     break;
 
+                case 'TWEET':
                 case 'POST_AVATAR_BADGE':
 
                     imgTag.src = img;
@@ -57,14 +63,15 @@ export class Badge implements IWidget<IBadgeState> {
                     imgTag.style[horizontal] = '-7px';
                     break;
 
+                case 'PROFILE':
                 case 'PROFILE_AVATAR_BADGE':
 
                     imgTag.src = img;
-                    imgTag.style.width = '32px';
-                    imgTag.style.height = '32px';
+                    imgTag.style.width = '22%';
+                    imgTag.style.minWidth = '13px';
                     imgTag.style.position = 'absolute';
-                    imgTag.style.right = (horizontal === 'right') ? '-125px' : '-40px';
-                    imgTag.style.bottom = (vertical === 'bottom') ? '0px' : '106px';
+                    imgTag.style.right = (horizontal === 'right') ? '16%' : '73%';
+                    imgTag.style.bottom = (vertical === 'bottom') ? '-52px' : '54px';
                     break;
 
                 case 'PROFILE_USERNAME_BADGE':
@@ -128,10 +135,12 @@ export class Badge implements IWidget<IBadgeState> {
                 this.el = document.createElement('span');
                 break;
 
+            case 'PROFILE':
             case 'PROFILE_AVATAR_BADGE':
                 this.el = document.createElement('div');
                 this.el.classList.add("dapplet-widget-profile-avatar-badge");
                 this.el.style.position = 'absolute';
+                this.el.style.width = '25%';
                 break;
 
             case 'PROFILE_BUTTON_GROUP':

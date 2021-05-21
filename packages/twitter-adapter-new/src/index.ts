@@ -55,7 +55,41 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
             POST_SOCIAL_CONTEXT: {
                 selector: "div.css-1dbjc4n.r-1iusvr4.r-16y2uox.r-m611by",
                 insert: 'inside'
-            }
+            },
+            // Context-oriented point
+            TWEET: {
+              insPoints: {
+                SOUTH: {
+                    selector: "div[role=group] > *:last-child"
+                },
+                COMBO: {
+                    selector: "" //ToDo
+                },
+                PICTURE: {
+                    selector: "div[data-testid=tweet] > div:nth-child(2) > div:nth-child(2)",
+                    insert: 'inside'
+                },
+                AVATAR_BADGE: {
+                    selector: "div.css-1dbjc4n.r-18kxxzh.r-1wbh5a2.r-13qz1uu > *:last-child"
+                },
+                USERNAME_BADGE: {
+                    selector: "div.css-1dbjc4n.r-18u37iz.r-1wbh5a2.r-1f6r7vd > *:first-child",
+                    insert: 'begin' // end
+                },
+                USERNAME_LABEL: {
+                    selector: "div.css-1dbjc4n.r-1d09ksm.r-18u37iz.r-1wbh5a2 > *:last-child, div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-dnmrzs > *:last-child",
+                    insert: 'end' // end
+                },
+                STARTER: {
+                    selector: "div.css-1dbjc4n.r-18u37iz.r-1h0z5md.r-1joea0r > *:first-child",
+                    insert: 'begin'
+                },
+                SOCIAL_CONTEXT: {
+                    selector: "div.css-1dbjc4n.r-1iusvr4.r-16y2uox.r-m611by",
+                    insert: 'inside'
+                },
+              },
+            },
         },
         events: {
             like: (node: any, ctx: any, emit: Function) => {
@@ -111,7 +145,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
         contextSelector: "div.css-1dbjc4n.r-1ifxtd0.r-ymttw5.r-ttdzmv",
         insPoints: {
             PROFILE_AVATAR_BADGE: {
-                selector: "div.css-1dbjc4n.r-obd0qt.r-18u37iz.r-1w6e6rj.r-1wtj0ep > *:last-child",
+                selector: "div.css-1dbjc4n.r-obd0qt.r-18u37iz.r-1w6e6rj.r-1wtj0ep",
                 insert: 'end'
             },
             PROFILE_USERNAME_BADGE: {
@@ -121,7 +155,24 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
             PROFILE_BUTTON_GROUP: {
                 selector: "div.css-1dbjc4n.r-obd0qt.r-18u37iz.r-1w6e6rj.r-1h0z5md.r-dnmrzs > *:first-child",
                 insert: "begin"
-            }
+            },
+            // Context-oriented point
+            PROFILE: {
+                insPoints: {
+                    AVATAR_BADGE: {
+                        selector: "div.css-1dbjc4n.r-obd0qt.r-18u37iz.r-1w6e6rj.r-1wtj0ep",
+                        insert: 'end'
+                    },
+                    USERNAME_BADGE: {
+                        selector: "div.css-1dbjc4n.r-15d164r.r-1g94qm0 div.css-901oao.r-hkyrab.r-1qd0xha.r-1b6yd1w.r-1vr29t4.r-ad9z0x.r-bcqeeo.r-qvutc0 > *:last-child",
+                        insert: "end"
+                    },
+                    BUTTON_GROUP: {
+                        selector: "div.css-1dbjc4n.r-obd0qt.r-18u37iz.r-1w6e6rj.r-1h0z5md.r-dnmrzs > *:first-child",
+                        insert: "begin"
+                    },
+                },
+            },
         },
         events: {
             // calls for every new context

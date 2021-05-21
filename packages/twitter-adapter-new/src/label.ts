@@ -19,6 +19,10 @@ export class Label implements IWidget<ILabelState> {
     public state: ILabelState;
     insPointName: string;  // POST_USERNAME_BADGE | POST_AVATAR_BADGE
 
+    public static contextInsPoints = {
+      TWEET: 'USERNAME_LABEL',
+    }
+
     public mount() {
         this._injectStyles();
         if (!this.el) this._createElement();

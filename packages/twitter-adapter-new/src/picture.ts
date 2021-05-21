@@ -16,6 +16,10 @@ export class Picture implements IWidget<IPictureState> {
     public state: IPictureState;
     insPointName: string;
 
+    public static contextInsPoints = {
+      TWEET: 'PICTURE',
+    }
+
     public mount() {
         if (!this.el) this._createElement();
 

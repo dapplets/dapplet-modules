@@ -127,7 +127,10 @@ class DynamicAdapter implements IDynamicAdapter {
                 return;
             }
 
-            const node = (insPoint.selector) ? contextNode.querySelector(insPoint.selector) as HTMLElement : contextNode;
+            const node = (insPoint.selector) ? contextNode.querySelector(insPoint.selector) as HTMLElement
+                : (insPoint.insPoints ?
+                    contextNode.querySelector(insPoint.insPoints[Widget.contextInsPoints[insPointName]].selector) as HTMLElement
+                    : contextNode);
             if (!node) return;
 
             // check if a widget already exists for the insPoint
@@ -162,7 +165,11 @@ class DynamicAdapter implements IDynamicAdapter {
 
             widget.el.setAttribute('data-dapplet-order', order.toString());
 
-            const insertTo: 'begin' | 'end' = (insPoint.insert === undefined) ? 'end' : insPoint.insert;
+            const insertTo: 'begin' | 'end' | 'inside' = (insPoint.insert === undefined) ?
+              (insPoint.insPoints?.[Widget.contextInsPoints[insPointName]].insert === undefined ?
+                'end'
+                : insPoint.insPoints[Widget.contextInsPoints[insPointName]].insert)
+              : insPoint.insert;
 
             const insertedElements = node.parentNode.querySelectorAll(':scope > .dapplet-widget');
 
