@@ -12,7 +12,9 @@ interface IDynamicAdapter extends IContentAdapter<any> {
 class DynamicAdapter implements IDynamicAdapter {
     private observer: MutationObserver = null;
     private featureConfigs: any[] = [];
-    private contextBuilders: WidgetBuilder[] = [];
+    private contextBuilders: {
+        [name: string]: WidgetBuilder,
+    };
     private stateStorage = new Map<string, any>();
 
     // Config from feature
@@ -20,10 +22,9 @@ class DynamicAdapter implements IDynamicAdapter {
         if (this.featureConfigs.find(f => f === config)) return;
         this.featureConfigs.splice(config['orderIndex'], 0, config);
         this.updateObservers();
-
         return {
             $: (ctx: any, id: string) => {
-                return this.contextBuilders.map(wb => wb.widgets.get(config)?.filter(x => x.state.ctx === ctx && x.state.id === id).map(x => x.state) || []).flat(1)[0];
+                return Object.values(this.contextBuilders).map(wb => wb.widgets.get(config)?.filter(x => x.state.ctx === ctx && x.state.id === id).map(x => x.state) || []).flat(1)[0];
             },
             reset: () => {
                 this.detachConfig(config);
@@ -35,7 +36,7 @@ class DynamicAdapter implements IDynamicAdapter {
     // Config from feature
     public detachConfig(config: any) {
         this.featureConfigs = this.featureConfigs.filter(f => f !== config);
-        this.contextBuilders.forEach(wb => {
+        Object.values(this.contextBuilders).forEach(wb => {
             const widgets = wb.widgets.get(config);
             if (!widgets || widgets.length === 0) return;
             widgets.forEach(w => w.unmount());
@@ -44,16 +45,18 @@ class DynamicAdapter implements IDynamicAdapter {
     }
 
     // Config from adapter
-    public configure(config: IWidgetBuilderConfig[]) {
-        const builders = config.map((cfg) => new WidgetBuilder(cfg));
-        builders.forEach(b => b.eventHandler = (event, args, target) => {
-            if (target) {
-                target?.events?.[event]?.(...args);
-            } else {
-                this.featureConfigs.forEach(config => config?.events?.[event]?.(...args));
+    public configure(config: IWidgetBuilderConfig[]): void {
+        this.contextBuilders = config.reduce((acc, cfg) => {
+            const builder = new WidgetBuilder(cfg);
+            builder.eventHandler = (event, args, target) => {
+                if (target) {
+                    target?.events?.[event]?.(...args);
+                } else {
+                    this.featureConfigs.forEach(config => config?.events?.[event]?.(...args));
+                }
             }
-        });
-        this.contextBuilders.push(...builders);
+            return { ...acc, [cfg.contextName]: builder};
+        }, {});
     }
 
     constructor() {
@@ -70,7 +73,7 @@ class DynamicAdapter implements IDynamicAdapter {
     }
 
     private updateObservers(mutations?) {
-        this.contextBuilders.forEach(contextBuilder => {
+        Object.values(this.contextBuilders).forEach((contextBuilder) => {
             const container = document.querySelector(contextBuilder.containerSelector);
             if (container) {
                 // destroy contexts to removed nodes
@@ -115,11 +118,13 @@ class DynamicAdapter implements IDynamicAdapter {
             });
         }
 
-        function createWidget(Widget: any, builder: WidgetBuilder, insPointName: string, config: { [state: string]: T }, order: number, contextNode: Element, clazz: string): any {
+        function createWidget(Widget: any, builder: WidgetBuilder, _insPointName: string, config: { [state: string]: T }, order: number, contextNode: Element, clazz: string): any {
             if (order === undefined || order === null) {
                 //console.error('Empty order!');
                 order = 0;
             }
+
+            const insPointName = Widget.contextInsPoints[builder.contextName]
 
             const insPoint = builder.insPoints[insPointName];
             if (!insPoint) {
@@ -131,7 +136,10 @@ class DynamicAdapter implements IDynamicAdapter {
                 : (insPoint.insPoints ?
                     contextNode.querySelector(insPoint.insPoints[Widget.contextInsPoints[insPointName]].selector) as HTMLElement
                     : contextNode);
-            if (!node) return;
+            if (!node) {
+                // console.error(`There is no ${insPointName} in the ${_insPointName}. Check the selector.`);
+                return;
+            };
 
             // check if a widget already exists for the insPoint
             if (node.parentElement.getElementsByClassName(clazz).length > 0) return;
@@ -158,7 +166,7 @@ class DynamicAdapter implements IDynamicAdapter {
 
             const widget = new Widget() as IWidget<T>;
             widget.state = state.state;
-            widget.insPointName = insPointName;
+            widget.insPointName = builder.contextName;
             state.changedHandler = () => widget.mount(); // when data in state was changed, then rerender a widget
             widget.mount(); // ToDo: remove it?
             widget.el.classList.add('dapplet-widget', clazz);

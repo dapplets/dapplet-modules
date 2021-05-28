@@ -17,7 +17,7 @@ export class Picture implements IWidget<IPictureState> {
     insPointName: string;
 
     public static contextInsPoints = {
-      TWEET: 'PICTURE',
+        POST: 'PICTURE',
     }
 
     public mount() {

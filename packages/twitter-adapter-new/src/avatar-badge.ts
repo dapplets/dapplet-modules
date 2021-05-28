@@ -1,13 +1,13 @@
 import { IWidget } from 'dynamic-adapter.dapplet-base.eth';
 
-export interface IBadgeState {
+export interface IAvatarBadgeState {
     img: string;
     label: string;
     loading: boolean;
     disabled: boolean;
     tooltip?: string;
-    exec: (ctx: any, me: IBadgeState) => void;
-    init: (tx: any, me: IBadgeState) => void;
+    exec: (ctx: any, me: IAvatarBadgeState) => void;
+    init: (tx: any, me: IAvatarBadgeState) => void;
     ctx: any;
     horizontal: 'left' | 'right';
     vertical: 'top' | 'bottom';
@@ -16,14 +16,14 @@ export interface IBadgeState {
     insPointName: string;
 }
 
-export class Badge implements IWidget<IBadgeState> {
+export class AvatarBadge implements IWidget<IAvatarBadgeState> {
     public el: HTMLElement;
-    public state: IBadgeState;
-    insPointName: string;  // POST_USERNAME_BADGE | POST_AVATAR_BADGE
+    public state: IAvatarBadgeState;
+    insPointName: string;
 
     public static contextInsPoints = {
-      PROFILE: 'AVATAR_BADGE',
-      TWEET: 'AVATAR_BADGE',
+        POST: 'AVATAR_BADGE',
+        PROFILE: 'AVATAR_BADGE',
     }
 
     public mount() {
@@ -38,23 +38,10 @@ export class Badge implements IWidget<IBadgeState> {
                 const imgTag = document.createElement('img');
                 this.el.appendChild(imgTag);
             }
-
             const imgTag: HTMLImageElement = this.el.firstChild as any;
 
             switch (this.insPointName) {
-                case 'POST_USERNAME_BADGE':
-
-                    imgTag.src = img;
-                    imgTag.style.width = '15px';
-                    imgTag.style.height = '15px';
-                    imgTag.style.position = 'relative';
-                    imgTag.style[vertical] = '2px';
-                    imgTag.style[horizontal] = '3px';
-                    break;
-
-                case 'TWEET':
-                case 'POST_AVATAR_BADGE':
-
+                case 'POST':
                     imgTag.src = img;
                     imgTag.style.width = '24px';
                     imgTag.style.height = '24px';
@@ -64,8 +51,6 @@ export class Badge implements IWidget<IBadgeState> {
                     break;
 
                 case 'PROFILE':
-                case 'PROFILE_AVATAR_BADGE':
-
                     imgTag.src = img;
                     imgTag.style.width = '22%';
                     imgTag.style.minWidth = '13px';
@@ -73,44 +58,6 @@ export class Badge implements IWidget<IBadgeState> {
                     imgTag.style.right = (horizontal === 'right') ? '16%' : '73%';
                     imgTag.style.bottom = (vertical === 'bottom') ? '-52px' : '54px';
                     break;
-
-                case 'PROFILE_USERNAME_BADGE':
-
-                    imgTag.src = img;
-                    imgTag.style.width = '20px';
-                    imgTag.style.height = '20px';
-                    imgTag.style.position = 'relative';
-                    imgTag.style[vertical] = '2px';
-                    break;
-
-                case 'HEADING_USERNAME_BADGE':
-                    imgTag.src = img;
-                    imgTag.style.width = '24px';
-                    imgTag.style.height = '24px';
-                    imgTag.style.position = 'relative';
-                    imgTag.style[vertical] = '3px';
-                    imgTag.style[horizontal] = '1px';
-                    break;
-
-                case 'SUSPENDED_USERNAME_BADGE':
-
-                    imgTag.src = img;
-                    imgTag.style.width = '20px';
-                    imgTag.style.height = '20px';
-                    imgTag.style.position = 'relative';
-                    imgTag.style[vertical] = '3px';
-                    break;
-
-                case 'PROFILE_BUTTON_GROUP':
-
-                    imgTag.src = img;
-                    imgTag.style.width = '18px';
-                    imgTag.style.height = '18px';
-                    imgTag.style.position = 'relative';
-                    imgTag.style[vertical] = '9px';
-                    imgTag.style[horizontal] = '10px';
-                    break;
-
             }
 
             this.el.title = tooltip ?? '';
@@ -125,30 +72,14 @@ export class Badge implements IWidget<IBadgeState> {
 
     private _createElement() {
         switch (this.insPointName) {
-            case 'SUSPENDED_USERNAME_BADGE':
-            case 'PROFILE_USERNAME_BADGE':
-                this.el = document.createElement('span');
-                this.el.style.margin = '2px';
-                break;
-
-            case 'HEADING_USERNAME_BADGE':
-                this.el = document.createElement('span');
-                break;
-
             case 'PROFILE':
-            case 'PROFILE_AVATAR_BADGE':
                 this.el = document.createElement('div');
                 this.el.classList.add("dapplet-widget-profile-avatar-badge");
                 this.el.style.position = 'absolute';
                 this.el.style.width = '25%';
                 break;
 
-            case 'PROFILE_BUTTON_GROUP':
-                this.el = document.createElement('div');
-                this.el.classList.add("dapplet-widget-profile-button", "css-18t94o4", "css-1dbjc4n", "r-1niwhzg", "r-1xl5njo", "r-sdzlij", "r-1phboty", "r-rs99b7", "r-1w2pmg", "r-15d164r", "r-zso239", "r-1vuscfd", "r-53xb7h", "r-mk0yit", "r-o7ynqc", "r-6416eg", "r-lrvibr");
-                break;
-
-            default:
+            case 'POST':
                 this.el = document.createElement('div');
         }
 

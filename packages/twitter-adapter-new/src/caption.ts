@@ -15,7 +15,11 @@ export interface ICaptionState {
 export class Caption implements IWidget<ICaptionState> {
     public el: HTMLElement;
     public state: ICaptionState;
-    insPointName: string;  // POST_SOCIAL_CONTEXT
+    insPointName: string;
+
+    public static contextInsPoints = {
+      POST: 'SOCIAL_CONTEXT',
+    }
 
     public mount() {
         if (!document.getElementById('dapplet-widget-caption-styles')) this._injectStyles();
@@ -34,7 +38,14 @@ export class Caption implements IWidget<ICaptionState> {
                     <div class="css-1dbjc4n r-18u37iz">
                         <div class="css-1dbjc4n r-1habvwh r-1wbh5a2 r-1777fci">
                             <div class="css-1dbjc4n">
-                                <a dir="auto" role="link" data-focusable="true" class="css-4rbku5 css-18t94o4 css-901oao r-1re7ezh r-1loqt21 r-1qd0xha r-a023e6 r-16dba41 r-ad9z0x r-bcqeeo r-qvutc0"><span class="css-901oao css-16my406 css-cens5h r-1re7ezh r-1qd0xha r-n6v787 r-16dba41 r-1sf4r6n r-bcqeeo r-qvutc0" data-testid="socialContext" style="-webkit-line-clamp: 2;">${text}</span></a>
+                                <a dir="auto" role="link" data-focusable="true" class="css-4rbku5 css-18t94o4 css-901oao r-1re7ezh r-1loqt21 r-1qd0xha r-a023e6 r-16dba41 r-ad9z0x r-bcqeeo r-qvutc0" style="color: rgb(91, 112, 131);"><span class="css-901oao css-16my406 css-cens5h r-1re7ezh r-1qd0xha r-n6v787 r-16dba41 r-1sf4r6n r-bcqeeo r-qvutc0"data-testid="socialContext" style="
+                                -webkit-line-clamp: 2;
+                                font-family: inherit;
+                                line-height: 16px;
+                                overflow-wrap: break-word;
+                                font-weight: 700;
+                                white-space: inherit;
+                                padding-left: 0.5em">${text}</span></a>
                             </div>
                         </div>
                     </div>
@@ -52,6 +63,9 @@ export class Caption implements IWidget<ICaptionState> {
     private _createElement() {
         this.el = document.createElement('div');
         this.el.classList.add('css-1dbjc4n', 'r-zl2h9q', 'dapplet-widget-caption');
+        this.el.style.display = 'flex';
+        this.el.style['-webkit-box-flex'] = '1';
+        this.el.style.flexGrow = '1';
         this.el.addEventListener('click', (e) => {
             this.state.exec?.(this.state.ctx, this.state);
             e.preventDefault();

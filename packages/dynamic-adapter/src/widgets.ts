@@ -3,6 +3,7 @@ import { IFeature, IConnection } from "@dapplets/dapplet-extension";
 import { IWidgetBuilderConfig, Context } from "./types";
 
 export class WidgetBuilder {
+    contextName: string;
     containerSelector: string;
     contextSelector: string;
     insPoints: { [key: string]: any };
@@ -54,7 +55,12 @@ export class WidgetBuilder {
 
         for (const contextNode of contextNodes) {
             const isNewContext = !this.contexts.has(contextNode);
-            const context: Context = isNewContext ? { parsed: this._tryParseContext(contextNode), eventHandlers: {} } : this.contexts.get(contextNode);
+            const context: Context = isNewContext
+                ? {
+                    parsed: this._tryParseContext(contextNode),
+                    eventHandlers: {},
+                }
+                : this.contexts.get(contextNode);
 
             // ToDo: refactor isNew checking
             if (isNewContext) {
@@ -88,7 +94,6 @@ export class WidgetBuilder {
 
             for (let i = 0; i < featureConfigs.length; i++) {
                 const featureConfig = featureConfigs[i];
-
                 // Prevent multiple execution of featureConfig on one context
                 if (!this.executedNodes.has(contextNode)) this.executedNodes.set(contextNode, new WeakSet());
                 if (this.executedNodes.get(contextNode).has(featureConfig)) continue;
@@ -100,21 +105,19 @@ export class WidgetBuilder {
                     newFeatureConfigs.push(featureConfig);
                 }
 
-                for (const insPointName in this.insPoints) {
-                    if (featureConfig[insPointName] === undefined) continue;
+                if (featureConfig[this.contextName] === undefined) continue;
 
-                    const insPointConfig = featureConfig[insPointName];
+                const insPointConfig = featureConfig[this.contextName];
 
-                    if (Array.isArray(insPointConfig)) {
-                        this._insertWidgets(insPointConfig, featureConfig, insPointName, context, contextNode);
-                    } else if (typeof insPointConfig === 'function') {
-                        const arr = insPointConfig(context.parsed);
-                        const insert = (arr) => this._insertWidgets(arr, featureConfig, insPointName, context, contextNode);
-                        (arr instanceof Promise) ? arr.then(insert) : insert(arr);
-                    } else {
-                        featureConfig[insPointName] = undefined;
-                        console.error(`Invalid configuration of "${insPointName}" insertion point. It must be an array of widgets or function.`);
-                    }
+                if (Array.isArray(insPointConfig)) {
+                    this._insertWidgets(insPointConfig, featureConfig, this.contextName, context, contextNode);
+                } else if (typeof insPointConfig === 'function') {
+                    const arr = insPointConfig(context.parsed);
+                    const insert = (arr) => this._insertWidgets(arr, featureConfig, this.contextName, context, contextNode);
+                    (arr instanceof Promise) ? arr.then(insert) : insert(arr);
+                } else {
+                    featureConfig[this.contextName] = undefined;
+                    console.error(`Invalid configuration of "${this.contextName}" insertion point. It must be an array of widgets or function.`);
                 }
             }
         }
@@ -138,7 +141,7 @@ export class WidgetBuilder {
 
             if (contextIds.length === 0 || contextIds.indexOf(context.parsed.id) !== -1) {
                 if (typeof widgetConstructor !== 'function') {
-                    console.error(`Invalid widget configuration in the insertion point "${insPointName}". It must be WidgetConstructor instance.`);
+                    //console.error(`Invalid widget configuration in the insertion point "${insPointName}". It must be WidgetConstructor instance.`);
                     continue;
                 }
                 const insertedWidget = widgetConstructor(this, insPointName, featureConfig.orderIndex, contextNode);

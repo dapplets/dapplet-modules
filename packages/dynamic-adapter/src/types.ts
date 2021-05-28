@@ -1,6 +1,7 @@
 import { IFeature, IConnection } from "@dapplets/dapplet-extension";
 
 export interface IWidgetBuilderConfig {
+    contextName: string;
     containerSelector: string,
     contextSelector: string,
     insPoints: { [key: string]: any },

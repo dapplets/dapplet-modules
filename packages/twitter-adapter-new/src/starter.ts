@@ -1,58 +1,66 @@
-import { IFeature } from '@dapplets/dapplet-extension'
+import { T_TwitterFeatureConfig } from 'twitter-adapter.dapplet-base.eth';
 import ICON_DAPPLET from './dapplet.png';
 import TwitterAdapter from '.';
 
 declare var chrome;
 
+interface IStarter {
+    label: string;
+    exec: (ctx) => void;
+    config: any;
+    id: number;
+    dapplet?: string;
+    order?: number;
+}
+
 export default class Starter {
     public config: any;
-    public widgets: {
-        id: string;
-        dapplet: string;
-        label: string;
-        order: number;
-        exec: (ctx) => void;
-        config: any;
-    }[] = [];
+    public widgets: IStarter[] = [];
     private _buttonId = 0;
-
     private _overlay = Core.overlay({ url: chrome.extension.getURL('starter.html'), title: 'Starter' });
 
     constructor(public adapter: TwitterAdapter) {
-        const { button } = this.adapter.exports("twitter-adapter.dapplet-base.eth");
+        const { buttonStarter } = this.adapter.exports("twitter-adapter.dapplet-base.eth");
         this.config = {
             events: {
                 starter: (ctx) => this.openStarter(ctx)
             },
-            POST_STARTER: [
-                button({
+            POST: (ctx) =>
+                buttonStarter({
                     "DEFAULT": {
                         img: ICON_DAPPLET,
-                        exec: (ctx) => this.openStarter(ctx)
+                        exec: () => this.openStarter(ctx)
                     }
                 })
-            ]
         };
-        
     }
 
     public openStarter(ctx: any) {
-        this._overlay.sendAndListen('ctx', { ctx, buttons: this.widgets }, {
-            'button_clicked': (op, { type, message }) => {
-                const id = message;
-                const button = this.widgets.find(b => b.id === id);
-                button?.exec?.(ctx);
+        this._overlay.sendAndListen(
+            'ctx',
+            {
+                ctx,
+                buttons: this.widgets,
+            }, {
+                'button_clicked': (op, { type, message }) => {
+                    const id = message;
+                    const button = this.widgets.find(b => b.id === id);
+                    button?.exec?.(ctx);
             }
-        })
+        });
     }
 
-    public attachConfig(config: any) {
-        const widgets = (config.POST_STARTER || []).map(c => ({ ...c, config, id: ++this._buttonId }));
+    public attachConfig(config: T_TwitterFeatureConfig) {
+        const widgets: IStarter[] = (config.POST('') || [])
+            .filter((widget) => typeof widget !== 'function')
+            .flat()
+            .map((starter: { label: string, exec: () => void }) => {
+                return { ...starter, config, id: ++this._buttonId };
+            });
         if (this.widgets.length === 0 && widgets.length !== 0) {
             this.adapter.adapter.attachConfig(this.config);
         }
         this.widgets.push(...widgets);
-        delete config.POST_STARTER;
     }
 
     public detachConfig(config: any, featureId: string) {

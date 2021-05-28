@@ -17,10 +17,10 @@ export interface ILabelState {
 export class Label implements IWidget<ILabelState> {
     public el: HTMLElement;
     public state: ILabelState;
-    insPointName: string;  // POST_USERNAME_BADGE | POST_AVATAR_BADGE
+    insPointName: string;
 
     public static contextInsPoints = {
-      TWEET: 'USERNAME_LABEL',
+        POST: 'USERNAME_LABEL',
     }
 
     public mount() {
@@ -37,45 +37,56 @@ export class Label implements IWidget<ILabelState> {
                 const imgTag = document.createElement('img');
                 imgTag.style.width = '18px';
                 imgTag.style.height = '18px';
-                imgTag.style.position = 'relative';
-                imgTag.style.top = '2px';
-                imgTag.style.left = '2px';
-                imgTag.style.marginRight = '4px';
-                this.el.appendChild(imgTag);
+                const imgWrapper = document.createElement('div');
+                imgWrapper.classList.add('img-wrapper');
+                imgWrapper.appendChild(imgTag);
+                this.el.appendChild(imgWrapper);
             }
             const imgTag: HTMLImageElement = this.el.querySelector('img') as any;
             imgTag.src = this.state.img;
         } else {
-            this.el.querySelector('img')?.remove();
+            this.el.querySelector('.img-wrapper')?.remove();
         }
 
         if (this.state.text) {
-            if (!this.el.querySelector('span')) {
+            if (!this.el.querySelector('.text-wrapper')) {
                 const textTag = document.createElement('span');
                 textTag.innerText = text;
-                this.el.appendChild(textTag);
+                textTag.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+                textTag.style.fontSize = '15px';
+                textTag.style.lineHeight = 'line-height: 20px';
+                textTag.style.padding = '0 .3em';
+                const textWrapper = document.createElement('div');
+                textWrapper.style.marginTop = '2px';
+                textWrapper.classList.add('text-wrapper');
+                textWrapper.classList.add('r-111h2gw');
+                textWrapper.appendChild(textTag);
+                this.el.appendChild(textWrapper);
             }
             const textTag: HTMLSpanElement = this.el.querySelector('span') as any;
             textTag.innerText = this.state.text;
         } else {
-            this.el.querySelector('span')?.remove();
+            this.el.querySelector('.text-wrapper')?.remove();
         }
 
         if (this.state.postfix) {
-            if (!this.el.querySelector('div')) {
+            if (!this.el.querySelector('.postfix-tag')) {
                 const postfixTag = document.createElement('div');
+                postfixTag.classList.add('postfix-tag');
                 postfixTag.innerText = this.state.postfix;
                 this.el.appendChild(postfixTag);
             }
-            const postfixTag: HTMLImageElement = this.el.querySelector('div') as any;
+            const postfixTag: HTMLImageElement = this.el.querySelector('.postfix-tag') as any;
             postfixTag.innerText = this.state.postfix;
         } else {
-            this.el.querySelector('div')?.remove();
+            this.el.querySelector('.postfix-tag')?.remove();
         }
 
         this.el.classList.toggle('dapplet-widget-label', !basic);
         this.el.classList.toggle('dapplet-widget-label-basic', basic);
-        
+        this.el.style.display = 'flex';
+        this.el.style.marginLeft = '.9em';
+        this.el.style.transitionDuration = '0.1s';
         this.el.title = tooltip ?? '';
     }
 
@@ -106,11 +117,10 @@ export class Label implements IWidget<ILabelState> {
                 color: #fff;
                 padding: 2px 4px;
                 border-radius: 4px;
-                margin-left: 6px;
                 font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
             }
 
-            .dapplet-widget-label:hover {
+            .dapplet-widget-label:hover img {
                 background: rgb(26, 145, 218);
             }
 
@@ -126,10 +136,11 @@ export class Label implements IWidget<ILabelState> {
             .dapplet-widget-label-basic {
                 margin-left: 6px;
                 border-radius: 50%;
+                color: rgb(15, 20, 25);
             }
 
-            .dapplet-widget-label-basic:hover {
-                background: rgba(0,0,0, 0.10);
+            .dapplet-widget-label-basic:hover  {
+                color: rgb(27 149 224);
             }
         `;
         document.head.appendChild(styleTag);

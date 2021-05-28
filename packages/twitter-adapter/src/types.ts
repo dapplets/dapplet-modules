@@ -6,21 +6,13 @@ export type T_TwitterFeatureConfig = {
     connections?: {
         [name: string]: any
     },
+    POST?: (ctx?) => T_TwitterActionFactory[] | T_TwitterActionFactory,
+    PROFILE?: (ctx?) => T_TwitterActionFactory[] | T_TwitterActionFactory,
+    HEADING?: (ctx?) => T_TwitterActionFactory[] | T_TwitterActionFactory,
+    SUSPENDED?: (ctx?) => T_TwitterActionFactory[] | T_TwitterActionFactory,
+
     POST_EVENT?: Function[],
     THREAD_EVENT?: Function[],
-    POST_AVATAR_BADGE?: T_TwitterActionFactory[],
-    POST_USERNAME_BADGE?: T_TwitterActionFactory[],
-    PROFILE_USERNAME_BADGE?: T_TwitterActionFactory[],
-    PROFILE_AVATAR_BADGE?: T_TwitterActionFactory[],
-    PROFILE_BUTTON_GROUP?: T_TwitterActionFactory[],
-    HEADING_USERNAME_BADGE?: T_TwitterActionFactory[],
-    SUSPENDED_USERNAME_BADGE?: T_TwitterActionFactory[],
-    POST_SOUTH?: T_TwitterActionFactory[],
-    POST_COMBO?: T_TwitterActionFactory[],
-    DM_SOUTH?: T_TwitterActionFactory[],
-    POST_PICTURE?: T_TwitterActionFactory[],
-    BODY?: T_TwitterActionFactory[],
-    POST_STARTER?: T_TwitterActionFactory[]
 }
 
 export interface ITwitterAdapter extends IContentAdapter<T_TwitterFeatureConfig> {  //ToDo: eliminate excessive interfaces and use ambient module instead
