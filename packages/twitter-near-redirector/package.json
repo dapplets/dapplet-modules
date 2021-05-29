@@ -1,18 +1,17 @@
 {
   "name": "twitter-near-redirector.dapplet-base.eth",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Add redirections for tweets",
   "main": "build/index.js",
   "scripts": {
     "build": "webpack --config webpack.dev.js",
     "watch": "webpack -w --config webpack.dev.js",
-    "clean": "(if exist lib rd /q /s lib) & (if exist dist rd /q /s dist)"
+    "clean": "rimraf build lib"
   },
   "author": "Dapplets Team",
   "license": "MIT",
   "devDependencies": {
-    "@dapplets/dapplet-extension": "latest",
-    "twitter-adapter.dapplet-base.eth": "^0.5.1"
+    "twitter-adapter.dapplet-base.eth": "^0.9.0"
   },
   "dependencies": {}
 }

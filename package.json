@@ -20,13 +20,13 @@
     "build": "",
     "watch": "lerna exec --parallel -- npm run watch",
     "serve": "node src/server/index.js",
-    "clean": "lerna run clean",
-    "clean:node_modules": "lerna exec -- if exist node_modules rd /q /s node_modules",
-    "clean:package_lock": "lerna exec -- if exist package-lock.json del /f package-lock.json",
-    "clean:self:node_modules": "if exist node_modules rd /q /s node_modules",
-    "clean:self:package_lock": "if exist package-lock.json del /f package-lock.json",
-    "clean:all": "npm run clean && npm run clean:node_modules && npm run clean:package_lock && npm run clean:self:node_modules && npm run clean:self:package_lock",
-    "link": "lerna exec -- npm link @dapplets/dapplet-extension"
+    "clean": "lerna exec -- npm run clean",
+    "clean:package_lock": "lerna exec -- rimraf package-lock.json",
+    "clean:node_modules": "lerna exec -- rimraf node_modules",
+    "clean:self:package_lock": "rimraf package-lock.json",
+    "clean:self:node_modules": "rimraf node_modules",
+    "clean:all": "npm run clean && npm run clean:package_lock && npm run clean:node_modules && npm run clean:self:package_lock && npm run clean:self:node_modules",
+    "link": "npm link @dapplets/dapplet-extension"
   },
   "repository": {
     "type": "git",
@@ -37,8 +37,10 @@
   },
   "homepage": "https://github.com/dapplets/typescript-examples#readme",
   "devDependencies": {
+    "@dapplets/dapplet-extension": "latest",
     "lerna": "^4.0.0",
     "npm-run-all": "^4.1.5",
+    "rimraf": "^3.0.2",
     "ts-loader": "^8.0.18",
     "typescript": "^4.2.3",
     "url-loader": "^4.1.1",

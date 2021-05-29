@@ -5,7 +5,7 @@
   "scripts": {
     "build": "webpack --config webpack.dev.js",
     "watch": "webpack -w --config webpack.dev.js",
-    "clean": "(if exist build rd /q /s build) & (if exist dist rd /q /s dist)"
+    "clean": "rimraf build lib"
   },
   "author": "Dapplets Team",
   "license": "MIT",
@@ -18,6 +18,5 @@
   "main": "build/index.js",
   "typings": "build/index.d.ts",
   "devDependencies": {
-    "@dapplets/dapplet-extension": "latest"
   }
 }

@@ -1,11 +1,11 @@
 {
   "name": "twitter-adapter.dapplet-base.eth",
-  "version": "0.6.0",
+  "version": "0.9.0",
   "description": "Adapter for twitter.com",
   "scripts": {
     "build": "webpack --config webpack.dev.js",
     "watch": "webpack -w --config webpack.dev.js",
-    "clean": "(if exist lib rd /q /s lib) & (if exist dist rd /q /s dist)"
+    "clean": "rimraf build lib"
   },
   "author": "Dapplets Team",
   "license": "MIT",
@@ -18,6 +18,5 @@
   "main": "build/index.js",
   "typings": "lib/index.d.ts",
   "devDependencies": {
-    "@dapplets/dapplet-extension": "latest"
   }
 }

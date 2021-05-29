@@ -1,17 +1,16 @@
 {
   "name": "twitter-feature-1.dapplet-base.eth",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "description": "Fake news tracking for Twitter",
   "main": "build/index.js",
   "scripts": {
     "build": "webpack --config webpack.dev.js",
     "watch": "webpack -w --config webpack.dev.js",
-    "clean": "(if exist lib rd /q /s lib) & (if exist dist rd /q /s dist)"
+    "clean": "rimraf build lib"
   },
   "author": "Dapplets Team",
   "license": "MIT",
   "devDependencies": {
-    "@dapplets/dapplet-extension": "latest",
-    "twitter-adapter.dapplet-base.eth": "^0.5.0"
+    "twitter-adapter.dapplet-base.eth": "^0.9.0"
   }
 }
