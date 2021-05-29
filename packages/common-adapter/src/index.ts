@@ -1,4 +1,4 @@
-import { IFeature, IContentAdapter } from '@dapplets/dapplet-extension';
+import { IContentAdapter } from '@dapplets/dapplet-extension';
 import { IDynamicAdapter } from 'dynamic-adapter.dapplet-base.eth';
 import { IButtonState, Button } from './button';
 import { IPopupState, Popup } from './popup';
@@ -16,7 +16,7 @@ export default class CommonAdapter implements IContentAdapter<ICommonAdapterConf
         @Inject("dynamic-adapter.dapplet-base.eth")
         private dynamicAdapter: IDynamicAdapter
     ) {
-        this.dynamicAdapter.configure(this.config);
+        this.dynamicAdapter.configure(Object.entries(this.config).map(([name, cfg]) => ({ ...cfg, contextName: name })));
     }
 
     // ToDo: refactor it

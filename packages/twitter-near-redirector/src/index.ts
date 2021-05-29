@@ -1,4 +1,5 @@
-import { T_TwitterFeatureConfig } from 'twitter-adapter.dapplet-base.eth'
+import {} from '@dapplets/dapplet-extension';
+import { T_TwitterFeatureConfig, ITwitterAdapter } from 'twitter-adapter.dapplet-base.eth';
 import NEAR_ICON from './icons/near';
 
 @Injectable
@@ -6,14 +7,14 @@ export default class TwitterFeature {
     public config: T_TwitterFeatureConfig;
 
     @Inject("twitter-adapter.dapplet-base.eth")
-    public adapter: any;
+    public adapter: ITwitterAdapter;
 
     async activate() {
         const contract: any = Core.contract('near', 'dev-1615369741028-1922063', { viewMethods: ['get'], changeMethods: ['add'] });
 
         const { button } = this.adapter.exports;
-        this.adapter.attachConfig({
-            POST_SOUTH: [
+        this.config = {
+            POST: () => [
                 button({
                     "DEFAULT": {
                         loading: true,
@@ -62,6 +63,8 @@ export default class TwitterFeature {
                     }
                 })
             ]
-        });
+        };
+
+        this.adapter.attachConfig(this.config);
     }
 }

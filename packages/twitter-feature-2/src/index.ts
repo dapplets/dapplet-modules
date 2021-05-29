@@ -7,7 +7,7 @@ export default class TwitterFeature {
     public config: T_TwitterFeatureConfig;
 
     @Inject("twitter-adapter.dapplet-base.eth")
-    public adapter: any;
+    public adapter: ITwitterAdapter;
 
     public async activate() {
         const wallet = await Core.wallet({ type: 'ethereum', network: 'rinkeby' });
@@ -17,15 +17,13 @@ export default class TwitterFeature {
         // ToDo: exports in ITwitterAdapter type is function, but in runtime it's object.
         const { button } = this.adapter.exports;
         const { $ } = this.adapter.attachConfig({
-            POST_STARTER: [
-                {
+            POST: () => [
+                [{
                     label: 'Add tweet to the Ethereum registry',
                     exec: async (ctx, me) => {
                         wallet.sendAndListen('1', ctx, {});
                     }
-                }
-            ],
-            POST_SOUTH: [
+                }],
                 button({
                     id: 'first_button',
                     initial: "DEFAULT",
@@ -89,9 +87,7 @@ export default class TwitterFeature {
                         }
                     }
                 })
-            ],
-            POST_COMBO: [],
-            DM_SOUTH: []
+            ]
         });
     }
 }

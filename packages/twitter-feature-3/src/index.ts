@@ -8,12 +8,12 @@ export default class TwitterFeature {
 
     constructor(
         @Inject("twitter-adapter.dapplet-base.eth")
-        public adapter: any
+        public adapter: ITwitterAdapter
     ) {
         // ToDo: exports in ITwitterAdapter type is function, but in runtime it's object.
         const { picture } = this.adapter.exports;
         this.config = {
-            POST_PICTURE: [
+            POST: () => [
                 picture({
                     initial: 'DEFAULT',
                     DEFAULT: {

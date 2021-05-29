@@ -58,7 +58,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
         @Inject("dynamic-adapter.dapplet-base.eth")
         private adapter: IDynamicAdapter
     ) {
-        this.adapter.configure(this.config);
+        this.adapter.configure(Object.entries(this.config).map(([name, cfg]) => ({ ...cfg, contextName: name })));
     }
 
     // ToDo: refactor it

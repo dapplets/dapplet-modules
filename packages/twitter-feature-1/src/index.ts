@@ -13,7 +13,7 @@ const EVENTS_DEF = {
 export default class TwitterFeature {
 
     @Inject("twitter-adapter.dapplet-base.eth")
-    public adapter: any;
+    public adapter: ITwitterAdapter;
 
     async activate() {
         const serverUrl = await Core.storage.get('serverUrl');
@@ -24,8 +24,8 @@ export default class TwitterFeature {
         const { button, badge } = this.adapter.exports;
 
         this.adapter.attachConfig({
-            POST_STARTER: [
-                {
+            POST: () => [
+                [{
                     label: 'Attach tweet to prediction market',
                     exec: async (ctx) => {
                         const overlayUrl = await Core.storage.get('overlayUrl');
@@ -40,9 +40,7 @@ export default class TwitterFeature {
                             }
                         });
                     }
-                }
-            ],
-            POST_SOUTH: [
+                }],
                 button({
                     initial: "DEFAULT",
                     "DEFAULT": {
@@ -77,9 +75,7 @@ export default class TwitterFeature {
                         exec: (ctx, me) => me.state = 'DEFAULT'
                     }
                 })
-            ],
-            POST_COMBO: [],
-            DM_SOUTH: []
+            ]
         });
     }
 
