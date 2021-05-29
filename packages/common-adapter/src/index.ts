@@ -16,7 +16,7 @@ export default class CommonAdapter implements IContentAdapter<ICommonAdapterConf
         @Inject("dynamic-adapter.dapplet-base.eth")
         private dynamicAdapter: IDynamicAdapter
     ) {
-        this.dynamicAdapter.configure(Object.entries(this.config).map(([name, cfg]) => ({ ...cfg, contextName: name })));
+        this.dynamicAdapter.configure(this.config);
     }
 
     // ToDo: refactor it
@@ -28,17 +28,19 @@ export default class CommonAdapter implements IContentAdapter<ICommonAdapterConf
 
     public statusLine = new StatusLine();
 
-    public config = [{
-        containerSelector: "html",
-        contextSelector: "body > *:nth-last-child(2)",
-        insPoints: {
-            BODY: {}
-        },
-        //ToDo: remove any twitter dependencies
-        contextBuilder: (node: any) => ({
+    public config = {
+        BODY: {
+            containerSelector: "html",
+            contextSelector: "body > *:nth-last-child(2)",
+            insPoints: {
+                BODY: {}
+            },
+            //ToDo: remove any twitter dependencies
+            contextBuilder: (node: any) => ({
 
-        }),
-    }];
+            }),
+        }
+    };
 
     // ToDo: refactor it
     public attachConfig(config: ICommonAdapterConfig, featureId?: string) { // ToDo: automate two-way dependency handling(?)

@@ -19,8 +19,9 @@ export class WidgetBuilder {
 
     //ToDo: widgets
 
-    constructor(widgetBuilderConfig: IWidgetBuilderConfig) {
-        return Object.assign(this, widgetBuilderConfig);
+    constructor(contextName: string, widgetBuilderConfig: IWidgetBuilderConfig) {
+        Object.assign(this, widgetBuilderConfig);
+        this.contextName = contextName;
     }
 
     public emitEvent(target: any, event: string, context: Context, args: any[]) {

@@ -1,5 +1,4 @@
 import { IFeature } from '@dapplets/dapplet-extension'
-import CommonAdapter from 'common-adapter.dapplet-base.eth'
 import PICTURE from './picture.png';
 
 @Injectable

@@ -4,7 +4,7 @@ import { IWidgetBuilderConfig, Context, IWidget } from './types';
 import { State, WidgetConfig } from './state';
 
 interface IDynamicAdapter extends IContentAdapter<any> {
-    configure(config: IWidgetBuilderConfig[]): void;
+    configure(config: { [contextName: string]: IWidgetBuilderConfig }): void;
     createWidgetFactory<T>(Widget: any): (config: { [state: string]: T }) => (builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element) => any;
 }
 
@@ -12,9 +12,7 @@ interface IDynamicAdapter extends IContentAdapter<any> {
 class DynamicAdapter implements IDynamicAdapter {
     private observer: MutationObserver = null;
     private featureConfigs: any[] = [];
-    private contextBuilders: {
-        [name: string]: WidgetBuilder,
-    };
+    private contextBuilders: WidgetBuilder[];
     private stateStorage = new Map<string, any>();
 
     // Config from feature
@@ -24,7 +22,7 @@ class DynamicAdapter implements IDynamicAdapter {
         this.updateObservers();
         return {
             $: (ctx: any, id: string) => {
-                return Object.values(this.contextBuilders).map(wb => wb.widgets.get(config)?.filter(x => x.state.ctx === ctx && x.state.id === id).map(x => x.state) || []).flat(1)[0];
+                return this.contextBuilders.map(wb => wb.widgets.get(config)?.filter(x => x.state.ctx === ctx && x.state.id === id).map(x => x.state) || []).flat(1)[0];
             },
             reset: () => {
                 this.detachConfig(config);
@@ -36,7 +34,7 @@ class DynamicAdapter implements IDynamicAdapter {
     // Config from feature
     public detachConfig(config: any) {
         this.featureConfigs = this.featureConfigs.filter(f => f !== config);
-        Object.values(this.contextBuilders).forEach(wb => {
+        this.contextBuilders.forEach(wb => {
             const widgets = wb.widgets.get(config);
             if (!widgets || widgets.length === 0) return;
             widgets.forEach(w => w.unmount());
@@ -45,9 +43,9 @@ class DynamicAdapter implements IDynamicAdapter {
     }
 
     // Config from adapter
-    public configure(config: IWidgetBuilderConfig[]): void {
-        this.contextBuilders = config.reduce((acc, cfg) => {
-            const builder = new WidgetBuilder(cfg);
+    public configure(config: { [contextName: string]: IWidgetBuilderConfig }): void {
+        this.contextBuilders = Object.entries(config).map(([contextName, cfg]) => {
+            const builder = new WidgetBuilder(contextName, cfg);
             builder.eventHandler = (event, args, target) => {
                 if (target) {
                     target?.events?.[event]?.(...args);
@@ -55,8 +53,8 @@ class DynamicAdapter implements IDynamicAdapter {
                     this.featureConfigs.forEach(config => config?.events?.[event]?.(...args));
                 }
             }
-            return { ...acc, [cfg.contextName]: builder};
-        }, {});
+            return builder;
+        });
     }
 
     constructor() {
@@ -174,15 +172,15 @@ class DynamicAdapter implements IDynamicAdapter {
             widget.el.setAttribute('data-dapplet-order', order.toString());
 
             const insertTo: 'begin' | 'end' | 'inside' = (insPoint.insert === undefined) ?
-              (insPoint.insPoints?.[Widget.contextInsPoints[insPointName]].insert === undefined ?
-                'end'
-                : insPoint.insPoints[Widget.contextInsPoints[insPointName]].insert)
-              : insPoint.insert;
+                (insPoint.insPoints?.[Widget.contextInsPoints[insPointName]].insert === undefined ?
+                    'end'
+                    : insPoint.insPoints[Widget.contextInsPoints[insPointName]].insert)
+                : insPoint.insert;
 
             const insertedElements = node.parentNode.querySelectorAll(':scope > .dapplet-widget');
 
             if (insertedElements.length === 0) {
-                if (insertTo === 'end') { 
+                if (insertTo === 'end') {
                     node.parentNode.insertBefore(widget.el, node.nextSibling);
                 } else if (insertTo === 'begin') {
                     node.parentNode.insertBefore(widget.el, node);
