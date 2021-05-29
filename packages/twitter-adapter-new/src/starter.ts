@@ -51,7 +51,7 @@ export default class Starter {
     }
 
     public attachConfig(config: T_TwitterFeatureConfig) {
-        const widgets: IStarter[] = (config.POST('') || [])
+        const widgets: IStarter[] = (config.POST && config.POST('') || [])
             .filter((widget) => typeof widget !== 'function')
             .flat()
             .map((starter: { label: string, exec: () => void }) => {
