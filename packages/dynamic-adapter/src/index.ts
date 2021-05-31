@@ -12,7 +12,7 @@ interface IDynamicAdapter extends IContentAdapter<any> {
 class DynamicAdapter implements IDynamicAdapter {
     private observer: MutationObserver = null;
     private featureConfigs: any[] = [];
-    private contextBuilders: WidgetBuilder[];
+    private contextBuilders: WidgetBuilder[] = [];
     private stateStorage = new Map<string, any>();
 
     // Config from feature
@@ -44,7 +44,7 @@ class DynamicAdapter implements IDynamicAdapter {
 
     // Config from adapter
     public configure(config: { [contextName: string]: IWidgetBuilderConfig }): void {
-        this.contextBuilders = Object.entries(config).map(([contextName, cfg]) => {
+        const builders = Object.entries(config).map(([contextName, cfg]) => {
             const builder = new WidgetBuilder(contextName, cfg);
             builder.eventHandler = (event, args, target) => {
                 if (target) {
@@ -55,6 +55,8 @@ class DynamicAdapter implements IDynamicAdapter {
             }
             return builder;
         });
+
+        this.contextBuilders.push(...builders);
     }
 
     constructor() {
