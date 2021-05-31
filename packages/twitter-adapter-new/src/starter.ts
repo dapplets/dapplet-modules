@@ -42,25 +42,32 @@ export default class Starter {
                 ctx,
                 buttons: this.widgets,
             }, {
-                'button_clicked': (op, { type, message }) => {
-                    const id = message;
-                    const button = this.widgets.find(b => b.id === id);
-                    button?.exec?.(ctx);
+            'button_clicked': (op, { type, message }) => {
+                const id = message;
+                const button = this.widgets.find(b => b.id === id);
+                button?.exec?.(ctx);
             }
         });
     }
 
-    public attachConfig(config: T_TwitterFeatureConfig) {
-        const widgets: IStarter[] = (config.POST && config.POST('') || [])
-            .filter((widget) => typeof widget !== 'function')
-            .flat()
-            .map((starter: { label: string, exec: () => void }) => {
-                return { ...starter, config, id: ++this._buttonId };
-            });
-        if (this.widgets.length === 0 && widgets.length !== 0) {
-            this.adapter.adapter.attachConfig(this.config);
+    public async attachConfig(config: T_TwitterFeatureConfig) {
+        if (!config.POST) return;
+        
+        const arr = config.POST('');
+        const insert = (arr: any[]) => {
+            const widgets: IStarter[] = (arr || [])
+                .filter((widget) => typeof widget !== 'function')
+                .flat()
+                .map((starter: { label: string, exec: () => void }) => {
+                    return { ...starter, config, id: ++this._buttonId };
+                });
+            if (this.widgets.length === 0 && widgets.length !== 0) {
+                this.adapter.adapter.attachConfig(this.config);
+            }
+            this.widgets.push(...widgets);
         }
-        this.widgets.push(...widgets);
+
+        (arr instanceof Promise) ? arr.then(insert) : insert(arr);
     }
 
     public detachConfig(config: any, featureId: string) {
