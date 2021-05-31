@@ -4,6 +4,7 @@ import { T_TwitterFeatureConfig } from 'twitter-adapter.dapplet-base.eth';
 import { IButtonState, Button } from './button';
 import { IButtonStarterState, ButtonStarter } from './button-starter';
 import { IPictureState, Picture } from './picture';
+import { IAvatarState, Avatar } from './avatar';
 import { IAvatarBadgeState, AvatarBadge } from './avatar-badge';
 import { IUsernameBadgeState, UsernameBadge } from './username-badge';
 import { ILabelState, Label } from './label';
@@ -21,6 +22,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
         button: this.adapter.createWidgetFactory<IButtonState>(Button),
         buttonStarter: this.adapter.createWidgetFactory<IButtonStarterState>(ButtonStarter),
         picture: this.adapter.createWidgetFactory<IPictureState>(Picture),
+        avatar: this.adapter.createWidgetFactory<IAvatarState>(Avatar),
         avatarBadge: this.adapter.createWidgetFactory<IAvatarBadgeState>(AvatarBadge),
         usernameBadge: this.adapter.createWidgetFactory<IUsernameBadgeState>(UsernameBadge),
         label: this.adapter.createWidgetFactory<ILabelState>(Label),
@@ -41,6 +43,10 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                 PICTURE: {
                     selector: "div[data-testid=tweet] > div:nth-child(2) > div:nth-child(2)",
                     insert: 'inside'
+                },
+                AVATAR: {
+                    selector: "div.css-1dbjc4n.r-1adg3ll.r-1udh08x div.css-1dbjc4n.r-1niwhzg.r-vvn4in.r-u6sd8q.r-4gszlv.r-1p0dtai.r-1pi2tsx.r-1d2f490.r-u8s1d.r-zchlnj.r-ipm5af.r-13qz1uu.r-1wyyakw",
+                    insert: 'end',
                 },
                 AVATAR_BADGE: {
                     selector: "div.css-1dbjc4n.r-18kxxzh.r-1wbh5a2.r-13qz1uu > *:last-child"
@@ -115,6 +121,10 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
             containerSelector: "main[role=main]",
             contextSelector: "div.css-1dbjc4n.r-1ifxtd0.r-ymttw5.r-ttdzmv",
             insPoints: {
+                AVATAR: {
+                    selector: "a div.css-1dbjc4n.r-1twgtwe.r-sdzlij.r-rs99b7.r-1p0dtai.r-1mi75qu.r-1d2f490.r-1ny4l3l.r-u8s1d.r-zchlnj.r-ipm5af.r-o7ynqc.r-6416eg",
+                    insert: 'end'
+                },
                 AVATAR_BADGE: {
                     selector: "div.css-1dbjc4n.r-obd0qt.r-18u37iz.r-1w6e6rj.r-1wtj0ep",
                     insert: 'end'
@@ -124,7 +134,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                     insert: "end"
                 },
                 BUTTON_GROUP: {
-                    selector: "div.css-1dbjc4n.r-obd0qt.r-18u37iz.r-1w6e6rj.r-1h0z5md.r-dnmrzs > *:first-child",
+                    selector: "div.css-1dbjc4n.r-obd0qt.r-18u37iz.r-1w6e6rj.r-1h0z5md.r-dnmrzs > *:last-child",
                     insert: "begin"
                 },
             },
