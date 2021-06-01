@@ -171,6 +171,10 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
             containerSelector: "main[role=main]",
             contextSelector: "div.css-1dbjc4n.r-kzbkwu.r-ymttw5.r-ttdzmv",
             insPoints: {
+                AVATAR: {
+                    selector: '[role="presentation"]',
+                    insert: 'end'
+                },
                 USERNAME_BADGE: {
                     selector: 'div.css-1dbjc4n.r-6gpygo.r-14gqq1x',
                     insert: "end"
