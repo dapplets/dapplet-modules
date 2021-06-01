@@ -8,6 +8,6 @@
     "main": { "$ref": "package.json#/main" },
     "contextIds": ["twitter.com", "www.twitter.com", "mobile.twitter.com"],
     "interfaces": {
-      "identity-adapter.dapplet-base.eth": "0.2.0"
+      "identity-adapter.dapplet-base.eth": "0.3.0"
     }
 }
