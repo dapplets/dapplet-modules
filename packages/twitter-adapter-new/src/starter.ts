@@ -56,7 +56,7 @@ export default class Starter {
         const arr = config.POST('');
         const insert = (arr: any[]) => {
             const widgets: IStarter[] = (arr || [])
-                .filter((widget) => typeof widget !== 'function')
+                .filter((widget) => Array.isArray(widget))
                 .flat()
                 .map((starter: { label: string, exec: () => void }) => {
                     return { ...starter, config, id: ++this._buttonId };

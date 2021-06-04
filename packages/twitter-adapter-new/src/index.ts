@@ -115,8 +115,29 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                     authorImg: el.querySelector('div[data-testid=tweet] img.css-9pa8cd')?.getAttribute('src')
                 });
             },
-            theme: this._getTheme
+            theme: this._getTheme,
+            childrenContexts: ['REPOST'],
         },
+        REPOST: {
+            containerSelector: "main[role=main]",
+            contextSelector: "article.css-1dbjc4n div[tabindex] > div.css-1dbjc4n",
+            insPoints: {
+                SOUTH: {
+                    selector: "div.css-901oao.r-18jsvk2.r-1qd0xha.r-a023e6.r-16dba41.r-rjixqe.r-14gqq1x.r-bcqeeo.r-bnwqim.r-qvutc0",
+                },
+            },
+            events: {},
+            contextBuilder: (el: any) => {
+                return ({
+                    id: el.querySelector('time').dateTime + el.querySelector('[dir="ltr"]')?.innerText + el.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.querySelector('time').dateTime,
+                    text: el.querySelector('div.css-901oao.r-18jsvk2.r-1qd0xha.r-a023e6.r-16dba41.r-rjixqe.r-14gqq1x.r-bcqeeo.r-bnwqim.r-qvutc0 span')?.innerText,
+                    authorFullname: el.querySelector('[dir="auto"]').textContent,
+                    authorUsername: el.querySelector('[dir="ltr"]')?.innerText?.replace('@', '')?.toLowerCase(),
+                    authorImg: el.querySelector('[role="presentation"] img')?.getAttribute('src')
+                });
+            },
+            theme: this._getTheme,
+        }, 
         PROFILE: {
             containerSelector: "main[role=main]",
             contextSelector: "div.css-1dbjc4n.r-1ifxtd0.r-ymttw5.r-ttdzmv",
