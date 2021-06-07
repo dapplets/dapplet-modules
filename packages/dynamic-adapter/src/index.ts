@@ -9,6 +9,11 @@ interface IDynamicAdapter extends IContentAdapter<any> {
     createWidgetFactory<T>(Widget: any): (config: { [state: string]: T }) => (builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element) => any;
 }
 
+interface IConfig {
+    orderIndex: number,
+    ['string']: (ctx: string) => any[] | any,
+}
+
 @Injectable
 class DynamicAdapter implements IDynamicAdapter {
     private observer: MutationObserver = null;
@@ -18,13 +23,41 @@ class DynamicAdapter implements IDynamicAdapter {
     private locator = new Locator();
 
     // Config from feature
-    public attachConfig(config: any) { // ToDo: automate two-way dependency handling(?)
+    public attachConfig(config: IConfig) { // ToDo: automate two-way dependency handling(?)
         if (this.featureConfigs.find(f => f === config)) return;
         this.featureConfigs.splice(config['orderIndex'], 0, config);
+        const addNestedConfigs = (featureConfig: IConfig) =>
+            Object.values(featureConfig).forEach((fn) => {
+                if (typeof fn !== 'function') return;
+                const widgets = fn('');
+                const insert = (widgets: any[] | any) => {
+                    (Array.isArray(widgets) ? widgets : [widgets])
+                        .filter((widget) => !Array.isArray(widget) && typeof widget === 'object')
+                        .forEach((configsWrapper) => {
+                            Object.entries(configsWrapper).forEach(([key, value]) => {
+                                this.featureConfigs[config['orderIndex']][key] = value;
+                            });
+                            addNestedConfigs(configsWrapper);
+                        });
+                };
+                (widgets instanceof Promise) ? widgets.then(insert) : insert(widgets);
+            });
+
+        addNestedConfigs(config);
         this.updateObservers();
         return {
             $: (ctx: any, id: string) => {
-                return this.contextBuilders.map(wb => wb.widgets.get(config)?.filter(x => x.state.ctx === ctx && x.state.id === id).map(x => x.state) || []).flat(1)[0];
+                return this.contextBuilders
+                    .map(
+                        (wb) =>
+                            wb.widgets
+                                .get(config)
+                                ?.filter(
+                                    (x) => x.state.ctx === ctx && x.state.id === id
+                                )
+                                .map((x) => x.state) || []
+                    )
+                    .flat(1)[0];
             },
             reset: () => {
                 this.detachConfig(config);
@@ -74,8 +107,13 @@ class DynamicAdapter implements IDynamicAdapter {
         this.observer.observe(document.body, OBSERVER_CONFIG);
     }
 
-    private updateObservers(mutations?: MutationRecord[]) {
+    private updateObservers(mutations?) {
         this.contextBuilders
+            .filter((contextBuilder) =>
+                !this.contextBuilders.find((anyContextBuilder) =>
+                    anyContextBuilder.childrenContexts?.includes(contextBuilder.contextName)
+                )
+            )
             .forEach((contextBuilder) => {
                 const container = document.querySelector(contextBuilder.containerSelector);
                 if (container) {
@@ -89,15 +127,15 @@ class DynamicAdapter implements IDynamicAdapter {
                             removedContexts.push(...contexts)
                         }))
                     if (removedContexts && removedContexts.length > 0) {
-                        Core.contextFinished(removedContexts.map(c => c.parsed), document.location.hostname);
+                        Core.contextFinished(removedContexts.map(c => c.parsed));
                         removedContexts.forEach(ctx => contextBuilder.emitEvent(null, 'context_changed', ctx, [null, null, ctx.parsed]));
                     }
-                    contextBuilder.updateContexts(this.featureConfigs, container); // ToDo: think about it
+                    contextBuilder.updateContexts(this.featureConfigs, container, this.contextBuilders, null); // ToDo: think about it
                 }
                 // a new container was opened, no observer attached yet
                 if (container && !contextBuilder.observer) {
                     contextBuilder.observer = new MutationObserver(() => {
-                        contextBuilder.updateContexts(this.featureConfigs, container);
+                        contextBuilder.updateContexts(this.featureConfigs, container, this.contextBuilders, null);
                     });
                     contextBuilder.observer.observe(container, {
                         childList: true,
@@ -108,7 +146,7 @@ class DynamicAdapter implements IDynamicAdapter {
                     contextBuilder.observer.disconnect();
                     contextBuilder.observer = null;
                 }
-            });
+        });
 
         if (mutations) this.locator.handleMutations(mutations);
     }

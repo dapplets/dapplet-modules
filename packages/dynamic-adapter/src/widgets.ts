@@ -16,6 +16,7 @@ export class WidgetBuilder {
     executedNodes = new WeakMap<Node, WeakSet<any>>();
     widgetsByContextId = new Map<string, Set<any>>();
     theme: undefined | (() => string) = null;
+    childrenContexts: string[] | null = null;
 
     //ToDo: widgets
 
@@ -36,18 +37,20 @@ export class WidgetBuilder {
         return true;
     }
 
-    private _tryParseContext(el: Element) {
+    private _tryParseContext(el: Element, parent: any) {
         try {
-            return this.contextBuilder(el);
+            const ctx = this.contextBuilder(el);
+            ctx.parent = parent;
+            return ctx;
         } catch (err) {
             // ToDo: what need to do in this cases?
             console.warn("Cannot parse context");
-            return {};
+            return { parent };
         }
     }
 
     // `updateContexts()` is called when new context is found.
-    public updateContexts(featureConfigs: any[], container: Element) {
+    public updateContexts(featureConfigs: any[], container: Element, widgetBuilders: WidgetBuilder[], parentContext: any) {
         const contextNodes = Array.from(container?.querySelectorAll(this.contextSelector) || []);
         if (contextNodes.length === 0) return;
 
@@ -58,7 +61,7 @@ export class WidgetBuilder {
             const isNewContext = !this.contexts.has(contextNode);
             const context: Context = isNewContext
                 ? {
-                    parsed: this._tryParseContext(contextNode),
+                    parsed: this._tryParseContext(contextNode, parentContext),
                     eventHandlers: {},
                 }
                 : this.contexts.get(contextNode);
@@ -67,7 +70,7 @@ export class WidgetBuilder {
             if (isNewContext) {
                 newParsedContexts.push(context);
             } else {
-                const newContext = this._tryParseContext(contextNode);
+                const newContext = this._tryParseContext(contextNode, parentContext);
                 if (!this._compareObjects(context.parsed, newContext)) {
                     
                     if (newContext.id !== context.parsed.id) {
@@ -121,13 +124,26 @@ export class WidgetBuilder {
                     console.error(`Invalid configuration of "${this.contextName}" insertion point. It must be an array of widgets or function.`);
                 }
             }
+
+            if (this.childrenContexts) {
+                for (const childrenContext of this.childrenContexts) {
+                    const wb = widgetBuilders.find(x => x.contextName === childrenContext);
+                    wb.updateContexts(featureConfigs, contextNode, widgetBuilders, context.parsed);
+                }
+            }
         }
 
         Core.contextStarted(newParsedContexts.map((ctx) => ctx.parsed), document.location.hostname);
         newParsedContexts.forEach(ctx => this.emitEvent(null, 'context_changed', ctx, [null, ctx.parsed, null]));
 
         const allContexts = contextNodes.map(cn => this.contexts.get(cn)).filter(cn => !!cn);
-        newFeatureConfigs.forEach(fc => allContexts.forEach(ctx => newParsedContexts.indexOf(ctx) === -1 && this.emitEvent(fc, 'context_changed', ctx, [fc, ctx.parsed, null])));
+        newFeatureConfigs.forEach((fc) =>
+            allContexts.forEach(
+                (ctx) =>
+                    newParsedContexts.indexOf(ctx) === -1 &&
+                    this.emitEvent(fc, 'context_changed', ctx, [fc, ctx.parsed, null])
+            )
+        );
 
         return newParsedContexts;
     }
