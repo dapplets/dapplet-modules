@@ -1,0 +1,17 @@
+{
+  "name": "video-adapter.dapplet-base.eth",
+  "version": "0.1.0",
+  "description": "Video adapter",
+  "scripts": {
+    "build": "webpack --config webpack.dev.js",
+    "watch": "webpack -w --config webpack.dev.js",
+    "clean": "rimraf build lib"
+  },
+  "author": "Dapplets Project",
+  "license": "MIT",
+  "main": "build/index.js",
+  "typings": "build/index.d.ts",
+  "devDependencies": {
+    "dynamic-adapter.dapplet-base.eth": "^0.6.1"
+  }
+}
