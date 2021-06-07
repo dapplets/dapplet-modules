@@ -1,0 +1,17 @@
+{
+  "name": "video-feature.dapplet-base.eth",
+  "version": "0.1.0",
+  "description": "Demonstration of the capabilities of the video adapter",
+  "main": "build/index.js",
+  "scripts": {
+    "build": "webpack --config webpack.dev.js",
+    "watch": "webpack -w --config webpack.dev.js",
+    "clean": "rimraf build lib"
+  },
+  "author": "Dapplets Team",
+  "license": "MIT",
+  "devDependencies": {
+    "video-adapter.dapplet-base.eth": "^0.1.0"
+  },
+  "dependencies": {}
+}
