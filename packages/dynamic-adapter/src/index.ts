@@ -2,6 +2,7 @@ import { WidgetBuilder } from './widgets';
 import { IFeature, IContentAdapter } from '@dapplets/dapplet-extension';
 import { IWidgetBuilderConfig, Context, IWidget } from './types';
 import { State, WidgetConfig } from './state';
+import { Locator } from './locator';
 
 interface IDynamicAdapter extends IContentAdapter<any> {
     configure(config: { [contextName: string]: IWidgetBuilderConfig }): void;
@@ -14,6 +15,7 @@ class DynamicAdapter implements IDynamicAdapter {
     private featureConfigs: any[] = [];
     private contextBuilders: WidgetBuilder[] = [];
     private stateStorage = new Map<string, any>();
+    private locator = new Locator();
 
     // Config from feature
     public attachConfig(config: any) { // ToDo: automate two-way dependency handling(?)
@@ -72,40 +74,43 @@ class DynamicAdapter implements IDynamicAdapter {
         this.observer.observe(document.body, OBSERVER_CONFIG);
     }
 
-    private updateObservers(mutations?) {
-        Object.values(this.contextBuilders).forEach((contextBuilder) => {
-            const container = document.querySelector(contextBuilder.containerSelector);
-            if (container) {
-                // destroy contexts to removed nodes
-                const removedContexts: Context[] = []
-                mutations?.forEach(m => Array.from(m.removedNodes)
-                    .filter((n: Element) => n.nodeType == Node.ELEMENT_NODE)
-                    .forEach((n: Element) => {
-                        const contextNodes = Array.from(n?.querySelectorAll(contextBuilder.contextSelector) || []);
-                        const contexts = contextNodes.map((n: Element) => contextBuilder.contexts.get(n)).filter(e => e)
-                        removedContexts.push(...contexts)
-                    }))
-                if (removedContexts && removedContexts.length > 0) {
-                    Core.contextFinished(removedContexts.map(c => c.parsed));
-                    removedContexts.forEach(ctx => contextBuilder.emitEvent(null, 'context_changed', ctx, [null, null, ctx.parsed]));
+    private updateObservers(mutations?: MutationRecord[]) {
+        this.contextBuilders
+            .forEach((contextBuilder) => {
+                const container = document.querySelector(contextBuilder.containerSelector);
+                if (container) {
+                    // destroy contexts to removed nodes
+                    const removedContexts: Context[] = []
+                    mutations?.forEach(m => Array.from(m.removedNodes)
+                        .filter((n: Element) => n.nodeType == Node.ELEMENT_NODE)
+                        .forEach((n: Element) => {
+                            const contextNodes = Array.from(n?.querySelectorAll(contextBuilder.contextSelector) || []);
+                            const contexts = contextNodes.map((n: Element) => contextBuilder.contexts.get(n)).filter(e => e)
+                            removedContexts.push(...contexts)
+                        }))
+                    if (removedContexts && removedContexts.length > 0) {
+                        Core.contextFinished(removedContexts.map(c => c.parsed), document.location.hostname);
+                        removedContexts.forEach(ctx => contextBuilder.emitEvent(null, 'context_changed', ctx, [null, null, ctx.parsed]));
+                    }
+                    contextBuilder.updateContexts(this.featureConfigs, container); // ToDo: think about it
                 }
-                contextBuilder.updateContexts(this.featureConfigs, container); // ToDo: think about it
-            }
-            // a new container was opened, no observer attached yet
-            if (container && !contextBuilder.observer) {
-                contextBuilder.observer = new MutationObserver(() => {
-                    contextBuilder.updateContexts(this.featureConfigs, container);
-                });
-                contextBuilder.observer.observe(container, {
-                    childList: true,
-                    subtree: true
-                });
-            } else if (!container && contextBuilder.observer) {
-                // a container was destroyed, disconnect observer too
-                contextBuilder.observer.disconnect();
-                contextBuilder.observer = null;
-            }
-        });
+                // a new container was opened, no observer attached yet
+                if (container && !contextBuilder.observer) {
+                    contextBuilder.observer = new MutationObserver(() => {
+                        contextBuilder.updateContexts(this.featureConfigs, container);
+                    });
+                    contextBuilder.observer.observe(container, {
+                        childList: true,
+                        subtree: true
+                    });
+                } else if (!container && contextBuilder.observer) {
+                    // a container was destroyed, disconnect observer too
+                    contextBuilder.observer.disconnect();
+                    contextBuilder.observer = null;
+                }
+            });
+
+        if (mutations) this.locator.handleMutations(mutations);
     }
 
     public createWidgetFactory<T>(Widget: any) {

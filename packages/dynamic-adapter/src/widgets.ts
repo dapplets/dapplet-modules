@@ -123,7 +123,7 @@ export class WidgetBuilder {
             }
         }
 
-        Core.contextStarted(newParsedContexts.map((ctx) => ctx.parsed));
+        Core.contextStarted(newParsedContexts.map((ctx) => ctx.parsed), document.location.hostname);
         newParsedContexts.forEach(ctx => this.emitEvent(null, 'context_changed', ctx, [null, ctx.parsed, null]));
 
         const allContexts = contextNodes.map(cn => this.contexts.get(cn)).filter(cn => !!cn);
