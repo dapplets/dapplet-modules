@@ -116,9 +116,9 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                 });
             },
             theme: this._getTheme,
-            childrenContexts: ['REPOST'],
+            childrenContexts: ['QUOTE_POST'],
         },
-        REPOST: {
+        QUOTE_POST: {
             containerSelector: "main[role=main]",
             contextSelector: "article.css-1dbjc4n div[tabindex] > div.css-1dbjc4n",
             insPoints: {

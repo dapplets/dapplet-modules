@@ -107,7 +107,11 @@ class DynamicAdapter implements IDynamicAdapter {
 
     private updateObservers(mutations?) {
         Object.values(this.contextBuilders)
-            .filter(x => x.childrenContexts && x.childrenContexts.length > 0)
+            .filter((contextBuilder) =>
+                !this.contextBuilders.find((anyContextBuilder) =>
+                    anyContextBuilder.childrenContexts?.includes(contextBuilder.contextName)
+                )
+            )
             .forEach((contextBuilder) => {
                 const container = document.querySelector(contextBuilder.containerSelector);
                 if (container) {
