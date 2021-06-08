@@ -2,6 +2,11 @@ import { IFeature, IConnection } from "@dapplets/dapplet-extension";
 
 import { IWidgetBuilderConfig, Context } from "./types";
 
+interface IConfig {
+    orderIndex: number,
+    ['string']: (ctx: string) => any[] | any,
+}
+
 export class WidgetBuilder {
     contextName: string;
     containerSelector: string;
@@ -123,11 +128,29 @@ export class WidgetBuilder {
                     featureConfig[this.contextName] = undefined;
                     console.error(`Invalid configuration of "${this.contextName}" insertion point. It must be an array of widgets or function.`);
                 }
-            }
 
-            if (this.childrenContexts) {
-                for (const childrenContext of this.childrenContexts) {
+                for (const childrenContext of this.childrenContexts ?? []) {
                     const wb = widgetBuilders.find(x => x.contextName === childrenContext);
+                    Object.values(featureConfig).forEach((fn) => {
+                        if (typeof fn !== 'function') return;
+                        const widgets = fn(context.parsed);
+                        const insert = (widgets: any[] | any) => {
+                            (Array.isArray(widgets) ? widgets : [widgets])
+                                .filter((widget) => !Array.isArray(widget) && typeof widget === 'object')
+                                .forEach((configsWrapper) => {
+                                    Object.entries(configsWrapper).forEach(([key, value]) => {
+                                        if (childrenContext === key) {
+                                            if (featureConfig[key] && featureConfig[key] !== value) {
+                                                const old = featureConfig[key];
+                                                console.log('overwriting...', old, value);
+                                            }
+                                            featureConfig[key] = value;
+                                        }
+                                    });
+                                });
+                        };
+                        (widgets instanceof Promise) ? widgets.then(insert) : insert(widgets);
+                    });
                     wb.updateContexts(featureConfigs, contextNode, widgetBuilders, context.parsed);
                 }
             }

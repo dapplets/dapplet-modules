@@ -24,24 +24,6 @@ class DynamicAdapter implements IDynamicAdapter {
     public attachConfig(config: IConfig) { // ToDo: automate two-way dependency handling(?)
         if (this.featureConfigs.find(f => f === config)) return;
         this.featureConfigs.splice(config['orderIndex'], 0, config);
-        const addNestedConfigs = (featureConfig: IConfig) =>
-            Object.values(featureConfig).forEach((fn) => {
-                if (typeof fn !== 'function') return;
-                const widgets = fn('');
-                const insert = (widgets: any[] | any) => {
-                    (Array.isArray(widgets) ? widgets : [widgets])
-                        .filter((widget) => !Array.isArray(widget) && typeof widget === 'object')
-                        .forEach((configsWrapper) => {
-                            Object.entries(configsWrapper).forEach(([key, value]) => {
-                                this.featureConfigs[config['orderIndex']][key] = value;
-                            });
-                            addNestedConfigs(configsWrapper);
-                        });
-                };
-                (widgets instanceof Promise) ? widgets.then(insert) : insert(widgets);
-            });
-
-        addNestedConfigs(config);
         this.updateObservers();
         return {
             $: (ctx: any, id: string) => {
