@@ -140,18 +140,14 @@ export class WidgetBuilder {
                                 .forEach((configsWrapper) => {
                                     Object.entries(configsWrapper).forEach(([key, value]) => {
                                         if (childrenContext === key) {
-                                            if (featureConfig[key] && featureConfig[key] !== value) {
-                                                const old = featureConfig[key];
-                                                console.log('overwriting...', old, value);
-                                            }
-                                            featureConfig[key] = value;
+                                            featureConfig[key] = value; // ToDo: [POTENTIAL BUG] unclear consequences of overwriting configurations of child contexts
+                                            wb.updateContexts([featureConfig], contextNode, widgetBuilders, context.parsed);
                                         }
                                     });
                                 });
                         };
                         (widgets instanceof Promise) ? widgets.then(insert) : insert(widgets);
                     });
-                    wb.updateContexts(featureConfigs, contextNode, widgetBuilders, context.parsed);
                 }
             }
         }
