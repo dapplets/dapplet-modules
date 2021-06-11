@@ -1,10 +1,6 @@
 {
   "name": "dynamic-adapter.dapplet-base.eth",
-<<<<<<< HEAD
-  "version": "0.6.1",
-=======
   "version": "0.6.2",
->>>>>>> origin/nested-ctxs
   "description": "Dynamic Adapter",
   "scripts": {
     "build": "webpack --config webpack.dev.js",
