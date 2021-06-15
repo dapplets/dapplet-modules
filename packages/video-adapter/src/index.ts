@@ -12,7 +12,7 @@ export default class VideoAdapter implements IContentAdapter<ICommonAdapterConfi
 
     constructor(
         @Inject("dynamic-adapter.dapplet-base.eth")
-        private dynamicAdapter: IDynamicAdapter
+        private dynamicAdapter: IDynamicAdapter<ICommonAdapterConfig>
     ) {
         this.dynamicAdapter.configure(this.config);
     }

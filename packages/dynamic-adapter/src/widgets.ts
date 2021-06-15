@@ -167,6 +167,19 @@ export class WidgetBuilder {
         return newParsedContexts;
     }
 
+    public removeConfigFromExecutedNodes(config: any, contextBuilders: WidgetBuilder[]) {
+      contextBuilders.forEach((contextBuilder) => {
+        const container = document.querySelector(contextBuilder.containerSelector);
+        const contextNodes = Array.from(container?.querySelectorAll(this.contextSelector) || []);
+        if (contextNodes.length === 0) return;
+        for (const contextNode of contextNodes) {
+            if (this.executedNodes.get(contextNode).has(config)) {
+                this.executedNodes.get(contextNode).delete(config);
+            }
+        }
+      })
+    }
+
     private _insertWidgets(insPointConfig: any, featureConfig: any, insPointName: string, context: Context, contextNode: Element) {
         if (insPointConfig === null || insPointConfig === undefined) return;
         

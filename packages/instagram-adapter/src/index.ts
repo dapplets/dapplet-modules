@@ -69,7 +69,7 @@ export default class InstagramAdapter {
 
     constructor(
         @Inject("dynamic-adapter.dapplet-base.eth")
-        readonly adapter: IDynamicAdapter
+        readonly adapter: IDynamicAdapter<any>
     ) {
         this.adapter.configure(this.config);
     }

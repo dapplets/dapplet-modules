@@ -14,7 +14,7 @@ export default class CommonAdapter implements IContentAdapter<ICommonAdapterConf
 
     constructor(
         @Inject("dynamic-adapter.dapplet-base.eth")
-        private dynamicAdapter: IDynamicAdapter
+        private dynamicAdapter: IDynamicAdapter<ICommonAdapterConfig>
     ) {
         this.dynamicAdapter.configure(this.config);
     }

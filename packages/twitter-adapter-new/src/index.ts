@@ -211,7 +211,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
 
     constructor(
         @Inject("dynamic-adapter.dapplet-base.eth")
-        readonly adapter: IDynamicAdapter
+        readonly adapter: IDynamicAdapter<T_TwitterFeatureConfig>
     ) {
         this.adapter.configure(this.config);
         this.starter = new Starter(this);
@@ -231,8 +231,8 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
 
     public resetConfig(config: T_TwitterFeatureConfig, newConfig?: T_TwitterFeatureConfig, featureId?: string): void {
         this.starter.detachConfig(config, featureId);
-        this.starter.attachConfig(newConfig || config);
-        this.adapter.resetConfig(config, newConfig);
+        this.starter.attachConfig(newConfig ?? config);
+        this.adapter.resetConfig(config, newConfig ?? config);
     }
 
     public getCurrentUser() {

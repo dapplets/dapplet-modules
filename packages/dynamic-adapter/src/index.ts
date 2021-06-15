@@ -4,18 +4,16 @@ import { IWidgetBuilderConfig, Context, IWidget } from './types';
 import { State, WidgetConfig } from './state';
 import { Locator } from './locator';
 
-interface IDynamicAdapter extends IContentAdapter<any> {
+interface IDynamicAdapter<IAdapterConfig> extends IContentAdapter<IAdapterConfig> {
     configure(config: { [contextName: string]: IWidgetBuilderConfig }): void;
     createWidgetFactory<T>(Widget: any): (config: { [state: string]: T }) => (builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element) => any;
-}
-
-interface IConfig {
-    orderIndex: number,
-    ['string']: (ctx: string) => any[] | any,
+    resetConfig(config: IAdapterConfig, newConfig?: IAdapterConfig): {
+        $: (ctx: any, id: string) => any;
+    };
 }
 
 @Injectable
-class DynamicAdapter implements IDynamicAdapter {
+class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig>  {
     private observer: MutationObserver = null;
     private featureConfigs: any[] = [];
     private contextBuilders: WidgetBuilder[] = [];
@@ -23,7 +21,7 @@ class DynamicAdapter implements IDynamicAdapter {
     private locator = new Locator();
 
     // Config from feature
-    public attachConfig(config: IConfig) { // ToDo: automate two-way dependency handling(?)
+    public attachConfig(config: IAdapterConfig) { // ToDo: automate two-way dependency handling(?)
         if (this.featureConfigs.find(f => f === config)) return;
         this.featureConfigs.splice(config['orderIndex'], 0, config);
         this.updateObservers();
@@ -51,11 +49,12 @@ class DynamicAdapter implements IDynamicAdapter {
             const widgets = wb.widgets.get(config);
             if (!widgets || widgets.length === 0) return;
             widgets.forEach(w => w.unmount());
+            wb.removeConfigFromExecutedNodes(config, this.contextBuilders);
         });
         // ToDo: close all subscriptions and connections
     }
 
-    public resetConfig(config: IConfig, newConfig?: IConfig) {
+    public resetConfig(config: IAdapterConfig, newConfig?: IAdapterConfig) {
         this.detachConfig(config);
         return this.attachConfig(newConfig ?? config);
     }
