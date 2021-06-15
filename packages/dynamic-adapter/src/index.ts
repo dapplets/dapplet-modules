@@ -41,9 +41,9 @@ class DynamicAdapter implements IDynamicAdapter {
                     )
                     .flat(1)[0];
             },
-            reset: () => {
+            reset: (newConfig: IConfig = config) => {
                 this.detachConfig(config);
-                this.attachConfig(config);
+                return this.attachConfig(newConfig);
             }
         }
     }
