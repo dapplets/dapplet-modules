@@ -4,9 +4,6 @@ export class Locator {
 
     private _map = new Map<string, Set<Element>>();
 
-    constructor() {
-    }
-
     // ToDo: scan contextIds before MutationObserver initialization
 
     handleMutations(mutations: MutationRecord[]) {
