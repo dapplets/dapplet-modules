@@ -229,6 +229,12 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
         this.adapter.detachConfig(config, featureId);
     }
 
+    public resetConfig(config: T_TwitterFeatureConfig, newConfig?: T_TwitterFeatureConfig, featureId?: string): void {
+        this.starter.detachConfig(config, featureId);
+        this.starter.attachConfig(newConfig || config);
+        this.adapter.resetConfig(config, newConfig);
+    }
+
     public getCurrentUser() {
         if (!document.querySelector('[data-testid=SideNav_AccountSwitcher_Button]')) return null;
         return ({

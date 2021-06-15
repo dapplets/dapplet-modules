@@ -40,10 +40,6 @@ class DynamicAdapter implements IDynamicAdapter {
                                 .map((x) => x.state) || []
                     )
                     .flat(1)[0];
-            },
-            reset: (newConfig: IConfig = config) => {
-                this.detachConfig(config);
-                return this.attachConfig(newConfig);
             }
         }
     }
@@ -57,6 +53,11 @@ class DynamicAdapter implements IDynamicAdapter {
             widgets.forEach(w => w.unmount());
         });
         // ToDo: close all subscriptions and connections
+    }
+
+    public resetConfig(config: IConfig, newConfig?: IConfig) {
+        this.detachConfig(config);
+        return this.attachConfig(newConfig ?? config);
     }
 
     // Config from adapter
