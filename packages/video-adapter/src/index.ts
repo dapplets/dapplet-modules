@@ -2,17 +2,17 @@ import { IContentAdapter } from '@dapplets/dapplet-extension';
 import { IDynamicAdapter } from 'dynamic-adapter.dapplet-base.eth';
 import { ICaptionState, Caption } from './caption';
 
-interface ICommonAdapterConfig {
+interface IVideoAdapterConfig {
     events?: { [event: string]: Function },
     VIDEO?: (ctx: any) => any[]
 }
 
 @Injectable
-export default class VideoAdapter implements IContentAdapter<ICommonAdapterConfig> {
+export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig> {
 
     constructor(
         @Inject("dynamic-adapter.dapplet-base.eth")
-        private dynamicAdapter: IDynamicAdapter<ICommonAdapterConfig>
+        private dynamicAdapter: IDynamicAdapter<IVideoAdapterConfig>
     ) {
         this.dynamicAdapter.configure(this.config);
     }
@@ -50,14 +50,14 @@ export default class VideoAdapter implements IContentAdapter<ICommonAdapterConfi
     };
 
     // ToDo: refactor it
-    public attachConfig(config: ICommonAdapterConfig, featureId?: string) { // ToDo: automate two-way dependency handling(?)
+    public attachConfig(config: IVideoAdapterConfig, featureId?: string) { // ToDo: automate two-way dependency handling(?)
         return this.dynamicAdapter.attachConfig(config);
     }
 
     // ToDo: refactor it
     // feature deactivation
     // ToDo: detachConfig uses config and featureId as the key of the feature. Refactor to use only one key.
-    public detachConfig(config: ICommonAdapterConfig, featureId?: string) {
+    public detachConfig(config: IVideoAdapterConfig, featureId?: string) {
         // ToDo: detach statusLine messages
         this.dynamicAdapter.detachConfig(config, featureId);
     }
