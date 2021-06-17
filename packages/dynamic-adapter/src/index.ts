@@ -38,7 +38,8 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
                                 .map((x) => x.state) || []
                     )
                     .flat(1)[0];
-            }
+            },
+            reset: (newConfig?: IAdapterConfig) => this.resetConfig(config, newConfig)
         }
     }
 
