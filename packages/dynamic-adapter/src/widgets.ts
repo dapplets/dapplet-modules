@@ -15,13 +15,14 @@ export class WidgetBuilder {
     events: { [key: string]: (node: any, ctx: any, emitter: Function, on?: Function) => void };
     contextBuilder: (node: any) => any;
     observer: MutationObserver = null;
-    widgets = new Map<IFeature, any[]>();
-    contexts = new WeakMap<Node, Context>();
     eventHandler: (event: string, args: any[], target: any) => void = null;
-    executedNodes = new WeakMap<Node, WeakSet<any>>();
-    widgetsByContextId = new Map<string, Set<any>>();
     theme: undefined | (() => string) = null;
     childrenContexts: string[] | null = null;
+
+    private executedNodes = new WeakMap<Node, WeakSet<any>>();
+    private widgetsByContextId = new Map<string, Set<any>>();
+    private widgets = new Map<IFeature, any[]>();
+    public contexts = new WeakMap<Node, Context>(); // ToDo: make private
 
     //ToDo: widgets
 
@@ -33,25 +34,6 @@ export class WidgetBuilder {
     public emitEvent(target: any, event: string, context: Context, args: any[]) {
         this.eventHandler?.(event, args, target);
         context.eventHandlers[event]?.forEach(h => h(...args));
-    }
-
-    private _compareObjects(a: any, b: any) {
-        for (const key in a) {
-            if (a[key] !== b[key]) return false;
-        }
-        return true;
-    }
-
-    private _tryParseContext(el: Element, parent: any) {
-        try {
-            const ctx = this.contextBuilder(el);
-            ctx.parent = parent;
-            return ctx;
-        } catch (err) {
-            // ToDo: what need to do in this cases?
-            console.warn("Cannot parse context");
-            return { parent };
-        }
     }
 
     // `updateContexts()` is called when new context is found.
@@ -77,7 +59,7 @@ export class WidgetBuilder {
             } else {
                 const newContext = this._tryParseContext(contextNode, parentContext);
                 if (!this._compareObjects(context.parsed, newContext)) {
-                    
+
                     if (newContext.id !== context.parsed.id) {
                         this.executedNodes.delete(contextNode);
                         this.widgetsByContextId.get(context.parsed.id)?.forEach(x => x.unmount());
@@ -167,9 +149,21 @@ export class WidgetBuilder {
         return newParsedContexts;
     }
 
-    public removeConfigFromExecutedNodes(config: any, contextBuilders: WidgetBuilder[]) {
-      contextBuilders.forEach((contextBuilder) => {
-        const container = document.querySelector(contextBuilder.containerSelector);
+    public findWidget(config: any, ctx: any, id: any) {
+        const widgets = this.widgets.get(config);
+        if (!widgets) return null;
+
+        const widget = widgets.find(x => x.state.ctx === ctx && x.state.id === id);
+        if (!widget) return null;
+
+        return widget.state;
+    }
+
+    public unmountWidgets(config: any) {
+        const widgets = this.widgets.get(config);
+        if (!widgets || widgets.length === 0) return;
+        widgets.forEach(w => w.unmount());
+        const container = document.querySelector(this.containerSelector);
         const contextNodes = Array.from(container?.querySelectorAll(this.contextSelector) || []);
         if (contextNodes.length === 0) return;
         for (const contextNode of contextNodes) {
@@ -177,14 +171,13 @@ export class WidgetBuilder {
                 this.executedNodes.get(contextNode).delete(config);
             }
         }
-      })
     }
 
     private _insertWidgets(insPointConfig: any, featureConfig: any, insPointName: string, context: Context, contextNode: Element) {
         if (insPointConfig === null || insPointConfig === undefined) return;
-        
+
         const widgetConstructors = Array.isArray(insPointConfig) ? insPointConfig : [insPointConfig];
-        
+
         for (const widgetConstructor of widgetConstructors) {
             const contextIds = featureConfig.contextIds || [];
 
@@ -195,7 +188,7 @@ export class WidgetBuilder {
                 }
                 const insertedWidget = widgetConstructor(this, insPointName, featureConfig.orderIndex, contextNode);
                 if (!insertedWidget) continue;
-                
+
                 const registeredWidgets = this.widgets.get(featureConfig);
                 registeredWidgets.push(insertedWidget);
                 this.widgets.set(featureConfig, registeredWidgets);
@@ -205,6 +198,25 @@ export class WidgetBuilder {
                     if (!this.widgetsByContextId.get(context.parsed.id).has(insertedWidget)) this.widgetsByContextId.get(context.parsed.id).add(insertedWidget);
                 }
             }
+        }
+    }
+
+    private _compareObjects(a: any, b: any) {
+        for (const key in a) {
+            if (a[key] !== b[key]) return false;
+        }
+        return true;
+    }
+
+    private _tryParseContext(el: Element, parent: any) {
+        try {
+            const ctx = this.contextBuilder(el);
+            ctx.parent = parent;
+            return ctx;
+        } catch (err) {
+            // ToDo: what need to do in this cases?
+            console.warn("Cannot parse context");
+            return { parent };
         }
     }
 }

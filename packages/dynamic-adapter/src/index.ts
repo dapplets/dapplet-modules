@@ -20,24 +20,29 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
     private stateStorage = new Map<string, any>();
     private locator = new Locator();
 
+    constructor() {
+        if (!document || !window || !MutationObserver) throw Error('Document or MutationObserver is not available.');
+
+        this.locator.scanDocument();
+        this.observer = new MutationObserver((mutations) => this.updateObservers(mutations));
+        this.observer.observe(document.body, { childList: true, subtree: true });
+    }
+
     // Config from feature
     public attachConfig(config: IAdapterConfig) { // ToDo: automate two-way dependency handling(?)
         if (this.featureConfigs.find(f => f === config)) return;
+
         this.featureConfigs.splice(config['orderIndex'], 0, config);
         this.updateObservers();
+
         return {
             $: (ctx: any, id: string) => {
-                return this.contextBuilders
-                    .map(
-                        (wb) =>
-                            wb.widgets
-                                .get(config)
-                                ?.filter(
-                                    (x) => x.state.ctx === ctx && x.state.id === id
-                                )
-                                .map((x) => x.state) || []
-                    )
-                    .flat(1)[0];
+                for (const wb of this.contextBuilders) {
+                    const widget = wb.findWidget(config, ctx, id);
+                    if (widget) return widget;
+                }
+
+                return null;
             },
             reset: (newConfig?: IAdapterConfig) => this.resetConfig(config, newConfig)
         }
@@ -46,12 +51,7 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
     // Config from feature
     public detachConfig(config: any) {
         this.featureConfigs = this.featureConfigs.filter(f => f !== config);
-        this.contextBuilders.forEach(wb => {
-            const widgets = wb.widgets.get(config);
-            if (!widgets || widgets.length === 0) return;
-            widgets.forEach(w => w.unmount());
-            wb.removeConfigFromExecutedNodes(config, this.contextBuilders);
-        });
+        this.contextBuilders.forEach(wb => wb.unmountWidgets(config));
         // ToDo: close all subscriptions and connections
     }
 
@@ -75,20 +75,6 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
         });
 
         this.contextBuilders.push(...builders);
-    }
-
-    constructor() {
-        if (this.observer) return;
-        if (!document || !window || !MutationObserver) throw Error('Document or MutationObserver is not available.');
-        const OBSERVER_CONFIG = {
-            childList: true,
-            subtree: true
-        }
-
-        this.locator.scanDocument();
-        this.observer = new MutationObserver((mutations) => this.updateObservers(mutations));
-
-        this.observer.observe(document.body, OBSERVER_CONFIG);
     }
 
     private updateObservers(mutations?) {

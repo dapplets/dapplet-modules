@@ -59,7 +59,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
 
     constructor(
         @Inject("dynamic-adapter.dapplet-base.eth")
-        private adapter: IDynamicAdapter
+        private adapter: IDynamicAdapter<T_TwitterFeatureConfig>
     ) {
         this.adapter.configure(this.config);
     }
