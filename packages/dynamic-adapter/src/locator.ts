@@ -1,20 +1,22 @@
+/**
+ * The Locator is responsible for finding dynamic contexts.
+ * It handles mutations from the MutationObserver 
+ * and performs a full DOM scan on Dynamic Adapter initialization.
+ */
 export class Locator {
 
     private _locators = Core.getContentDetectors();
-
     private _map = new Map<string, Set<Element>>();
 
-    // ToDo: scan contextIds before MutationObserver initialization
-
-    handleMutations(mutations: MutationRecord[]) {
+    public handleMutations(mutations: MutationRecord[]) {
         for (const mutation of mutations) {
             for (const addedNode of Array.from(mutation.addedNodes) as Element[]) {
                 for (const locator of this._locators) {
                     if (addedNode.matches && addedNode.matches(locator.selector)) {
-                        this.addElement(addedNode, locator.contextId);
+                        this._addElement(addedNode, locator.contextId);
                     } else if (addedNode.querySelectorAll) {
                         const elements = addedNode.querySelectorAll(locator.selector);
-                        elements.forEach(el => this.addElement(el, locator.contextId));
+                        elements.forEach(el => this._addElement(el, locator.contextId));
                     }
                 }
             }
@@ -22,17 +24,24 @@ export class Locator {
             for (const removedNode of Array.from(mutation.removedNodes) as Element[]) {
                 for (const locator of this._locators) {
                     if (removedNode.matches && removedNode.matches(locator.selector)) {
-                        this.removeElement(removedNode, locator.contextId);
+                        this._removeElement(removedNode, locator.contextId);
                     } else if (removedNode.querySelectorAll) {
                         const elements = removedNode.querySelectorAll(locator.selector);
-                        elements.forEach(el => this.removeElement(el, locator.contextId));
+                        elements.forEach(el => this._removeElement(el, locator.contextId));
                     }
                 }
             }
         }
     }
 
-    addElement(el: Element, contextId: string) {
+    public scanDocument() {
+        for (const locator of this._locators) {
+            const nodes = document.querySelectorAll(locator.selector);
+            nodes.forEach(x => this._addElement(x, locator.contextId));
+        }
+    }
+
+    private _addElement(el: Element, contextId: string) {
         if (!this._map.has(contextId)) this._map.set(contextId, new Set());
         this._map.get(contextId).add(el);
         if (this._map.get(contextId).size === 1) {
@@ -40,7 +49,7 @@ export class Locator {
         }
     }
 
-    removeElement(el: Element, contextId: string) {
+    private _removeElement(el: Element, contextId: string) {
         if (!this._map.has(contextId)) return;
         this._map.get(contextId).delete(el);
         if (this._map.get(contextId).size === 0) {

@@ -85,6 +85,7 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
             subtree: true
         }
 
+        this.locator.scanDocument();
         this.observer = new MutationObserver((mutations) => this.updateObservers(mutations));
 
         this.observer.observe(document.body, OBSERVER_CONFIG);
