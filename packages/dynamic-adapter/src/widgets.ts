@@ -52,6 +52,8 @@ export class WidgetBuilder {
                     eventHandlers: {},
                 }
                 : this.contexts.get(contextNode);
+            
+            if (!context.parsed) continue;
 
             // ToDo: refactor isNew checking
             if (isNewContext) {
@@ -183,7 +185,7 @@ export class WidgetBuilder {
 
             if (contextIds.length === 0 || contextIds.indexOf(context.parsed.id) !== -1) {
                 if (typeof widgetConstructor !== 'function') {
-                    //console.error(`Invalid widget configuration in the insertion point "${insPointName}". It must be WidgetConstructor instance.`);
+                    console.error(`Invalid widget configuration in the insertion point "${insPointName}". It must be WidgetConstructor instance.`);
                     continue;
                 }
                 const insertedWidget = widgetConstructor(this, insPointName, featureConfig.orderIndex, contextNode);
@@ -215,8 +217,8 @@ export class WidgetBuilder {
             return ctx;
         } catch (err) {
             // ToDo: what need to do in this cases?
-            console.warn("Cannot parse context");
-            return { parent };
+            console.warn(`Cannot parse context "${this.contextName}"`, err);
+            return null;
         }
     }
 }
