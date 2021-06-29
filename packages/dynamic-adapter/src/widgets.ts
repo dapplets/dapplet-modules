@@ -185,7 +185,7 @@ export class WidgetBuilder {
 
             if (contextIds.length === 0 || contextIds.indexOf(context.parsed.id) !== -1) {
                 if (typeof widgetConstructor !== 'function') {
-                    console.error(`Invalid widget configuration in the insertion point "${insPointName}". It must be WidgetConstructor instance.`);
+                    // console.error(`Invalid widget configuration in the insertion point "${insPointName}". It must be WidgetConstructor instance.`);
                     continue;
                 }
                 const insertedWidget = widgetConstructor(this, insPointName, featureConfig.orderIndex, contextNode);
