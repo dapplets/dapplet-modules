@@ -16,6 +16,10 @@ export class Popup implements IWidget<IPopupState> {
     public state: IPopupState;
     public insPointName: string;
 
+    public static contextInsPoints = {
+        BODY: 'BODY'
+    }
+
     public mount() {
         if (!this.el) this._createElement();
 

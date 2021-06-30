@@ -31,13 +31,15 @@ export default class CommonAdapter implements IContentAdapter<ICommonAdapterConf
     public config = {
         BODY: {
             containerSelector: "html",
-            contextSelector: "body > *:nth-last-child(2)",
+            contextSelector: null, // context and container are the same 
             insPoints: {
-                BODY: {}
+                BODY: {
+                    selector: "body"
+                }
             },
             //ToDo: remove any twitter dependencies
             contextBuilder: (node: any) => ({
-
+                id: document.location.href
             }),
         }
     };

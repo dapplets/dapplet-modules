@@ -14,6 +14,10 @@ export class Button implements IWidget<IButtonState> {
     public state: IButtonState;
     public insPointName: string;
 
+    public static contextInsPoints = {
+        BODY: 'BODY'
+    }
+
     public mount() {
         if (!this.el) this._createElement();
 
