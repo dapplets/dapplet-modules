@@ -38,7 +38,7 @@ export class WidgetBuilder {
 
     // `updateContexts()` is called when new context is found.
     public updateContexts(featureConfigs: any[], container: Element, widgetBuilders: WidgetBuilder[], parentContext: any) {
-        const contextNodes = Array.from(container?.querySelectorAll(this.contextSelector) || []);
+        const contextNodes = this.contextSelector ? Array.from(container?.querySelectorAll(this.contextSelector) || []) : [container];
         if (contextNodes.length === 0) return;
 
         const newParsedContexts = [];
@@ -166,7 +166,7 @@ export class WidgetBuilder {
         if (!widgets || widgets.length === 0) return;
         widgets.forEach(w => w.unmount());
         const container = document.querySelector(this.containerSelector);
-        const contextNodes = Array.from(container?.querySelectorAll(this.contextSelector) || []);
+        const contextNodes = this.contextSelector ? Array.from(container?.querySelectorAll(this.contextSelector) || []) : [container];
         if (contextNodes.length === 0) return;
         for (const contextNode of contextNodes) {
             if (this.executedNodes.get(contextNode).has(config)) {

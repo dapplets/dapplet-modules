@@ -2,7 +2,7 @@ import { IFeature, IConnection } from "@dapplets/dapplet-extension";
 
 export interface IWidgetBuilderConfig {
     containerSelector: string,
-    contextSelector: string,
+    contextSelector?: string,
     insPoints: { [key: string]: any },
     contextBuilder: (tweetNode: any) => any,
 }

@@ -92,7 +92,7 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
                     mutations?.forEach(m => Array.from(m.removedNodes)
                         .filter((n: Element) => n.nodeType == Node.ELEMENT_NODE)
                         .forEach((n: Element) => {
-                            const contextNodes = Array.from(n?.querySelectorAll(contextBuilder.contextSelector) || []);
+                            const contextNodes = contextBuilder.contextSelector ? Array.from(n?.querySelectorAll(contextBuilder.contextSelector) || []) : [n];
                             const contexts = contextNodes.map((n: Element) => contextBuilder.contexts.get(n)).filter(e => e)
                             removedContexts.push(...contexts)
                         }))
