@@ -239,6 +239,11 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
             );
         }
     }
+
+    public deactivate() {
+        this.contextBuilders.forEach(x => x.observer?.disconnect());
+        this.observer.disconnect();
+    }
 }
 
 export { DynamicAdapter, IWidget, IDynamicAdapter }
