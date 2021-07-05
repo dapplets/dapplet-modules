@@ -17,6 +17,7 @@ export class Sticker implements IWidget<IStickerState> {
     public el: HTMLElement;
     public state: IStickerState;
     insPointName: string;
+    private _resizeObserver: ResizeObserver;
 
     public static contextInsPoints = {
         VIDEO: 'STICKER'
@@ -41,6 +42,12 @@ export class Sticker implements IWidget<IStickerState> {
         const stickerWidthInPx = `${stickerWidth}px`;
 
         if (!hidden && ctx.currentTime >= from && ctx.currentTime <= to) {
+            if (!this._resizeObserver) {
+                this._resizeObserver = new ResizeObserver((el) => {
+                    console.log(el)
+                    this.mount()})
+                this._resizeObserver.observe(ctx.element) // video element
+            }
             this.el.style.removeProperty('display');
             const container = document.createElement('div');
             container.style.position = 'absolute';
@@ -59,6 +66,7 @@ export class Sticker implements IWidget<IStickerState> {
             this.el.innerHTML = '';
             this.el.appendChild(container);
         } else {
+            this._resizeObserver && this._resizeObserver.unobserve(ctx.element) // video element
             this.el.firstChild?.remove();
             this.el.style.display = 'none';
             return;
