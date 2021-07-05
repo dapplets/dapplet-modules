@@ -4,6 +4,8 @@ export interface ICaptionState {
     text?: string;
     from?: number;
     to?: number;
+    vertical?: string;
+    horizontal?: string;
     exec: (ctx: any, me: ICaptionState) => void;
     init: (tx: any, me: ICaptionState) => void;
     ctx: any;
@@ -22,20 +24,21 @@ export class Caption implements IWidget<ICaptionState> {
     public mount() {
         if (!this.el) this._createElement();
 
+        const { text, from, to, vertical, horizontal, hidden, ctx } = this.state;
+
         const style = `
             z-index: 9999;
             font-size: 24px;
             color: #fff;
             position: absolute;
-            bottom: 0;
+            bottom: ${vertical ?? '20%'};
             width: 100%;
-            text-align: center;
+            text-align: ${horizontal ?? 'center'};
             font-family: system-ui;
             text-shadow: 1px 0 1px #000, 0 1px 1px #000, -1px 0 1px #000, 0 -1px 1px #000;
             padding: 10px;
         `;
 
-        const { text, from, to, hidden, ctx } = this.state;
         if (!hidden && ctx.currentTime >= from && ctx.currentTime <= to) {
             this.el.innerHTML = `
                 <div style="${style}">

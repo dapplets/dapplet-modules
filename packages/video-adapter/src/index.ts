@@ -1,6 +1,7 @@
 import { IContentAdapter } from '@dapplets/dapplet-extension';
 import { IDynamicAdapter } from 'dynamic-adapter.dapplet-base.eth';
 import { ICaptionState, Caption } from './caption';
+import { IStickerState, Sticker } from './sticker';
 
 interface IVideoAdapterConfig {
     events?: { [event: string]: Function },
@@ -19,7 +20,8 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
 
     // ToDo: refactor it
     public exports = featureId => ({
-        caption: this.dynamicAdapter.createWidgetFactory<ICaptionState>(Caption)
+        caption: this.dynamicAdapter.createWidgetFactory<ICaptionState>(Caption),
+        sticker: this.dynamicAdapter.createWidgetFactory<IStickerState>(Sticker),
     });
 
     public config = {
@@ -27,12 +29,16 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
             containerSelector: "html",
             contextSelector: "video",
             insPoints: {
-                CAPTION: {}
+                CAPTION: {},
+                STICKER: {},
             },
             contextBuilder: (n: HTMLVideoElement) => ({
                 id: n.src,
+                element: n,
                 height: n.videoHeight,
                 width: n.videoWidth,
+                clientWidth: n.clientWidth,
+                clientHeight: n.clientHeight,
                 poster: n.poster,
                 duration: n.duration,
                 loop: n.loop,
@@ -44,7 +50,7 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
                 pause: () => n.pause(),
                 play: () => n.play(),
                 setCurrentTime: (time: number) => n.currentTime = time,
-                onTimeUpdate: (callback) => n.ontimeupdate = callback
+                onTimeUpdate: (callback) => n.addEventListener('timeupdate', callback)
             }),
         }
     };
