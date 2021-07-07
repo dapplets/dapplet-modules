@@ -17,7 +17,6 @@ export class Sticker implements IWidget<IStickerState> {
     public el: HTMLElement;
     public state: IStickerState;
     insPointName: string;
-    private _resizeObserver: ResizeObserver;
 
     public static contextInsPoints = {
         VIDEO: 'STICKER'
@@ -28,34 +27,31 @@ export class Sticker implements IWidget<IStickerState> {
 
         const { img, from = 0, to = Infinity, vertical = 50, horizontal = 50, width = 1, hidden, ctx } = this.state;
 
+        const clientWidth = ctx.element.offsetWidth;
+        const clientHeight = ctx.element.offsetHeight;
+
         const videoAspectRatio = ctx.width / ctx.height;
-        const clientAspectRatio = ctx.clientWidth / ctx.clientHeight;
+        const clientAspectRatio = clientWidth / clientHeight;
 
         let stickerWidth: number;
 
         if (clientAspectRatio <= videoAspectRatio) {
-            stickerWidth = width * (videoAspectRatio >= 1 ? ctx.clientWidth / videoAspectRatio : ctx.clientWidth) / 5;
+            stickerWidth = width * (videoAspectRatio >= 1 ? clientWidth / videoAspectRatio : clientWidth) / 5;
         } else {
-            stickerWidth = width * (videoAspectRatio >= 1 ? ctx.clientHeight : ctx.clientHeight * videoAspectRatio) / 5;
+            stickerWidth = width * (videoAspectRatio >= 1 ? clientHeight : clientHeight * videoAspectRatio) / 5;
         }
 
         const stickerWidthInPx = `${stickerWidth}px`;
 
         if (!hidden && ctx.currentTime >= from && ctx.currentTime <= to) {
-            if (!this._resizeObserver) {
-                this._resizeObserver = new ResizeObserver((el) => {
-                    console.log(el)
-                    this.mount()})
-                this._resizeObserver.observe(ctx.element) // video element
-            }
             this.el.style.removeProperty('display');
-            const container = document.createElement('div');
+            const container = document.createElement('deckgo-drr');
             container.style.position = 'absolute';
             container.style.bottom = videoAspectRatio > clientAspectRatio 
-                ? `calc((0.01 * ${vertical} - 0.5) * ${(ctx.clientWidth / videoAspectRatio).toString()}px + 0.5 * (${(ctx.clientHeight).toString()}px - ${stickerWidthInPx})`
+                ? `calc((0.01 * ${vertical} - 0.5) * ${(clientWidth / videoAspectRatio).toString()}px + 0.5 * (${(clientHeight).toString()}px - ${stickerWidthInPx})`
                 : `calc(${vertical}% - (${stickerWidthInPx} / 2))`;
             container.style.left = videoAspectRatio < clientAspectRatio 
-                ? `calc((0.01 * ${horizontal} - 0.5) * ${(ctx.clientHeight * videoAspectRatio).toString()}px + 0.5 * ${(ctx.clientWidth).toString()}px)`
+                ? `calc((0.01 * ${horizontal} - 0.5) * ${(clientHeight * videoAspectRatio).toString()}px + 0.5 * ${(clientWidth).toString()}px)`
                 : `${horizontal}%`;
             container.style.cursor = 'pointer';
             container.style.zIndex = '9999';
@@ -66,7 +62,6 @@ export class Sticker implements IWidget<IStickerState> {
             this.el.innerHTML = '';
             this.el.appendChild(container);
         } else {
-            this._resizeObserver && this._resizeObserver.unobserve(ctx.element) // video element
             this.el.firstChild?.remove();
             this.el.style.display = 'none';
             return;
@@ -85,8 +80,9 @@ export class Sticker implements IWidget<IStickerState> {
             return false;
         });
         this.el.classList.add('dapplet-widget-video-sticker');
-        this.state.ctx.onTimeUpdate(() => this.mount());
-        this.mount();
+        this.state.ctx.onTimeUpdate(() => this.mount()); // ToDo: check memory leak
+        this.state.ctx.onResize(() => this.mount());
+        //this.mount(); // ToDo: WTF?
         this.state.init?.(this.state.ctx, this.state);
     }
 }

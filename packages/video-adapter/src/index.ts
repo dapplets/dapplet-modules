@@ -11,6 +11,8 @@ interface IVideoAdapterConfig {
 @Injectable
 export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig> {
 
+    private _observers = new WeakMap<any, ResizeObserver>();
+
     constructor(
         @Inject("dynamic-adapter.dapplet-base.eth")
         private dynamicAdapter: IDynamicAdapter<IVideoAdapterConfig>
@@ -19,7 +21,7 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
     }
 
     // ToDo: refactor it
-    public exports = featureId => ({
+    public exports = () => ({
         caption: this.dynamicAdapter.createWidgetFactory<ICaptionState>(Caption),
         sticker: this.dynamicAdapter.createWidgetFactory<IStickerState>(Sticker),
     });
@@ -32,31 +34,57 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
                 CAPTION: {},
                 STICKER: {},
             },
-            contextBuilder: (n: HTMLVideoElement) => ({
-                id: n.src,
-                element: n,
-                height: n.videoHeight,
-                width: n.videoWidth,
-                clientWidth: n.clientWidth,
-                clientHeight: n.clientHeight,
-                poster: n.poster,
-                duration: n.duration,
-                loop: n.loop,
-                muted: n.muted,
-                currentTime: n.currentTime,
-                src: n.src,
-                volume: n.volume,
-                paused: n.paused,
-                pause: () => n.pause(),
-                play: () => n.play(),
-                setCurrentTime: (time: number) => n.currentTime = time,
-                onTimeUpdate: (callback) => n.addEventListener('timeupdate', callback)
-            }),
+            contextBuilder: (n: HTMLVideoElement) => {
+
+                // ToDo: call dispatchEvent of n
+                if (!this._observers.has(n)) {
+                    const observer = new ResizeObserver(() => {
+                      n.dispatchEvent(new CustomEvent('resize'));
+                      /*console.log('entries:', entries)
+                        for (const entry of entries) {
+                            if (entry.contentBoxSize) {
+                                const contentBoxSize = Array.isArray(entry.contentBoxSize) ? entry.contentBoxSize[0] : entry.contentBoxSize;
+                                n.dispatchEvent(new CustomEvent('resize', { detail: {
+                                    width: contentBoxSize.inlineSize,
+                                    height: contentBoxSize.blockSize
+                                }}));
+                            } else {
+                                n.dispatchEvent(new CustomEvent('resize', { detail: {
+                                    width: entry.contentRect.width,
+                                    height: entry.contentRect.height
+                                }}));
+                            }
+                        }*/
+                    });
+                    observer.observe(n);
+                    this._observers.set(n, observer);
+                }
+
+                return {
+                    id: n.src,
+                    element: n,
+                    height: n.videoHeight,
+                    width: n.videoWidth,
+                    poster: n.poster,
+                    duration: n.duration,
+                    loop: n.loop,
+                    muted: n.muted,
+                    currentTime: n.currentTime,
+                    src: n.src,
+                    volume: n.volume,
+                    paused: n.paused,
+                    pause: () => n.pause(),
+                    play: () => n.play(),
+                    setCurrentTime: (time: number) => n.currentTime = time,
+                    onTimeUpdate: (callback) => n.addEventListener('timeupdate', callback),
+                    onResize: (callback) => n.addEventListener('resize', callback)
+                }
+            },
         }
     };
 
     // ToDo: refactor it
-    public attachConfig(config: IVideoAdapterConfig, featureId?: string) { // ToDo: automate two-way dependency handling(?)
+    public attachConfig(config: IVideoAdapterConfig/*, featureId?: string*/) { // ToDo: automate two-way dependency handling(?)
         return this.dynamicAdapter.attachConfig(config);
     }
 
