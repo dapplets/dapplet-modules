@@ -55,8 +55,8 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
                     imgTag.style.width = '22%';
                     imgTag.style.minWidth = '13px';
                     imgTag.style.position = 'absolute';
-                    imgTag.style.right = (horizontal === 'right') ? '16%' : '73%';
-                    imgTag.style.bottom = (vertical === 'bottom') ? '-52px' : '54px';
+                    imgTag.style.right = (horizontal === 'right') ? '2%' : '75%';
+                    imgTag.style.top = (vertical === 'bottom') ? '75%' : '2%';
                     break;
             }
 
@@ -75,8 +75,6 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
             case 'PROFILE':
                 this.el = document.createElement('div');
                 this.el.classList.add("dapplet-widget-profile-avatar-badge");
-                this.el.style.position = 'absolute';
-                this.el.style.width = '25%';
                 break;
 
             case 'POST':
