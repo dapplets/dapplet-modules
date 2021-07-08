@@ -14,8 +14,8 @@ export default class InstagramAdapter {
 
     public config = {
         POST: {
-            containerSelector: 'div[role="dialog"]',
-            contextSelector: "article",
+            containerSelector: 'article[role="presentation"]',
+            contextSelector: undefined, // the same as containerSelector
             insPoints: {
                 POST_SOUTH: {
                     selector: "section.ltpMr.Slqrh > *:nth-last-child(2)"
@@ -60,6 +60,7 @@ export default class InstagramAdapter {
                 }
             },
             contextBuilder: (h: any) => ({
+                id: h.querySelector('h2')?.innerText,
                 authorUsername: h.querySelector('h2')?.innerText,
                 authorFullname: h.querySelector('h2')?.innerText,
                 authorImg: h.querySelector('img.be6sR')?.getAttribute('src')

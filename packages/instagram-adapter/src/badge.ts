@@ -21,6 +21,11 @@ export class Badge implements IWidget<IBadgeState> {
     public state: IBadgeState;
     insPointName: string;  // POST_USERNAME_BADGE | POST_AVATAR_BADGE
 
+    public static contextInsPoints = {
+        POST: 'POST_AVATAR_BADGE',
+        PROFILE: 'PROFILE_AVATAR_BADGE',
+    }
+
     public mount() {
         if (!this.el) this._createElement();
         const { img, vertical, horizontal, hidden, tooltip } = this.state;
@@ -34,13 +39,13 @@ export class Badge implements IWidget<IBadgeState> {
             const imgTag: HTMLImageElement = this.el.firstChild as any;
 
             switch (this.insPointName) {
-                case 'POST_AVATAR_BADGE':
+                case 'POST':
                     imgTag.src = img;
                     imgTag.style.width = '16px';
                     imgTag.style.height = '16px';
                     break;
 
-                case 'PROFILE_AVATAR_BADGE':
+                case 'PROFILE':
                     imgTag.src = img;
                     imgTag.style.width = '32px';
                     imgTag.style.height = '32px';
@@ -62,18 +67,18 @@ export class Badge implements IWidget<IBadgeState> {
 
         this.el = document.createElement('div');
         switch (this.insPointName) {
-            case 'PROFILE_AVATAR_BADGE':
+            case 'PROFILE':
                 this.el.style.cssText = '';
                 this.el.style.position = 'absolute';
-                this.el.style[vertical] = '1px';
-                this.el.style[horizontal] = '1px';
+                this.el.style[vertical ?? 'bottom'] = '1px';
+                this.el.style[horizontal ?? 'left'] = '1px';
                 break;
-            case 'POST_AVATAR_BADGE':
+            case 'POST':
                 this.el.style.cssText = '';
                 this.el.style.position = 'absolute';
                 this.el.style.zIndex = '1';
-                this.el.style[vertical] = '-2px';
-                this.el.style[horizontal] = '-2px';
+                this.el.style[vertical ?? 'bottom'] = '-2px';
+                this.el.style[horizontal ?? 'left'] = '-2px';
                 break;
         }
 

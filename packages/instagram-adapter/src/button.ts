@@ -18,6 +18,11 @@ export class Button implements IWidget<IButtonState> {
     public state: IButtonState;
     insPointName: string;
 
+    public static contextInsPoints = {
+        POST: 'POST_SOUTH',
+        PROFILE: 'PROFILE_BUTTON_GROUP',
+    }
+
     public mount() {
         if (!this.el) this._createElement();
 
@@ -28,21 +33,30 @@ export class Button implements IWidget<IButtonState> {
             return;
         }
 
-        if (this.insPointName === 'POST_SOUTH') {
-            const htmlString = `<span class="_15y0l"><button class="wpO6b" type="button">
+        if (this.insPointName === 'POST') {
+            const htmlString = `
+                <span class="_15y0l">
+                    <button class="wpO6b" type="button">
                         ${loading ? `<svg width="24px" height="24px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="lds-rolling" style="background: none;">
                                 <circle cx="50" cy="50" fill="none" stroke="#1da1f2" stroke-width="14" r="40" stroke-dasharray="188.49555921538757 64.83185307179586" transform="rotate(77.5793 50 50)">
                                     <animateTransform attributeName="transform" type="rotate" calcMode="linear" values="0 50 50;360 50 50" keyTimes="0;1" dur="1s" begin="0s" repeatCount="indefinite"></animateTransform>
                                 </circle>
                             </svg>` : `<img height="24" src="${img}" />`}
-                    </button></span>`;
+                    </button>
+                </span>
+            `;
             
             this.el.innerHTML = htmlString;
 
-        } else if (this.insPointName === 'PROFILE_BUTTON_GROUP') {
-            const htmlString = `<span style="margin-left: 8px;" class="vBF20 _1OSdk">
-                    <button class="_5f5mN jIbKX _6VtSN yZn4P">${img ? `<img height="16" src="${img}" />` : ''}${label}</button>
-                </span>`;
+        } else if (this.insPointName === 'PROFILE') {
+            const htmlString = `
+                <span style="margin-left: 8px;" class="QzzMF Igw0E IwRSH eGOV_ ui_ht bPdm3">
+                    <button class="sqdOP L3NKy _8A5w5 ZIAjV">
+                        ${img ? `<img style="position: relative; top: 2px; margin-right: 4px;" height="14" src="${img}" />` : ''}
+                        ${label}
+                    </button>
+                </span>
+            `;
             
             this.el.innerHTML = htmlString;
         }
