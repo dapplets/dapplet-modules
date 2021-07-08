@@ -10,7 +10,7 @@ export default class TwitterFeature {
     public adapter: ITwitterAdapter;
 
     public async activate() {
-        const { button, badge } = this.adapter.exports;
+        const { button, avatarBadge } = this.adapter.exports;
 
         const { $ } = this.adapter.attachConfig({
             POST: () => [
@@ -32,7 +32,7 @@ export default class TwitterFeature {
                         }
                     }
                 }),
-                badge({
+                avatarBadge({
                     "DEFAULT": {
                         label: 'TEST',
                         img: ETHEREUM_ICON,
@@ -43,7 +43,7 @@ export default class TwitterFeature {
                         }
                     }
                 }),
-                badge({
+                avatarBadge({
                     "DEFAULT": {
                         label: 'TEST',
                         img: ETHEREUM_ICON,
@@ -54,7 +54,7 @@ export default class TwitterFeature {
                         }
                     }
                 }),
-                badge({
+                avatarBadge({
                     "DEFAULT": {
                         label: 'TEST',
                         img: ETHEREUM_ICON,
@@ -65,7 +65,7 @@ export default class TwitterFeature {
                         }
                     }
                 }),
-                badge({
+                avatarBadge({
                     "DEFAULT": {
                         label: 'TEST',
                         img: ETHEREUM_ICON,
@@ -96,7 +96,7 @@ export default class TwitterFeature {
                         }
                     }
                 }),
-                badge({
+                avatarBadge({
                     "DEFAULT": {
                         label: 'TEST',
                         img: ETHEREUM_ICON,
@@ -107,7 +107,7 @@ export default class TwitterFeature {
                         }
                     }
                 }),
-                badge({
+                avatarBadge({
                     "DEFAULT": {
                         label: 'TEST',
                         img: ETHEREUM_ICON,
@@ -118,7 +118,7 @@ export default class TwitterFeature {
                         }
                     }
                 }),
-                badge({
+                avatarBadge({
                     "DEFAULT": {
                         label: 'TEST',
                         img: ETHEREUM_ICON,
@@ -129,7 +129,7 @@ export default class TwitterFeature {
                         }
                     }
                 }),
-                badge({
+                avatarBadge({
                     "DEFAULT": {
                         label: 'TEST',
                         img: ETHEREUM_ICON,

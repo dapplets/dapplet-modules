@@ -1,7 +1,7 @@
 import { IFeature } from '@dapplets/dapplet-extension';
 import { IDynamicAdapter } from 'dynamic-adapter.dapplet-base.eth';
 import { IButtonState, Button } from './button';
-import { IBadgeState, Badge } from './badge';
+import { IBadgeState, AvatarBadge } from './avatar-badge';
 
 @Injectable
 export default class InstagramAdapter {
@@ -9,7 +9,7 @@ export default class InstagramAdapter {
     // ToDo: refactor it
     public exports = featureId => ({
         button: this.adapter.createWidgetFactory<IButtonState>(Button),
-        badge: this.adapter.createWidgetFactory<IBadgeState>(Badge)
+        avatarBadge: this.adapter.createWidgetFactory<IBadgeState>(AvatarBadge)
     });
 
     public config = {

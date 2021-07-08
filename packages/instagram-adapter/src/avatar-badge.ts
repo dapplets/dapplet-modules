@@ -16,7 +16,7 @@ export interface IBadgeState {
     insPointName: string;
 }
 
-export class Badge implements IWidget<IBadgeState> {
+export class AvatarBadge implements IWidget<IBadgeState> {
     public el: HTMLElement;
     public state: IBadgeState;
     insPointName: string;  // POST_USERNAME_BADGE | POST_AVATAR_BADGE
