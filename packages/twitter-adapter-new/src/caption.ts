@@ -22,7 +22,6 @@ export class Caption implements IWidget<ICaptionState> {
     }
 
     public mount() {
-        if (!document.getElementById('dapplet-widget-caption-styles')) this._injectStyles();
         if (!this.el) this._createElement();
         
         const { text, hidden, img, tooltip } = this.state;
@@ -31,21 +30,18 @@ export class Caption implements IWidget<ICaptionState> {
 
         this.el.innerHTML = `
             <div class="css-1dbjc4n r-18u37iz">
-                <div class="css-1dbjc4n r-obd0qt r-18kxxzh r-zso239" style="flex-basis: 49px;">
-                    ${(img) ? `<img src="${img}" style="height: auto; margin: auto 0; width: 13px;" class="r-1re7ezh r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xzupcd"/>` : ''}
+                <div class="css-1dbjc4n r-obd0qt r-1hwvwag r-18kxxzh r-1777fci r-15zivkp r-1b7u577">
+                    ${(img) ? `<img src="${img}" class="r-14j79pv r-4qtqp9 r-yyyyoo r-10ptun7 r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1janqcz" />` : ''}
                 </div>
                 <div class="css-1dbjc4n r-1iusvr4 r-16y2uox">
                     <div class="css-1dbjc4n r-18u37iz">
                         <div class="css-1dbjc4n r-1habvwh r-1wbh5a2 r-1777fci">
-                            <div class="css-1dbjc4n">
-                                <a dir="auto" role="link" data-focusable="true" class="css-4rbku5 css-18t94o4 css-901oao r-1re7ezh r-1loqt21 r-1qd0xha r-a023e6 r-16dba41 r-ad9z0x r-bcqeeo r-qvutc0" style="color: rgb(91, 112, 131);"><span class="css-901oao css-16my406 css-cens5h r-1re7ezh r-1qd0xha r-n6v787 r-16dba41 r-1sf4r6n r-bcqeeo r-qvutc0"data-testid="socialContext" style="
-                                -webkit-line-clamp: 2;
-                                font-family: inherit;
-                                line-height: 16px;
-                                overflow-wrap: break-word;
-                                font-weight: 700;
-                                white-space: inherit;
-                                padding-left: 0.5em">${text}</span></a>
+                            <div class="css-1dbjc4n dapplet-widget-caption">
+                                <a dir="auto" role="link" class="r-14j79pv r-1loqt21 r-1qd0xha r-a023e6 r-16dba41 r-rjixqe r-bcqeeo r-qvutc0 " >
+                                    <span class="css-901oao css-16my406 css-cens5h r-14j79pv r-poiln3 r-n6v787 r-b88u0q r-1cwl3u0 r-bcqeeo r-qvutc0">
+                                        <span class="css-901oao css-16my406 r-poiln3 r-bcqeeo r-qvutc0">${text}</span>
+                                    </span>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -61,11 +57,9 @@ export class Caption implements IWidget<ICaptionState> {
     }
 
     private _createElement() {
+        this._injectStyles();
         this.el = document.createElement('div');
-        this.el.classList.add('css-1dbjc4n', 'r-zl2h9q', 'dapplet-widget-caption');
-        this.el.style.display = 'flex';
-        this.el.style['-webkit-box-flex'] = '1';
-        this.el.style.flexGrow = '1';
+        this.el.classList.add('css-1dbjc4n', 'r-15zivkp');
         this.el.addEventListener('click', (e) => {
             this.state.exec?.(this.state.ctx, this.state);
             e.preventDefault();
@@ -76,6 +70,8 @@ export class Caption implements IWidget<ICaptionState> {
     }
 
     private _injectStyles() {
+        if (document.getElementById('dapplet-widget-caption-styles')) return;
+
         const styleTag: HTMLStyleElement = document.createElement('style');
         styleTag.id = 'dapplet-widget-caption-styles';
         styleTag.type = 'text/css';
@@ -84,6 +80,7 @@ export class Caption implements IWidget<ICaptionState> {
                 text-decoration: underline;
             }
         `;
+
         document.head.appendChild(styleTag);
     }
 }

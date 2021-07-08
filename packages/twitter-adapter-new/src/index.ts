@@ -64,7 +64,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                     insert: 'begin'
                 },
                 SOCIAL_CONTEXT: {
-                    selector: "div.css-1dbjc4n.r-1iusvr4.r-16y2uox div.css-1dbjc4n.r-15zivkp > div",
+                    selector: "div.css-1dbjc4n.r-1iusvr4.r-16y2uox.r-ttdzmv",
                     insert: 'inside'
                 },
             },
