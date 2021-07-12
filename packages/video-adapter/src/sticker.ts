@@ -19,11 +19,11 @@ export class Sticker implements IWidget<IStickerState> {
     public el: HTMLElement;
     public state: IStickerState;
     insPointName: string;
-    private _translationParams: { x: number, y: number, callback: any };
-    //private _scaleParams: { x: number, y: number, callback: any };
+    private _translationParams: { x: number, y: number, callback: any }; // x, y -> %
     private _size: { x: number, y: number, callback: any };
+    private _rotate: { angle: number, callback: any };
     private _scaleCoef = { x: 1, y: 1 };
-    private _coordinates: { x: number, y: number } = { x: 0, y: 0 };
+    private _coordinates = { x: 0, y: 0 };
     private _stickerId = Math.trunc(Math.random() * 1_000_000_000);
 
     public static contextInsPoints = {
@@ -53,15 +53,12 @@ export class Sticker implements IWidget<IStickerState> {
                 this._size.y = heightCo * minDimension / 5;
             }
 
-            const x = this._size.x * this._scaleCoef.x;
-            const y = this._size.y * this._scaleCoef.y;
-
             this.el.style.removeProperty('display');
             const container = document.createElement('div');
             container.classList.add(`dapplet-sticker-${this._stickerId}`);
             container.style.position = 'absolute';
-            container.style.width = `${x}px`;
-            container.style.height = `${y}px`;
+            container.style.width = `${this._size.x * this._scaleCoef.x}px`;
+            container.style.height = `${this._size.y * this._scaleCoef.y}px`;
 
             this._coordinates.y = videoAspectRatio > clientAspectRatio
                 ? (0.01 * vertical - 0.5) * (clientWidth / videoAspectRatio) + 0.5 * (clientHeight - this._size.y)
@@ -73,8 +70,8 @@ export class Sticker implements IWidget<IStickerState> {
             container.style.top = `${this._coordinates.y}px`;
             container.style.left = `${this._coordinates.x}px`;
 
-            //container.style.transform = `translate(${this._translationParams.x}%, ${this._translationParams.y}%) scale(${this._scaleParams.x}, ${this._scaleParams.y})`;
-            container.style.transform = `translate(${this._translationParams.x}%, ${this._translationParams.y}%)`;
+            console.log('this._rotate:', this._rotate)
+            container.style.transform = `translate(${this._translationParams.x}%, ${this._translationParams.y}%) rotate(${this._rotate.angle ?? 0}rad)`;
 
             // for .draggable and .resizable
             container.style.touchAction = 'none';
@@ -83,7 +80,8 @@ export class Sticker implements IWidget<IStickerState> {
 
             container.style.cursor = 'pointer';
             container.style.zIndex = '9999';
-            container.onclick = () => container.style.outline = 'solid rgb(121, 242, 230)';
+
+            container.setAttribute('data-angle', String(this._rotate.angle ?? 0))
 
             const image = document.createElement('img');
             image.src = img;
@@ -93,26 +91,58 @@ export class Sticker implements IWidget<IStickerState> {
             this.el.innerHTML = '';
 
             container.addEventListener(`drug-sticker-${this._stickerId}`, (e: any) => {
-              e.stopPropagation();
-              this._translationParams.x = e.detail!.x;
-              this._translationParams.y = e.detail!.y;
-              console.log(this._translationParams, this._stickerId)
+                e.stopPropagation();
+                this._translationParams.x += e.detail.x * 100 / this._size.x / this._scaleCoef.x;
+                this._translationParams.y += e.detail.y * 100 / this._size.y / this._scaleCoef.y;
+                e.target.style.transform =
+                    `translate(${this._translationParams.x}%, ${this._translationParams.y}%) rotate(${this._rotate.angle ?? 0}rad)`;
             })
-
-            /*container.addEventListener(`scale-sticker-${this._stickerId}`, (e: any) => {
-              e.stopPropagation();
-              this._scaleParams.x = e.detail!.x;
-              this._scaleParams.y = e.detail!.y;
-              console.log(this._scaleParams, this._stickerId)
-            })*/
 
             container.addEventListener(`scale-sticker-${this._stickerId}`, (e: any) => {
-              e.stopPropagation();
-              this._scaleCoef.x = e.detail.x / this._size.x;
-              this._scaleCoef.y = e.detail.y / this._size.y;
-              console.log('this._size:', this._size)
+                e.stopPropagation();
+                console.log('e.detail', e.detail)
+
+                const oldTranslationParamX = this._translationParams.x
+                const oldTranslationParamY = this._translationParams.y
+                const oldScaleCoefX = this._scaleCoef.x
+                const oldScaleCoefY = this._scaleCoef.y
+
+                this._scaleCoef.x = e.detail.w / this._size.x;
+                this._scaleCoef.y = e.detail.h / this._size.y;
+
+                this._translationParams.x = oldTranslationParamX * oldScaleCoefX / this._scaleCoef.x
+                this._translationParams.y = oldTranslationParamY * oldScaleCoefY / this._scaleCoef.y
+
+                e.target.style.transform =
+                    `translate(${this._translationParams.x}%, ${this._translationParams.y}%) rotate(${this._rotate.angle ?? 0}rad)`;
+
+
+                /*this._translationParams.x += e.detail.x * 100 / this._size.x / this._scaleCoef.x;
+                this._translationParams.y += e.detail.y * 100 / this._size.y / this._scaleCoef.y;
+                e.target.style.transform =
+                    `translate(${this._translationParams.x}%, ${this._translationParams.y}%) rotate(${this._rotate.angle ?? 0}rad)`;*/
             })
 
+            container.addEventListener(`rotate-sticker-${this._stickerId}`, (e: any) => {
+                e.stopPropagation();
+                this._rotate.angle = e.detail.angle;
+                e.target.style.transform =
+                    `translate(${this._translationParams.x ?? 0}%, ${this._translationParams.y ?? 0}%) rotate(${this._rotate.angle}rad)`;
+                //e.target.setAttribute('data-angle', this._rotate.angle);
+            })
+
+            // add rotate handle
+            const rotationHandle = document.createElement('div');
+            rotationHandle.classList.add('sticker-rotation-handle');
+            rotationHandle.classList.add(`sticker-rotation-handle-${this._stickerId}`);
+            rotationHandle.innerHTML = '&circlearrowright;'
+            
+            container.onclick = () => {
+                container.style.outline = 'solid rgb(121, 242, 230)';
+                rotationHandle.style.display = 'table';
+            };
+
+            container.appendChild(rotationHandle);
             this.el.appendChild(container);
         } else {
             this.el.firstChild?.remove();
@@ -137,62 +167,134 @@ export class Sticker implements IWidget<IStickerState> {
             return false;
         });
 
-        console.log(this._stickerId)
+        const id = this._stickerId;
 
-        if (!this._translationParams) this._translationParams = { x: 0, y: 0, callback: (target, position) => target.dispatchEvent(new CustomEvent(`drug-sticker-${this._stickerId}`, { detail: { x: position.x, y: position.y } })) };
-        //if (!this._scaleParams) this._scaleParams = { x: 1, y: 1, callback: (target, size) => target.dispatchEvent(new CustomEvent(`scale-sticker-${this._stickerId}`, { detail: { x: size.x, y: size.y } })) };
-        if (!this._size) this._size = { x: null, y: null, callback: (target, size) => target.dispatchEvent(new CustomEvent(`scale-sticker-${this._stickerId}`, { detail: { x: size.x, y: size.y } })) };
+        this._translationParams = { x: 0, y: 0, callback: (target, position) => target.dispatchEvent(new CustomEvent(`drug-sticker-${id}`, { detail: { x: position.x, y: position.y } })) };
+        this._size = { x: null, y: null, callback: (target, size) => target.dispatchEvent(new CustomEvent(`scale-sticker-${id}`, { detail: { w: size.w, h: size.h, x: size.x, y: size.y } })) };
+        this._rotate = { angle: null, callback: (target, angle) => target.dispatchEvent(new CustomEvent(`rotate-sticker-${id}`, { detail: { angle } })) };
 
+        const position = { ...this._translationParams };
+        const size = { ...this._size };
+        const rotate = { ...this._rotate };
+        let rotateAngle =  this._rotate.angle ?? 0;
 
-        const position = { x: 0, y: 0, callback: this._translationParams.callback };
-        //const scale = { x: 1, y: 1, callback: this._scaleParams.callback };
-        const size = { x: null, y: null, callback: this._size.callback };
-        interact(`.dapplet-sticker-${this._stickerId}`).draggable({
-          listeners: {
-            start (event) {
-              event.stopPropagation();
-              console.log(event.type, event.target)
-            },
-            move (event) {
-              event.stopPropagation();
-              console.log(event)
-              position.x += event.dx * 100 / event.target.offsetWidth;
-              position.y += event.dy * 100 / event.target.offsetHeight;
-        
-              event.target.style.transform =
-                `translate(${position.x}%, ${position.y}%)`
-              position.callback(event.target, position)
-            },
-          },
-          modifiers: [
-            interact.modifiers.restrictRect({
-              restriction: 'parent'
-            })
-          ]
-        }).resizable({
-            edges: { top: true, left: true, bottom: true, right: true },
+        interact(`.dapplet-sticker-${id}`).draggable({
             listeners: {
-              move: function (event) {
-                event.stopPropagation();
-                console.log(event)
-                let { x, y } = event.target.dataset
+                start (event) {
+                    event.stopPropagation();
+                    console.log(event.type, event)
+                },
+                move (event) {
+                    event.stopPropagation();
+                    //console.log('^^^^event.target:', event.target)
+                    position.x = event.dx;
+                    position.y = event.dy;
 
-                x = (parseFloat(x) || 0) + event.deltaRect.left
-                y = (parseFloat(y) || 0) + event.deltaRect.top
-
-                Object.assign(event.target.style, {
-                  width: `${event.rect.width}px`,
-                  height: `${event.rect.height}px`,
-                  //transform: `scale(${event.rect.width / event.target.offsetWidth}, ${event.rect.height / event.target.offsetHeight})`,
-                  //transform: `translate(${x}px, ${y}px)`
+                    /*event.target.addEventListener(`rotate-sticker-${id}`, (e: any) => {
+                        e.stopPropagation();
+                        rotateAngle = e.detail.angle;
+                        console.log('++++++++rotateAngle:', rotateAngle)
+                    })
+                    console.log('^^^^rotateAngle:', rotateAngle)
+                    event.target.style.transform =
+                        `translate(${position.x}%, ${position.y}%) rotate(${rotateAngle}rad)`*/
+                    position.callback(event.target, position)
+                },
+            },
+            modifiers: [
+                interact.modifiers.restrictRect({
+                    restriction: 'parent'
                 })
+            ]
+        }).resizable({
+            edges: { top: false, left: false, bottom: true, right: true },
+            listeners: {
+                move: function (event) {
+                    event.stopPropagation();
+                    console.log(event)
+                    /*let { x, y } = event.target.dataset
 
-                Object.assign(event.target.dataset, { x, y })
-                size.callback(event.target, { x: event.rect.width /*/ event.target.offsetWidth*/, y: event.rect.height /*/ event.target.offsetHeight*/ })
-              }
+                    x = (parseFloat(x) || 0) + event.deltaRect.left
+                    y = (parseFloat(y) || 0) + event.deltaRect.top*/
+
+                    Object.assign(event.target.style, {
+                        width: `${event.rect.width}px`,
+                        height: `${event.rect.height}px`,
+                    })
+
+                    //ыObject.assign(event.target.dataset, { x, y })
+                    size.callback(event.target, { w: event.rect.width, h: event.rect.height, /*x, y */})
+                }
             }
-          })
+        });
 
+        interact(`.sticker-rotation-handle-${id}`).draggable({
+            onstart: function(event) {
+                var box = event.target.parentElement;
+                var rect = box.getBoundingClientRect();
+
+                // store the center as the element has css `transform-origin: center center`
+                box.setAttribute('data-center-x', rect.left + rect.width / 2);
+                box.setAttribute('data-center-y', rect.top + rect.height / 2);
+                // get the angle of the element when the drag starts
+                box.setAttribute('data-angle', getDragAngle(event));
+            },
+            onmove: function(event) {
+                var box = event.target.parentElement;
+
+                /*var pos = {
+                  x: parseFloat(box.getAttribute('data-x')) || 0,
+                  y: parseFloat(box.getAttribute('data-y')) || 0
+                };*/
+
+                var angle = getDragAngle(event);
+
+                // update transform style on dragmove
+                //box.style.transform = 'translate(' + pos.x + 'px, ' + pos.y + 'px) rotate(' + angle + 'rad' + ')';
+                rotate.callback(box, angle);
+            },
+            onend: function(event) {
+                var box = event.target.parentElement;
+
+                // save the angle on dragend
+                const x = getDragAngle(event);
+                box.setAttribute('data-angle', x);
+            },
+        });
+
+        function getDragAngle(event) {
+            var box = event.target.parentElement;
+            var startAngle = parseFloat(box.getAttribute('data-angle')) || 0;
+            var center = {
+                x: parseFloat(box.getAttribute('data-center-x')) || 0,
+                y: parseFloat(box.getAttribute('data-center-y')) || 0
+            };
+            var angle = Math.atan2(center.y - event.clientY,
+                center.x - event.clientX);
+
+            return angle - startAngle;
+        }
+
+        if (![...<any>document.styleSheets].map((styleSheet) => styleSheet.title).includes('sticker-rotation-handle-styles')) {
+            const styleTag: HTMLStyleElement = document.createElement('style');
+            styleTag.title = 'sticker-rotation-handle-styles';
+            styleTag.id = 'sticker-rotation-handle-styles';
+            styleTag.innerText = `
+                .sticker-rotation-handle {
+                    padding: 3px 4px;
+                    display: none;
+                    position: absolute;
+                    left: calc(50% - 10px);
+                    background-color: rgb(121, 242, 230);
+                    border-radius: 10rem;
+                    line-height: 1;
+                    text-align: center;
+                    font-weight: bold;
+                    color: #fff;
+                    cursor: move;
+                }`;
+            document.head.appendChild(styleTag);
+        }
 
         this.el.classList.add('dapplet-widget-video-sticker');
         this.state.ctx.onTimeUpdate(() => this.mount()); // ToDo: check memory leak
