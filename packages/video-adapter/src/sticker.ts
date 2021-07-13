@@ -102,6 +102,12 @@ export class Sticker implements IWidget<IStickerState> {
                 e.stopPropagation();
                 console.log('e.detail', e.detail)
 
+                //const oldTranslationParamXpx = this._translationParams.x / 100 * this._size.x * this._scaleCoef.x;
+                //const newTranslationParamXpx = oldTranslationParamXpx - (e.detail.x / 2);
+                //const oldTranslationParamYpx = this._translationParams.y / 100 * this._size.y * this._scaleCoef.y;
+                //const newTranslationParamYpx = oldTranslationParamYpx - (e.detail.y / 2);
+
+
                 const oldTranslationParamX = this._translationParams.x
                 const oldTranslationParamY = this._translationParams.y
                 const oldScaleCoefX = this._scaleCoef.x
@@ -112,6 +118,9 @@ export class Sticker implements IWidget<IStickerState> {
 
                 this._translationParams.x = oldTranslationParamX * oldScaleCoefX / this._scaleCoef.x
                 this._translationParams.y = oldTranslationParamY * oldScaleCoefY / this._scaleCoef.y
+
+                //this._translationParams.x = newTranslationParamXpx * 100 / (this._size.x * this._scaleCoef.x)
+                //this._translationParams.y = newTranslationParamYpx * 100 / (this._size.y * this._scaleCoef.y);
 
                 e.target.style.transform =
                     `translate(${this._translationParams.x}%, ${this._translationParams.y}%) rotate(${this._rotate.angle ?? 0}rad)`;
@@ -201,14 +210,17 @@ export class Sticker implements IWidget<IStickerState> {
                     position.callback(event.target, position)
                 },
             },
-            modifiers: [
+            /*modifiers: [
                 interact.modifiers.restrictRect({
                     restriction: 'parent'
                 })
-            ]
+            ]*/
         }).resizable({
             edges: { top: false, left: false, bottom: true, right: true },
             listeners: {
+                start: function(event) {
+                    console.log(event.type, event)
+                },
                 move: function (event) {
                     event.stopPropagation();
                     console.log(event)
@@ -217,21 +229,45 @@ export class Sticker implements IWidget<IStickerState> {
                     x = (parseFloat(x) || 0) + event.deltaRect.left
                     y = (parseFloat(y) || 0) + event.deltaRect.top*/
 
+                    console.log('event.target.dataset?.angle', event.target.dataset?.angle)
+                    const a = event.target.dataset?.angle
+                    let w: number;
+                    let h: number;
+
+                    console.log('event.target.style.width', parseFloat(event.target.style.width))
+                    console.log('event.target.style.height', parseFloat(event.target.style.height))
+
+                    if ((a < 0.3927 && a > -0.3927) || (a < 3.5343 && a > 2.75)) {
+                        w = event.rect.width > 20 ? event.rect.width : 20;
+                        h = event.rect.height > 20 ? event.rect.height : 20;
+                    } else if ((a < 1.9635 && a > 1.1781) || a < -1.1781 || a > 4.32) {
+                        h = event.rect.width > 20 ? event.rect.width : 20;
+                        w = event.rect.height > 20 ? event.rect.height : 20;
+                    } else {
+                        if (event.dy === 0) {
+                            w = event.rect.width > 20 ? parseFloat(event.target.style.width) + event.dx : 20;
+                            h = event.rect.height > 20 ? parseFloat(event.target.style.height) + event.dx : 20;
+                        } else {
+                            w = event.rect.width > 20 ? parseFloat(event.target.style.width) + event.dy : 20;
+                            h = event.rect.height > 20 ? parseFloat(event.target.style.height) + event.dy : 20;
+                        }
+                    }
+
                     Object.assign(event.target.style, {
-                        width: `${event.rect.width}px`,
-                        height: `${event.rect.height}px`,
+                        width: `${w}px`,
+                        height: `${h}px`,
                     })
 
-                    //ыObject.assign(event.target.dataset, { x, y })
-                    size.callback(event.target, { w: event.rect.width, h: event.rect.height, /*x, y */})
+                    //Object.assign(event.target.dataset, { x, y })
+                    size.callback(event.target, { w, h, x: event.dx, y: event.dy })
                 }
-            }
+            },
         });
 
         interact(`.sticker-rotation-handle-${id}`).draggable({
             onstart: function(event) {
-                var box = event.target.parentElement;
-                var rect = box.getBoundingClientRect();
+                const box = event.target.parentElement;
+                const rect = box.getBoundingClientRect();
 
                 // store the center as the element has css `transform-origin: center center`
                 box.setAttribute('data-center-x', rect.left + rect.width / 2);
@@ -240,21 +276,21 @@ export class Sticker implements IWidget<IStickerState> {
                 box.setAttribute('data-angle', getDragAngle(event));
             },
             onmove: function(event) {
-                var box = event.target.parentElement;
+                const box = event.target.parentElement;
 
                 /*var pos = {
                   x: parseFloat(box.getAttribute('data-x')) || 0,
                   y: parseFloat(box.getAttribute('data-y')) || 0
                 };*/
 
-                var angle = getDragAngle(event);
+                const angle = getDragAngle(event);
 
                 // update transform style on dragmove
                 //box.style.transform = 'translate(' + pos.x + 'px, ' + pos.y + 'px) rotate(' + angle + 'rad' + ')';
                 rotate.callback(box, angle);
             },
             onend: function(event) {
-                var box = event.target.parentElement;
+                const box = event.target.parentElement;
 
                 // save the angle on dragend
                 const x = getDragAngle(event);
@@ -263,16 +299,19 @@ export class Sticker implements IWidget<IStickerState> {
         });
 
         function getDragAngle(event) {
-            var box = event.target.parentElement;
-            var startAngle = parseFloat(box.getAttribute('data-angle')) || 0;
-            var center = {
+            const box = event.target.parentElement;
+            const startAngle = parseFloat(box.getAttribute('data-angle')) || 0;
+            const center = {
                 x: parseFloat(box.getAttribute('data-center-x')) || 0,
                 y: parseFloat(box.getAttribute('data-center-y')) || 0
             };
-            var angle = Math.atan2(center.y - event.clientY,
+            const angle = Math.atan2(center.y - event.clientY,
                 center.x - event.clientX);
 
-            return angle - startAngle;
+            const a = (angle - startAngle) % (2 * Math.PI);
+            if (a > (1.5 * Math.PI)) return a - (2 * Math.PI);
+            if (a < -(0.5 * Math.PI)) return a + (2 * Math.PI);
+            return a;
         }
 
         if (![...<any>document.styleSheets].map((styleSheet) => styleSheet.title).includes('sticker-rotation-handle-styles')) {
