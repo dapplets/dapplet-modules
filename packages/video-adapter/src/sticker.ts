@@ -9,6 +9,7 @@ export interface IStickerState {
     horizontal?: number;
     widthCo?: number;
     heightCo?: number;
+    mutable?: boolean;
     exec: (ctx: any, me: IStickerState) => void;
     init: (tx: any, me: IStickerState) => void;
     ctx: any;
@@ -41,6 +42,7 @@ export class Sticker implements IWidget<IStickerState> {
             horizontal = 50,
             widthCo = 1,
             heightCo = 1,
+            mutable = true,
             hidden,
             ctx,
         } = this.state;
@@ -66,7 +68,7 @@ export class Sticker implements IWidget<IStickerState> {
 
             this.el.style.removeProperty('display');
             const container = document.createElement('div');
-            container.classList.add(`dapplet-sticker-${this._stickerId}`);
+            if (mutable) container.classList.add(`dapplet-sticker-${this._stickerId}`);
             container.style.position = 'absolute';
             container.style.width = `${this._size.x * this._scaleCoef.x}px`;
             container.style.height = `${this._size.y * this._scaleCoef.y}px`;
@@ -145,17 +147,20 @@ export class Sticker implements IWidget<IStickerState> {
             });
 
             // add rotate handle
-            const rotationHandle = document.createElement('div');
-            rotationHandle.classList.add('sticker-rotation-handle');
-            rotationHandle.classList.add(`sticker-rotation-handle-${this._stickerId}`);
-            rotationHandle.innerHTML = '&circlearrowright;';
+            if (mutable) {
+                const rotationHandle = document.createElement('div');
+                rotationHandle.classList.add('sticker-rotation-handle');
+                rotationHandle.classList.add(`sticker-rotation-handle-${this._stickerId}`);
+                rotationHandle.innerHTML = '&circlearrowright;';
 
-            container.onclick = () => {
-                container.style.outline = 'solid rgb(121, 242, 230)';
-                rotationHandle.style.display = 'table';
-            };
+                container.onclick = () => {
+                    container.style.outline = 'solid rgb(121, 242, 230)';
+                    rotationHandle.style.display = 'table';
+                };
 
-            container.appendChild(rotationHandle);
+                container.appendChild(rotationHandle);
+            }
+
             this.el.appendChild(container);
         } else {
             this.el.firstChild?.remove();

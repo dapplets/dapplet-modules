@@ -2,6 +2,7 @@ import { IContentAdapter } from '@dapplets/dapplet-extension';
 import { IDynamicAdapter } from 'dynamic-adapter.dapplet-base.eth';
 import { ICaptionState, Caption } from './caption';
 import { IStickerState, Sticker } from './sticker';
+import { ILabelState, Label } from './label';
 
 interface IVideoAdapterConfig {
     events?: { [event: string]: Function },
@@ -24,6 +25,7 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
     public exports = () => ({
         caption: this.dynamicAdapter.createWidgetFactory<ICaptionState>(Caption),
         sticker: this.dynamicAdapter.createWidgetFactory<IStickerState>(Sticker),
+        label: this.dynamicAdapter.createWidgetFactory<ILabelState>(Label),
     });
 
     public config = {
@@ -33,6 +35,7 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
             insPoints: {
                 CAPTION: {},
                 STICKER: {},
+                LABEL: {},
             },
             contextBuilder: (n: HTMLVideoElement) => {
 
