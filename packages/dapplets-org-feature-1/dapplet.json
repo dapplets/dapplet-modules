@@ -9,6 +9,6 @@
     "title": "Floating Button and Popup",
     "contextIds": ["common-adapter.dapplet-base.eth"],
     "dependencies": {
-      "common-adapter.dapplet-base.eth": "0.3.4"
+      "common-adapter.dapplet-base.eth": "0.3.6"
     }
 }

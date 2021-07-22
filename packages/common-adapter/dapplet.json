@@ -12,8 +12,9 @@
       "forum.dapplets.org", 
       "youtube.com", 
       "twitter.com", 
-      "mobile.twitter.com"],
+      "mobile.twitter.com"
+    ],
     "dependencies": {
-      "dynamic-adapter.dapplet-base.eth": "0.5.9"
+      "dynamic-adapter.dapplet-base.eth": "0.6.9"
     }
 }

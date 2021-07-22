@@ -8,9 +8,9 @@
     "main": { "$ref": "package.json#/main" },
     "contextIds": ["instagram.com", "www.instagram.com"],
     "dependencies": {
-      "dynamic-adapter.dapplet-base.eth": "0.5.9"
+      "dynamic-adapter.dapplet-base.eth": "0.6.9"
     },
     "interfaces": {
-      "identity-adapter.dapplet-base.eth": "0.2.0"
+      "identity-adapter.dapplet-base.eth": "0.3.0"
     }
 }

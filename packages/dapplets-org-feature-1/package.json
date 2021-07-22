@@ -12,6 +12,6 @@
   "main": "build/index.js",
   "typings": "build/index.d.ts",
   "devDependencies": {
-    "common-adapter.dapplet-base.eth": "^0.3.0"
+    "common-adapter.dapplet-base.eth": "^0.3.6"
   }
 }
