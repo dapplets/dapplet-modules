@@ -1,6 +1,6 @@
 {
   "name": "video-feature.dapplet-base.eth",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Demonstration of the capabilities of the video adapter",
   "main": "build/index.js",
   "scripts": {

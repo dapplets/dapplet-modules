@@ -15,7 +15,10 @@ export default class VideoFeature implements IFeature {
                     "DEFAULT": {
                         text: 'Media Downloader',
                         from: 2051,
-                        to: 3620
+                        to: 3620,
+                        exec: (ctx) => {
+                            console.log(ctx);
+                        }
                     }
                 })
             ]
