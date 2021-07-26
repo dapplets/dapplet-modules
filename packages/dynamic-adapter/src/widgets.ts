@@ -48,7 +48,7 @@ export class WidgetBuilder {
             const isNewContext = !this.contexts.has(contextNode);
             const context: Context = isNewContext
                 ? {
-                    parsed: this._tryParseContext(contextNode, parentContext),
+                    parsed: this._tryParseContext(contextNode, parentContext, widgetBuilders),
                     eventHandlers: {},
                 }
                 : this.contexts.get(contextNode);
@@ -59,7 +59,7 @@ export class WidgetBuilder {
             if (isNewContext) {
                 newParsedContexts.push(context);
             } else {
-                const newContext = this._tryParseContext(contextNode, parentContext);
+                const newContext = this._tryParseContext(contextNode, parentContext, widgetBuilders);
                 if (!this._compareObjects(context.parsed, newContext)) {
 
                     if (newContext.id !== context.parsed.id) {
@@ -169,7 +169,7 @@ export class WidgetBuilder {
         const contextNodes = this.contextSelector ? Array.from(container?.querySelectorAll(this.contextSelector) || []) : [container];
         if (contextNodes.length === 0) return;
         for (const contextNode of contextNodes) {
-            if (this.executedNodes.get(contextNode).has(config)) {
+            if (this.executedNodes.get(contextNode)?.has(config)) {
                 this.executedNodes.get(contextNode).delete(config);
             }
         }
@@ -210,15 +210,29 @@ export class WidgetBuilder {
         return true;
     }
 
-    private _tryParseContext(el: Element, parent: any) {
+    private _tryParseContext(el: Element, parent: any, widgetBuilders: WidgetBuilder[]) {
         try {
             const ctx = this.contextBuilder(el);
-            ctx.parent = parent;
+            ctx.parent = this._getParentContextByElement(el, widgetBuilders) ?? parent;
             return ctx;
         } catch (err) {
             // ToDo: what need to do in this cases?
             console.warn(`Cannot parse context "${this.contextName}"`, err);
             return null;
         }
+    }
+
+    private _getParentContextByElement(el: Element, widgetBuilders: WidgetBuilder[]): any {
+        let currentEl = el;
+        
+        while (currentEl.parentElement) {
+            for (const cb of widgetBuilders) {
+                const parentCtx = cb.contexts.get(currentEl.parentElement);
+                if (parentCtx) return parentCtx.parsed;
+            }
+            currentEl = currentEl.parentElement;
+        }
+
+        return null;
     }
 }
