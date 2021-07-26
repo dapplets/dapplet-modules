@@ -88,6 +88,7 @@ export class Button implements IWidget<IButtonState> {
 
         if (this.insPointName === 'POST' || this.insPointName === 'QUOTE_POST') {
             this.el.classList.add('css-1dbjc4n', 'r-18u37iz', 'r-1h0z5md');
+            if (this.insPointName === 'QUOTE_POST') this.el.style.marginTop = '12px';
 
             styleTag.innerText = `
                 .dapplet-widget > div[role="button"] > div:hover > .css-1dbjc4n.r-xoduu5 > .r-sdzlij {
