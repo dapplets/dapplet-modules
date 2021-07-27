@@ -1,7 +1,13 @@
 import { IWidget } from 'dynamic-adapter.dapplet-base.eth';
 
+interface IImg {
+  main: string
+  hover: string
+  active: string
+}
+
 export interface ILabelState {
-    img: string;
+    img: string | IImg;
     vertical?: number;
     horizontal?: number;
     widthCo?: number;
@@ -91,12 +97,20 @@ export class Label implements IWidget<ILabelState> {
       container.style.zIndex = '9999';
 
       const image = document.createElement('img');
-      image.src = img;
       image.style.width = '100%';
       image.style.height = '100%';
+      if (typeof img === 'string') {
+        image.src = img;
+      } else {
+        image.src = img.main;
+        image.addEventListener('mouseenter', () => image.src = img.hover);
+        image.addEventListener('mouseleave', () => image.src = img.main);
+        image.addEventListener('mousedown', () => image.src = img.active);
+        image.addEventListener('mouseup', () => image.src = img.main);
+      }
       container.appendChild(image);
-      this.el.innerHTML = '';
 
+      this.el.innerHTML = '';
       this.el.appendChild(container);
   }
 

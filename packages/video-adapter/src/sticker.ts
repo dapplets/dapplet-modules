@@ -11,7 +11,7 @@ export interface IStickerState {
     heightCo?: number;
     mutable?: boolean;
     exec: (ctx: any, me: IStickerState) => void;
-    init: (tx: any, me: IStickerState) => void;
+    init: (ctx: any, me: IStickerState) => void;
     ctx: any;
     hidden: boolean;
 }
@@ -70,6 +70,8 @@ export class Sticker implements IWidget<IStickerState> {
             const container = document.createElement('div');
             if (mutable) container.classList.add(`dapplet-sticker-${this._stickerId}`);
             container.style.position = 'absolute';
+            container.style.display = 'flex';
+            container.style.alignItems = 'center';
             container.style.width = `${this._size.x * this._scaleCoef.x}px`;
             container.style.height = `${this._size.y * this._scaleCoef.y}px`;
 
@@ -104,7 +106,7 @@ export class Sticker implements IWidget<IStickerState> {
             const image = document.createElement('img');
             image.src = img;
             image.style.width = '100%';
-            image.style.height = '100%';
+            //image.style.height = '100%';
             container.appendChild(image);
             this.el.innerHTML = '';
 
@@ -152,6 +154,7 @@ export class Sticker implements IWidget<IStickerState> {
                 rotationHandle.classList.add('sticker-rotation-handle');
                 rotationHandle.classList.add(`sticker-rotation-handle-${this._stickerId}`);
                 rotationHandle.innerHTML = '&circlearrowright;';
+                rotationHandle.style.top = '100%';
 
                 container.onclick = () => {
                     container.style.outline = 'solid rgb(121, 242, 230)';
