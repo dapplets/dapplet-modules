@@ -9,6 +9,7 @@ export interface IStickerState {
     horizontal?: number;
     widthCo?: number;
     heightCo?: number;
+    rotated?: number;
     mutable?: boolean;
     exec: (ctx: any, me: IStickerState) => void;
     init: (ctx: any, me: IStickerState) => void;
@@ -42,6 +43,7 @@ export class Sticker implements IWidget<IStickerState> {
             horizontal = 50,
             widthCo = 1,
             heightCo = 1,
+            rotated = 0,
             mutable = true,
             hidden,
             ctx,
@@ -91,7 +93,7 @@ export class Sticker implements IWidget<IStickerState> {
 
             container.style.transform = `translate(${this._translationParams.x}%, ${
                 this._translationParams.y
-            }%) rotate(${this._rotate.angle ?? 0}rad)`;
+            }%) rotate(${this._rotate.angle ?? rotated}rad)`;
 
             // for .draggable and .resizable
             container.style.touchAction = 'none';
@@ -101,7 +103,7 @@ export class Sticker implements IWidget<IStickerState> {
             container.style.cursor = 'pointer';
             container.style.zIndex = '9999';
 
-            container.setAttribute('data-angle', String(this._rotate.angle ?? 0));
+            container.setAttribute('data-angle', String(this._rotate.angle ?? rotated));
 
             const image = document.createElement('img');
             image.src = img;
@@ -116,7 +118,7 @@ export class Sticker implements IWidget<IStickerState> {
                 this._translationParams.y += (e.detail.y * 100) / this._size.y / this._scaleCoef.y;
                 e.target.style.transform = `translate(${this._translationParams.x}%, ${
                     this._translationParams.y
-                }%) rotate(${this._rotate.angle ?? 0}rad)`;
+                }%) rotate(${this._rotate.angle ?? rotated}rad)`;
             });
 
             container.addEventListener(`scale-sticker-${this._stickerId}`, (e: any) => {
@@ -137,7 +139,7 @@ export class Sticker implements IWidget<IStickerState> {
 
                 e.target.style.transform = `translate(${this._translationParams.x}%, ${
                     this._translationParams.y
-                }%) rotate(${this._rotate.angle ?? 0}rad)`;
+                }%) rotate(${this._rotate.angle ?? rotated}rad)`;
             });
 
             container.addEventListener(`rotate-sticker-${this._stickerId}`, (e: any) => {
