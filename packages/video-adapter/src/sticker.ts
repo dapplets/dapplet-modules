@@ -2,19 +2,22 @@ import { IWidget } from 'dynamic-adapter.dapplet-base.eth';
 import interact from 'interactjs';
 
 export interface IStickerState {
-    img: string;
-    from?: number;
-    to?: number;
-    vertical?: number;
-    horizontal?: number;
-    widthCo?: number;
-    heightCo?: number;
-    rotated?: number;
-    mutable?: boolean;
-    exec: (ctx: any, me: IStickerState) => void;
-    init: (ctx: any, me: IStickerState) => void;
-    ctx: any;
-    hidden: boolean;
+    stickerId?: number
+    img: string
+    from?: number
+    to?: number
+    vertical?: number
+    horizontal?: number
+    widthCo?: number
+    heightCo?: number
+    rotated?: number
+    opacity?: number
+    transform?: string
+    mutable?: boolean
+    exec: (ctx: any, me: IStickerState) => void
+    init: (ctx: any, me: IStickerState) => void
+    ctx: any
+    hidden: boolean
 }
 
 export class Sticker implements IWidget<IStickerState> {
@@ -26,16 +29,15 @@ export class Sticker implements IWidget<IStickerState> {
     private _rotate: { angle: number; callback: any };
     private _scaleCoef = { x: 1, y: 1 };
     private _coordinates = { x: 0, y: 0 };
-    private _stickerId = Math.trunc(Math.random() * 1_000_000_000);
+    private _stickerId: number;
 
     public static contextInsPoints = {
         VIDEO: 'STICKER',
     };
 
     public mount() {
-        if (!this.el) this._createElement();
-
         const {
+            stickerId = Math.trunc(Math.random() * 1_000_000_000),
             img,
             from = 0,
             to = Infinity,
@@ -45,9 +47,15 @@ export class Sticker implements IWidget<IStickerState> {
             heightCo = 1,
             rotated = 0,
             mutable = true,
+            opacity = 1,
+            transform,
             hidden,
             ctx,
         } = this.state;
+
+        if (this._stickerId === undefined) this._stickerId = stickerId;
+
+        if (!this.el) this._createElement();
 
         if (!hidden && ctx.currentTime >= from && ctx.currentTime <= to) {
             const clientWidth = ctx.element.offsetWidth;
@@ -70,12 +78,15 @@ export class Sticker implements IWidget<IStickerState> {
 
             this.el.style.removeProperty('display');
             const container = document.createElement('div');
-            if (mutable) container.classList.add(`dapplet-sticker-${this._stickerId}`);
             container.style.position = 'absolute';
             container.style.display = 'flex';
             container.style.alignItems = 'center';
             container.style.width = `${this._size.x * this._scaleCoef.x}px`;
             container.style.height = `${this._size.y * this._scaleCoef.y}px`;
+
+            container.style.opacity = `${opacity}`;
+
+            if (mutable) container.classList.add(`dapplet-sticker-${this._stickerId}`);
 
             this._coordinates.y =
                 videoAspectRatio > clientAspectRatio
@@ -91,9 +102,13 @@ export class Sticker implements IWidget<IStickerState> {
             container.style.top = `${this._coordinates.y}px`;
             container.style.left = `${this._coordinates.x}px`;
 
-            container.style.transform = `translate(${this._translationParams.x}%, ${
-                this._translationParams.y
-            }%) rotate(${this._rotate.angle ?? rotated}rad)`;
+            if (transform) {
+                container.style.transform = transform;
+            } else {
+                container.style.transform = `translate(${this._translationParams.x}%, ${
+                    this._translationParams.y
+                }%) rotate(${this._rotate.angle ?? rotated}rad)`;
+            }
 
             // for .draggable and .resizable
             container.style.touchAction = 'none';
@@ -103,8 +118,6 @@ export class Sticker implements IWidget<IStickerState> {
             container.style.cursor = 'pointer';
             container.style.zIndex = '9999';
 
-            container.setAttribute('data-angle', String(this._rotate.angle ?? rotated));
-
             const image = document.createElement('img');
             image.src = img;
             image.style.width = '100%';
@@ -112,46 +125,48 @@ export class Sticker implements IWidget<IStickerState> {
             container.appendChild(image);
             this.el.innerHTML = '';
 
-            container.addEventListener(`drug-sticker-${this._stickerId}`, (e: any) => {
-                e.stopPropagation();
-                this._translationParams.x += (e.detail.x * 100) / this._size.x / this._scaleCoef.x;
-                this._translationParams.y += (e.detail.y * 100) / this._size.y / this._scaleCoef.y;
-                e.target.style.transform = `translate(${this._translationParams.x}%, ${
-                    this._translationParams.y
-                }%) rotate(${this._rotate.angle ?? rotated}rad)`;
-            });
-
-            container.addEventListener(`scale-sticker-${this._stickerId}`, (e: any) => {
-                e.stopPropagation();
-
-                const oldTranslationParamX = this._translationParams.x;
-                const oldTranslationParamY = this._translationParams.y;
-                const oldScaleCoefX = this._scaleCoef.x;
-                const oldScaleCoefY = this._scaleCoef.y;
-
-                this._scaleCoef.x = e.detail.w / this._size.x;
-                this._scaleCoef.y = e.detail.h / this._size.y;
-
-                this._translationParams.x =
-                    (oldTranslationParamX * oldScaleCoefX) / this._scaleCoef.x;
-                this._translationParams.y =
-                    (oldTranslationParamY * oldScaleCoefY) / this._scaleCoef.y;
-
-                e.target.style.transform = `translate(${this._translationParams.x}%, ${
-                    this._translationParams.y
-                }%) rotate(${this._rotate.angle ?? rotated}rad)`;
-            });
-
-            container.addEventListener(`rotate-sticker-${this._stickerId}`, (e: any) => {
-                e.stopPropagation();
-                this._rotate.angle = e.detail.angle;
-                e.target.style.transform = `translate(${this._translationParams.x ?? 0}%, ${
-                    this._translationParams.y ?? 0
-                }%) rotate(${this._rotate.angle}rad)`;
-            });
-
-            // add rotate handle
             if (mutable) {
+                container.setAttribute('data-angle', String(this._rotate.angle ?? rotated));
+
+                container.addEventListener(`drug-sticker-${this._stickerId}`, (e: any) => {
+                    e.stopPropagation();
+                    this._translationParams.x += (e.detail.x * 100) / this._size.x / this._scaleCoef.x;
+                    this._translationParams.y += (e.detail.y * 100) / this._size.y / this._scaleCoef.y;
+                    e.target.style.transform = `translate(${this._translationParams.x}%, ${
+                        this._translationParams.y
+                    }%) rotate(${this._rotate.angle ?? rotated}rad)`;
+                });
+
+                container.addEventListener(`scale-sticker-${this._stickerId}`, (e: any) => {
+                    e.stopPropagation();
+
+                    const oldTranslationParamX = this._translationParams.x;
+                    const oldTranslationParamY = this._translationParams.y;
+                    const oldScaleCoefX = this._scaleCoef.x;
+                    const oldScaleCoefY = this._scaleCoef.y;
+
+                    this._scaleCoef.x = e.detail.w / this._size.x;
+                    this._scaleCoef.y = e.detail.h / this._size.y;
+
+                    this._translationParams.x =
+                        (oldTranslationParamX * oldScaleCoefX) / this._scaleCoef.x;
+                    this._translationParams.y =
+                        (oldTranslationParamY * oldScaleCoefY) / this._scaleCoef.y;
+
+                    e.target.style.transform = `translate(${this._translationParams.x}%, ${
+                        this._translationParams.y
+                    }%) rotate(${this._rotate.angle ?? rotated}rad)`;
+                });
+
+                container.addEventListener(`rotate-sticker-${this._stickerId}`, (e: any) => {
+                    e.stopPropagation();
+                    this._rotate.angle = e.detail.angle;
+                    e.target.style.transform = `translate(${this._translationParams.x ?? 0}%, ${
+                        this._translationParams.y ?? 0
+                    }%) rotate(${this._rotate.angle}rad)`;
+                });
+
+                // add rotate handle
                 const rotationHandle = document.createElement('div');
                 rotationHandle.classList.add('sticker-rotation-handle');
                 rotationHandle.classList.add(`sticker-rotation-handle-${this._stickerId}`);
