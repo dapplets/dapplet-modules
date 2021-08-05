@@ -25,9 +25,8 @@ export class Sticker implements IWidget<IStickerState> {
     public state: IStickerState;
     insPointName: string;
     private _translationParams: { x: number; y: number; callback: any }; // x, y -> %
-    private _size: { x: number; y: number; callback: any };
+    private _scale: { factor: number; callback: any };
     private _rotate: { angle: number; callback: any };
-    private _scaleCoef = { x: 1, y: 1 };
     private _coordinates = { x: 0, y: 0 };
     private _stickerId: number;
 
@@ -64,16 +63,18 @@ export class Sticker implements IWidget<IStickerState> {
             const videoAspectRatio = ctx.width / ctx.height;
             const clientAspectRatio = clientWidth / clientHeight;
 
+            const size: { x?: number, y?: number } = {}
+
             if (clientAspectRatio <= videoAspectRatio) {
                 const minDimension =
                     videoAspectRatio >= 1 ? clientWidth / videoAspectRatio : clientWidth;
-                this._size.x = (widthCo * minDimension) / 5;
-                this._size.y = (heightCo * minDimension) / 5;
+                size.x = (widthCo * minDimension) / 5;
+                size.y = (heightCo * minDimension) / 5;
             } else {
                 const minDimension =
                     videoAspectRatio >= 1 ? clientHeight : clientHeight * videoAspectRatio;
-                this._size.x = (widthCo * minDimension) / 5;
-                this._size.y = (heightCo * minDimension) / 5;
+                size.x = (widthCo * minDimension) / 5;
+                size.y = (heightCo * minDimension) / 5;
             }
 
             this.el.style.removeProperty('display');
@@ -81,8 +82,8 @@ export class Sticker implements IWidget<IStickerState> {
             container.style.position = 'absolute';
             container.style.display = 'flex';
             container.style.alignItems = 'center';
-            container.style.width = `${this._size.x * this._scaleCoef.x}px`;
-            container.style.height = `${this._size.y * this._scaleCoef.y}px`;
+            container.style.width = `${size.x}px`;
+            container.style.height = `${size.y}px`;
 
             container.style.opacity = `${opacity}`;
 
@@ -91,8 +92,8 @@ export class Sticker implements IWidget<IStickerState> {
             this._coordinates.y =
                 videoAspectRatio > clientAspectRatio
                     ? (0.01 * vertical - 0.5) * (clientWidth / videoAspectRatio) +
-                      0.5 * (clientHeight - this._size.y)
-                    : 0.01 * vertical * clientHeight - this._size.y / 2;
+                      0.5 * (clientHeight - size.y)
+                    : 0.01 * vertical * clientHeight - size.y / 2;
             this._coordinates.x =
                 videoAspectRatio < clientAspectRatio
                     ? (0.01 * horizontal - 0.5) * clientHeight * videoAspectRatio +
@@ -105,9 +106,12 @@ export class Sticker implements IWidget<IStickerState> {
             if (transform) {
                 container.style.transform = transform;
             } else {
-                container.style.transform = `translate(${this._translationParams.x}%, ${
-                    this._translationParams.y
-                }%) rotate(${this._rotate.angle ?? rotated}rad)`;
+                container.style.transform = setTransform(
+                  this._scale.factor,
+                  this._translationParams.x,
+                  this._translationParams.y,
+                  this._rotate.angle ?? rotated
+                );
             }
 
             // for .draggable and .resizable
@@ -118,11 +122,17 @@ export class Sticker implements IWidget<IStickerState> {
             container.style.cursor = 'pointer';
             container.style.zIndex = '9999';
 
+            const imageContainer = document.createElement('div');
+            imageContainer.style.zIndex = '99999';
+            imageContainer.style.display = 'flex';
+            imageContainer.style.width = '100%';
+            imageContainer.style.height = '100%';
+
             const image = document.createElement('img');
             image.src = img;
             image.style.width = '100%';
-            //image.style.height = '100%';
-            container.appendChild(image);
+            imageContainer.appendChild(image);
+
             this.el.innerHTML = '';
 
             if (mutable) {
@@ -130,11 +140,14 @@ export class Sticker implements IWidget<IStickerState> {
 
                 container.addEventListener(`drug-sticker-${this._stickerId}`, (e: any) => {
                     e.stopPropagation();
-                    this._translationParams.x += (e.detail.x * 100) / this._size.x / this._scaleCoef.x;
-                    this._translationParams.y += (e.detail.y * 100) / this._size.y / this._scaleCoef.y;
-                    e.target.style.transform = `translate(${this._translationParams.x}%, ${
-                        this._translationParams.y
-                    }%) rotate(${this._rotate.angle ?? rotated}rad)`;
+                    this._translationParams.x += (e.detail.x * 100) / size.x / this._scale.factor;
+                    this._translationParams.y += (e.detail.y * 100) / size.y / this._scale.factor;
+                    e.target.style.transform = setTransform(
+                      this._scale.factor,
+                      this._translationParams.x,
+                      this._translationParams.y,
+                      this._rotate.angle ?? rotated
+                    );
                 });
 
                 container.addEventListener(`scale-sticker-${this._stickerId}`, (e: any) => {
@@ -142,45 +155,75 @@ export class Sticker implements IWidget<IStickerState> {
 
                     const oldTranslationParamX = this._translationParams.x;
                     const oldTranslationParamY = this._translationParams.y;
-                    const oldScaleCoefX = this._scaleCoef.x;
-                    const oldScaleCoefY = this._scaleCoef.y;
+                    const oldScaleCoefX = this._scale.factor;
+                    const oldScaleCoefY = this._scale.factor;
 
-                    this._scaleCoef.x = e.detail.w / this._size.x;
-                    this._scaleCoef.y = e.detail.h / this._size.y;
+                    this._scale.factor = e.detail.factor;
 
                     this._translationParams.x =
-                        (oldTranslationParamX * oldScaleCoefX) / this._scaleCoef.x;
+                        (oldTranslationParamX * oldScaleCoefX) / this._scale.factor;
                     this._translationParams.y =
-                        (oldTranslationParamY * oldScaleCoefY) / this._scaleCoef.y;
+                        (oldTranslationParamY * oldScaleCoefY) / this._scale.factor;
 
-                    e.target.style.transform = `translate(${this._translationParams.x}%, ${
-                        this._translationParams.y
-                    }%) rotate(${this._rotate.angle ?? rotated}rad)`;
+                    e.target.style.transform = setTransform(
+                      this._scale.factor,
+                      this._translationParams.x,
+                      this._translationParams.y,
+                      this._rotate.angle ?? rotated
+                    );
                 });
 
                 container.addEventListener(`rotate-sticker-${this._stickerId}`, (e: any) => {
                     e.stopPropagation();
                     this._rotate.angle = e.detail.angle;
-                    e.target.style.transform = `translate(${this._translationParams.x ?? 0}%, ${
-                        this._translationParams.y ?? 0
-                    }%) rotate(${this._rotate.angle}rad)`;
+                    e.target.style.transform = setTransform(
+                      this._scale.factor,
+                      this._translationParams.x,
+                      this._translationParams.y,
+                      this._rotate.angle,
+                    );
                 });
 
-                // add rotate handle
-                const rotationHandle = document.createElement('div');
-                rotationHandle.classList.add('sticker-rotation-handle');
-                rotationHandle.classList.add(`sticker-rotation-handle-${this._stickerId}`);
-                rotationHandle.innerHTML = '&circlearrowright;';
-                rotationHandle.style.top = '100%';
+                // add rotate handles
+                const rotationHandle1 = document.createElement('div');
+                rotationHandle1.classList.add('sticker-rotation-handle');
+                rotationHandle1.classList.add(`sticker-rotation-handle-${this._stickerId}`);
+                rotationHandle1.style.top = '70%';
+                rotationHandle1.style.left = '70%';
+
+                const rotationHandle2 = document.createElement('div');
+                rotationHandle2.classList.add('sticker-rotation-handle');
+                rotationHandle2.classList.add(`sticker-rotation-handle-${this._stickerId}`);
+                rotationHandle2.style.top = '-35%';
+                rotationHandle2.style.left = '-35%'; 
+
+                const rotationHandle3 = document.createElement('div');
+                rotationHandle3.classList.add('sticker-rotation-handle');
+                rotationHandle3.classList.add(`sticker-rotation-handle-${this._stickerId}`);
+                rotationHandle3.style.top = '70%';
+                rotationHandle3.style.left = '-35%'; 
+
+                const rotationHandle4 = document.createElement('div');
+                rotationHandle4.classList.add('sticker-rotation-handle');
+                rotationHandle4.classList.add(`sticker-rotation-handle-${this._stickerId}`);
+                rotationHandle4.style.top = '-35%';
+                rotationHandle4.style.left = '70%'; 
 
                 container.onclick = () => {
                     container.style.outline = 'solid rgb(121, 242, 230)';
-                    rotationHandle.style.display = 'table';
+                    rotationHandle1.style.display = 'table';
+                    rotationHandle2.style.display = 'table';
+                    rotationHandle3.style.display = 'table';
+                    rotationHandle4.style.display = 'table';
                 };
 
-                container.appendChild(rotationHandle);
+                container.appendChild(rotationHandle1);
+                container.appendChild(rotationHandle2);
+                container.appendChild(rotationHandle3);
+                container.appendChild(rotationHandle4);
             }
 
+            container.appendChild(imageContainer);
             this.el.appendChild(container);
         } else {
             this.el.firstChild?.remove();
@@ -217,14 +260,11 @@ export class Sticker implements IWidget<IStickerState> {
                     })
                 ),
         };
-        this._size = {
-            x: null,
-            y: null,
-            callback: (target, size) =>
+        this._scale = {
+            factor: 1,
+            callback: (target, factor) =>
                 target.dispatchEvent(
-                    new CustomEvent(`scale-sticker-${id}`, {
-                        detail: { w: size.w, h: size.h, x: size.x, y: size.y },
-                    })
+                    new CustomEvent(`scale-sticker-${id}`, { detail: { factor } })
                 ),
         };
         this._rotate = {
@@ -236,7 +276,7 @@ export class Sticker implements IWidget<IStickerState> {
         };
 
         const position = { ...this._translationParams };
-        const size = { ...this._size };
+        const scale = { ...this._scale };
         const rotate = { ...this._rotate };
 
         interact(`.dapplet-sticker-${id}`)
@@ -251,49 +291,24 @@ export class Sticker implements IWidget<IStickerState> {
                 },
             })
             .resizable({
-                edges: { top: false, left: false, bottom: true, right: true },
+                edges: { top: true, left: true, bottom: true, right: true },
                 listeners: {
                     move: function (event) {
                         event.stopPropagation();
-                        const a = event.target.dataset?.angle;
-                        let w: number;
-                        let h: number;
+                        const transform = event.target.style.transform;
+                        const transformParams = transform.match(/[a-z]+\(.+?\)/g);
+                        const scaleParam = transformParams && transformParams.find((x) => /scale\(.*\)/.test(x));
+                        const oldFactor = scaleParam === undefined || scaleParam === null ? 1 : +scaleParam.match(/[0-9.]+/)[0];
 
-                        if ((a < 0.3927 && a > -0.3927) || (a < 3.5343 && a > 2.75)) {
-                            w = event.rect.width > 20 ? event.rect.width : 20;
-                            h = event.rect.height > 20 ? event.rect.height : 20;
-                        } else if ((a < 1.9635 && a > 1.1781) || a < -1.1781 || a > 4.32) {
-                            h = event.rect.width > 20 ? event.rect.width : 20;
-                            w = event.rect.height > 20 ? event.rect.height : 20;
-                        } else {
-                            if (event.dy === 0) {
-                                w =
-                                    event.rect.width > 20
-                                        ? parseFloat(event.target.style.width) + event.dx
-                                        : 20;
-                                h =
-                                    event.rect.height > 20
-                                        ? parseFloat(event.target.style.height) + event.dx
-                                        : 20;
-                            } else {
-                                w =
-                                    event.rect.width > 20
-                                        ? parseFloat(event.target.style.width) + event.dy
-                                        : 20;
-                                h =
-                                    event.rect.height > 20
-                                        ? parseFloat(event.target.style.height) + event.dy
-                                        : 20;
-                            }
-                        }
+                        const factor = oldFactor + 2 * (event.deltaRect.width === 0
+                          ? (event.deltaRect.bottom
+                              ? event.deltaRect.bottom
+                              : -event.deltaRect.top) / event.target.offsetHeight
+                          : (event.deltaRect.right
+                              ? event.deltaRect.right
+                              : -event.deltaRect.left) / event.target.offsetWidth);
 
-                        Object.assign(event.target.style, {
-                            width: `${w}px`,
-                            height: `${h}px`,
-                        });
-
-                        //Object.assign(event.target.dataset, { x, y })
-                        size.callback(event.target, { w, h, x: event.dx, y: event.dy });
+                        scale.callback(event.target, factor <= 0.3 ? 0.32 : factor);
                     },
                 },
             });
@@ -348,17 +363,15 @@ export class Sticker implements IWidget<IStickerState> {
             styleTag.id = 'sticker-rotation-handle-styles';
             styleTag.innerText = `
                 .sticker-rotation-handle {
-                    padding: 3px 4px;
                     display: none;
                     position: absolute;
-                    left: calc(50% - 10px);
-                    background-color: rgb(121, 242, 230);
-                    border-radius: 10rem;
+                    width: 60%;
+                    height: 60%;
                     line-height: 1;
                     text-align: center;
                     font-weight: bold;
                     color: #fff;
-                    cursor: move;
+                    cursor: url("./rotate.svg"), move;
                 }`;
             document.head.appendChild(styleTag);
         }
@@ -370,3 +383,7 @@ export class Sticker implements IWidget<IStickerState> {
         this.state.init?.(this.state.ctx, this.state);
     }
 }
+
+const setTransform = (factor, transX, transY, angle) => {
+  return `scale(${factor}) translate(${transX}%, ${transY}%) rotate(${angle}rad)`;
+};
