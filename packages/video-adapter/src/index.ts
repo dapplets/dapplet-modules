@@ -73,17 +73,17 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
                 };
 
                 Object.defineProperties(obj, {
-                    element: { get: () => n, enumerable: true },
-                    height: { get: () => n.videoHeight, enumerable: true  },
-                    width: { get: () => n.videoWidth, enumerable: true  },
-                    poster: { get: () => n.poster, enumerable: true  },
-                    duration: { get: () => n.duration, enumerable: true  },
-                    loop: { get: () => n.loop, enumerable: true  },
-                    muted: { get: () => n.muted, enumerable: true  },
-                    currentTime: { get: () => n.currentTime, enumerable: true  },
-                    src: { get: () => n.src, enumerable: true  },
-                    volume: { get: () => n.volume, enumerable: true  },
-                    paused: { get: () => n.paused, enumerable: true  }
+                    element: { get: () => n },
+                    height: { get: () => n.videoHeight  },
+                    width: { get: () => n.videoWidth  },
+                    poster: { get: () => n.poster  },
+                    duration: { get: () => n.duration  },
+                    loop: { get: () => n.loop },
+                    muted: { get: () => n.muted  },
+                    currentTime: { get: () => n.currentTime  },
+                    src: { get: () => n.src  },
+                    volume: { get: () => n.volume  },
+                    paused: { get: () => n.paused }
                 });
 
                 return obj;
