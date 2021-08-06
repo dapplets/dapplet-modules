@@ -28,7 +28,7 @@ export class Sticker implements IWidget<IStickerState> {
     private _scale: { factor: number; callback: any };
     private _rotate: { angle: number; callback: any };
     private _coordinates = { x: 0, y: 0 };
-    private _stickerId: number;
+    private _stickerId = Math.trunc(Math.random() * 1_000_000_000);
 
     public static contextInsPoints = {
         VIDEO: 'STICKER',
@@ -36,7 +36,7 @@ export class Sticker implements IWidget<IStickerState> {
 
     public mount() {
         const {
-            stickerId = Math.trunc(Math.random() * 1_000_000_000),
+            stickerId,
             img,
             from = 0,
             to = Infinity,
@@ -52,9 +52,9 @@ export class Sticker implements IWidget<IStickerState> {
             ctx,
         } = this.state;
 
-        if (this._stickerId === undefined) this._stickerId = stickerId;
+        if (stickerId !== undefined) this._stickerId = stickerId;
 
-        if (!this.el) this._createElement();
+        if (!this.el) this._createElement(mutable);
 
         if (!hidden && ctx.currentTime >= from && ctx.currentTime <= to) {
             const clientWidth = ctx.element.offsetWidth;
@@ -236,7 +236,7 @@ export class Sticker implements IWidget<IStickerState> {
         this.el && this.el.remove();
     }
 
-    private _createElement() {
+    private _createElement(mutable: boolean) {
         this.el = document.createElement('div');
         this.el.style.position = 'absolute';
         this.el.style.width = '100%';
@@ -253,90 +253,97 @@ export class Sticker implements IWidget<IStickerState> {
         this._translationParams = {
             x: 0,
             y: 0,
-            callback: (target, position) =>
-                target.dispatchEvent(
+            callback: mutable
+              ? (target, position) => target.dispatchEvent(
                     new CustomEvent(`drug-sticker-${id}`, {
                         detail: { x: position.x, y: position.y },
                     })
-                ),
+                )
+              : null,
         };
         this._scale = {
             factor: 1,
-            callback: (target, factor) =>
+            callback: mutable
+              ? (target, factor) =>
                 target.dispatchEvent(
                     new CustomEvent(`scale-sticker-${id}`, { detail: { factor } })
-                ),
+                )
+              : null,
         };
         this._rotate = {
             angle: null,
-            callback: (target, angle) =>
+            callback: mutable
+              ? (target, angle) =>
                 target.dispatchEvent(
                     new CustomEvent(`rotate-sticker-${id}`, { detail: { angle } })
-                ),
+                )
+              : null,
         };
 
-        const position = { ...this._translationParams };
-        const scale = { ...this._scale };
-        const rotate = { ...this._rotate };
+        if (mutable) {
+          const position = { ...this._translationParams };
+          const scale = { ...this._scale };
+          const rotate = { ...this._rotate };
 
-        interact(`.dapplet-sticker-${id}`)
-            .draggable({
-                listeners: {
-                    move(event) {
-                        event.stopPropagation();
-                        position.x = event.dx;
-                        position.y = event.dy;
-                        position.callback(event.target, position);
-                    },
-                },
-            })
-            .resizable({
-                edges: { top: true, left: true, bottom: true, right: true },
-                listeners: {
-                    move: function (event) {
-                        event.stopPropagation();
-                        const transform = event.target.style.transform;
-                        const transformParams = transform.match(/[a-z]+\(.+?\)/g);
-                        const scaleParam = transformParams && transformParams.find((x) => /scale\(.*\)/.test(x));
-                        const oldFactor = scaleParam === undefined || scaleParam === null ? 1 : +scaleParam.match(/[0-9.]+/)[0];
+          interact(`.dapplet-sticker-${id}`)
+              .draggable({
+                  listeners: {
+                      move(event) {
+                          event.stopPropagation();
+                          position.x = event.dx;
+                          position.y = event.dy;
+                          position.callback(event.target, position);
+                      },
+                  },
+              })
+              .resizable({
+                  edges: { top: true, left: true, bottom: true, right: true },
+                  listeners: {
+                      move: function (event) {
+                          event.stopPropagation();
+                          const transform = event.target.style.transform;
+                          const transformParams = transform.match(/[a-z]+\(.+?\)/g);
+                          const scaleParam = transformParams && transformParams.find((x) => /scale\(.*\)/.test(x));
+                          const oldFactor = scaleParam === undefined || scaleParam === null ? 1 : +scaleParam.match(/[0-9.]+/)[0];
 
-                        const factor = oldFactor + 2 * (event.deltaRect.width === 0
-                          ? (event.deltaRect.bottom
-                              ? event.deltaRect.bottom
-                              : -event.deltaRect.top) / event.target.offsetHeight
-                          : (event.deltaRect.right
-                              ? event.deltaRect.right
-                              : -event.deltaRect.left) / event.target.offsetWidth);
+                          const factor = oldFactor + 2 * (event.deltaRect.width === 0
+                            ? (event.deltaRect.bottom
+                                ? event.deltaRect.bottom
+                                : -event.deltaRect.top) / event.target.offsetHeight
+                            : (event.deltaRect.right
+                                ? event.deltaRect.right
+                                : -event.deltaRect.left) / event.target.offsetWidth);
 
-                        scale.callback(event.target, factor <= 0.3 ? 0.32 : factor);
-                    },
-                },
-            });
+                          scale.callback(event.target, factor <= 0.3 ? 0.32 : factor);
+                      },
+                  },
+              });
 
-        interact(`.sticker-rotation-handle-${id}`).draggable({
-            onstart: function (event) {
-                const box = event.target.parentElement;
-                const rect = box.getBoundingClientRect();
+          interact(`.sticker-rotation-handle-${id}`).draggable({
+              onstart: function (event) {
+                  const box = event.target.parentElement;
+                  const rect = box.getBoundingClientRect();
 
-                // store the center as the element has css `transform-origin: center center`
-                box.setAttribute('data-center-x', rect.left + rect.width / 2);
-                box.setAttribute('data-center-y', rect.top + rect.height / 2);
-                // get the angle of the element when the drag starts
-                box.setAttribute('data-angle', getDragAngle(event));
-            },
-            onmove: function (event) {
-                const box = event.target.parentElement;
-                const angle = getDragAngle(event);
-                rotate.callback(box, angle);
-            },
-            onend: function (event) {
-                const box = event.target.parentElement;
+                  // store the center as the element has css `transform-origin: center center`
+                  box.setAttribute('data-center-x', rect.left + rect.width / 2);
+                  box.setAttribute('data-center-y', rect.top + rect.height / 2);
+                  // get the angle of the element when the drag starts
+                  box.setAttribute('data-angle', getDragAngle(event));
+              },
+              onmove: function (event) {
+                  const box = event.target.parentElement;
+                  const angle = getDragAngle(event);
+                  rotate.callback(box, angle);
+              },
+              onend: function (event) {
+                  const box = event.target.parentElement;
 
-                // save the angle on dragend
-                const x = getDragAngle(event);
-                box.setAttribute('data-angle', x);
-            },
-        });
+                  // save the angle on dragend
+                  const x = getDragAngle(event);
+                  box.setAttribute('data-angle', x);
+              },
+          });
+        }
 
         function getDragAngle(event) {
             const box = event.target.parentElement;
