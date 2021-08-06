@@ -42,46 +42,51 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
                 // ToDo: call dispatchEvent of n
                 if (!this._observers.has(n)) {
                     const observer = new ResizeObserver(() => {
-                      n.dispatchEvent(new CustomEvent('resize'));
-                      /*console.log('entries:', entries)
-                        for (const entry of entries) {
-                            if (entry.contentBoxSize) {
-                                const contentBoxSize = Array.isArray(entry.contentBoxSize) ? entry.contentBoxSize[0] : entry.contentBoxSize;
-                                n.dispatchEvent(new CustomEvent('resize', { detail: {
-                                    width: contentBoxSize.inlineSize,
-                                    height: contentBoxSize.blockSize
-                                }}));
-                            } else {
-                                n.dispatchEvent(new CustomEvent('resize', { detail: {
-                                    width: entry.contentRect.width,
-                                    height: entry.contentRect.height
-                                }}));
-                            }
-                        }*/
+                        n.dispatchEvent(new CustomEvent('resize'));
+                        /*console.log('entries:', entries)
+                          for (const entry of entries) {
+                              if (entry.contentBoxSize) {
+                                  const contentBoxSize = Array.isArray(entry.contentBoxSize) ? entry.contentBoxSize[0] : entry.contentBoxSize;
+                                  n.dispatchEvent(new CustomEvent('resize', { detail: {
+                                      width: contentBoxSize.inlineSize,
+                                      height: contentBoxSize.blockSize
+                                  }}));
+                              } else {
+                                  n.dispatchEvent(new CustomEvent('resize', { detail: {
+                                      width: entry.contentRect.width,
+                                      height: entry.contentRect.height
+                                  }}));
+                              }
+                          }*/
                     });
                     observer.observe(n);
                     this._observers.set(n, observer);
                 }
 
-                return {
+                const obj = {
                     id: n.src,
-                    element: n,
-                    height: n.videoHeight,
-                    width: n.videoWidth,
-                    poster: n.poster,
-                    duration: n.duration,
-                    loop: n.loop,
-                    muted: n.muted,
-                    currentTime: n.currentTime,
-                    src: n.src,
-                    volume: n.volume,
-                    paused: n.paused,
                     pause: () => n.pause(),
                     play: () => n.play(),
                     setCurrentTime: (time: number) => n.currentTime = time,
                     onTimeUpdate: (callback) => n.addEventListener('timeupdate', callback),
                     onResize: (callback) => n.addEventListener('resize', callback)
-                }
+                };
+
+                Object.defineProperties(obj, {
+                    element: { get: () => n },
+                    height: { get: () => n.videoHeight },
+                    width: { get: () => n.videoWidth },
+                    poster: { get: () => n.poster },
+                    duration: { get: () => n.duration },
+                    loop: { get: () => n.loop },
+                    muted: { get: () => n.muted },
+                    currentTime: { get: () => n.currentTime },
+                    src: { get: () => n.src },
+                    volume: { get: () => n.volume },
+                    paused: { get: () => n.paused }
+                });
+
+                return obj;
             },
         }
     };
