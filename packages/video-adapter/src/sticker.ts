@@ -314,7 +314,7 @@ export class Sticker implements IWidget<IStickerState> {
                                 ? event.deltaRect.right
                                 : -event.deltaRect.left) / event.target.offsetWidth);
 
-                          scale.callback(event.target, factor <= 0.3 ? 0.32 : factor);
+                          scale.callback(event.target, factor > 0.3 ? (factor < 2.5 ? factor : 2.5) : 0.32);
                       },
                   },
               });
