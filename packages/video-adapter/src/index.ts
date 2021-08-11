@@ -33,9 +33,9 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
             containerSelector: "html",
             contextSelector: "video",
             insPoints: {
-                CAPTION: {},
-                STICKER: {},
-                LABEL: {},
+                CAPTION: { insert: 'begin' },
+                STICKER: { insert: 'begin' },
+                LABEL: { insert: 'begin' },
             },
             contextBuilder: (n: HTMLVideoElement) => {
 

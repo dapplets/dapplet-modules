@@ -229,6 +229,14 @@ export class Sticker implements IWidget<IStickerState> {
             }
 
             container.appendChild(imageContainer);
+
+            container.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.state.exec?.(this.state.ctx, this.state);
+                e.preventDefault();
+                return false;
+            });
+
             this.el.appendChild(container);
         } else {
             this.el.firstChild?.remove();
@@ -244,14 +252,12 @@ export class Sticker implements IWidget<IStickerState> {
     private _createElement(mutable: boolean) {
         this.el = document.createElement('div');
         this.el.style.position = 'absolute';
+        this.el.style.top = '0';
+        this.el.style.bottom = '0';
+        this.el.style.right = '0';
+        this.el.style.left = '0';
         this.el.style.width = '100%';
         this.el.style.height = '100%';
-        this.el.addEventListener('click', (e) => {
-            e.stopPropagation();
-            this.state.exec?.(this.state.ctx, this.state);
-            e.preventDefault();
-            return false;
-        });
 
         const id = this._stickerId;
 
