@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+body {
+  background-color: #F4F4F4 !important;
+  height: calc(100% - 50px) !important;
+}
+
+.overlay-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 14px 4px 20px 4px;
+  height: 100%;
+  width: calc(100% - 7px);
+  padding: 0 15px 3px 15px;
+  overflow-y: overlay;
+  max-height: calc(100vh - 30px);
+}
+
+.ui.card {
+  margin: .5em 0 !important;
+}
+
+.ui.header {
+  margin-bottom: 0 !important;
+}
+
+button.link {
+  color: rgb(27, 149, 224);
+  border: none;
+  background: none;
+  font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
+  font-size: 1em;
+  line-height: 1.4285em;
+  cursor: pointer;
+}
+
+button.link:hover {
+  text-decoration: underline;
+}
