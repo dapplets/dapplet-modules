@@ -12,6 +12,6 @@
         "twitter-adapter.dapplet-base.eth": "0.9.0"
     },
     "overlays": {
-        "twitter-demo-overlay": "https://localhost:3000"
+        "twitter-demo-overlay": "https://localhost:8080/packages/twitter-demo-overlay/build/"
     }
 }

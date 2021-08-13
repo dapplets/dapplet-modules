@@ -17,6 +17,7 @@
   },
   "scripts": {
     "start": "webpack serve",
+    "watch": "webpack --watch",
     "build": "webpack"
   },
   "devDependencies": {

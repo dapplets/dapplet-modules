@@ -168,7 +168,9 @@ app.ws('/:feature', function (ws, req) {
 
 app.get('/index.json', function (req, res) {
     const packagesPath = './packages';
-    const urls = fs.readdirSync(packagesPath).map(package => `packages/${package}/dapplet.json`);
+    const urls = fs.readdirSync(packagesPath)
+        .filter(x => x.indexOf('overlay') === -1) // exclude overlays
+        .map(package => `packages/${package}/dapplet.json`);
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify(urls, null, 3));
 });

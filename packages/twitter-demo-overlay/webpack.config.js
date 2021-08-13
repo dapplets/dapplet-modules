@@ -4,7 +4,8 @@ const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const WebpackAssetsManifest = require('webpack-assets-manifest');
 
 module.exports = {
-    mode: 'production',
+    mode: 'development',
+    devtool: false,
     output: {
         path: path.resolve(__dirname, 'build'),
         clean: true
@@ -41,14 +42,5 @@ module.exports = {
         new HtmlWebpackPlugin({ template: "public/index.html" }),
         new ForkTsCheckerWebpackPlugin(),
         new WebpackAssetsManifest(),
-    ],
-    devServer: {
-        contentBase: path.join(__dirname, "build"),
-        port: 3000,
-        https: true,
-        hot: false,
-        inline: false,
-        liveReload: false,
-        open: false
-    }
+    ]
 };
