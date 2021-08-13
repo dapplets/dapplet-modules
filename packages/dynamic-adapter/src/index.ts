@@ -75,6 +75,7 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
         });
 
         this.contextBuilders.push(...builders);
+        this.updateObservers();
     }
 
     private updateObservers(mutations?) {
