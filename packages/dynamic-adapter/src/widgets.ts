@@ -60,6 +60,12 @@ export class WidgetBuilder {
                 newParsedContexts.push(context);
             } else {
                 const newContext = this._tryParseContext(contextNode, parentContext, widgetBuilders);
+
+                if (!newContext) {
+                    this.contexts.delete(contextNode);
+                    continue;
+                }
+
                 if (!this._compareObjects(context.parsed, newContext)) {
 
                     if (newContext.id !== context.parsed.id) {
