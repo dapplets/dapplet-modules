@@ -57,8 +57,8 @@ export class Sticker implements IWidget<IStickerState> {
         if (!this.el) this._createElement(mutable);
 
         if (!hidden && ctx.currentTime >= from && ctx.currentTime <= to) {
-            const clientWidth = ctx.element.offsetWidth;
-            const clientHeight = ctx.element.offsetHeight;
+            const clientWidth = ctx.element.offsetWidth + ctx.element.offsetLeft * 2;
+            const clientHeight = ctx.element.offsetHeight + ctx.element.offsetTop * 2;
 
             const videoAspectRatio = ctx.width / ctx.height;
             const clientAspectRatio = clientWidth / clientHeight;
