@@ -17,6 +17,5 @@
   ],
   "main": "build/index.js",
   "typings": "lib/index.d.ts",
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }

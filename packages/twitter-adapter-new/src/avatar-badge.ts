@@ -14,6 +14,7 @@ export interface IAvatarBadgeState {
     hidden: boolean;
     username: string;
     insPointName: string;
+    theme?: 'DARK' | 'LIGHT'
 }
 
 export class AvatarBadge implements IWidget<IAvatarBadgeState> {
@@ -31,35 +32,54 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
         this._injectStyles();
         if (!this.el) this._createElement();
 
-        const { img, vertical, horizontal, hidden, tooltip } = this.state;
+        const { img, vertical, horizontal, hidden, tooltip, theme } = this.state;
 
         if (!hidden) {
             if (!this.el.firstChild) {
+                const container = document.createElement('div');
                 const imgTag = document.createElement('img');
-                this.el.appendChild(imgTag);
+                container.style.position = 'absolute';
+                container.style.display = 'flex';
+                container.style.overflow = 'hidden';
+                container.style.alignItems = 'center';
+                container.style.borderRadius = '99em';
+                if (theme === 'DARK') {
+                    container.style.backgroundColor = '#222';
+                } else {
+                    container.style.backgroundColor = 'lightgray';
+                }
+                imgTag.src = img;
+                imgTag.style.width = '100%';
+                switch (this.insPointName) {
+                    case 'POST':
+                        container.style.width = '24px';
+                        container.style.height = '24px';
+                        container.style[vertical] = '-2px';
+                        container.style[horizontal] = '-7px';
+                        if (theme === 'DARK') {
+                          container.style.border = '1px solid black';
+                        } else {
+                          container.style.border = '1px solid white';
+                        }
+                        break;
+
+                    case 'PROFILE':
+                        container.style.width = '25%';
+                        container.style.minWidth = '13px';
+                        container.style.height = '25%';
+                        container.style.minHeight = '13px';
+                        container.style.right = (horizontal === 'right') ? '2%' : '75%';
+                        container.style.top = (vertical === 'bottom') ? '75%' : '2%';
+                        if (theme === 'DARK') {
+                          container.style.border = '2px solid black';
+                        } else {
+                          container.style.border = '2px solid white';
+                        }
+                        break;
+                }
+                container.appendChild(imgTag);
+                this.el.appendChild(container);
             }
-            const imgTag: HTMLImageElement = this.el.firstChild as any;
-
-            switch (this.insPointName) {
-                case 'POST':
-                    imgTag.src = img;
-                    imgTag.style.width = '24px';
-                    imgTag.style.height = '24px';
-                    imgTag.style.position = 'absolute';
-                    imgTag.style[vertical] = '-2px';
-                    imgTag.style[horizontal] = '-7px';
-                    break;
-
-                case 'PROFILE':
-                    imgTag.src = img;
-                    imgTag.style.width = '22%';
-                    imgTag.style.minWidth = '13px';
-                    imgTag.style.position = 'absolute';
-                    imgTag.style.right = (horizontal === 'right') ? '2%' : '75%';
-                    imgTag.style.top = (vertical === 'bottom') ? '75%' : '2%';
-                    break;
-            }
-
             this.el.title = tooltip ?? '';
         } else {
             this.el.firstChild?.remove();
@@ -75,10 +95,16 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
             case 'PROFILE':
                 this.el = document.createElement('div');
                 this.el.classList.add("dapplet-widget-profile-avatar-badge");
+                this.el.style.zIndex = '50100';
                 break;
 
             case 'POST':
                 this.el = document.createElement('div');
+                this.el.style.zIndex = '50100';
+                const dimThemeWrapper: HTMLElement = document.querySelector('a.css-4rbku5.css-18t94o4.css-1dbjc4n.r-yfoy6g.r-f6ebdl.r-sdzlij.r-1phboty.r-14f9gny.r-1loqt21.r-1gzrgec.r-cnkkqs.r-zjg7tu.r-1v6e3re.r-1ny4l3l.r-1udh08x.r-o7ynqc.r-6416eg.r-1xce0ei');
+                if (dimThemeWrapper) dimThemeWrapper.style.overflow = 'visible';
+                const blackThemeWrapper: HTMLElement = document.querySelector('a.css-4rbku5.css-18t94o4.css-1dbjc4n.r-kemksi.r-1xc7w19.r-sdzlij.r-1phboty.r-14f9gny.r-1loqt21.r-1gzrgec.r-cnkkqs.r-zjg7tu.r-1v6e3re.r-1ny4l3l.r-1udh08x.r-o7ynqc.r-6416eg.r-1xce0ei');
+                if (blackThemeWrapper) blackThemeWrapper.style.overflow = 'visible';
         }
 
         this.el.addEventListener('click', (e) => {

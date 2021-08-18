@@ -112,7 +112,8 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                     text: el.querySelector('div[data-testid=tweet] div[lang]')?.innerText,
                     authorFullname: this._parseAuthorFullname(el.querySelector('div[data-testid=tweet] > div:nth-child(2) > div:nth-child(1) a > div > div:nth-child(1) > div:nth-child(1) > span')),
                     authorUsername: el.querySelector('div[data-testid=tweet] > div:nth-child(2) > div:nth-child(1) a > div > div:nth-child(2) span')?.innerText?.replace('@', '')?.toLowerCase(),
-                    authorImg: el.querySelector('div[data-testid=tweet] img.css-9pa8cd')?.getAttribute('src')
+                    authorImg: el.querySelector('div[data-testid=tweet] img.css-9pa8cd')?.getAttribute('src'),
+                    theme: this._getTheme(),
                 });
             },
             theme: this._getTheme,
@@ -133,7 +134,8 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                     text: el.querySelector('div.css-901oao.r-18jsvk2.r-1qd0xha.r-a023e6.r-16dba41.r-rjixqe.r-14gqq1x.r-bcqeeo.r-bnwqim.r-qvutc0 span')?.innerText,
                     authorFullname: el.querySelector('[dir="auto"]').textContent,
                     authorUsername: el.querySelector('[dir="ltr"]')?.innerText?.replace('@', '')?.toLowerCase(),
-                    authorImg: el.querySelector('[role="presentation"] img')?.getAttribute('src')
+                    authorImg: el.querySelector('[role="presentation"] img')?.getAttribute('src'),
+                    theme: this._getTheme(),
                 });
             },
             theme: this._getTheme,
@@ -147,8 +149,8 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                     insert: 'end'
                 },
                 AVATAR_BADGE: {
-                    selector: "a.css-4rbku5.css-18t94o4.css-1dbjc4n.r-14lw9ot.r-11mg6pl",
-                    insert: 'inside'
+                    selector: "a div.css-1dbjc4n.r-1twgtwe.r-sdzlij.r-rs99b7.r-1p0dtai.r-1mi75qu.r-1d2f490.r-1ny4l3l.r-u8s1d.r-zchlnj.r-ipm5af.r-o7ynqc.r-6416eg",
+                    insert: 'end'
                 },
                 USERNAME_BADGE: {
                     selector: "div.css-1dbjc4n.r-1wbh5a2.r-dnmrzs.r-1ny4l3l",
@@ -172,7 +174,8 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                     id: el.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x > div > div > div:nth-child(2) span')?.innerText.replace('@', '').toLowerCase(),
                     authorFullname: this._parseAuthorFullname(el.querySelector('div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-dnmrzs > div > span:nth-child(1)')),
                     authorUsername: el.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x > div > div > div:nth-child(2) span')?.innerText.replace('@', '').toLowerCase(),
-                    authorImg: el.querySelector('a > div.css-1dbjc4n.r-1adg3ll.r-1udh08x > div.r-1p0dtai.r-1pi2tsx.r-1d2f490.r-u8s1d.r-ipm5af.r-13qz1uu > div > img')?.getAttribute('src')
+                    authorImg: el.querySelector('a > div.css-1dbjc4n.r-1adg3ll.r-1udh08x > div.r-1p0dtai.r-1pi2tsx.r-1d2f490.r-u8s1d.r-ipm5af.r-13qz1uu > div > img')?.getAttribute('src'),
+                    theme: this._getTheme(),
                 });
             },
             theme: this._getTheme
@@ -190,6 +193,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
             contextBuilder: (el: any) => ({
                 id: el.innerText,
                 profileFullname: el.innerText,
+                theme: this._getTheme(),
             }),
             theme: this._getTheme
         },
@@ -210,6 +214,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
             contextBuilder: (el: any) => ({
                 id: el.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x')?.textContent,
                 profileUsername: el.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x')?.textContent,
+                theme: this._getTheme(),
             }),
             theme: this._getTheme
         }

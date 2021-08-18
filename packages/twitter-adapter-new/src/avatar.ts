@@ -59,6 +59,7 @@ export class Avatar implements IWidget<IAvatarState> {
         this.el.style.width = '100%';
         this.el.style.height = '100%';
         this.el.style.bottom = '0';
+        this.el.style.zIndex = '50000';
         this.el.addEventListener('click', (e) => {
             this.state.exec?.(this.state.ctx, this.state);
             e.preventDefault();
