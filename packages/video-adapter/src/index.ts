@@ -13,6 +13,7 @@ interface IVideoAdapterConfig {
 export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig> {
 
     private _observers = new WeakMap<any, ResizeObserver>();
+    private _styleObservers = new WeakMap<any, MutationObserver>();
 
     constructor(
         @Inject("dynamic-adapter.dapplet-base.eth")
@@ -63,13 +64,25 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
                     this._observers.set(n, observer);
                 }
 
+                if (!this._styleObservers.has(n)) {
+                    const mutationObserver = new MutationObserver(() => {
+                        n.dispatchEvent(new CustomEvent('dpp-translate'));
+                    })
+                    mutationObserver.observe(n, {
+                      attributes: true,
+                      attributeFilter: ['style'],
+                    });
+                    this._styleObservers.set(n, mutationObserver);
+                }
+
                 const obj = {
                     id: n.src,
                     pause: () => n.pause(),
                     play: () => n.play(),
                     setCurrentTime: (time: number) => n.currentTime = time,
                     onTimeUpdate: (callback) => n.addEventListener('timeupdate', callback),
-                    onResize: (callback) => n.addEventListener('resize', callback)
+                    onResize: (callback) => n.addEventListener('resize', callback),
+                    onTranslate: (callback) => n.addEventListener('dpp-translate', callback),
                 };
 
                 Object.defineProperties(obj, {

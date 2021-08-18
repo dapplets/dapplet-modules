@@ -428,6 +428,7 @@ export class Sticker implements IWidget<IStickerState> {
         this.el.classList.add('dapplet-widget-video-sticker');
         this.state.ctx.onTimeUpdate(() => this.mount()); // ToDo: check memory leak
         this.state.ctx.onResize(() => this.mount());
+        this.state.ctx.onTranslate(() => this.mount());
         //this.mount(); // ToDo: WTF?
         this.state.init?.(this.state.ctx, this.state);
     }

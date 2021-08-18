@@ -1,6 +1,6 @@
 {
   "name": "video-adapter.dapplet-base.eth",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "description": "Video adapter",
   "scripts": {
     "build": "webpack --config webpack.dev.js",
