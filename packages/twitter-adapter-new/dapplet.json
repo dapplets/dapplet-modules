@@ -7,7 +7,7 @@
     "description": { "$ref": "package.json#/description" },
     "main": { "$ref": "package.json#/main" },
     "dependencies": {
-      "dynamic-adapter.dapplet-base.eth": "0.6.9"
+      "dynamic-adapter.dapplet-base.eth": "0.6.12"
     },
     "interfaces": {
       "identity-adapter.dapplet-base.eth": "0.3.0"

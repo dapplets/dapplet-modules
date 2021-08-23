@@ -71,10 +71,34 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
                     this.featureConfigs.forEach(config => config?.events?.[event]?.(...args));
                 }
             }
+
+            if (builder.adapterName) {
+                const container = document.querySelector(builder.containerSelector);
+                this.contextBuilders = this.contextBuilders
+                    .filter((contextBuilder) => {
+                        if (contextBuilder.adapterName === builder.adapterName) {
+                            //console.log('Start delete contexts')
+                            if (container) {
+                                const contextNodes = Array.from(document.querySelectorAll(contextBuilder.contextSelector) || []);
+                                const contexts = contextNodes.map((n: Element) => contextBuilder.contexts.get(n)).filter(e => e);
+                                Core.contextFinished(contexts.map(c => c.parsed));
+                                contexts.forEach(ctx => contextBuilder.emitEvent(null, 'context_changed', ctx, [null, null, ctx.parsed]));
+                            }
+                            //console.log('Finish delete contexts')
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    });
+                builder.updateContexts(this.featureConfigs, container, this.contextBuilders, null); // ToDo: think about it
+            }
+
             return builder;
         });
 
         this.contextBuilders.push(...builders);
+        //console.log('&&& this.contextBuilders:', this.contextBuilders)
+        //console.log('&&& this.featureConfigs:', this.featureConfigs)
         this.updateObservers();
     }
 
@@ -155,8 +179,10 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
                 return;
             };
 
+            if (!node.parentNode) return;
+
             // check if a widget already exists for the insPoint
-            if (node.parentElement.getElementsByClassName(clazz).length > 0) return;
+            if (node.parentElement?.getElementsByClassName(clazz).length > 0) return;
 
             const context = builder.contexts.get(contextNode);
 

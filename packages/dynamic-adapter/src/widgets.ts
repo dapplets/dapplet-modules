@@ -8,6 +8,7 @@ interface IConfig {
 }
 
 export class WidgetBuilder {
+    adapterName: string;
     contextName: string;
     containerSelector: string;
     contextSelector: string;

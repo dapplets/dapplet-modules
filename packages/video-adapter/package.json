@@ -1,6 +1,6 @@
 {
   "name": "video-adapter.dapplet-base.eth",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "description": "Video adapter",
   "scripts": {
     "build": "webpack --config webpack.dev.js",
@@ -12,7 +12,7 @@
   "main": "build/index.js",
   "typings": "build/index.d.ts",
   "devDependencies": {
-    "dynamic-adapter.dapplet-base.eth": "^0.6.1"
+    "dynamic-adapter.dapplet-base.eth": "^0.6.12"
   },
   "dependencies": {
     "interactjs": "^1.10.11"

@@ -14,9 +14,10 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
 
     private _observers = new WeakMap<any, ResizeObserver>();
     private _styleObservers = new WeakMap<any, MutationObserver>();
+    private _durationObservers = new WeakSet<any>();
 
     constructor(
-        @Inject("dynamic-adapter.dapplet-base.eth")
+        @Inject('dynamic-adapter.dapplet-base.eth')
         private dynamicAdapter: IDynamicAdapter<IVideoAdapterConfig>
     ) {
         this.dynamicAdapter.configure(this.config);
@@ -31,8 +32,9 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
 
     public config = {
         VIDEO: {
-            containerSelector: "html",
-            contextSelector: "video",
+            adapterName: 'VideoAdapter',
+            containerSelector: 'html',
+            contextSelector: 'video',
             insPoints: {
                 CAPTION: { insert: 'begin' },
                 STICKER: { insert: 'begin' },
@@ -75,6 +77,13 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
                     this._styleObservers.set(n, mutationObserver);
                 }
 
+                if (!this._durationObservers.has(n)) {
+                    n.addEventListener('loadedmetadata', () => {
+                        this.dynamicAdapter.configure(this.config);
+                    });
+                    this._durationObservers.add(n);
+                }
+
                 const obj = {
                     id: n.src,
                     pause: () => n.pause(),
@@ -86,17 +95,61 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
                 };
 
                 Object.defineProperties(obj, {
-                    element: { get: () => n },
-                    height: { get: () => n.videoHeight  },
-                    width: { get: () => n.videoWidth  },
-                    poster: { get: () => n.poster  },
-                    duration: { get: () => n.duration  },
-                    loop: { get: () => n.loop },
-                    muted: { get: () => n.muted  },
-                    currentTime: { get: () => n.currentTime  },
-                    src: { get: () => n.src  },
-                    volume: { get: () => n.volume  },
-                    paused: { get: () => n.paused }
+                    element: {
+                        get: () => n,
+                        set: (value: number) => value,
+                        enumerable: true,
+                    },
+                    height: {
+                        get: () => n.videoHeight,
+                        set: (value: number) => value,
+                        enumerable: true,
+                    },
+                    width: {
+                        get: () => n.videoWidth ,
+                        set: (value: number) => value,
+                        enumerable: true,
+                    },
+                    poster: {
+                        get: () => n.poster,
+                        set: (value: number) => value,
+                        enumerable: true,
+                    },
+                    duration: {
+                        get: () => n.duration,
+                        set: (value: number) => value,
+                        enumerable: true,
+                    },
+                    loop: { 
+                        get: () => n.loop,
+                        set: (value: number) => value,
+                        enumerable: true,
+                    },
+                    muted: {
+                        get: () => n.muted,
+                        set: (value: number) => value,
+                        enumerable: true,
+                    },
+                    currentTime: {
+                        get: () => n.currentTime ,
+                        set: (value: number) => value,
+                        enumerable: true,
+                    },
+                    src: {
+                        get: () => n.src,
+                        set: (value: number) => value,
+                        enumerable: true,
+                    },
+                    volume: {
+                        get: () => n.volume,
+                        set: (value: number) => value,
+                        enumerable: true,
+                    },
+                    paused: {
+                        get: () => n.paused,
+                        set: (value: number) => value,
+                        enumerable: true,
+                    },
                 });
 
                 return obj;
