@@ -1,21 +1,60 @@
 import { IWidget } from 'dynamic-adapter.dapplet-base.eth';
 
 export interface ICaptionState {
-    text: string;
-    disabled: boolean;
-    exec: (ctx: any, me: ICaptionState) => void;
-    init: (tx: any, me: ICaptionState) => void;
-    ctx: any;
-    hidden: boolean;
-    insPointName: string;
-    img: string;
+    img?: string;
+    text?: string;
     tooltip?: string;
+    hidden?: boolean;
+    disabled?: boolean;
+    exec?: (ctx: any, me: ICaptionState) => void;
+    init?: (tx: any, me: ICaptionState) => void;
+    ctx: any;
+    insPointName: string;
 }
 
 export class Caption implements IWidget<ICaptionState> {
     public el: HTMLElement;
     public state: ICaptionState;
     insPointName: string;
+
+    // ToDo 
+    public static widgetParamsDescription = {
+        img: {
+            description:'image as blob',
+            optional: true,
+            TYPE: 'string',
+        },
+        text: {
+            description:'text label',
+            optional: true,
+            TYPE: 'string',
+        },
+        tooltip: {
+            description: 'text tooltip',
+            optional: true,
+            TYPE: 'string',
+        },
+        disabled: {
+            description: 'makes the widget disabled',
+            optional: true,
+            TYPE: 'boolean',
+        },
+        hidden: {
+            description: 'hide widget',
+            optional: true,
+            TYPE: 'boolean',
+        },
+        exec: {
+            description: '(ctx: any, me: IAvatarState) => void',
+            optional: true,
+            TYPE: 'function',
+        },
+        init: {
+            description: '(ctx: any, me: IAvatarState) => void',
+            optional: true,
+            TYPE: 'function',
+        },
+    };
 
     public static contextInsPoints = {
       POST: 'SOCIAL_CONTEXT',

@@ -6,15 +6,18 @@ import dappletData from './dappletData';
 
 export default () => {
   const [activeIndexes, changeActiveItemes] = useState<string[]>([]);
+  const [theme, setTheme] = useState<'LIGHT' | 'DARK'>('LIGHT');
 
   useEffect(() => {
     bridge.onData((data) => {
+      setTheme(data.ctx.theme);
       if (data.index) {
         refs[data.index].current.scrollIntoView({
           behavior: 'smooth',
-          block: 'start',
+          block: 'center',
         });
       }
+      console.log(data.adapterDescription);
     });
   }, []);
 
@@ -35,8 +38,15 @@ export default () => {
   dappletData().forEach((value, index) =>
     value.widgets.forEach((v, i) => refs[index + '/' + i] = React.createRef()));
 
+  if (theme === 'DARK') {
+    document.body.style.background = '#15202B';
+    const el: HTMLElement | null = document.querySelector('#root');
+    el!.style.background = '#15202B';
+  }
+
   return (
-    <div className='overlay-container'>
+    <div
+      className={theme === 'DARK' ? 'overlay-container dpp-dark' : 'overlay-container'}>
       {false && <Header as='h3'>Contexts</Header>}
       {dappletData().map((context, ctxId) => (
         <Card key={ctxId} style={{ width: '100%' }}>

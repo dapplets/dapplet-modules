@@ -19,6 +19,20 @@ export class ButtonStarter implements IWidget<IButtonStarterState> {
     public state: IButtonStarterState;
     insPointName: string;
 
+    // ToDo 
+    public static widgetParamsDescription = {
+        label: {
+            description:'text label',
+            optional: true,
+            TYPE: 'string',
+        },
+        exec: {
+            description:'(ctx: any, me: IAvatarState) => void',
+            optional: true,
+            TYPE: 'function',
+        },
+    };
+
     public static contextInsPoints = {
         POST: 'STARTER',
     }

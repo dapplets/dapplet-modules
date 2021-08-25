@@ -3,21 +3,70 @@ import { IWidget } from 'dynamic-adapter.dapplet-base.eth';
 export interface IButtonState {
     img?: string;
     label?: string;
+    tooltip?: string;
+    theme?: 'DARK' | 'LIGHT';
     loading?: boolean;
     disabled?: boolean;
     hidden?: boolean;
-    tooltip?: string;
     exec?: (ctx: any, me: IButtonState) => void;
     init?: (ctx: any, me: IButtonState) => void;
     ctx?: any;
     insPointName?: string;
-    theme?: string;
 }
 
 export class Button implements IWidget<IButtonState> {
     public el: HTMLElement;
     public state: IButtonState;
     insPointName: string;
+
+    // ToDo 
+    public static widgetParamsDescription = {
+        img: {
+            description:'image as blob',
+            optional: true,
+            TYPE: 'string',
+        },
+        label: {
+            description:'text label',
+            optional: true,
+            TYPE: 'string',
+        },
+        tooltip: {
+            description: 'text tooltip',
+            optional: true,
+            TYPE: 'string',
+        },
+        theme: {
+            description: "'DARK' | 'LIGHT'",
+            optional: true,
+            TYPE: 'string',
+        },
+        loading: {
+            description: 'sets the loading icon instead of image',
+            optional: true,
+            TYPE: 'boolean',
+        },
+        disabled: {
+            description: 'makes the widget disabled',
+            optional: true,
+            TYPE: 'boolean',
+        },
+        hidden: {
+            description: 'hide widget',
+            optional: true,
+            TYPE: 'boolean',
+        },
+        exec: {
+            description: '(ctx: any, me: IAvatarState) => void',
+            optional: true,
+            TYPE: 'function',
+        },
+        init: {
+            description: '(ctx: any, me: IAvatarState) => void',
+            optional: true,
+            TYPE: 'function',
+        },
+    };
 
     public static contextInsPoints = {
         POST: 'SOUTH',

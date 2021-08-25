@@ -2,25 +2,69 @@ import { IWidget } from 'dynamic-adapter.dapplet-base.eth';
 
 export interface IAvatarBadgeState {
     img: string;
-    label: string;
-    loading: boolean;
-    disabled: boolean;
-    tooltip?: string;
-    exec: (ctx: any, me: IAvatarBadgeState) => void;
-    init: (tx: any, me: IAvatarBadgeState) => void;
-    ctx: any;
     horizontal: 'left' | 'right';
     vertical: 'top' | 'bottom';
-    hidden: boolean;
+    tooltip?: string;
+    hidden?: boolean;
+    theme?: 'DARK' | 'LIGHT'
+    //label?: string;
+    //loading?: boolean;
+    //disabled?: boolean;
+    exec?: (ctx: any, me: IAvatarBadgeState) => void;
+    init?: (tx: any, me: IAvatarBadgeState) => void;
+    ctx: any;
     username: string;
     insPointName: string;
-    theme?: 'DARK' | 'LIGHT'
 }
 
 export class AvatarBadge implements IWidget<IAvatarBadgeState> {
     public el: HTMLElement;
     public state: IAvatarBadgeState;
     insPointName: string;
+
+    // ToDo 
+    public static widgetParamsDescription = {
+        img: {
+            description:'image as blob',
+            optional: false,
+            TYPE: 'string',
+        },
+        horizontal: {
+            description: "'left' | 'right'",
+            optional: true,
+            TYPE: 'string',
+        },
+        vertical: {
+            description: "'top' | 'bottom'",
+            optional: true,
+            TYPE: 'string',
+        },
+        tooltip: {
+            description: 'text tooltip',
+            optional: true,
+            TYPE: 'string',
+        },
+        theme: {
+            description: "'DARK' | 'LIGHT'",
+            optional: true,
+            TYPE: 'string',
+        },
+        hidden: {
+            description: 'hide widget',
+            optional: true,
+            TYPE: 'boolean',
+        },
+        exec: {
+            description: '(ctx: any, me: IAvatarState) => void',
+            optional: true,
+            TYPE: 'function',
+        },
+        init: {
+            description: '(ctx: any, me: IAvatarState) => void',
+            optional: true,
+            TYPE: 'function',
+        },
+    };
 
     public static contextInsPoints = {
         POST: 'AVATAR_BADGE',

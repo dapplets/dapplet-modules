@@ -2,22 +2,56 @@ import { IWidget } from 'dynamic-adapter.dapplet-base.eth';
 
 export interface IAvatarState {
     img: string;
-    label: string;
-    loading: boolean;
-    disabled: boolean;
+    label?: string;
     tooltip?: string;
-    exec: (ctx: any, me: IAvatarState) => void;
-    init: (tx: any, me: IAvatarState) => void;
+    hidden?: boolean;
+    //loading?: boolean;
+    //disabled?: boolean;
+    exec?: (ctx: any, me: IAvatarState) => void;
+    init?: (ctx: any, me: IAvatarState) => void;
     ctx: any;
-    hidden: boolean;
-    username: string;
-    insPointName: string;
+    //username: string;
+    //insPointName: string;
 }
 
 export class Avatar implements IWidget<IAvatarState> {
     public el: HTMLElement;
     public state: IAvatarState;
     insPointName: string;
+
+    // ToDo 
+    public static widgetParamsDescription = {
+        img: {
+            description:'image as blob',
+            optional: false,
+            TYPE: 'string',
+        },
+        label: {
+            description:'text label',
+            optional: true,
+            TYPE: 'string',
+        },
+        tooltip: {
+            description:'text tooltip',
+            optional: true,
+            TYPE: 'string',
+        },
+        hidden: {
+            description:'hide widget',
+            optional: true,
+            TYPE: 'boolean',
+        },
+        exec: {
+            description:'(ctx: any, me: IAvatarState) => void',
+            optional: true,
+            TYPE: 'function',
+        },
+        init: {
+            description:'(ctx: any, me: IAvatarState) => void',
+            optional: true,
+            TYPE: 'function',
+        },
+    };
 
     public static contextInsPoints = {
         POST: 'AVATAR',

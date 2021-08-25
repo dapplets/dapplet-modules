@@ -12,10 +12,25 @@ import { Caption } from './caption';
 import Starter from './starter';
 import Slideout from 'slideout';
 
+const widgets = {
+  avatar: Avatar,
+  avatarBadge: AvatarBadge,
+  button: Button,
+  buttonStarter: ButtonStarter,
+  usernameBadge: UsernameBadge,
+  picture: Picture,
+  label: Label,
+  caption: Caption,
+}
+
 @Injectable
 export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureConfig> {
 
     private starter: Starter;
+
+    public getContextInsPoints = (widgetName) => widgets[widgetName].contextInsPoints;
+
+    public getWidgetParamsDescription = (widgetName) => widgets[widgetName].widgetParamsDescription;
 
     // ToDo: refactor it
     public exports = featureId => ({

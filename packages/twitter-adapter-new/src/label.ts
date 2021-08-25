@@ -1,23 +1,73 @@
 import { IWidget } from 'dynamic-adapter.dapplet-base.eth';
 
 export interface ILabelState {
-    text: string;
-    disabled: boolean;
-    exec: (ctx: any, me: ILabelState) => void;
-    init: (tx: any, me: ILabelState) => void;
-    ctx: any;
-    hidden: boolean;
-    insPointName: string;
-    img: string;
-    postfix?: string;
+    img?: string;
+    text?: string;
     tooltip?: string;
+    postfix?: string;
     basic?: boolean;
+    hidden?: boolean;
+    disabled?: boolean;
+    exec?: (ctx: any, me: ILabelState) => void;
+    init?: (tx: any, me: ILabelState) => void;
+    ctx: any;
+    insPointName: string;
 }
 
 export class Label implements IWidget<ILabelState> {
     public el: HTMLElement;
     public state: ILabelState;
     insPointName: string;
+
+    // ToDo 
+    public static widgetParamsDescription = {
+        img: {
+            description:'image as blob',
+            optional: true,
+            TYPE: 'string',
+        },
+        text: {
+            description:'text label',
+            optional: true,
+            TYPE: 'string',
+        },
+        tooltip: {
+            description: 'text tooltip',
+            optional: true,
+            TYPE: 'string',
+        },
+        postfix: {
+            description: 'adds a postfix to text, optional',
+            optional: true,
+            TYPE: 'string',
+        },
+        basic: {
+            description: 'By default there is a blue background. In case of true there is no background',
+            optional: true,
+            TYPE: 'boolean',
+            default: false,
+        },
+        disabled: {
+            description: 'makes the widget disabled',
+            optional: true,
+            TYPE: 'boolean',
+        },
+        hidden: {
+            description: 'hide widget',
+            optional: true,
+            TYPE: 'boolean',
+        },
+        exec: {
+            description: '(ctx: any, me: IAvatarState) => void',
+            optional: true,
+            TYPE: 'function',
+        },
+        init: {
+            description: '(ctx: any, me: IAvatarState) => void',
+            optional: true,
+            TYPE: 'function',
+        },
+    };
 
     public static contextInsPoints = {
         POST: 'USERNAME_LABEL',

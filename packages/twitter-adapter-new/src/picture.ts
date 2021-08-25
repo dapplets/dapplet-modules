@@ -2,11 +2,11 @@ import { IWidget } from 'dynamic-adapter.dapplet-base.eth';
 
 export interface IPictureState {
     img: string;
-    disabled: boolean;
-    hidden: boolean;
     tooltip?: string;
-    exec: (ctx: any, me: IPictureState) => void;
-    init: (ctx: any, me: IPictureState) => void;
+    hidden?: boolean;
+    disabled?: boolean;
+    exec?: (ctx: any, me: IPictureState) => void;
+    init?: (ctx: any, me: IPictureState) => void;
     ctx: any;
     insPointName: string;
 }
@@ -15,6 +15,40 @@ export class Picture implements IWidget<IPictureState> {
     public el: HTMLElement;
     public state: IPictureState;
     insPointName: string;
+
+    // ToDo 
+    public static widgetParamsDescription = {
+        img: {
+            description:'image as blob',
+            optional: false,
+            TYPE: 'string',
+        },
+        tooltip: {
+            description: 'text tooltip',
+            optional: true,
+            TYPE: 'string',
+        },
+        disabled: {
+            description: 'makes the widget disabled',
+            optional: true,
+            TYPE: 'boolean',
+        },
+        hidden: {
+            description: 'hide widget',
+            optional: true,
+            TYPE: 'boolean',
+        },
+        exec: {
+            description: '(ctx: any, me: IAvatarState) => void',
+            optional: true,
+            TYPE: 'function',
+        },
+        init: {
+            description: '(ctx: any, me: IAvatarState) => void',
+            optional: true,
+            TYPE: 'function',
+        },
+    };
 
     public static contextInsPoints = {
         POST: 'PICTURE',

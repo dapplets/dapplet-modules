@@ -2,16 +2,14 @@ import { IWidget } from 'dynamic-adapter.dapplet-base.eth';
 
 export interface IUsernameBadgeState {
     img: string;
-    label: string;
-    loading: boolean;
-    disabled: boolean;
     tooltip?: string;
-    exec: (ctx: any, me: IUsernameBadgeState) => void;
-    init: (tx: any, me: IUsernameBadgeState) => void;
+    hidden?: boolean;
+    //label: string;
+    //loading: boolean;
+    //disabled: boolean;
+    exec?: (ctx: any, me: IUsernameBadgeState) => void;
+    init?: (tx: any, me: IUsernameBadgeState) => void;
     ctx: any;
-    horizontal: 'left' | 'right';
-    vertical: 'top' | 'bottom';
-    hidden: boolean;
     username: string;
     insPointName: string;
 }
@@ -20,6 +18,35 @@ export class UsernameBadge implements IWidget<IUsernameBadgeState> {
     public el: HTMLElement;
     public state: IUsernameBadgeState;
     insPointName: string;
+
+    // ToDo 
+    public static widgetParamsDescription = {
+        img: {
+            description:'image as blob',
+            optional: false,
+            TYPE: 'string',
+        },
+        tooltip: {
+            description: 'text tooltip',
+            optional: true,
+            TYPE: 'string',
+        },
+        hidden: {
+            description: 'hide widget',
+            optional: true,
+            TYPE: 'boolean',
+        },
+        exec: {
+            description: '(ctx: any, me: IAvatarState) => void',
+            optional: true,
+            TYPE: 'function',
+        },
+        init: {
+            description: '(ctx: any, me: IAvatarState) => void',
+            optional: true,
+            TYPE: 'function',
+        },
+    };
 
     public static contextInsPoints = {
         POST: 'USERNAME_BADGE',
@@ -33,7 +60,7 @@ export class UsernameBadge implements IWidget<IUsernameBadgeState> {
         this._injectStyles();
         if (!this.el) this._createElement();
 
-        const { img, vertical, horizontal, hidden, tooltip } = this.state;
+        const { img, hidden, tooltip } = this.state;
 
         if (!hidden) {
             if (!this.el.firstChild) {

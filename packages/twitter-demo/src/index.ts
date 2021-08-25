@@ -1,5 +1,5 @@
 import { IFeature } from '@dapplets/dapplet-extension';
-import { T_TwitterFeatureConfig, ITwitterAdapter } from 'twitter-adapter.dapplet-base.eth';
+import { T_TwitterFeatureConfig } from 'twitter-adapter.dapplet-base.eth';
 import EXAMPLE_IMG from './icon19.png';
 import DARK from './icon19_dark.png';
 import LIGHT from './icon19_light.png';
@@ -10,12 +10,30 @@ import BOY from './uzumaki-v.jpeg';
 export default class TwitterDemo implements IFeature {
 
   @Inject('twitter-adapter.dapplet-base.eth')
-  public adapter: any;
+  public adapter: any
 
-  private _overlay: any;
-  private _config: any;
+  private _overlay: any
+  private _config: T_TwitterFeatureConfig
+  private _adapterDescription: {
+    contextsNames: string[]
+    widgets?: any
+  }
 
   async activate(): Promise<void> {
+
+    const contextsNames = Object.keys(this.adapter.config);
+    //console.log(contextsNames)
+
+    this._adapterDescription = { contextsNames, widgets: {} };
+  
+    Object.keys(this.adapter.exports).forEach((widgetName) => {
+      //console.log('widgetName:', widgetName);
+      const contextInsPoints = this.adapter.getContextInsPoints(widgetName);
+      //console.log(contextInsPoints);
+      const widgetParamsDescription = this.adapter.getWidgetParamsDescription(widgetName)
+      //console.log(widgetParamsDescription);
+      this._adapterDescription.widgets[widgetName] = { contextInsPoints, widgetParamsDescription };
+    })
 
     if (!this._overlay) {
       this._overlay = Core
@@ -29,112 +47,15 @@ export default class TwitterDemo implements IFeature {
 
     if (localStorage.getItem('tw-dd-open-force') === 'open') {
       localStorage.removeItem('tw-dd-open-force');
-      //(() => this.openOverlay())();
       this.openOverlay();
     }
 
     const { avatar, avatarBadge, usernameBadge, label, button, picture, caption } = this.adapter.exports;
 
-    /*const config2 = {
-      POST: async (ctx) => [
-        avatar({
-          initial: 'DEFAULT',
-          DEFAULT: {
-            img: BOY,
-          },
-        }),
-        usernameBadge({
-          initial: 'DEFAULT',
-          DEFAULT: {
-            img: { DARK, LIGHT },
-            exec: () => {
-              console.log('ctx = ', ctx);
-              this.openOverlay();
-            },
-          },
-        }),
-        avatarBadge({
-          initial: 'DEFAULT',
-          DEFAULT: {
-            vertical: 'bottom',
-            horizontal: 'right',
-            img: { DARK, LIGHT },
-            exec: () => {
-              console.log('ctx = ', ctx);
-              this.openOverlay();
-            },
-          },
-        }),
-        label({
-          initial: 'DEFAULT',
-          DEFAULT: {
-            basic: true,
-            img: EXAMPLE_IMG,
-            text: 'label',
-            exec: () => {
-              console.log('ctx = ', ctx);
-              this.openOverlay();
-            },
-          },
-        }),
-      ],
-      PROFILE: async (ctx) => [
-        avatar({
-          initial: 'DEFAULT',
-          DEFAULT: {
-            img: BOY,
-            exec: () => {
-              console.log('ctx = ', ctx);
-              this.openOverlay();
-            },
-          },
-        }),
-        usernameBadge({
-          initial: 'DEFAULT',
-          DEFAULT: {
-            img: BIG_IMG,
-            exec: () => {
-              console.log('ctx = ', ctx);
-              this.openOverlay();
-            },
-          },
-        }),
-        avatarBadge({
-          initial: 'DEFAULT',
-          DEFAULT: {
-            vertical: 'bottom',
-            horizontal: 'right',
-            img: BIG_IMG,
-            exec: () => {
-              console.log('ctx = ', ctx);
-              this.openOverlay();
-            },
-          },
-        }),
-        button({
-          initial: 'DEFAULT',
-          DEFAULT: {
-            img: BIG_IMG,
-            label: 'button#1',
-            exec: () => {
-              console.log('ctx = ', ctx);
-              this.openOverlay();
-            },
-          },
-        }),
-        button({
-          initial: 'DEFAULT',
-          DEFAULT: {
-            img: BIG_IMG,
-            label: 'button#2',
-            exec: () => {
-              console.log('ctx = ', ctx);
-              this.openOverlay();
-            },
-          },
-        }),
-      ],
-    };*/
+    /*const config = contextsNames.reduce((acc, value) => ({
+      ...acc,
+      [value]: async (ctx) => '',
+    }), {});*/
 
     this._config = {
       POST: async (ctx) => [
@@ -195,15 +116,9 @@ export default class TwitterDemo implements IFeature {
           initial: 'DEFAULT',
           DEFAULT: {
             img: BOY,
-          },
-        }),
-        usernameBadge({
-          initial: 'DEFAULT',
-          DEFAULT: {
-            img: { DARK, LIGHT },
             exec: () => {
               console.log('ctx = ', ctx);
-              this.openOverlay();
+              this.openOverlay({ index: '0/0', ctx });
             },
           },
         }),
@@ -215,7 +130,17 @@ export default class TwitterDemo implements IFeature {
             img: { DARK, LIGHT },
             exec: () => {
               console.log('ctx = ', ctx);
-              this.openOverlay();
+              this.openOverlay({ index: '0/1', ctx });
+            },
+          },
+        }),
+        usernameBadge({
+          initial: 'DEFAULT',
+          DEFAULT: {
+            img: { DARK, LIGHT },
+            exec: () => {
+              console.log('ctx = ', ctx);
+              this.openOverlay({ index: '0/2', ctx });
             },
           },
         }),
@@ -226,6 +151,8 @@ export default class TwitterDemo implements IFeature {
             img: EXAMPLE_IMG,
             exec: () => {
               $(ctx, 'pic').hidden = !$(ctx, 'pic').hidden;
+              console.log('ctx = ', ctx);
+              this.openOverlay({ index: '0/3', ctx });
             },
           },
         }),
@@ -237,7 +164,7 @@ export default class TwitterDemo implements IFeature {
             text: 'label',
             exec: () => {
               console.log('ctx = ', ctx);
-              this.openOverlay();
+              this.openOverlay({ index: '0/4', ctx });
             },
           },
         }),
@@ -246,6 +173,10 @@ export default class TwitterDemo implements IFeature {
           initial: 'DEFAULT',
           DEFAULT: {
             img: BIG_IMG,
+            exec: () => {
+              console.log('ctx = ', ctx);
+              this.openOverlay({ index: '0/5', ctx });
+            },
           },
         }),
         caption({
@@ -255,7 +186,7 @@ export default class TwitterDemo implements IFeature {
             text: 'caption',
             exec: () => {
               console.log('ctx = ', ctx);
-              this.openOverlay();
+              this.openOverlay({ index: '0/6', ctx });
             },
           },
         }),
@@ -266,17 +197,8 @@ export default class TwitterDemo implements IFeature {
           DEFAULT: {
             img: BOY,
             exec: () => {
-              this.openOverlay({ index: '0/0' });
-            },
-          },
-        }),
-        usernameBadge({
-          initial: 'DEFAULT',
-          DEFAULT: {
-            img: BIG_IMG,
-            exec: () => {
               console.log('ctx = ', ctx);
-              this.openOverlay();
+              this.openOverlay({ index: '1/0', ctx });
             },
           },
         }),
@@ -288,7 +210,17 @@ export default class TwitterDemo implements IFeature {
             img: BIG_IMG,
             exec: () => {
               console.log('ctx = ', ctx);
-              this.openOverlay();
+              this.openOverlay({ index: '1/1', ctx });
+            },
+          },
+        }),
+        usernameBadge({
+          initial: 'DEFAULT',
+          DEFAULT: {
+            img: BIG_IMG,
+            exec: () => {
+              console.log('ctx = ', ctx);
+              this.openOverlay({ index: '1/2', ctx });
             },
           },
         }),
@@ -298,21 +230,8 @@ export default class TwitterDemo implements IFeature {
             img: BIG_IMG,
             label: 'button#1',
             exec: () => {
-              console.log('this.config = ', this._config);
-              //console.log('Reset to config2')
-              //this.adapter.resetConfig(this._config, config2);
-            },
-          },
-        }),
-        button({
-          initial: 'DEFAULT',
-          DEFAULT: {
-            img: BIG_IMG,
-            label: 'button#2',
-            exec: () => {
-              console.log('this.config = ', this._config);
-              //console.log('Reset to config2')
-              //this.adapter.resetConfig(this._config, config2);
+              console.log('ctx = ', ctx);
+              this.openOverlay({ index: '1/3', ctx });
             },
           },
         }),
@@ -324,7 +243,7 @@ export default class TwitterDemo implements IFeature {
             img: BIG_IMG,
             exec: () => {
               console.log('ctx = ', ctx);
-              this.openOverlay({ index: '2/0' });
+              this.openOverlay({ index: '2/0', ctx });
             },
           },
         }),
@@ -336,7 +255,7 @@ export default class TwitterDemo implements IFeature {
             img: BOY,
             exec: () => {
               console.log('ctx = ', ctx);
-              this.openOverlay();
+              this.openOverlay({ index: '3/0', ctx });
             },
           },
         }),
@@ -346,7 +265,7 @@ export default class TwitterDemo implements IFeature {
             img: BIG_IMG,
             exec: () => {
               console.log('ctx = ', ctx);
-              this.openOverlay();
+              this.openOverlay({ index: '3/1', ctx });
             },
           },
         }),
@@ -356,6 +275,6 @@ export default class TwitterDemo implements IFeature {
   }
 
   openOverlay(props?: any): void {
-    this._overlay.send('data', props);
+    this._overlay.send('data', { ...props, adapterDescription: this._adapterDescription });
   }
 }
