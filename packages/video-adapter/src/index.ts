@@ -14,7 +14,6 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
 
     private _observers = new WeakMap<any, ResizeObserver>();
     private _styleObservers = new WeakMap<any, MutationObserver>();
-    private _durationObservers = new WeakSet<any>();
 
     constructor(
         @Inject('dynamic-adapter.dapplet-base.eth')
@@ -32,7 +31,6 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
 
     public config = {
         VIDEO: {
-            adapterName: 'VideoAdapter',
             containerSelector: 'html',
             contextSelector: 'video',
             insPoints: {
@@ -46,21 +44,6 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
                 if (!this._observers.has(n)) {
                     const observer = new ResizeObserver(() => {
                         n.dispatchEvent(new CustomEvent('resize'));
-                        /*console.log('entries:', entries)
-                          for (const entry of entries) {
-                              if (entry.contentBoxSize) {
-                                  const contentBoxSize = Array.isArray(entry.contentBoxSize) ? entry.contentBoxSize[0] : entry.contentBoxSize;
-                                  n.dispatchEvent(new CustomEvent('resize', { detail: {
-                                      width: contentBoxSize.inlineSize,
-                                      height: contentBoxSize.blockSize
-                                  }}));
-                              } else {
-                                  n.dispatchEvent(new CustomEvent('resize', { detail: {
-                                      width: entry.contentRect.width,
-                                      height: entry.contentRect.height
-                                  }}));
-                              }
-                          }*/
                     });
                     observer.observe(n);
                     this._observers.set(n, observer);
@@ -77,15 +60,11 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
                     this._styleObservers.set(n, mutationObserver);
                 }
 
-                if (!this._durationObservers.has(n)) {
-                    n.addEventListener('loadedmetadata', () => {
-                        this.dynamicAdapter.configure(this.config);
-                    });
-                    this._durationObservers.add(n);
-                }
+                if (!n.src || n.src === '') return;
+                if (Number.isNaN(n.duration)) return;
 
                 const obj = {
-                    id: n.src,
+                    id: n.src + '/' + n.duration,
                     pause: () => n.pause(),
                     play: () => n.play(),
                     setCurrentTime: (time: number) => n.currentTime = time,

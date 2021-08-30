@@ -8,7 +8,6 @@ interface IConfig {
 }
 
 export class WidgetBuilder {
-    adapterName: string;
     contextName: string;
     containerSelector: string;
     contextSelector: string;
@@ -63,13 +62,17 @@ export class WidgetBuilder {
                 const newContext = this._tryParseContext(contextNode, parentContext, widgetBuilders);
 
                 if (!newContext) {
+                    const oldId = this.contexts.get(contextNode).parsed.id;
                     this.contexts.delete(contextNode);
+                    this.executedNodes.delete(contextNode);
+                    this.widgetsByContextId.get(oldId)?.forEach(x => x.unmount());
                     continue;
                 }
 
                 if (!this._compareObjects(context.parsed, newContext)) {
 
                     if (newContext.id !== context.parsed.id) {
+                        // ToDo: think about a neccessary of calling this.contexts.delete(contextNode)
                         this.executedNodes.delete(contextNode);
                         this.widgetsByContextId.get(context.parsed.id)?.forEach(x => x.unmount());
                     }
