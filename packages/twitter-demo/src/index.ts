@@ -1,13 +1,11 @@
 import { IFeature } from '@dapplets/dapplet-extension';
 import { T_TwitterFeatureConfig } from 'twitter-adapter.dapplet-base.eth';
-import EXAMPLE_IMG from './icon19.png';
-import DARK from './icon19_dark.png';
-import LIGHT from './icon19_light.png';
-import BIG_IMG from './icon64.png';
-import BOY from './uzumaki-v.jpeg';
+import MAIN_IMG from './Red_Icon2.svg';
+import BLACK_IMG from './Black_Icon2.svg';
+import WHITE_IMG from './White_Icon2.svg';
 
 @Injectable
-export default class TwitterDemo implements IFeature {
+export default class DemoDapplet implements IFeature {
 
   @Inject('twitter-adapter.dapplet-base.eth')
   public adapter: any
@@ -65,7 +63,7 @@ export default class TwitterDemo implements IFeature {
               initial: 'DEFAULT',
               DEFAULT: {
                 label: 'repost',
-                img: EXAMPLE_IMG,
+                img: MAIN_IMG,
                 exec: () => {
                   console.log('ctx = ', ctx)
                   console.log('repostCtx = ', repostCtx)
@@ -78,7 +76,7 @@ export default class TwitterDemo implements IFeature {
               initial: 'DEFAULT',
               DEFAULT: {
                 label: 'repost#2',
-                img: EXAMPLE_IMG,
+                img: MAIN_IMG,
                 exec: () => {
                   console.log('ctx = ', ctx)
                   console.log('repostCtx = ', repostCtx)
@@ -115,7 +113,7 @@ export default class TwitterDemo implements IFeature {
         avatar({
           initial: 'DEFAULT',
           DEFAULT: {
-            img: BOY,
+            img: MAIN_IMG,
             exec: () => {
               console.log('ctx = ', ctx);
               this.openOverlay({ index: '0/0', ctx });
@@ -127,7 +125,7 @@ export default class TwitterDemo implements IFeature {
           DEFAULT: {
             vertical: 'bottom',
             horizontal: 'right',
-            img: { DARK, LIGHT },
+            img: { DARK: WHITE_IMG, LIGHT: BLACK_IMG },
             exec: () => {
               console.log('ctx = ', ctx);
               this.openOverlay({ index: '0/1', ctx });
@@ -137,7 +135,7 @@ export default class TwitterDemo implements IFeature {
         usernameBadge({
           initial: 'DEFAULT',
           DEFAULT: {
-            img: { DARK, LIGHT },
+            img: { DARK: WHITE_IMG, LIGHT:BLACK_IMG  },
             exec: () => {
               console.log('ctx = ', ctx);
               this.openOverlay({ index: '0/2', ctx });
@@ -148,7 +146,7 @@ export default class TwitterDemo implements IFeature {
           initial: 'DEFAULT',
           DEFAULT: {
             label: 'button',
-            img: EXAMPLE_IMG,
+            img: MAIN_IMG,
             exec: () => {
               $(ctx, 'pic').hidden = !$(ctx, 'pic').hidden;
               console.log('ctx = ', ctx);
@@ -160,7 +158,7 @@ export default class TwitterDemo implements IFeature {
           initial: 'DEFAULT',
           DEFAULT: {
             basic: true,
-            img: EXAMPLE_IMG,
+            img: MAIN_IMG,
             text: 'label',
             exec: () => {
               console.log('ctx = ', ctx);
@@ -172,7 +170,7 @@ export default class TwitterDemo implements IFeature {
           id: 'pic',
           initial: 'DEFAULT',
           DEFAULT: {
-            img: BIG_IMG,
+            img: MAIN_IMG,
             exec: () => {
               console.log('ctx = ', ctx);
               this.openOverlay({ index: '0/5', ctx });
@@ -182,7 +180,7 @@ export default class TwitterDemo implements IFeature {
         caption({
           initial: 'DEFAULT',
           DEFAULT: {
-            img: EXAMPLE_IMG,
+            img: MAIN_IMG,
             text: 'caption',
             exec: () => {
               console.log('ctx = ', ctx);
@@ -195,7 +193,7 @@ export default class TwitterDemo implements IFeature {
         avatar({
           initial: 'DEFAULT',
           DEFAULT: {
-            img: BOY,
+            img: MAIN_IMG,
             exec: () => {
               console.log('ctx = ', ctx);
               this.openOverlay({ index: '1/0', ctx });
@@ -207,7 +205,7 @@ export default class TwitterDemo implements IFeature {
           DEFAULT: {
             vertical: 'bottom',
             horizontal: 'right',
-            img: BIG_IMG,
+            img: MAIN_IMG,
             exec: () => {
               console.log('ctx = ', ctx);
               this.openOverlay({ index: '1/1', ctx });
@@ -217,7 +215,7 @@ export default class TwitterDemo implements IFeature {
         usernameBadge({
           initial: 'DEFAULT',
           DEFAULT: {
-            img: BIG_IMG,
+            img: MAIN_IMG,
             exec: () => {
               console.log('ctx = ', ctx);
               this.openOverlay({ index: '1/2', ctx });
@@ -227,7 +225,7 @@ export default class TwitterDemo implements IFeature {
         button({
           initial: 'DEFAULT',
           DEFAULT: {
-            img: BIG_IMG,
+            img: MAIN_IMG,
             label: 'button#1',
             exec: () => {
               console.log('ctx = ', ctx);
@@ -240,7 +238,7 @@ export default class TwitterDemo implements IFeature {
         usernameBadge({
           initial: 'DEFAULT',
           DEFAULT: {
-            img: BIG_IMG,
+            img: MAIN_IMG,
             exec: () => {
               console.log('ctx = ', ctx);
               this.openOverlay({ index: '2/0', ctx });
@@ -252,7 +250,7 @@ export default class TwitterDemo implements IFeature {
         avatar({
           initial: 'DEFAULT',
           DEFAULT: {
-            img: BOY,
+            img: MAIN_IMG,
             exec: () => {
               console.log('ctx = ', ctx);
               this.openOverlay({ index: '3/0', ctx });
@@ -262,7 +260,7 @@ export default class TwitterDemo implements IFeature {
         usernameBadge({
           initial: 'DEFAULT',
           DEFAULT: {
-            img: BIG_IMG,
+            img: MAIN_IMG,
             exec: () => {
               console.log('ctx = ', ctx);
               this.openOverlay({ index: '3/1', ctx });

@@ -3,10 +3,10 @@
     "branch": "default",
     "version": { "$ref": "package.json#/version" },
     "type": "FEATURE",
-    "title": "Twitter Adapter Demo Dapplet",
+    "title": "Demo Dapplet",
     "description": { "$ref": "package.json#/description" },
     "main": { "$ref": "package.json#/main" },
-    "icon": "src/icon64.png",
+    "icon": "src/Red_Icon3.png",
     "contextIds": ["twitter-adapter.dapplet-base.eth"],
     "dependencies": {
         "twitter-adapter.dapplet-base.eth": "0.9.0"

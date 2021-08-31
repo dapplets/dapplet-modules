@@ -1,7 +1,7 @@
 {
   "name": "twitter-demo.dapplet-base.eth",
   "version": "0.1.1",
-  "description": "Demonstration of the capabilities of the Twitter adapter",
+  "description": "Demonstration of adapters capabilities",
   "main": "build/index.js",
   "scripts": {
     "build": "webpack --config webpack.dev.js",

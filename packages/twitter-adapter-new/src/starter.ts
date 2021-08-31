@@ -1,5 +1,5 @@
 import { T_TwitterFeatureConfig } from 'twitter-adapter.dapplet-base.eth';
-import ICON_DAPPLET from './dapplet.png';
+import ICON_DAPPLET from './Red_Icon1.svg';
 import TwitterAdapter from '.';
 
 declare var chrome;
