@@ -59,11 +59,12 @@ export class Picture implements IWidget<IPictureState> {
 
         const { img, disabled, hidden, tooltip } = this.state;
 
-        if (hidden) {
-            this.el.innerHTML = '';
-        } else {
-            const htmlString = `<img src="${img}" />`
-            this.el.innerHTML = htmlString;
+        this.el.innerHTML = '';
+        if (!hidden) {
+            const image = document.createElement('img');
+            image.style.width = '100%';
+            image.src = img;
+            this.el.append(image);
         }
         
         this.el.title = tooltip ?? '';
@@ -76,11 +77,14 @@ export class Picture implements IWidget<IPictureState> {
     private _createElement() {
         this.el = document.createElement('div');
         this.el.addEventListener("click", e => {
+            e.preventDefault();
+            e.stopPropagation();
             if (!this.state.disabled) {
                 this.state.exec?.(this.state.ctx, this.state);
             }
         });
         this.el.style.position = 'absolute';
+        this.el.style.maxWidth = '25%';
         this.el.style.bottom = '15px';
         this.el.style.right = '15px';
         this.el.style.zIndex = '3';
