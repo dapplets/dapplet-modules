@@ -17,7 +17,7 @@ export default class Starter {
     public config: any;
     public widgets: IStarter[] = [];
     private _buttonId = 0;
-    private _overlay = Core.overlay({ url: chrome.extension.getURL('starter.html'), title: 'Starter' });
+    private _overlay = (Core.starterOverlay) ? Core.starterOverlay() : Core.overlay({ url: chrome.extension.getURL('starter.html'), title: 'Starter' }); // ToDo: utilize starterOverlay
 
     constructor(public adapter: TwitterAdapter) {
         const { buttonStarter } = this.adapter.exports("twitter-adapter.dapplet-base.eth");
