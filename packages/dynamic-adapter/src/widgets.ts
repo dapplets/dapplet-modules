@@ -13,7 +13,7 @@ export class WidgetBuilder {
     contextSelector: string;
     insPoints: { [key: string]: any };
     events: { [key: string]: (node: any, ctx: any, emitter: Function, on?: Function) => void };
-    contextBuilder: (node: any) => any;
+    contextBuilder: (node: any, parent: any) => any;
     observer: MutationObserver = null;
     eventHandler: (event: string, args: any[], target: any) => void = null;
     theme: undefined | (() => string) = null;
@@ -220,10 +220,12 @@ export class WidgetBuilder {
         return true;
     }
 
-    private _tryParseContext(el: Element, parent: any, widgetBuilders: WidgetBuilder[]) {
+    private _tryParseContext(el: Element, _parent: any, widgetBuilders: WidgetBuilder[]) {
         try {
-            const ctx = this.contextBuilder(el);
-            ctx.parent = this._getParentContextByElement(el, widgetBuilders) ?? parent;
+            const parent = this._getParentContextByElement(el, widgetBuilders) ?? _parent;
+            const ctx = this.contextBuilder(el, parent);
+            if (!ctx) return null;
+            ctx.parent = parent;
             return ctx;
         } catch (err) {
             // ToDo: what need to do in this cases?

@@ -162,6 +162,7 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
             if (node.parentElement?.getElementsByClassName(clazz).length > 0) return;
 
             const context = builder.contexts.get(contextNode);
+            if (!context) return;
 
             // widget state restoring
             const state = (() => {
