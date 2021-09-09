@@ -38,7 +38,9 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
                 STICKER: { insert: 'begin' },
                 LABEL: { insert: 'begin' },
             },
-            contextBuilder: (n: HTMLVideoElement) => {
+            contextBuilder: (n: HTMLVideoElement, parent: any) => {
+
+                if (!n) return;
 
                 // ToDo: call dispatchEvent of n
                 if (!this._observers.has(n)) {
@@ -63,8 +65,14 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
                 if (!n.src || n.src === '') return;
                 if (Number.isNaN(n.duration)) return;
 
+                const isUnstableId = n.src.indexOf('blob:') === 0;
+                if (isUnstableId) {
+                    Core.contextStarted(['id'], document.location.hostname);
+                    if (!parent) return;
+                }
+
                 const obj = {
-                    id: n.src + '/' + n.duration,
+                    id: (isUnstableId) ? parent.id : n.src,
                     pause: () => n.pause(),
                     play: () => n.play(),
                     setCurrentTime: (time: number) => n.currentTime = time,
