@@ -1,13 +1,28 @@
 {
-    "name": { "$ref": "package.json#/name" },
-    "branch": "default",
-    "version": { "$ref": "package.json#/version" },
-    "type": "ADAPTER",
-    "title": "TwitterAdapter",
-    "description": { "$ref": "package.json#/description" },
-    "main": { "$ref": "package.json#/main" },
-    "contextIds": ["twitter.com", "www.twitter.com", "mobile.twitter.com"],
-    "interfaces": {
-      "identity-adapter.dapplet-base.eth": "0.3.0"
-    }
+  "name": {
+    "$ref": "package.json#/name"
+  },
+  "branch": "default",
+  "version": {
+    "$ref": "package.json#/version"
+  },
+  "type": "ADAPTER",
+  "title": "TwitterAdapter",
+  "description": {
+    "$ref": "package.json#/description"
+  },
+  "main": {
+    "$ref": "package.json#/main"
+  },
+  "contextIds": [
+    "twitter.com",
+    "www.twitter.com",
+    "mobile.twitter.com",
+    "twitter.com/id",
+    "www.twitter.com/id",
+    "mobile.twitter.com/id"
+  ],
+  "interfaces": {
+    "identity-adapter.dapplet-base.eth": "0.3.0"
+  }
 }
