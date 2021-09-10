@@ -27,9 +27,9 @@ export class ButtonStarter implements IWidget<IButtonStarterState> {
             TYPE: 'string',
         },
         exec: {
-            description:'(ctx: any, me: IAvatarState) => void',
+            description:'action on click',
             optional: true,
-            TYPE: 'function',
+            TYPE: '(ctx: any, me: IButtonStarterState) => void',
         },
     };
 

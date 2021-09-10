@@ -52,19 +52,19 @@ export class Button implements IWidget<IButtonState> {
             TYPE: 'boolean',
         },
         hidden: {
-            description: 'hide widget',
+            description: 'hides the widget',
             optional: true,
             TYPE: 'boolean',
         },
         exec: {
-            description: '(ctx: any, me: IAvatarState) => void',
+            description:'action on click',
             optional: true,
-            TYPE: 'function',
+            TYPE: '(ctx: any, me: IButtonState) => void',
         },
         init: {
-            description: '(ctx: any, me: IAvatarState) => void',
+            description:'action through initialisation',
             optional: true,
-            TYPE: 'function',
+            TYPE: '(ctx: any, me: IButtonState) => void',
         },
     };
 

@@ -30,14 +30,14 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
             TYPE: 'string',
         },
         horizontal: {
-            description: "'left' | 'right'",
+            description: 'sets a horizontal position',
             optional: true,
-            TYPE: 'string',
+            TYPE: "'left' | 'right'",
         },
         vertical: {
-            description: "'top' | 'bottom'",
+            description: 'sets a vertical position',
             optional: true,
-            TYPE: 'string',
+            TYPE: "'top' | 'bottom'",
         },
         tooltip: {
             description: 'text tooltip',
@@ -50,19 +50,19 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
             TYPE: 'string',
         },
         hidden: {
-            description: 'hide widget',
+            description: 'hides the widget',
             optional: true,
             TYPE: 'boolean',
         },
         exec: {
-            description: '(ctx: any, me: IAvatarState) => void',
+            description: 'action on click',
             optional: true,
-            TYPE: 'function',
+            TYPE: '(ctx: any, me: IAvatarBadgeState) => void',
         },
         init: {
-            description: '(ctx: any, me: IAvatarState) => void',
+            description: 'action through initialisation',
             optional: true,
-            TYPE: 'function',
+            TYPE: '(ctx: any, me: IAvatarBadgeState) => void',
         },
     };
 
