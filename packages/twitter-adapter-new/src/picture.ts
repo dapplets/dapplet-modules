@@ -85,7 +85,7 @@ export class Picture implements IWidget<IPictureState> {
         });
         this.el.style.position = 'absolute';
         this.el.style.maxWidth = '25%';
-        this.el.style.bottom = '15px';
+        this.el.style.bottom = '3px';
         this.el.style.right = '15px';
         this.el.style.zIndex = '3';
         this.mount();
