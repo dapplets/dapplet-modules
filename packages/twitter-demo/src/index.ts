@@ -148,7 +148,6 @@ export default class DemoDapplet implements IFeature {
             label: 'button',
             img: MAIN_IMG,
             exec: () => {
-              $(ctx, 'pic').hidden = !$(ctx, 'pic').hidden;
               console.log('ctx = ', ctx);
               this.openOverlay({ index: '0/3', ctx });
             },
@@ -167,7 +166,6 @@ export default class DemoDapplet implements IFeature {
           },
         }),
         picture({
-          id: 'pic',
           initial: 'DEFAULT',
           DEFAULT: {
             img: MAIN_IMG,
@@ -269,7 +267,7 @@ export default class DemoDapplet implements IFeature {
         }),
       ],
     };
-    const { $ } = this.adapter.attachConfig(this._config);
+    this.adapter.attachConfig(this._config);
   }
 
   openOverlay(props?: any): void {
