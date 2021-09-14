@@ -56,7 +56,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                     selector: "" //ToDo
                 },
                 PICTURE: {
-                    selector: "div[data-testid=tweet] > div:nth-child(2) > div:nth-child(2)",
+                    selector: "div > div",
                     insert: 'inside'
                 },
                 AVATAR: {
