@@ -100,7 +100,6 @@ export class Avatar implements IWidget<IAvatarState> {
             return false;
         });
         this.el.classList.add('dapplet-widget-badge');
-        this.mount();
         this.state.init?.(this.state.ctx, this.state);
     }
 }

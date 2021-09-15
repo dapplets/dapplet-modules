@@ -60,8 +60,8 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                     insert: 'inside'
                 },
                 AVATAR: {
-                    selector: "div.css-1dbjc4n.r-1adg3ll.r-1udh08x div.css-1dbjc4n.r-1niwhzg.r-vvn4in.r-u6sd8q.r-4gszlv.r-1p0dtai.r-1pi2tsx.r-1d2f490.r-u8s1d.r-zchlnj.r-ipm5af.r-13qz1uu.r-1wyyakw",
-                    insert: 'end',
+                    selector: ".css-1dbjc4n.r-1awozwy.r-1hwvwag.r-18kxxzh.r-1b7u577 > div:first-child",
+                    insert: 'inside',
                 },
                 AVATAR_BADGE: {
                     selector: "div.css-1dbjc4n.r-18kxxzh.r-1wbh5a2.r-13qz1uu > *:last-child"
