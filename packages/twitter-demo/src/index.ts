@@ -58,11 +58,11 @@ export default class DemoDapplet implements IFeature {
     this._config = {
       POST: async (ctx) => [
         {
-          QUOTE_POST: async (repostCtx) => [
+          QUOTE_POST: async (repostCtx) =>
             button({
               initial: 'DEFAULT',
               DEFAULT: {
-                label: 'repost',
+                label: 'quote post',
                 img: MAIN_IMG,
                 exec: () => {
                   console.log('ctx = ', ctx)
@@ -72,20 +72,6 @@ export default class DemoDapplet implements IFeature {
                 },
               },
             }),
-            button({
-              initial: 'DEFAULT',
-              DEFAULT: {
-                label: 'repost#2',
-                img: MAIN_IMG,
-                exec: () => {
-                  console.log('ctx = ', ctx)
-                  console.log('repostCtx = ', repostCtx)
-                  console.log('parent ctx = ', repostCtx.parent)
-                  this.openOverlay();
-                },
-              },
-            }),
-          ]
         },
         [
           {
