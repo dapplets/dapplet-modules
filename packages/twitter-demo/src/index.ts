@@ -1,8 +1,8 @@
 import { IFeature } from '@dapplets/dapplet-extension';
 import { T_TwitterFeatureConfig } from 'twitter-adapter.dapplet-base.eth';
-import MAIN_IMG from './Red_Icon2.svg';
-import BLACK_IMG from './Black_Icon2.svg';
-import WHITE_IMG from './White_Icon2.svg';
+import MAIN_IMG from './Red_Icon3.svg';
+import BLACK_IMG from './Black_Icon3.svg';
+import WHITE_IMG from './White_Icon3.svg';
 
 @Injectable
 export default class DemoDapplet implements IFeature {
