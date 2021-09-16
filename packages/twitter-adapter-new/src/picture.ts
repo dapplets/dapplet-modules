@@ -34,19 +34,19 @@ export class Picture implements IWidget<IPictureState> {
             TYPE: 'boolean',
         },
         hidden: {
-            description: 'hide widget',
+            description: 'hides the widget',
             optional: true,
             TYPE: 'boolean',
         },
         exec: {
-            description: '(ctx: any, me: IAvatarState) => void',
+            description:'action on click',
             optional: true,
-            TYPE: 'function',
+            TYPE: '(ctx: any, me: IPictureState) => void',
         },
         init: {
-            description: '(ctx: any, me: IAvatarState) => void',
+            description:'action through initialisation',
             optional: true,
-            TYPE: 'function',
+            TYPE: '(ctx: any, me: IPictureState) => void',
         },
     };
 
@@ -85,7 +85,7 @@ export class Picture implements IWidget<IPictureState> {
         });
         this.el.style.position = 'absolute';
         this.el.style.maxWidth = '25%';
-        this.el.style.bottom = '15px';
+        this.el.style.bottom = '3px';
         this.el.style.right = '15px';
         this.el.style.zIndex = '3';
         this.mount();

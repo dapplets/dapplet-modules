@@ -37,19 +37,19 @@ export class Avatar implements IWidget<IAvatarState> {
             TYPE: 'string',
         },
         hidden: {
-            description:'hide widget',
+            description:'hides the widget',
             optional: true,
             TYPE: 'boolean',
         },
         exec: {
-            description:'(ctx: any, me: IAvatarState) => void',
+            description:'action on click',
             optional: true,
-            TYPE: 'function',
+            TYPE: '(ctx: any, me: IAvatarState) => void',
         },
         init: {
-            description:'(ctx: any, me: IAvatarState) => void',
+            description:'action through initialisation',
             optional: true,
-            TYPE: 'function',
+            TYPE: '(ctx: any, me: IAvatarState) => void',
         },
     };
 
@@ -100,7 +100,6 @@ export class Avatar implements IWidget<IAvatarState> {
             return false;
         });
         this.el.classList.add('dapplet-widget-badge');
-        this.mount();
         this.state.init?.(this.state.ctx, this.state);
     }
 }

@@ -1,8 +1,8 @@
 import { IFeature } from '@dapplets/dapplet-extension';
 import { T_TwitterFeatureConfig } from 'twitter-adapter.dapplet-base.eth';
-import MAIN_IMG from './Red_Icon2.svg';
-import BLACK_IMG from './Black_Icon2.svg';
-import WHITE_IMG from './White_Icon2.svg';
+import MAIN_IMG from './Red_Icon3.svg';
+import BLACK_IMG from './Black_Icon3.svg';
+import WHITE_IMG from './White_Icon3.svg';
 
 @Injectable
 export default class DemoDapplet implements IFeature {
@@ -58,11 +58,11 @@ export default class DemoDapplet implements IFeature {
     this._config = {
       POST: async (ctx) => [
         {
-          QUOTE_POST: async (repostCtx) => [
+          QUOTE_POST: async (repostCtx) =>
             button({
               initial: 'DEFAULT',
               DEFAULT: {
-                label: 'repost',
+                label: 'quote post',
                 img: MAIN_IMG,
                 exec: () => {
                   console.log('ctx = ', ctx)
@@ -72,20 +72,6 @@ export default class DemoDapplet implements IFeature {
                 },
               },
             }),
-            button({
-              initial: 'DEFAULT',
-              DEFAULT: {
-                label: 'repost#2',
-                img: MAIN_IMG,
-                exec: () => {
-                  console.log('ctx = ', ctx)
-                  console.log('repostCtx = ', repostCtx)
-                  console.log('parent ctx = ', repostCtx.parent)
-                  this.openOverlay();
-                },
-              },
-            }),
-          ]
         },
         [
           {
@@ -148,7 +134,6 @@ export default class DemoDapplet implements IFeature {
             label: 'button',
             img: MAIN_IMG,
             exec: () => {
-              $(ctx, 'pic').hidden = !$(ctx, 'pic').hidden;
               console.log('ctx = ', ctx);
               this.openOverlay({ index: '0/3', ctx });
             },
@@ -167,7 +152,6 @@ export default class DemoDapplet implements IFeature {
           },
         }),
         picture({
-          id: 'pic',
           initial: 'DEFAULT',
           DEFAULT: {
             img: MAIN_IMG,
@@ -269,7 +253,7 @@ export default class DemoDapplet implements IFeature {
         }),
       ],
     };
-    const { $ } = this.adapter.attachConfig(this._config);
+    this.adapter.attachConfig(this._config);
   }
 
   openOverlay(props?: any): void {

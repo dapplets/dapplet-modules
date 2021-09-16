@@ -53,19 +53,19 @@ export class Label implements IWidget<ILabelState> {
             TYPE: 'boolean',
         },
         hidden: {
-            description: 'hide widget',
+            description: 'hides the widget',
             optional: true,
             TYPE: 'boolean',
         },
         exec: {
-            description: '(ctx: any, me: IAvatarState) => void',
+            description:'action on click',
             optional: true,
-            TYPE: 'function',
+            TYPE: '(ctx: any, me: ILabelState) => void',
         },
         init: {
-            description: '(ctx: any, me: IAvatarState) => void',
+            description:'action through initialisation',
             optional: true,
-            TYPE: 'function',
+            TYPE: '(ctx: any, me: ILabelState) => void',
         },
     };
 
