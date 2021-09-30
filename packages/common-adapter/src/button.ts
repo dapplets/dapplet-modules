@@ -30,19 +30,17 @@ export class Button implements IWidget<IButtonState> {
                 height:60px;
                 bottom:40px;
                 left:40px;
-                background-color:#fff;
                 color:#FFF;
-                border-radius:50px;
-                border: 3px solid #d10019;
+                border-radius:99em;
                 text-align:center;
                 box-shadow: 2px 2px 3px #999;
                 cursor: pointer;
                 display: block;
                 box-sizing: content-box;
+                background: no-repeat center/100% url(${img}) #d4e0e9;
             ">
-                <img style="margin-top:11px;" height="32" src="${img}">
             </div>
-        `
+        `;
 
         this.el.title = tooltip ?? '';
         this.el.innerHTML = htmlString;

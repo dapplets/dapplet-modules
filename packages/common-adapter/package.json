@@ -1,6 +1,6 @@
 {
   "name": "common-adapter.dapplet-base.eth",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "description": "Generic adapter for all sites",
   "scripts": {
     "build": "webpack --config webpack.dev.js",
