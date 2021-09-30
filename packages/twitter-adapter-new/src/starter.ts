@@ -1,6 +1,6 @@
 import { T_TwitterFeatureConfig } from 'twitter-adapter.dapplet-base.eth';
-import ICON_DAPPLET from './Red_Icon1.svg';
-import TwitterAdapter from '.';
+// import ICON_DAPPLET from './Red_Icon1.svg';
+import {TwitterAdapter} from './index';
 
 declare var chrome;
 
@@ -13,11 +13,11 @@ interface IStarter {
     order?: number;
 }
 
-export default class Starter {
+export class Starter {
     public config: any;
     public widgets: IStarter[] = [];
     private _buttonId = 0;
-    private _overlay = (Core.starterOverlay) ? Core.starterOverlay() : Core.overlay({ url: chrome.extension.getURL('starter.html'), title: 'Starter' }); // ToDo: utilize starterOverlay
+    private _overlay = ((Core as any).starterOverlay) ? (Core as any).starterOverlay() : (Core as any).overlay({ url: chrome.extension.getURL('starter.html'), title: 'Starter' }); // ToDo: utilize starterOverlay
 
     constructor(public adapter: TwitterAdapter) {
         const { buttonStarter } = this.adapter.exports("twitter-adapter.dapplet-base.eth");
@@ -28,7 +28,7 @@ export default class Starter {
             POST: (ctx) =>
                 buttonStarter({
                     "DEFAULT": {
-                        img: ICON_DAPPLET,
+                        // img: ICON_DAPPLET,
                         exec: () => this.openStarter(ctx)
                     }
                 })

@@ -5,7 +5,8 @@
   "scripts": {
     "build": "webpack --config webpack.dev.js",
     "watch": "webpack -w --config webpack.dev.js",
-    "clean": "rimraf build lib"
+    "clean": "rimraf build lib",
+    "test": "jest"
   },
   "author": "Dapplets Team",
   "license": "MIT",

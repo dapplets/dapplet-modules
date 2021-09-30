@@ -9,22 +9,22 @@ import { IAvatarBadgeState, AvatarBadge } from './avatar-badge';
 import { IUsernameBadgeState, UsernameBadge } from './username-badge';
 import { ILabelState, Label } from './label';
 import { Caption } from './caption';
-import Starter from './starter';
-import Slideout from 'slideout';
+import { Starter } from './starter';
+// import Slideout from 'slideout';
 
 const widgets = {
-  avatar: Avatar,
-  avatarBadge: AvatarBadge,
-  button: Button,
-  buttonStarter: ButtonStarter,
-  usernameBadge: UsernameBadge,
-  picture: Picture,
-  label: Label,
-  caption: Caption,
+    //   avatar: Avatar,
+    //   avatarBadge: AvatarBadge,
+    //   button: Button,
+    //   buttonStarter: ButtonStarter,
+    //   usernameBadge: UsernameBadge,
+    //   picture: Picture,
+    //   label: Label,
+    //   caption: Caption,
 }
 
 @Injectable
-export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureConfig> {
+export class TwitterAdapter implements IContentAdapter<T_TwitterFeatureConfig> {
 
     private starter: Starter;
 
@@ -98,17 +98,17 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                 },
                 starter: (node: any, ctx: any, emit: Function) => {
                     node.parentNode.style.overflow = 'hidden';
-                    const slideout = new Slideout({
-                        'panel': node,
-                        'menu': document.createElement('div'),
-                        'padding': 150,
-                        'tolerance': 70,
-                        'side': 'right'
-                    });
-                    slideout.on('open', () => {
-                        emit(ctx);
-                        slideout.close();
-                    });
+                    // const slideout = new Slideout({
+                    //     'panel': node,
+                    //     'menu': document.createElement('div'),
+                    //     'padding': 150,
+                    //     'tolerance': 70,
+                    //     'side': 'right'
+                    // });
+                    // slideout.on('open', () => {
+                    //     emit(ctx);
+                    //     slideout.close();
+                    // });
                 }
             },
             // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
