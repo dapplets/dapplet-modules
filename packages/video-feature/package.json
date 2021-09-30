@@ -1,6 +1,6 @@
 {
   "name": "video-feature.dapplet-base.eth",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Demonstration of the capabilities of the video adapter",
   "main": "build/index.js",
   "scripts": {
@@ -11,7 +11,7 @@
   "author": "Dapplets Team",
   "license": "MIT",
   "devDependencies": {
-    "video-adapter.dapplet-base.eth": "^0.2.0"
+    "video-adapter.dapplet-base.eth": "^0.3.0"
   },
   "dependencies": {}
 }
