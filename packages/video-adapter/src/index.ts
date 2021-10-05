@@ -56,8 +56,8 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
                         n.dispatchEvent(new CustomEvent('dpp-translate'));
                     })
                     mutationObserver.observe(n, {
-                      attributes: true,
-                      attributeFilter: ['style'],
+                        attributes: true,
+                        attributeFilter: ['style'],
                     });
                     this._styleObservers.set(n, mutationObserver);
                 }
@@ -65,14 +65,17 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
                 if (!n.src || n.src === '') return;
                 if (Number.isNaN(n.duration)) return;
 
-                const isUnstableId = n.src.indexOf('blob:') === 0;
-                if (isUnstableId) {
+                const videoExtensions = ["webm", "mkv", "flv", "vob", "ogv", "ogg", "rrc", "gifv", "mng", "mov", "avi", "qt", "wmv", "yuv", "rm", "asf", "amv", "mp4", "m4p", "m4v", "mpg", "mp2", "mpeg", "mpe", "mpv", "m4v", "svi", "3gp", "3g2", "mxf", "roq", "nsv", "flv", "f4v", "f4p", "f4a", "f4b"];
+                const regexResult = /\.(\w{3,4})(?:$|\?|#)/.exec(n.src)?.[1]?.toLowerCase();
+                const isStableId = regexResult !== null && videoExtensions.indexOf(regexResult) !== -1;
+
+                if (!isStableId) {
                     Core.contextStarted(['id'], document.location.hostname);
                     if (!parent) return;
                 }
 
                 const obj = {
-                    id: (isUnstableId) ? parent.id : n.src,
+                    id: (!isStableId) ? parent.id : n.src,
                     pause: () => n.pause(),
                     play: () => n.play(),
                     setCurrentTime: (time: number) => n.currentTime = time,
@@ -93,7 +96,7 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
                         enumerable: true,
                     },
                     width: {
-                        get: () => n.videoWidth ,
+                        get: () => n.videoWidth,
                         set: (value: number) => value,
                         enumerable: true,
                     },
@@ -107,7 +110,7 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
                         set: (value: number) => value,
                         enumerable: true,
                     },
-                    loop: { 
+                    loop: {
                         get: () => n.loop,
                         set: (value: number) => value,
                         enumerable: true,
@@ -118,7 +121,7 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
                         enumerable: true,
                     },
                     currentTime: {
-                        get: () => n.currentTime ,
+                        get: () => n.currentTime,
                         set: (value: number) => value,
                         enumerable: true,
                     },
