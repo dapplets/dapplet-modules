@@ -11,7 +11,7 @@
   "author": "Dapplets Team",
   "license": "MIT",
   "devDependencies": {
-    "video-adapter.dapplet-base.eth": "^0.3.0"
+    "video-adapter.dapplet-base.eth": "^0.4.0"
   },
   "dependencies": {}
 }

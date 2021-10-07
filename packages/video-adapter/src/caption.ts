@@ -18,7 +18,7 @@ export class Caption implements IWidget<ICaptionState> {
     insPointName: string;
 
     public static contextInsPoints = {
-        VIDEO: 'CAPTION'
+        VIDEO: 'VIDEO'
     }
 
     public mount() {

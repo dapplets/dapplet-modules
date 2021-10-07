@@ -27,7 +27,7 @@ export class Label implements IWidget<ILabelState> {
   private _stickerId = Math.trunc(Math.random() * 1_000_000_000);
 
   public static contextInsPoints = {
-      VIDEO: 'LABEL',
+      VIDEO: 'VIDEO',
   };
 
   public mount() {

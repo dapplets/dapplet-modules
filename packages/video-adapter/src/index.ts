@@ -3,6 +3,7 @@ import { IDynamicAdapter } from 'dynamic-adapter.dapplet-base.eth';
 import { ICaptionState, Caption } from './caption';
 import { IStickerState, Sticker } from './sticker';
 import { ILabelState, Label } from './label';
+import { IControlState, Control } from './control';
 
 interface IVideoAdapterConfig {
     events?: { [event: string]: Function },
@@ -27,6 +28,7 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
         caption: this.dynamicAdapter.createWidgetFactory<ICaptionState>(Caption),
         sticker: this.dynamicAdapter.createWidgetFactory<IStickerState>(Sticker),
         label: this.dynamicAdapter.createWidgetFactory<ILabelState>(Label),
+        control: this.dynamicAdapter.createWidgetFactory<IControlState>(Control),
     });
 
     public config = {
@@ -34,9 +36,7 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
             containerSelector: 'html',
             contextSelector: 'video',
             insPoints: {
-                CAPTION: { insert: 'begin' },
-                STICKER: { insert: 'begin' },
-                LABEL: { insert: 'begin' },
+                VIDEO: { insert: 'begin' },
             },
             contextBuilder: (n: HTMLVideoElement, parent: any) => {
 
@@ -144,7 +144,17 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
 
                 return obj;
             },
-        }
+        },
+        RIGHT_CONTROLS: {
+          containerSelector: '.ytp-right-controls, [data-testid="videoPlayer"] .css-1dbjc4n.r-13awgt0 .css-1dbjc4n.r-1awozwy.r-18u37iz.r-17s6mgv.r-ero68b',
+          contextSelector: '',
+          insPoints: {
+            RIGHT_CONTROLS: { insert: 'inside' },
+          },
+          contextBuilder: () => ({
+            id: 'RIGHT_CONTROLS'
+          }),
+        },
     };
 
     // ToDo: refactor it

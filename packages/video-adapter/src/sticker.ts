@@ -31,7 +31,7 @@ export class Sticker implements IWidget<IStickerState> {
     private _stickerId = Math.trunc(Math.random() * 1_000_000_000);
 
     public static contextInsPoints = {
-        VIDEO: 'STICKER',
+        VIDEO: 'VIDEO',
     };
 
     public mount() {
