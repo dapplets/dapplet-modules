@@ -146,8 +146,8 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
             },
         },
         RIGHT_CONTROLS: {
-          containerSelector: '.ytp-right-controls, [data-testid="videoPlayer"] .css-1dbjc4n.r-13awgt0 .css-1dbjc4n.r-1awozwy.r-18u37iz.r-17s6mgv.r-ero68b',
-          contextSelector: '',
+          containerSelector: 'html',
+          contextSelector: '[data-testid="videoPlayer"] .css-1dbjc4n.r-13awgt0 .css-1dbjc4n.r-1awozwy.r-18u37iz.r-17s6mgv.r-ero68b, .html5-video-player .ytp-right-controls',
           insPoints: {
             RIGHT_CONTROLS: { insert: 'inside' },
           },
