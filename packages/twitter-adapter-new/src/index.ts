@@ -123,7 +123,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                 }
 
                 return ({
-                    id: el.querySelector('.css-1dbjc4n.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu a time')?.parentNode?.href?.split('/')?.pop() || document.location.href.substr(document.location.href.lastIndexOf('status/') + 7),
+                    id: el.querySelector('.css-1dbjc4n.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu a time')?.parentNode?.href?.split('/')?.pop() || /status\/([0-9]*)/gm.exec(document.location.href)?.[1],
                     text: el.querySelector('.css-1dbjc4n.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu div[lang]')?.innerText,
                     authorFullname: this._parseAuthorFullname(el.querySelector('.css-1dbjc4n.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu > div:nth-child(1) > div:nth-child(1) a > div > div:nth-child(2) > div:nth-child(1)')),
                     authorUsername: el.querySelector('article div.css-1dbjc4n.r-18u37iz.r-1wbh5a2.r-13hce6t > div > span')?.innerText?.replace('@', '')?.toLowerCase(),
