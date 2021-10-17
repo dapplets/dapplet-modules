@@ -9,6 +9,6 @@
     "icon": "src/icon.png",
     "contextIds": ["video-adapter.dapplet-base.eth"],
     "dependencies": {
-      "video-adapter.dapplet-base.eth": "0.3.0"
+      "video-adapter.dapplet-base.eth": "0.4.0"
     }
 }

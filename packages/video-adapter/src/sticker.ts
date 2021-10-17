@@ -14,6 +14,7 @@ export interface IStickerState {
     opacity?: number
     transform?: string
     mutable?: boolean
+    reset?: boolean
     exec: (ctx: any, me: IStickerState) => void
     init: (ctx: any, me: IStickerState) => void
     ctx: any
@@ -31,7 +32,7 @@ export class Sticker implements IWidget<IStickerState> {
     private _stickerId = Math.trunc(Math.random() * 1_000_000_000);
 
     public static contextInsPoints = {
-        VIDEO: 'STICKER',
+        VIDEO: 'VIDEO',
     };
 
     public mount() {
@@ -49,12 +50,22 @@ export class Sticker implements IWidget<IStickerState> {
             opacity = 1,
             transform,
             hidden,
+            reset,
             ctx,
         } = this.state;
 
         if (stickerId !== undefined) this._stickerId = stickerId;
 
         if (!this.el) this._createElement(mutable);
+
+        if (reset) {
+            this._translationParams.x = 0; // x, y -> %
+            this._translationParams.y = 0; // x, y -> %
+            this._scale.factor = 1;
+            this._rotate.angle = null;
+            this._coordinates.x = 0;
+            this._coordinates.y = 0;
+        }
 
         if (!hidden && ctx.currentTime >= from && ctx.currentTime <= to) {
             const clientWidth = ctx.element.offsetWidth + ctx.element.offsetLeft * 2;
@@ -214,13 +225,13 @@ export class Sticker implements IWidget<IStickerState> {
                 rotationHandle4.style.top = '-25%';
                 rotationHandle4.style.left = '75%'; 
 
-                container.onclick = () => {
-                    container.style.outline = 'solid rgb(121, 242, 230)';
-                    rotationHandle1.style.display = 'table';
-                    rotationHandle2.style.display = 'table';
-                    rotationHandle3.style.display = 'table';
-                    rotationHandle4.style.display = 'table';
-                };
+                //container.onclick = () => {
+                container.style.outline = 'solid rgb(121, 242, 230)';
+                rotationHandle1.style.display = 'table';
+                rotationHandle2.style.display = 'table';
+                rotationHandle3.style.display = 'table';
+                rotationHandle4.style.display = 'table';
+                //};
 
                 container.appendChild(rotationHandle1);
                 container.appendChild(rotationHandle2);
@@ -421,6 +432,11 @@ export class Sticker implements IWidget<IStickerState> {
                 .sticker-rotation-handle.srh-fourth::after {
                   bottom: 41%;
                   left: 40%;
+                }
+                
+                .dapplet-widget-video-sticker > div:hover {
+                  outline: solid rgb(121, 242, 230) !important;
+                  transition: outline .1s ease-in;
                 }`;
             document.head.appendChild(styleTag);
         }
@@ -429,7 +445,6 @@ export class Sticker implements IWidget<IStickerState> {
         this.state.ctx.onTimeUpdate(() => this.mount()); // ToDo: check memory leak
         this.state.ctx.onResize(() => this.mount());
         this.state.ctx.onTranslate(() => this.mount());
-        //this.mount(); // ToDo: WTF?
         this.state.init?.(this.state.ctx, this.state);
     }
 }
