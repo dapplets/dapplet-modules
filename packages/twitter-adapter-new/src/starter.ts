@@ -17,7 +17,8 @@ export default class Starter {
     public config: any;
     public widgets: IStarter[] = [];
     private _buttonId = 0;
-    private _overlay = (Core.starterOverlay) ? Core.starterOverlay() : Core.overlay({ url: chrome.extension.getURL('starter.html'), title: 'Starter' }); // ToDo: utilize starterOverlay
+    private _core: any = Core;
+    private _overlay = (this._core.starterOverlay) ? this._core.starterOverlay() : Core.overlay({ url: chrome.extension.getURL('starter.html'), title: 'Starter' }); // ToDo: utilize starterOverlay
 
     constructor(public adapter: TwitterAdapter) {
         const { buttonStarter } = this.adapter.exports("twitter-adapter.dapplet-base.eth");
@@ -53,21 +54,22 @@ export default class Starter {
     public async attachConfig(config: T_TwitterFeatureConfig) {
         if (!config.POST) return;
         
-        const arr = config.POST('');
-        const insert = (arr: any[]) => {
-            const widgets: IStarter[] = (arr || [])
+        const postConfigData = config.POST('');
+        const insert = (configData: any) => {
+            const widgets: IStarter[] | false = Array.isArray(configData) && configData
                 .filter((widget) => Array.isArray(widget))
                 .flat()
                 .map((starter: { label: string, exec: () => void }) => {
                     return { ...starter, config, id: ++this._buttonId };
                 });
+            if (!widgets) return;
             if (this.widgets.length === 0 && widgets.length !== 0) {
                 this.adapter.adapter.attachConfig(this.config);
             }
             this.widgets.push(...widgets);
         }
 
-        (arr instanceof Promise) ? arr.then(insert) : insert(arr);
+        (postConfigData instanceof Promise) ? postConfigData.then(insert) : insert(postConfigData);
     }
 
     public detachConfig(config: any, featureId: string) {
