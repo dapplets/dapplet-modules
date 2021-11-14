@@ -1,6 +1,6 @@
 {
   "name": "dapplets-org-feature-1.dapplet-base.eth",
-  "version": "0.1.11",
+  "version": "0.1.14",
   "description": "Feature using the common adapter",
   "scripts": {
     "build": "webpack --config webpack.dev.js",
