@@ -124,9 +124,9 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
 
                 return ({
                     id: el.querySelector('.css-1dbjc4n.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu a time')?.parentNode?.href?.split('/')?.pop() || /status\/([0-9]*)/gm.exec(document.location.href)?.[1],
-                    text: el.querySelector('.css-1dbjc4n.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu div[lang]')?.innerText,
-                    authorFullname: this._parseAuthorFullname(el.querySelector('.css-1dbjc4n.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu > div:nth-child(1) > div:nth-child(1) a > div > div:nth-child(1) > div:nth-child(1)')),
-                    authorUsername: el.querySelector('article div.css-1dbjc4n.r-18u37iz.r-1wbh5a2.r-13hce6t > div > span')?.innerText?.replace('@', '')?.toLowerCase(),
+                    text: el.querySelector('.css-1dbjc4n.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu div[lang], div > div > div > div:nth-child(3) > div:nth-child(1) > div > div > span')?.innerText,
+                    authorFullname: this._parseAuthorFullname(el.querySelector('.css-1dbjc4n.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu > div:nth-child(1) > div:nth-child(1) a > div > div:nth-child(1) > div:nth-child(1), div.css-1dbjc4n.r-18u37iz.r-15zivkp div > div > span')),
+                    authorUsername: el.querySelector('article div.css-1dbjc4n.r-18u37iz.r-1wbh5a2.r-13hce6t > div > span, div.css-1dbjc4n.r-18u37iz.r-1wbh5a2 > div > span')?.innerText?.replace('@', '')?.toLowerCase(),
                     authorImg: el.querySelector('.css-1dbjc4n.r-1awozwy.r-1hwvwag.r-18kxxzh.r-1b7u577 > div:first-child img.css-9pa8cd')?.getAttribute('src'),
                     theme: this._getTheme(),
                 });
