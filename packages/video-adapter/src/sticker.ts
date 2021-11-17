@@ -1,12 +1,12 @@
 import { IWidget } from 'dynamic-adapter.dapplet-base.eth';
 import interact from 'interactjs';
 
-type IStickerTransform = {
+type IStickerTransformParams = {
     scale: number
     translateX: number
     translateY: number
     rotate: number
-    timestamp?: number
+    time: number
 }
 
 export interface IStickerState {
@@ -21,14 +21,16 @@ export interface IStickerState {
     rotated?: number
     opacity?: number
     transform?: string | {
-        [name: string]: IStickerTransform
+        [name: string]: IStickerTransformParams
     }
     mutable?: boolean
-    // reset?: boolean
+    reset?: boolean
     exec: (ctx: any, me: IStickerState) => void
     init: (ctx: any, me: IStickerState) => void
     ctx: any
     hidden: boolean
+    disabled?: boolean
+    onChange: (e: any) => void
 }
 
 export class Sticker implements IWidget<IStickerState> {
@@ -40,6 +42,7 @@ export class Sticker implements IWidget<IStickerState> {
     private _rotate: { angle: number; callback: any };
     private _coordinates = { x: 0, y: 0 };
     private _stickerId = Math.trunc(Math.random() * 1_000_000_000);
+    private _requestAnimationFrameID: number
 
     public static contextInsPoints = {
         VIDEO: 'VIDEO',
@@ -60,22 +63,23 @@ export class Sticker implements IWidget<IStickerState> {
             opacity = 1,
             transform,
             hidden,
-            // reset,
+            reset,
             ctx,
+            disabled,
         } = this.state;
 
         if (stickerId !== undefined) this._stickerId = stickerId;
 
         if (!this.el) this._createElement(mutable);
 
-        /* if (reset) {
-            this._translationParams.x = 0; // x, y -> %
-            this._translationParams.y = 0; // x, y -> %
+        if (reset) {
+            this._translationParams.x = 0;
+            this._translationParams.y = 0;
             this._scale.factor = 1;
             this._rotate.angle = null;
             this._coordinates.x = 0;
             this._coordinates.y = 0;
-        } */
+        }
 
         if (!hidden && ctx.currentTime >= from && ctx.currentTime <= to) {
             this.el.style.removeProperty('display');
@@ -106,7 +110,7 @@ export class Sticker implements IWidget<IStickerState> {
                 childEl.style.display = 'flex';
                 childEl.style.alignItems = 'center';
 
-                if (mutable) childEl.classList.add(`dapplet-sticker-${this._stickerId}`);
+                childEl.classList.add(`dapplet-sticker-${this._stickerId}`);
 
                 // for .draggable and .resizable
                 childEl.style.touchAction = 'none';
@@ -114,7 +118,6 @@ export class Sticker implements IWidget<IStickerState> {
                 childEl.style.boxSizing = 'border-box';
 
                 childEl.style.cursor = 'pointer';
-                childEl.style.zIndex = '9999';
 
                 const imageContainer = document.createElement('div');
                 imageContainer.style.zIndex = '99999';
@@ -141,6 +144,7 @@ export class Sticker implements IWidget<IStickerState> {
                             this._translationParams.y,
                             this._rotate.angle ?? rotated
                         );
+                        this.state.onChange?.(e);
                     });
 
                     childEl.addEventListener(`scale-sticker-${this._stickerId}`, (e: any) => {
@@ -164,6 +168,7 @@ export class Sticker implements IWidget<IStickerState> {
                             this._translationParams.y,
                             this._rotate.angle ?? rotated
                         );
+                        this.state.onChange?.(e);
                     });
 
                     childEl.addEventListener(`rotate-sticker-${this._stickerId}`, (e: any) => {
@@ -175,6 +180,7 @@ export class Sticker implements IWidget<IStickerState> {
                             this._translationParams.y,
                             this._rotate.angle,
                         );
+                        this.state.onChange?.(e);
                     });
 
                     // add rotate handles
@@ -207,7 +213,7 @@ export class Sticker implements IWidget<IStickerState> {
                     rotationHandle4.style.left = '75%';
 
                     // container.onclick = () => {
-                    childEl.style.outline = 'solid rgb(121, 242, 230)';
+                    childEl.style.outline = 'solid #588CA3';
                     rotationHandle1.style.display = 'table';
                     rotationHandle2.style.display = 'table';
                     rotationHandle3.style.display = 'table';
@@ -234,6 +240,12 @@ export class Sticker implements IWidget<IStickerState> {
 
             const container = <HTMLElement>this.el.firstElementChild;
 
+            if (disabled) {
+              container.style.zIndex = '-1';
+            } else {
+              container.style.zIndex = '9999';
+            }
+
             if (mutable) (<HTMLImageElement>container.lastElementChild.firstElementChild).src = img;
 
             container.style.width = `${size.x}px`;
@@ -259,41 +271,66 @@ export class Sticker implements IWidget<IStickerState> {
                 if (typeof transform === 'string') {
                     container.style.transform = transform;
                 } else {
-                    const transformSticker = (firstTimestampName: number, secondTimestampName?: number) => {
-                        if (secondTimestampName === undefined) {
+                    const transformSticker = (
+                      firstTransformPoint: IStickerTransformParams,
+                      secondTransformPoint?: IStickerTransformParams
+                    ) => {
+                        if (secondTransformPoint === undefined) {
                             container.style.transform = setTransform(
-                                transform[firstTimestampName].scale,
-                                transform[firstTimestampName].translateX,
-                                transform[firstTimestampName].translateY,
-                                transform[firstTimestampName].rotate,
+                                firstTransformPoint.scale,
+                                firstTransformPoint.translateX,
+                                firstTransformPoint.translateY,
+                                firstTransformPoint.rotate,
                             );
+                            this._scale.factor = firstTransformPoint.scale;
+                            this._translationParams.x = firstTransformPoint.translateX;
+                            this._translationParams.y = firstTransformPoint.translateY;
+                            this._rotate.angle = firstTransformPoint.rotate;
                         } else {
-                            const passedTimeFraction = (ctx.currentTime - firstTimestampName) / (secondTimestampName - firstTimestampName);
-                            const scale = (transform[secondTimestampName].scale - transform[firstTimestampName].scale) * passedTimeFraction + transform[firstTimestampName].scale;
-                            const transX = (transform[secondTimestampName].translateX - transform[firstTimestampName].translateX) * passedTimeFraction + transform[firstTimestampName].translateX;
-                            const transY = (transform[secondTimestampName].translateY - transform[firstTimestampName].translateY) * passedTimeFraction + transform[firstTimestampName].translateY;
-                            const angle = (transform[secondTimestampName].rotate - transform[firstTimestampName].rotate) * passedTimeFraction + transform[firstTimestampName].rotate;
+                            const passedTimeFraction = (ctx.currentTime - firstTransformPoint.time) / (secondTransformPoint.time - firstTransformPoint.time);
+                            const scale = (secondTransformPoint.scale - firstTransformPoint.scale) * passedTimeFraction + firstTransformPoint.scale;
+                            const transX = (secondTransformPoint.translateX - firstTransformPoint.translateX) * passedTimeFraction + firstTransformPoint.translateX;
+                            const transY = (secondTransformPoint.translateY - firstTransformPoint.translateY) * passedTimeFraction + firstTransformPoint.translateY;
+                            const angle = (secondTransformPoint.rotate - firstTransformPoint.rotate) * passedTimeFraction + firstTransformPoint.rotate;
                             container.style.transform = setTransform(scale, transX, transY, angle);
+                            this._scale.factor = scale;
+                            this._translationParams.x = transX;
+                            this._translationParams.y = transY;
+                            this._rotate.angle = angle;
                         }
                     }
 
-                    const keys = Object.keys(transform);
-                    if (ctx.currentTime === from || keys.length === 1) {
-                        transformSticker(from);
-                    } else if (ctx.currentTime === to && keys.length >= 2) {
-                        transformSticker(to);
-                    } else if (keys.length === 2) {
-                        transformSticker(from, to);
-                    } else {
-                        const sortedTimestamps = keys.map((key) => +key).sort((a, b) => a - b);
-                        const currentTimestamp = sortedTimestamps.find((timestamp) => timestamp === ctx.currentTime);
-                        if (currentTimestamp !== undefined) {
-                            transformSticker(currentTimestamp);
-                        } else {                
-                            const nearestHigherTimestamp = sortedTimestamps.find((timestamp) => timestamp > ctx.currentTime)
-                            const nearestLowerTimestamp = sortedTimestamps.reverse().find((timestamp) => timestamp < ctx.currentTime)
-                            transformSticker(nearestLowerTimestamp, nearestHigherTimestamp);
+                    const sortedTransformPoints = Object.values(transform).sort((a, b) => a.time - b.time);
+                    if (sortedTransformPoints.length === 1) {
+                        transformSticker(sortedTransformPoints[0]);
+                    } else if (sortedTransformPoints.length === 2) {
+                        if (ctx.currentTime <= sortedTransformPoints[0].time) {
+                            transformSticker(sortedTransformPoints[0]);
+                        } else if (ctx.currentTime >= sortedTransformPoints[1].time) {
+                            transformSticker(sortedTransformPoints[1]);
+                        } else {
+                            transformSticker(sortedTransformPoints[0], sortedTransformPoints[1]);
                         }
+                    } else { 
+                        if (ctx.currentTime <= sortedTransformPoints[0].time) {
+                            transformSticker(sortedTransformPoints[0]);
+                        } else if (ctx.currentTime >= sortedTransformPoints[sortedTransformPoints.length - 1].time) {
+                            transformSticker(sortedTransformPoints[sortedTransformPoints.length - 1]);
+                        } else {
+                            const currentTransformPoint = sortedTransformPoints.find((transformPoint) => transformPoint.time === ctx.currentTime);
+                            if (currentTransformPoint !== undefined) {
+                                transformSticker(currentTransformPoint);
+                            } else {                
+                                const nearestNextTransformPoint = sortedTransformPoints.find((transformPoint) => transformPoint.time > ctx.currentTime)
+                                const nearestPrevTransformPoint = sortedTransformPoints.reverse().find((transformPoint) => transformPoint.time < ctx.currentTime)
+                                transformSticker(nearestPrevTransformPoint, nearestNextTransformPoint);
+                            }
+                        }
+                    }
+
+                    if (sortedTransformPoints.length > 1) {
+                        this._requestAnimationFrameID && window.cancelAnimationFrame(this._requestAnimationFrameID);
+                        this._requestAnimationFrameID = window.requestAnimationFrame(() => this.mount());
                     }
                 }
             } else {
@@ -341,85 +378,85 @@ export class Sticker implements IWidget<IStickerState> {
         this._scale = {
             factor: 1,
             callback: mutable
-              ? (target, factor) =>
-                target.dispatchEvent(
-                    new CustomEvent(`scale-sticker-${id}`, { detail: { factor } })
-                )
-              : null,
+                ? (target, factor) =>
+                    target.dispatchEvent(
+                        new CustomEvent(`scale-sticker-${id}`, { detail: { factor } })
+                    )
+                : null,
         };
         this._rotate = {
             angle: null,
             callback: mutable
-              ? (target, angle) =>
-                target.dispatchEvent(
-                    new CustomEvent(`rotate-sticker-${id}`, { detail: { angle } })
-                )
-              : null,
+                ? (target, angle) =>
+                    target.dispatchEvent(
+                        new CustomEvent(`rotate-sticker-${id}`, { detail: { angle } })
+                    )
+                : null,
         };
 
         if (mutable) {
-          const position = { ...this._translationParams };
-          const scale = { ...this._scale };
-          const rotate = { ...this._rotate };
+            const position = { ...this._translationParams };
+            const scale = { ...this._scale };
+            const rotate = { ...this._rotate };
 
-          interact(`.dapplet-sticker-${id}`)
-              .draggable({
-                  listeners: {
-                      move(event) {
-                          event.stopPropagation();
-                          position.x = event.dx;
-                          position.y = event.dy;
-                          position.callback(event.target, position);
-                      },
-                  },
-              })
-              .resizable({
-                  edges: { top: true, left: true, bottom: true, right: true },
-                  listeners: {
-                      move: function (event) {
-                          event.stopPropagation();
-                          const transform = event.target.style.transform;
-                          const transformParams = transform.match(/[a-z]+\(.+?\)/g);
-                          const scaleParam = transformParams && transformParams.find((x) => /scale\(.*\)/.test(x));
-                          const oldFactor = scaleParam === undefined || scaleParam === null ? 1 : +scaleParam.match(/[0-9.]+/)[0];
+            interact(`.dapplet-sticker-${id}`)
+                .draggable({
+                    listeners: {
+                        move(event) {
+                            event.stopPropagation();
+                            position.x = event.dx;
+                            position.y = event.dy;
+                            position.callback(event.target, position);
+                        },
+                    },
+                })
+                .resizable({
+                    edges: { top: true, left: true, bottom: true, right: true },
+                    listeners: {
+                        move: function (event) {
+                            event.stopPropagation();
+                            const transform = event.target.style.transform;
+                            const transformParams = transform.match(/[a-z]+\(.+?\)/g);
+                            const scaleParam = transformParams && transformParams.find((x) => /scale\(.*\)/.test(x));
+                            const oldFactor = scaleParam === undefined || scaleParam === null ? 1 : +scaleParam.match(/[0-9.]+/)[0];
 
-                          const factor = oldFactor + 2 * (event.deltaRect.width === 0
-                            ? (event.deltaRect.bottom
-                                ? event.deltaRect.bottom
-                                : -event.deltaRect.top) / event.target.offsetHeight
-                            : (event.deltaRect.right
-                                ? event.deltaRect.right
-                                : -event.deltaRect.left) / event.target.offsetWidth);
+                            const factor = oldFactor + 2 * (event.deltaRect.width === 0
+                                ? (event.deltaRect.bottom
+                                    ? event.deltaRect.bottom
+                                    : -event.deltaRect.top) / event.target.offsetHeight
+                                : (event.deltaRect.right
+                                    ? event.deltaRect.right
+                                    : -event.deltaRect.left) / event.target.offsetWidth);
 
-                          scale.callback(event.target, factor > 0.3 ? (factor < 4 ? factor : 4) : 0.32);
-                      },
-                  },
-              });
+                            scale.callback(event.target, factor > 0.3 ? (factor < 4 ? factor : 4) : 0.32);
+                        },
+                    },
+                });
 
-          interact(`.sticker-rotation-handle-${id}`).draggable({
-              onstart: function (event) {
-                  const box = event.target.parentElement;
-                  const rect = box.getBoundingClientRect();
+            interact(`.sticker-rotation-handle-${id}`).draggable({
+                onstart: function (event) {
+                    const box = event.target.parentElement;
+                    const rect = box.getBoundingClientRect();
 
-                  // store the center as the element has css `transform-origin: center center`
-                  box.setAttribute('data-center-x', rect.left + rect.width / 2);
-                  box.setAttribute('data-center-y', rect.top + rect.height / 2);
-                  // get the angle of the element when the drag starts
-                  box.setAttribute('data-angle', getDragAngle(event));
-              },
-              onmove: function (event) {
-                  const box = event.target.parentElement;
-                  const angle = getDragAngle(event);
-                  rotate.callback(box, angle);
-              },
-              onend: function (event) {
-                  const box = event.target.parentElement;
+                    // store the center as the element has css `transform-origin: center center`
+                    box.setAttribute('data-center-x', rect.left + rect.width / 2);
+                    box.setAttribute('data-center-y', rect.top + rect.height / 2);
+                    // get the angle of the element when the drag starts
+                    box.setAttribute('data-angle', getDragAngle(event));
+                },
+                onmove: function (event) {
+                    const box = event.target.parentElement;
+                    const angle = getDragAngle(event);
+                    rotate.callback(box, angle);
+                },
+                onend: function (event) {
+                    const box = event.target.parentElement;
 
-                  // save the angle on dragend
-                  const x = getDragAngle(event);
-                  box.setAttribute('data-angle', x);
-              },
-          });
+                    // save the angle on dragend
+                    const x = getDragAngle(event);
+                    box.setAttribute('data-angle', x);
+                },
+            });
         }
 
         function getDragAngle(event) {
@@ -459,46 +496,46 @@ export class Sticker implements IWidget<IStickerState> {
                 }
 
                 .sticker-rotation-handle::after {
-                  content: '';
-                  position: absolute;
-                  width: 8%;
-                  height: 8%;
-                  z-index: 100000;
-                  border: solid rgb(121, 242, 230);
-                  background: white;
+                    content: '';
+                    position: absolute;
+                    width: 8%;
+                    height: 8%;
+                    z-index: 100000;
+                    border: solid #588CA3;
+                    background: white;
 
                 }
                 
                 .sticker-rotation-handle.srh-first::after {
-                  top: 40%;
-                  left: 40%;
+                    top: 40%;
+                    left: 40%;
                 }
                 
                 .sticker-rotation-handle.srh-second::after {
-                  bottom: 41%;
-                  right: 41%;
+                    bottom: 41%;
+                    right: 41%;
                 }
                 
                 .sticker-rotation-handle.srh-third::after {
-                  top: 40%;
-                  right: 41%;
+                    top: 40%;
+                    right: 41%;
                 }
                 
                 .sticker-rotation-handle.srh-fourth::after {
-                  bottom: 41%;
-                  left: 40%;
+                    bottom: 41%;
+                    left: 40%;
                 }
                 
                 .dapplet-widget-video-sticker > div:hover {
-                  outline: solid rgb(121, 242, 230) !important;
-                  transition: outline .1s ease-in;
+                    outline: solid #588CA3 !important;
+                    transition: outline .1s ease-in;
                 }`;
             document.head.appendChild(styleTag);
         }
 
         this.el.classList.add('dapplet-widget-video-sticker');
         this.state.ctx.onTimeUpdate(() => this.mount()); // ToDo: check memory leak
-        setInterval(() => this.mount(), 33); // ToDo: check memory leak
+        //setInterval(() => this.mount(), 33); // ToDo: check memory leak
         this.state.ctx.onResize(() => this.mount());
         this.state.ctx.onTranslate(() => this.mount());
         this.state.init?.(this.state.ctx, this.state);
