@@ -131,6 +131,8 @@ export class Button implements IWidget<IButtonState> {
 
     private _createElement() {
 
+        const { theme } = this.state;
+
         const styleTag: HTMLStyleElement = document.createElement('style');
         styleTag.type = 'text/css';
         this.el = document.createElement('div');
@@ -151,25 +153,44 @@ export class Button implements IWidget<IButtonState> {
 
         } else if (this.insPointName === 'PROFILE') {
 
-            this.el.classList.add("dapplet-widget-profile-button");
+            this.el.classList.add(theme === "LIGHT" ? "dapplet-widget-profile-button" : "dapplet-widget-profile-button-dark");
             styleTag.innerText = `
                 .dapplet-widget-profile-button {
-                    border: 1px solid rgb(196, 207, 214);
+                    border: 1px solid rgb(207, 217, 222);
                     padding: 0 10px;
-                    height: 40px;
+                    height: 35px;
                     cursor: pointer;
                     border-radius: 9999px;
                     margin: 0 8px 12px 0;
-                    font-weight: 700;
-                    color: rgb(196, 207, 214);
+                    font-weight: 600;
+                    color: #000;
                     box-sizing: border-box;
                     font-size: 15px;
                     font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-                    line-height: 38px;
+                    line-height: 33px;
                 }
                 
                 .dapplet-widget-profile-button:hover {
                     background-color: rgba(15, 20, 25, 0.1);
+                }
+
+                .dapplet-widget-profile-button-dark {
+                    border: 1px solid rgb(83, 100, 113);
+                    padding: 0 10px;
+                    height: 35px;
+                    cursor: pointer;
+                    border-radius: 9999px;
+                    margin: 0 8px 12px 0;
+                    font-weight: 600;
+                    color: #fff;
+                    box-sizing: border-box;
+                    font-size: 15px;
+                    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+                    line-height: 33px;
+                }
+                
+                .dapplet-widget-profile-button-dark:hover {
+                    background-color: rgba(239, 243, 244, 0.008);
                 }
             `;
         }
