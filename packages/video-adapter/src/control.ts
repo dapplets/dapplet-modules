@@ -105,7 +105,7 @@ export class Control implements IWidget<IControlState> {
                 width: 50px;
                 height: 100%;
                 justify-content: center;
-                margin-right: 3px;
+                margin-right: 8px;
                 opacity: .9;
             }
             .dapplet-widget-video-label:hover {
