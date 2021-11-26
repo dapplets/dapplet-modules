@@ -43,6 +43,10 @@ export class Sticker implements IWidget<IStickerState> {
     private _coordinates = { x: 0, y: 0 };
     private _stickerId = Math.trunc(Math.random() * 1_000_000_000);
     private _requestAnimationFrameID: number
+    private _wasDisabled: boolean
+    private _stopPropagationListener = (e: MouseEvent) => {
+        e.stopImmediatePropagation();
+    }
 
     public static contextInsPoints = {
         VIDEO: 'VIDEO',
@@ -241,9 +245,21 @@ export class Sticker implements IWidget<IStickerState> {
             const container = <HTMLElement>this.el.firstElementChild;
 
             if (disabled) {
-              container.style.zIndex = '-1';
+                container.style.zIndex = '-1';
             } else {
-              container.style.zIndex = '9999';
+                container.style.zIndex = '9999';
+            }
+
+            if (disabled && !this._wasDisabled) {
+                ctx.element.removeEventListener('click', this._stopPropagationListener);
+                ctx.element.removeEventListener('dblclick', this._stopPropagationListener);
+                ctx.element.parentElement.removeEventListener('click', this._stopPropagationListener);
+                this._wasDisabled = disabled;
+            } else if (!disabled && this._wasDisabled) {
+                ctx.element.addEventListener('click', this._stopPropagationListener);
+                ctx.element.addEventListener('dblclick', this._stopPropagationListener);
+                ctx.element.parentElement.addEventListener('click', this._stopPropagationListener);
+                this._wasDisabled = disabled;
             }
 
             if (mutable) (<HTMLImageElement>container.lastElementChild.firstElementChild).src = img;
