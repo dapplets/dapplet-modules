@@ -74,8 +74,13 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
 
                 const videoExtensions = ["webm", "mkv", "flv", "vob", "ogv", "ogg", "rrc", "gifv", "mng", "mov", "avi", "qt", "wmv", "yuv", "rm", "asf", "amv", "mp4", "m4p", "m4v", "mpg", "mp2", "mpeg", "mpe", "mpv", "m4v", "svi", "3gp", "3g2", "mxf", "roq", "nsv", "flv", "f4v", "f4p", "f4a", "f4b"];
                 const regexResult = /\.(\w{3,4})(?:$|\?|#)/.exec(src)?.[1]?.toLowerCase();
-                const regexSwarmResult = /\/bzz\//.exec(src)?.[0]?.toLowerCase();
-                const isStableId = (regexResult !== null && videoExtensions.indexOf(regexResult) !== -1) || !!regexSwarmResult;
+                const regexSwarmResult = /\/bzz\/([a-f0-9]{64})\/?$/gm.exec(src)?.[0];
+                const regexSiaskyResult = /siasky\.net\/([A-Za-z0-9_-]{46})\/?$/gm.exec(src)?.[0];
+                const regexIpfsResult = /\/ipfs\/(Qm[1-9A-HJ-NP-Za-km-z]{44,}|b[A-Za-z2-7]{58,}|B[A-Z2-7]{58,}|z[1-9A-HJ-NP-Za-km-z]{48,}|F[0-9A-F]{50,})\/?$/gm.exec(src)?.[0];
+                const isStableId = (regexResult !== null && videoExtensions.indexOf(regexResult) !== -1)
+                  || !!regexSwarmResult
+                  || !!regexSiaskyResult
+                  || !!regexIpfsResult;
 
                 if (!isStableId) {
                     Core.contextStarted(['id'], document.location.hostname);
