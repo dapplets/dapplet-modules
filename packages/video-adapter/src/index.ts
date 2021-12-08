@@ -62,20 +62,27 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
                     this._styleObservers.set(n, mutationObserver);
                 }
 
-                if (!n.src || n.src === '') return;
+                let src: string;
+                if (!n.src || n.src === '') {
+                  if (n.firstElementChild && (<HTMLSourceElement>n.firstElementChild).src) {
+                    src = (<HTMLSourceElement>n.firstElementChild).src;
+                  } else return;
+                } else {
+                  src = n.src;
+                }
                 if (Number.isNaN(n.duration)) return;
 
                 const videoExtensions = ["webm", "mkv", "flv", "vob", "ogv", "ogg", "rrc", "gifv", "mng", "mov", "avi", "qt", "wmv", "yuv", "rm", "asf", "amv", "mp4", "m4p", "m4v", "mpg", "mp2", "mpeg", "mpe", "mpv", "m4v", "svi", "3gp", "3g2", "mxf", "roq", "nsv", "flv", "f4v", "f4p", "f4a", "f4b"];
-                const regexResult = /\.(\w{3,4})(?:$|\?|#)/.exec(n.src)?.[1]?.toLowerCase();
-                const isStableId = regexResult !== null && videoExtensions.indexOf(regexResult) !== -1;
+                const regexResult = /\.(\w{3,4})(?:$|\?|#)/.exec(src)?.[1]?.toLowerCase();
+                const regexSwarmResult = /\/bzz\//.exec(src)?.[0]?.toLowerCase();
+                const isStableId = (regexResult !== null && videoExtensions.indexOf(regexResult) !== -1) || !!regexSwarmResult;
 
                 if (!isStableId) {
                     Core.contextStarted(['id'], document.location.hostname);
-                    if (!parent) return;
                 }
 
                 const obj = {
-                    id: (!isStableId) ? parent.id : n.src,
+                    id: !isStableId && parent ? parent.id : src,
                     pause: () => n.pause(),
                     play: () => n.play(),
                     setCurrentTime: (time: number) => n.currentTime = time,
@@ -87,6 +94,11 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
                 Object.defineProperties(obj, {
                     element: {
                         get: () => n,
+                        set: (value: number) => value,
+                        enumerable: true,
+                    },
+                    isStableLink: {
+                        get: () => isStableId,
                         set: (value: number) => value,
                         enumerable: true,
                     },
@@ -126,7 +138,7 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
                         enumerable: true,
                     },
                     src: {
-                        get: () => n.src,
+                        get: () => src,
                         set: (value: number) => value,
                         enumerable: true,
                     },

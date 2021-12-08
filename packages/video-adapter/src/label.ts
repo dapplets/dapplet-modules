@@ -7,23 +7,28 @@ interface IImg {
 }
 
 export interface ILabelState {
-    img: string | IImg;
-    vertical?: number;
-    horizontal?: number;
-    widthCo?: number;
-    heightCo?: number;
-    exec: (ctx: any, me: ILabelState) => void;
-    init: (tx: any, me: ILabelState) => void;
-    ctx: any;
-    hidden: boolean;
+    img: string | IImg
+    // vertical?: number // %
+    // horizontal?: number // %
+    // widthCo?: number // 0-1
+    // heightCo?: number // 0-1
+    width: number // px
+    height: number // px
+    top?: number // px
+    bottom?: number // px
+    left?: number // px
+    right?: number // px
+    exec: (ctx: any, me: ILabelState) => void
+    init: (tx: any, me: ILabelState) => void
+    ctx: any
+    hidden: boolean
 }
 
 export class Label implements IWidget<ILabelState> {
   public el: HTMLElement;
   public state: ILabelState;
   insPointName: string;
-  private _scaleCoef = { x: 1, y: 1 };
-  private _coordinates = { x: 0, y: 0 };
+  // private _coordinates = { x: 0, y: 0 };
   private _stickerId = Math.trunc(Math.random() * 1_000_000_000);
 
   public static contextInsPoints = {
@@ -35,10 +40,16 @@ export class Label implements IWidget<ILabelState> {
 
       const {
           img,
-          vertical = 50,
-          horizontal = 50,
-          widthCo = 1,
-          heightCo = 1,
+          // vertical = 50,
+          // horizontal = 50,
+          // widthCo = 1,
+          // heightCo = 1,
+          top,
+          bottom,
+          left,
+          right,
+          width,
+          height,
           hidden,
           ctx,
       } = this.state;
@@ -49,49 +60,51 @@ export class Label implements IWidget<ILabelState> {
           return;
       }
 
-      const clientWidth = ctx.element.offsetWidth;
-      const clientHeight = ctx.element.offsetHeight;
+      // const clientWidth = ctx.element.offsetWidth;
+      // const clientHeight = ctx.element.offsetHeight;
 
-      const videoAspectRatio = ctx.width / ctx.height;
-      const clientAspectRatio = clientWidth / clientHeight;
+      // const videoAspectRatio = ctx.width / ctx.height;
+      // const clientAspectRatio = clientWidth / clientHeight;
 
-      const size = { x: null, y: null };
+      // const size = { x: null, y: null };
 
-      if (clientAspectRatio <= videoAspectRatio) {
-          const minDimension =
-              videoAspectRatio >= 1 ? clientWidth / videoAspectRatio : clientWidth;
-          size.x = (widthCo * minDimension) / 5;
-          size.y = (heightCo * minDimension) / 5;
-      } else {
-          const minDimension =
-              videoAspectRatio >= 1 ? clientHeight : clientHeight * videoAspectRatio;
-          size.x = (widthCo * minDimension) / 5;
-          size.y = (heightCo * minDimension) / 5;
-      }
+      // if (clientAspectRatio <= videoAspectRatio) {
+      //     const minDimension =
+      //         videoAspectRatio >= 1 ? clientWidth / videoAspectRatio : clientWidth;
+      //     size.x = (widthCo * minDimension) / 5;
+      //     size.y = (heightCo * minDimension) / 5;
+      // } else {
+      //     const minDimension =
+      //         videoAspectRatio >= 1 ? clientHeight : clientHeight * videoAspectRatio;
+      //     size.x = (widthCo * minDimension) / 5;
+      //     size.y = (heightCo * minDimension) / 5;
+      // }
+
+      // this._coordinates.y =
+      //     videoAspectRatio > clientAspectRatio
+      //         ? (0.01 * vertical - 0.5) * (clientWidth / videoAspectRatio) +
+      //           0.5 * (clientHeight - size.y)
+      //         : 0.01 * vertical * clientHeight - size.y / 2;
+      // this._coordinates.x =
+      //     videoAspectRatio < clientAspectRatio
+      //         ? (0.01 * horizontal - 0.5) * clientHeight * videoAspectRatio +
+      //           0.5 * clientWidth
+      //         : 0.01 * horizontal * clientWidth;
 
       this.el.style.removeProperty('display');
       const container = document.createElement('div');
       container.classList.add(`dapplet-label-${this._stickerId}`);
       container.style.position = 'absolute';
-      container.style.width = `${size.x * this._scaleCoef.x}px`;
-      container.style.height = `${size.y * this._scaleCoef.y}px`;
 
-      this._coordinates.y =
-          videoAspectRatio > clientAspectRatio
-              ? (0.01 * vertical - 0.5) * (clientWidth / videoAspectRatio) +
-                0.5 * (clientHeight - size.y)
-              : 0.01 * vertical * clientHeight - size.y / 2;
-      this._coordinates.x =
-          videoAspectRatio < clientAspectRatio
-              ? (0.01 * horizontal - 0.5) * clientHeight * videoAspectRatio +
-                0.5 * clientWidth
-              : 0.01 * horizontal * clientWidth;
+      container.style.width = `${width}px`;
+      container.style.height = `${height}px`;
+      if (top !== undefined) container.style.top = `${top}px`;
+      if (bottom !== undefined) container.style.bottom = `${bottom}px`;
+      if (left !== undefined) container.style.left = `${left}px`;
+      if (right !== undefined) container.style.right = `${right}px`;
 
-      container.style.top = `${this._coordinates.y}px`;
-      container.style.left = `${this._coordinates.x}px`;
-
-      container.style.touchAction = 'none';
-      container.style.userSelect = 'none';
+      // container.style.touchAction = 'none';
+      // container.style.userSelect = 'none';
       container.style.boxSizing = 'border-box';
       container.style.cursor = 'pointer';
       container.style.zIndex = '9999';
@@ -111,9 +124,9 @@ export class Label implements IWidget<ILabelState> {
       container.appendChild(image);
 
       container.addEventListener('click', (e) => {
+          e.preventDefault();
           e.stopPropagation();
           this.state.exec?.(this.state.ctx, this.state);
-          e.preventDefault();
           return false;
       });
 
