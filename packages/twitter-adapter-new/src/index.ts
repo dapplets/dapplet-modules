@@ -160,11 +160,11 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
             contextSelector: "div.css-1dbjc4n.r-1ifxtd0.r-ymttw5.r-ttdzmv",
             insPoints: {
                 AVATAR: {
-                    selector: "a div.css-1dbjc4n.r-1twgtwe.r-sdzlij.r-rs99b7.r-1p0dtai.r-1mi75qu.r-1d2f490.r-1ny4l3l.r-u8s1d.r-zchlnj.r-ipm5af.r-o7ynqc.r-6416eg",
-                    insert: 'end'
+                    selector: "a",
+                    insert: 'inside'
                 },
                 AVATAR_BADGE: {
-                    selector: "a div.css-1dbjc4n.r-1twgtwe.r-sdzlij.r-rs99b7.r-1p0dtai.r-1mi75qu.r-1d2f490.r-1ny4l3l.r-u8s1d.r-zchlnj.r-ipm5af.r-o7ynqc.r-6416eg",
+                    selector: "div.css-1dbjc4n.r-ggadg3.r-u8s1d.r-8jfcpp",
                     insert: 'end'
                 },
                 USERNAME_BADGE: {

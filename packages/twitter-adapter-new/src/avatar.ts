@@ -74,7 +74,7 @@ export class Avatar implements IWidget<IAvatarState> {
             imgTag.style.position = 'absolute';
             imgTag.style.objectFit = 'cover';
             if (this.insPointName = 'SUSPENDED') {
-                imgTag.style.borderRadius = '99em';
+               //imgTag.style.borderRadius = '99em';
                 imgTag.style.cursor = 'pointer';
             }
             this.el.title = tooltip ?? '';
@@ -94,6 +94,7 @@ export class Avatar implements IWidget<IAvatarState> {
         this.el.style.height = '100%';
         this.el.style.bottom = '0';
         this.el.style.zIndex = '50000';
+        this.el.style.clipPath = this.insPointName === 'POST' ? 'circle(50%)' : 'circle(46%)';
         this.el.addEventListener('click', (e) => {
             this.state.exec?.(this.state.ctx, this.state);
             e.preventDefault();
