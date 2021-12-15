@@ -262,7 +262,7 @@ export class Sticker implements IWidget<IStickerState> {
                 this._wasDisabled = disabled;
             }
 
-            if (mutable) (<HTMLImageElement>container.lastElementChild.firstElementChild).src = img;
+            if (mutable && img) (<HTMLImageElement>container.lastElementChild.firstElementChild).src = img;
 
             container.style.width = `${size.x}px`;
             container.style.height = `${size.y}px`;
@@ -490,62 +490,10 @@ export class Sticker implements IWidget<IStickerState> {
             return a;
         }
 
-        if (
-            ![...(<any>document.styleSheets)]
-                .map((styleSheet) => styleSheet.title)
-                .includes('sticker-rotation-handle-styles')
-        ) {
+        if (!document.getElementById('sticker-rotation-handle-styles')) {
             const styleTag: HTMLStyleElement = document.createElement('style');
-            styleTag.title = 'sticker-rotation-handle-styles';
             styleTag.id = 'sticker-rotation-handle-styles';
-            styleTag.innerText = `
-                .sticker-rotation-handle {
-                    display: none;
-                    position: absolute;
-                    width: 50%;
-                    height: 50%;
-                    line-height: 1;
-                    text-align: center;
-                    font-weight: bold;
-                    color: #fff;
-                    cursor: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCA0MiA1MyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgdHJhbnNmb3JtPSJyb3RhdGUoODAgMjEgMjcpIj4KPHBhdGggZD0iTTQxLjYgMjYuNTI1QzQxLjYgMTkuMTI1IDM3LjYgMTIuMjI1IDMxLjIgOC41MjUwNUMzMC4zIDguMDI1MDUgMjkuMTk5OSA4LjMyNTA1IDI4LjU5OTkgOS4yMjUwNUMyOC4wOTk5IDEwLjEyNSAyOC40IDExLjIyNSAyOS4yOTk5IDExLjgyNUMzNC41OTk5IDE0LjgyNSAzNy44OTk5IDIwLjUyNSAzNy44OTk5IDI2LjYyNUMzNy44OTk5IDM1LjYyNSAzMC44OTk5IDQzLjAyNTEgMjIuMDk5OSA0My42MjVMMjUuMiA0MC41MjVDMjUuOSAzOS44MjUgMjUuOSAzOC42MjUgMjUuMiAzNy45MjVDMjQuNSAzNy4yMjUgMjMuMjk5OSAzNy4yMjUgMjIuNTk5OSAzNy45MjVMMTYuNyA0My44MjVDMTYuMyA0NC4yMjUgMTYuMiA0NC42MjUgMTYuMiA0NS4xMjVDMTYuMiA0NS42MjUgMTYuNCA0Ni4xMjUgMTYuNyA0Ni40MjVMMjIuNTk5OSA1Mi4zMjVDMjIuOTk5OSA1Mi43MjUgMjMuMzk5OSA1Mi44MjUgMjMuODk5OSA1Mi44MjVDMjQuMzk5OSA1Mi44MjUgMjQuOSA1Mi42MjUgMjUuMiA1Mi4zMjVDMjUuOSA1MS42MjUgMjUuOSA1MC40MjUgMjUuMiA0OS43MjVMMjIuNzk5OSA0Ny4zMjVDMzMuMTk5OSA0Ni4yMjUgNDEuNiAzNy4zMjUgNDEuNiAyNi41MjVaIiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSJibGFjayIvPgo8cGF0aCBkPSJNMTYuNSAxNC45MjVDMTYuOSAxNS4zMjUgMTcuMyAxNS40MjUgMTcuOCAxNS40MjVDMTguMyAxNS40MjUgMTguOCAxNS4yMjUgMTkuMSAxNC45MjVMMjUgOS4wMjVDMjUuNCA4LjYyNSAyNS41IDguMjI1IDI1LjUgNy43MjVDMjUuNSA3LjIyNSAyNS4zIDYuNzI1IDI1IDYuNDI1TDE5LjEgMC41MjVDMTguNCAtMC4xNzUgMTcuMiAtMC4xNzUgMTYuNSAwLjUyNUMxNS44IDEuMjI1IDE1LjggMi40MjUgMTYuNSAzLjEyNUwxOS4zIDUuOTI1QzguNSA2LjcyNSAwIDE1LjcyNSAwIDI2LjYyNUMwIDM0LjAyNSA0IDQwLjkyNSAxMC40IDQ0LjYyNUMxMC43IDQ0LjgyNSAxMSA0NC44MjUgMTEuMyA0NC44MjVDMTEuOSA0NC44MjUgMTIuNiA0NC41MjUgMTIuOSA0My45MjVDMTMuNCA0My4wMjUgMTMuMSA0MS45MjUgMTIuMiA0MS4zMjVDNi45IDM4LjMyNSAzLjYgMzIuNjI1IDMuNiAyNi41MjVDMy42IDE3LjcyNSAxMC40IDEwLjQyNSAxOSA5LjYyNUwxNi4zIDEyLjMyNUMxNS44IDEyLjkyNSAxNS44IDE0LjEyNSAxNi41IDE0LjkyNVoiIGZpbGw9IndoaXRlIiBzdHJva2U9ImJsYWNrIi8+CjwvZz4KPC9zdmc+Cg==") 15 15, move !important;
-                }
-
-                .sticker-rotation-handle::after {
-                    content: '';
-                    position: absolute;
-                    width: 8%;
-                    height: 8%;
-                    z-index: 100000;
-                    border: solid #588CA3;
-                    background: white;
-
-                }
-                
-                .sticker-rotation-handle.srh-first::after {
-                    top: 40%;
-                    left: 40%;
-                }
-                
-                .sticker-rotation-handle.srh-second::after {
-                    bottom: 41%;
-                    right: 41%;
-                }
-                
-                .sticker-rotation-handle.srh-third::after {
-                    top: 40%;
-                    right: 41%;
-                }
-                
-                .sticker-rotation-handle.srh-fourth::after {
-                    bottom: 41%;
-                    left: 40%;
-                }
-                
-                .dapplet-widget-video-sticker > div:hover {
-                    outline: solid #588CA3 !important;
-                    transition: outline .1s ease-in;
-                }`;
+            styleTag.innerText = ".sticker-rotation-handle{display:none;position:absolute;width:50%;height:50%;line-height:1;text-align:center;font-weight:700;color:#fff;cursor:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCA0MiA1MyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgdHJhbnNmb3JtPSJyb3RhdGUoODAgMjEgMjcpIj4KPHBhdGggZD0iTTQxLjYgMjYuNTI1QzQxLjYgMTkuMTI1IDM3LjYgMTIuMjI1IDMxLjIgOC41MjUwNUMzMC4zIDguMDI1MDUgMjkuMTk5OSA4LjMyNTA1IDI4LjU5OTkgOS4yMjUwNUMyOC4wOTk5IDEwLjEyNSAyOC40IDExLjIyNSAyOS4yOTk5IDExLjgyNUMzNC41OTk5IDE0LjgyNSAzNy44OTk5IDIwLjUyNSAzNy44OTk5IDI2LjYyNUMzNy44OTk5IDM1LjYyNSAzMC44OTk5IDQzLjAyNTEgMjIuMDk5OSA0My42MjVMMjUuMiA0MC41MjVDMjUuOSAzOS44MjUgMjUuOSAzOC42MjUgMjUuMiAzNy45MjVDMjQuNSAzNy4yMjUgMjMuMjk5OSAzNy4yMjUgMjIuNTk5OSAzNy45MjVMMTYuNyA0My44MjVDMTYuMyA0NC4yMjUgMTYuMiA0NC42MjUgMTYuMiA0NS4xMjVDMTYuMiA0NS42MjUgMTYuNCA0Ni4xMjUgMTYuNyA0Ni40MjVMMjIuNTk5OSA1Mi4zMjVDMjIuOTk5OSA1Mi43MjUgMjMuMzk5OSA1Mi44MjUgMjMuODk5OSA1Mi44MjVDMjQuMzk5OSA1Mi44MjUgMjQuOSA1Mi42MjUgMjUuMiA1Mi4zMjVDMjUuOSA1MS42MjUgMjUuOSA1MC40MjUgMjUuMiA0OS43MjVMMjIuNzk5OSA0Ny4zMjVDMzMuMTk5OSA0Ni4yMjUgNDEuNiAzNy4zMjUgNDEuNiAyNi41MjVaIiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSJibGFjayIvPgo8cGF0aCBkPSJNMTYuNSAxNC45MjVDMTYuOSAxNS4zMjUgMTcuMyAxNS40MjUgMTcuOCAxNS40MjVDMTguMyAxNS40MjUgMTguOCAxNS4yMjUgMTkuMSAxNC45MjVMMjUgOS4wMjVDMjUuNCA4LjYyNSAyNS41IDguMjI1IDI1LjUgNy43MjVDMjUuNSA3LjIyNSAyNS4zIDYuNzI1IDI1IDYuNDI1TDE5LjEgMC41MjVDMTguNCAtMC4xNzUgMTcuMiAtMC4xNzUgMTYuNSAwLjUyNUMxNS44IDEuMjI1IDE1LjggMi40MjUgMTYuNSAzLjEyNUwxOS4zIDUuOTI1QzguNSA2LjcyNSAwIDE1LjcyNSAwIDI2LjYyNUMwIDM0LjAyNSA0IDQwLjkyNSAxMC40IDQ0LjYyNUMxMC43IDQ0LjgyNSAxMSA0NC44MjUgMTEuMyA0NC44MjVDMTEuOSA0NC44MjUgMTIuNiA0NC41MjUgMTIuOSA0My45MjVDMTMuNCA0My4wMjUgMTMuMSA0MS45MjUgMTIuMiA0MS4zMjVDNi45IDM4LjMyNSAzLjYgMzIuNjI1IDMuNiAyNi41MjVDMy42IDE3LjcyNSAxMC40IDEwLjQyNSAxOSA5LjYyNUwxNi4zIDEyLjMyNUMxNS44IDEyLjkyNSAxNS44IDE0LjEyNSAxNi41IDE0LjkyNVoiIGZpbGw9IndoaXRlIiBzdHJva2U9ImJsYWNrIi8+CjwvZz4KPC9zdmc+Cg==) 15 15,move!important}.sticker-rotation-handle::after{content:'';position:absolute;width:8%;height:8%;z-index:100000;border:solid #588ca3;background:#fff}.sticker-rotation-handle.srh-first::after{top:40%;left:40%}.sticker-rotation-handle.srh-second::after{bottom:41%;right:41%}.sticker-rotation-handle.srh-third::after{top:40%;right:41%}.sticker-rotation-handle.srh-fourth::after{bottom:41%;left:40%}.dapplet-widget-video-sticker>div:hover{outline:solid #588ca3!important;transition:outline .1s ease-in}";
             document.head.appendChild(styleTag);
         }
 
