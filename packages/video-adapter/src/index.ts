@@ -84,6 +84,8 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
 
                 if (!isStableId) {
                     Core.contextStarted(['id'], document.location.hostname);
+                } else {
+                  src = src.split('?')[0];
                 }
 
                 if (n.parentElement.localName === 'body' && !n.id) {
