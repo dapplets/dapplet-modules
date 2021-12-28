@@ -145,8 +145,8 @@ export class Label implements IWidget<ILabelState> {
       this.el.style.bottom = '0';
       this.el.style.right = '0';
       this.el.style.left = '0';
-      this.el.style.width = '100%';
-      this.el.style.height = '100%';
+      this.el.style.width = '0';
+      this.el.style.height = '0';
       this.el.classList.add('dapplet-widget-video-label');
       this.state.init?.(this.state.ctx, this.state);
   }

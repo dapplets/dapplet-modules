@@ -15,6 +15,8 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
 
     private _observers = new WeakMap<any, ResizeObserver>();
     private _styleObservers = new WeakMap<any, MutationObserver>();
+    private _fullscreenHandlerMap = new Map<string, Function>();
+    private _fullscreenElementMap = new WeakMap<Element, HTMLElement>();
 
     constructor(
         @Inject('dynamic-adapter.dapplet-base.eth')
@@ -36,7 +38,27 @@ export default class VideoAdapter implements IContentAdapter<IVideoAdapterConfig
             containerSelector: 'html',
             contextSelector: 'video',
             insPoints: {
-                VIDEO: { insert: 'begin' },
+                VIDEO: {
+                    selector: (n: HTMLElement, refresh: Function, id?: string): HTMLElement => {
+                        if (this._fullscreenElementMap.has(n)) return this._fullscreenElementMap.get(n);
+                        const el = getWrapper(n.parentElement, n);
+                        const fullscreenChangeHandler = (e: any) => {
+                            const isFullscreen = !!document.fullscreenElement;
+                            if (isFullscreen) {
+                                this._fullscreenElementMap.set(n, <HTMLElement>document.fullscreenElement);
+                            } else {
+                                this._fullscreenElementMap.delete(n);
+                                el.removeEventListener('fullscreenchange', this._fullscreenHandlerMap.get(id));
+                                this._fullscreenHandlerMap.delete(id);
+                            }
+                            refresh();
+                        }
+                        this._fullscreenHandlerMap.set(id, fullscreenChangeHandler);
+                        el.addEventListener('fullscreenchange', fullscreenChangeHandler);
+                        return el;
+                    },
+                    insert: 'begin',
+                },
             },
             contextBuilder: (n: HTMLVideoElement, parent: any) => {
 
@@ -263,4 +285,16 @@ const fontLoader = (param: { family: string }) => {
   link.rel = 'stylesheet';
   link.href = 'https://fonts.googleapis.com/css2?family=' + param.family + ':wght@400;500;700&display=swap';
   headID.appendChild(link);
+};
+
+const getWrapper = (parent: HTMLElement, el: HTMLElement) => {
+  if (parent.offsetWidth !== el.offsetWidth || parent.offsetHeight !== el.offsetHeight) {
+      return el;
+  }
+  const grandParent = parent.parentElement;
+  if (grandParent !== null && grandParent.offsetWidth === parent.offsetWidth && grandParent.offsetHeight === parent.offsetHeight) {
+      return getWrapper(grandParent, parent);
+  } else {
+      return el;
+  }
 };
