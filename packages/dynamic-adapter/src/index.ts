@@ -17,13 +17,13 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
     private observer: MutationObserver = null;
     private featureConfigs: any[] = [];
     private contextBuilders: WidgetBuilder[] = [];
-    private stateStorage = new Map<string, any>();
+    private stateStorage = new Map<string, State<any>>();
     private locator = new Locator();
 
     constructor() {
         if (!document || !window || !MutationObserver) throw Error('Document or MutationObserver is not available.');
 
-        this.locator.scanDocument();
+        this.locator.scanDocument(); // find all dynamic contexts in a document
         this.observer = new MutationObserver((mutations) => this.updateObservers(mutations));
         this.observer.observe(document.body, { childList: true, subtree: true, attributes: true });
     }
@@ -139,6 +139,9 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
                 order = 0;
             }
 
+            const context = builder.contexts.get(contextNode);
+            if (!context) return;
+
             const insPointName = Widget.contextInsPoints[builder.contextName]
 
             const insPoint = builder.insPoints[insPointName];
@@ -147,10 +150,24 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
                 return;
             }
 
-            const node = (insPoint.selector) ? contextNode.querySelector(insPoint.selector) as HTMLElement
-                : (insPoint.insPoints ?
-                    contextNode.querySelector(insPoint.insPoints[Widget.contextInsPoints[insPointName]].selector) as HTMLElement
-                    : contextNode);
+            // make it automatically when insertion point's element was changed
+            const refreshSelector = (node: HTMLElement) => {
+                const widgets = node.parentElement?.getElementsByClassName(clazz);
+                const newInsertionPoint = insPoint.selector(contextNode, () => refreshSelector(node), clazz + '/' + context.parsed.id);
+                Array.from(widgets).forEach(x => {
+                    x.remove();
+                    newInsertionPoint.appendChild(x);
+                });
+            }
+
+            const node = insPoint.selector
+                ? typeof insPoint.selector === 'function'
+                    ? insPoint.selector(contextNode, () => refreshSelector(node), clazz + '/' + context.parsed.id)
+                    : contextNode.querySelector(insPoint.selector) as HTMLElement
+                : insPoint.insPoints
+                    ? contextNode.querySelector(insPoint.insPoints[Widget.contextInsPoints[insPointName]].selector) as HTMLElement
+                    : contextNode as HTMLElement;
+
             if (!node) {
                 // console.error(`There is no ${insPointName} in the ${_insPointName}. Check the selector.`);
                 return;
@@ -160,9 +177,6 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
 
             // check if a widget already exists for the insPoint
             if (node.parentElement?.getElementsByClassName(clazz).length > 0) return;
-
-            const context = builder.contexts.get(contextNode);
-            if (!context) return;
 
             // widget state restoring
             const state = (() => {
@@ -191,22 +205,26 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
 
             widget.el.setAttribute('data-dapplet-order', order.toString());
 
-            const insertTo: 'begin' | 'end' | 'inside' = (insPoint.insert === undefined) ?
-                (insPoint.insPoints?.[Widget.contextInsPoints[insPointName]].insert === undefined ?
-                    'end'
-                    : insPoint.insPoints[Widget.contextInsPoints[insPointName]].insert)
-                : insPoint.insert;
+            const insertTo: 'begin' | 'end' | 'inside' = insPoint.insert !== undefined
+                ? insPoint.insert
+                : insPoint.insPoints?.[Widget.contextInsPoints[insPointName]].insert === undefined
+                    ? 'end'
+                    : insPoint.insPoints[Widget.contextInsPoints[insPointName]].insert;
 
             const insertedElements = node.parentNode.querySelectorAll(':scope > .dapplet-widget');
 
             if (insertedElements.length === 0) {
-                if (insertTo === 'end') {
+                switch (insertTo) {
+                  case 'end':
                     node.parentNode.insertBefore(widget.el, node.nextSibling);
-                } else if (insertTo === 'begin') {
+                    break;
+                  case 'begin':
                     node.parentNode.insertBefore(widget.el, node);
-                } else if (insertTo === 'inside') {
+                    break;
+                  case 'inside':
                     node.appendChild(widget.el);
-                } else {
+                    break;
+                  default:
                     console.error('Invalid "insert" value in the insertion point config. The valid values are "begin" or "end".');
                 }
             } else {

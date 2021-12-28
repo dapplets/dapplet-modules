@@ -95,8 +95,7 @@ export class WidgetBuilder {
                 }
             }
 
-            for (let i = 0; i < featureConfigs.length; i++) {
-                const featureConfig = featureConfigs[i];
+            for (const featureConfig of featureConfigs) {
                 // Prevent multiple execution of featureConfig on one context
                 if (!this.executedNodes.has(contextNode)) this.executedNodes.set(contextNode, new WeakSet());
                 if (this.executedNodes.get(contextNode).has(featureConfig)) continue;
@@ -144,7 +143,7 @@ export class WidgetBuilder {
                     });
                 }
             }
-        }
+        } // end loop
 
         Core.contextStarted(newParsedContexts.map((ctx) => ctx.parsed), document.location.hostname);
         newParsedContexts.forEach(ctx => this.emitEvent(null, 'context_changed', ctx, [null, ctx.parsed, null]));

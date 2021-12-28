@@ -1,5 +1,4 @@
-import { AutoProperty, AutoPropertyConf } from "@dapplets/dapplet-extension";
-import { Connection, Listener } from "@dapplets/dapplet-extension/lib/inpage/connection";
+import { AutoPropertyConf } from "@dapplets/dapplet-extension";
 
 export type WidgetConfig<T> = ({
     [key: string]: T;
