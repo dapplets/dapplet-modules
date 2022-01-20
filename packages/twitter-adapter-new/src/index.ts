@@ -50,7 +50,8 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
             contextSelector: "article.css-1dbjc4n",
             insPoints: {
                 SOUTH: {
-                    selector: "div[role=group] > *:last-child"
+                    selector: "div[role=group] > *:last-child",
+                    maxNumber: 3,
                 },
                 COMBO: {
                     selector: "" //ToDo

@@ -6,6 +6,10 @@ interface IConfig {
     orderIndex: number,
     ['string']: (ctx: string) => any[] | any,
 }
+interface SavedContext {
+    _insPointName: string,
+    context: any,
+}
 
 export class WidgetBuilder {
     contextName: string;
@@ -21,8 +25,27 @@ export class WidgetBuilder {
 
     private executedNodes = new WeakMap<Node, WeakSet<any>>();
     private widgetsByContextId = new Map<string, Set<any>>();
+    public getWidgetsByContextId = () => this.widgetsByContextId;
     private widgets = new Map<IFeature, any[]>();
     public contexts = new WeakMap<Node, Context>(); // ToDo: make private
+
+    private notInsertedWidgetsQueue = new Map<IFeature, Map<any, Map<Element, SavedContext>>>();
+    public addToNotInsertedWidgetsQueue = (featureConfig: IFeature, insPointConfig: any, contextNode: Element, c: SavedContext) => {
+        // console.log('featureConfig', featureConfig)
+        // console.log('insPointConfig', insPointConfig)
+        if (!this.notInsertedWidgetsQueue.has(featureConfig)) {
+            this.notInsertedWidgetsQueue.set(featureConfig, new Map());
+            // console.log('Add Map L1: this.notInsertedWidgetsQueue', this.notInsertedWidgetsQueue)
+        }
+        if (!this.notInsertedWidgetsQueue.get(featureConfig).has(insPointConfig)) {
+            this.notInsertedWidgetsQueue.get(featureConfig).set(insPointConfig, new Map());
+            // console.log('Add Map L2: this.notInsertedWidgetsQueue', this.notInsertedWidgetsQueue)
+        }
+        if (!this.notInsertedWidgetsQueue.get(featureConfig).get(insPointConfig).has(contextNode)) {
+            this.notInsertedWidgetsQueue.get(featureConfig).get(insPointConfig).set(contextNode, c);
+            // console.log('Set element: this.notInsertedWidgetsQueue', this.notInsertedWidgetsQueue)
+        }
+    };
 
     //ToDo: widgets
 
@@ -181,23 +204,35 @@ export class WidgetBuilder {
             if (this.executedNodes.get(contextNode)?.has(config)) {
                 this.executedNodes.get(contextNode).delete(config);
             }
+            if (this.notInsertedWidgetsQueue.has(config)) {
+                this.notInsertedWidgetsQueue.delete(config);
+            }
         }
+        this.widgetsByContextId.forEach((widgetsById) => widgets.forEach(w => widgetsById.delete(w)));
+        this.widgets.delete(config);
+        this.notInsertedWidgetsQueue?.forEach((notInsertedWidgets, featureConfig) =>
+            notInsertedWidgets.forEach((contextDatas, widgetConstructor) =>
+                contextDatas.forEach((value, contextNode) => 
+                    this._insertWidgets(widgetConstructor, featureConfig, value._insPointName, value.context, contextNode))));
     }
 
     private _insertWidgets(insPointConfig: any, featureConfig: any, insPointName: string, context: Context, contextNode: Element) {
+      console.log("this.notInsertedWidgetsQueue", this.notInsertedWidgetsQueue)
         if (insPointConfig === null || insPointConfig === undefined) return;
 
         const widgetConstructors = Array.isArray(insPointConfig) ? insPointConfig : [insPointConfig];
+        console.log('widgetConstructors', widgetConstructors)
 
         for (const widgetConstructor of widgetConstructors) {
             const contextIds = featureConfig.contextIds || [];
+            console.log('contextIds', contextIds)
 
-            if (contextIds.length === 0 || contextIds.indexOf(context.parsed.id) !== -1) {
+            // if (contextIds.length === 0 || contextIds.indexOf(context.parsed.id) !== -1) {
                 if (typeof widgetConstructor !== 'function') {
                     // console.error(`Invalid widget configuration in the insertion point "${insPointName}". It must be WidgetConstructor instance.`);
                     continue;
                 }
-                const insertedWidget = widgetConstructor(this, insPointName, featureConfig.orderIndex, contextNode);
+                const insertedWidget = widgetConstructor(this, insPointName, featureConfig, contextNode, widgetConstructor);
                 if (!insertedWidget) continue;
 
                 const registeredWidgets = this.widgets.get(featureConfig);
@@ -208,7 +243,7 @@ export class WidgetBuilder {
                     if (!this.widgetsByContextId.has(context.parsed.id)) this.widgetsByContextId.set(context.parsed.id, new Set<any>());
                     if (!this.widgetsByContextId.get(context.parsed.id).has(insertedWidget)) this.widgetsByContextId.get(context.parsed.id).add(insertedWidget);
                 }
-            }
+            // }
         }
     }
 

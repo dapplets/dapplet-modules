@@ -6,7 +6,7 @@ import { Locator } from './locator';
 
 interface IDynamicAdapter<IAdapterConfig> extends IContentAdapter<IAdapterConfig> {
     configure(config: { [contextName: string]: IWidgetBuilderConfig }): void;
-    createWidgetFactory<T>(Widget: any): (config: { [state: string]: T }) => (builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element) => any;
+    createWidgetFactory<T>(Widget: any): (config: { [state: string]: T }) => (builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element, widgetConstructor: any) => any;
     resetConfig(config: IAdapterConfig, newConfig?: IAdapterConfig): {
         $: (ctx: any, id: string) => any;
     };
@@ -133,16 +133,36 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
             });
         }
 
-        function createWidget(Widget: any, builder: WidgetBuilder, _insPointName: string, config: { [state: string]: T }, order: number, contextNode: Element, clazz: string): any {
-            if (order === undefined || order === null) {
+        function createWidget(Widget: any, builder: WidgetBuilder, _insPointName: string, config: { [state: string]: T }, featureConfig: any, contextNode: Element, clazz: string, widgetConstructor: any): any {
+            console.log('in createWidget')
+            if (featureConfig.order === undefined || featureConfig.order === null) {
                 //console.error('Empty order!');
-                order = 0;
+                featureConfig.order = 0;
             }
-
             const context = builder.contexts.get(contextNode);
             if (!context) return;
 
             const insPointName = Widget.contextInsPoints[builder.contextName]
+            const widgetName = Widget.name;
+            const { maxNumber } = builder.insPoints[insPointName];
+            const widgetsByCurrentContextId = builder.getWidgetsByContextId().get(context.parsed.id);
+            let insertedWidgetsNumber: number = 0;
+            widgetsByCurrentContextId?.forEach((value) => {
+                if (Object.getPrototypeOf(value).constructor.name === widgetName) insertedWidgetsNumber += 1;
+            });
+            console.log('insertedWidgetsNumber', insertedWidgetsNumber)
+            if (maxNumber !== undefined && insertedWidgetsNumber >= +maxNumber) {
+                builder.addToNotInsertedWidgetsQueue(
+                    featureConfig,
+                    widgetConstructor,
+                    contextNode,
+                    {
+                        _insPointName,
+                        context,
+                    }
+                );
+                return;
+            };
 
             const insPoint = builder.insPoints[insPointName];
             if (!insPoint) {
@@ -203,7 +223,7 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
             widget.mount(); // ToDo: remove it?
             widget.el.classList.add('dapplet-widget', clazz);
 
-            widget.el.setAttribute('data-dapplet-order', order.toString());
+            widget.el.setAttribute('data-dapplet-order', featureConfig.order.toString());
 
             const insertTo: 'begin' | 'end' | 'inside' = insPoint.insert !== undefined
                 ? insPoint.insert
@@ -235,7 +255,7 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
                 for (let i = 0; i < insertedElements.length; i++) {
                     const element = insertedElements[i];
                     const elementOrder = parseInt(element.getAttribute('data-dapplet-order'));
-                    if (targetElementIndex === null && elementOrder > order) {
+                    if (targetElementIndex === null && elementOrder > featureConfig.order) {
                         targetElementIndex = i;
                     }
                     // if (elementOrder === order) {
@@ -257,8 +277,8 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
 
         return (config: WidgetConfig<T>) => {
             const uuid = uuidv4();
-            return ((builder: WidgetBuilder, insPointName: string, order: number, contextNode: Element) =>
-                createWidget(Widget, builder, insPointName, config, order, contextNode, uuid)
+            return ((builder: WidgetBuilder, insPointName: string, featureConfig: any, contextNode: Element, widgetConstructor: any) =>
+                createWidget(Widget, builder, insPointName, config, featureConfig, contextNode, uuid, widgetConstructor)
             );
         }
     }
