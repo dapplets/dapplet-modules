@@ -1,7 +1,8 @@
 import { IWidget } from 'dynamic-adapter.dapplet-base.eth';
 
 export interface IAvatarState {
-    img: string;
+    img?: string;
+    video?: string;
     label?: string;
     tooltip?: string;
     hidden?: boolean;
@@ -23,7 +24,12 @@ export class Avatar implements IWidget<IAvatarState> {
     public static widgetParamsDescription = {
         img: {
             description:'image as blob',
-            optional: false,
+            optional: true,
+            TYPE: 'string',
+        },
+        video: {
+            description:'video as blob',
+            optional: true,
             TYPE: 'string',
         },
         label: {
@@ -61,21 +67,36 @@ export class Avatar implements IWidget<IAvatarState> {
 
     public mount() {
         if (!this.el) this._createElement();
-        const { img, hidden, tooltip } = this.state;
+        const { img, video, hidden, tooltip } = this.state;
         if (!hidden) {
-            if (!this.el.firstChild) {
-                const imgTag = document.createElement('img');
-                this.el.appendChild(imgTag);
-            }
-            const imgTag: HTMLImageElement = this.el.firstChild as any;
-            imgTag.src = img;
-            imgTag.style.width = '100%';
-            imgTag.style.height = '100%';
-            imgTag.style.position = 'absolute';
-            imgTag.style.objectFit = 'cover';
-            if (this.insPointName = 'SUSPENDED') {
-               //imgTag.style.borderRadius = '99em';
-                imgTag.style.cursor = 'pointer';
+            if (img) {
+                if (!this.el.firstChild) {
+                    const imgTag = document.createElement('img');
+                    this.el.appendChild(imgTag);
+                }
+                const imgTag: HTMLImageElement = this.el.firstChild as any;
+                imgTag.src = img;
+                imgTag.style.width = '100%';
+                imgTag.style.height = '100%';
+                imgTag.style.position = 'absolute';
+                imgTag.style.objectFit = 'cover';
+                if (this.insPointName = 'SUSPENDED') {
+                    imgTag.style.cursor = 'pointer';
+                }
+            } else if (video) {
+                if (!this.el.firstChild) {
+                    const videoTag = document.createElement('video');
+                    this.el.appendChild(videoTag);
+                }
+                const videoTag: HTMLVideoElement = this.el.firstChild as any;
+                videoTag.src = video;
+                videoTag.autoplay = true;
+                videoTag.muted = true;
+                videoTag.loop = true;
+                videoTag.style.width = '100%';
+                if (this.insPointName = 'SUSPENDED') {
+                    videoTag.style.cursor = 'pointer';
+                }
             }
             this.el.title = tooltip ?? '';
         } else {

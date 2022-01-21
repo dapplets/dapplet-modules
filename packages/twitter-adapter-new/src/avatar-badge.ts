@@ -1,7 +1,8 @@
 import { IWidget } from 'dynamic-adapter.dapplet-base.eth';
 
 export interface IAvatarBadgeState {
-    img: string;
+    img?: string;
+    video?: string;
     horizontal: 'left' | 'right';
     vertical: 'top' | 'bottom';
     tooltip?: string;
@@ -26,7 +27,12 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
     public static widgetParamsDescription = {
         img: {
             description:'image as blob',
-            optional: false,
+            optional: true,
+            TYPE: 'string',
+        },
+        video: {
+            description:'video as blob',
+            optional: true,
             TYPE: 'string',
         },
         horizontal: {
@@ -76,12 +82,11 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
         this._injectStyles();
         if (!this.el) this._createElement();
 
-        const { img, vertical, horizontal, hidden, tooltip, theme } = this.state;
+        const { img, video, vertical, horizontal, hidden, tooltip, theme } = this.state;
 
         if (!hidden) {
             if (!this.el.firstChild) {
                 const container = document.createElement('div');
-                const imgTag = document.createElement('img');
                 container.style.position = 'absolute';
                 container.style.display = 'flex';
                 container.style.overflow = 'hidden';
@@ -92,8 +97,20 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
                 } else {
                     container.style.backgroundColor = 'lightgray';
                 }
-                imgTag.src = img;
-                imgTag.style.width = '100%';
+                if (img) {
+                    const imgTag = document.createElement('img');
+                    imgTag.src = img;
+                    imgTag.style.width = '100%';
+                    container.appendChild(imgTag);
+                } else if (video) {
+                    const videoTag = document.createElement('video');
+                    videoTag.src = video;
+                    videoTag.autoplay = true;
+                    videoTag.muted = true;
+                    videoTag.loop = true;
+                    videoTag.style.width = '100%';
+                    container.appendChild(videoTag);
+                }
                 switch (this.insPointName) {
                     case 'POST':
                         container.style.width = '24px';
@@ -121,7 +138,6 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
                         }
                         break;
                 }
-                container.appendChild(imgTag);
                 this.el.appendChild(container);
             }
             this.el.title = tooltip ?? '';
