@@ -45,8 +45,12 @@ export default class DemoDapplet implements IFeature {
 
     this._overlay.onClose((e: any) => console.log('The overlay closed!', e))
 
-    const adapterManifest = await (<any>Core).getManifest(adapterName);
-    console.log('adapterManifest', adapterManifest);
+    try {
+      const adapterManifest = await (<any>Core).getManifest(adapterName);
+      console.log('adapterManifest', adapterManifest);
+    } catch (err) {
+      console.log('Core.getManifest has en error:', err);
+    }
     
     Core.onAction(() => this.openOverlay());
 
