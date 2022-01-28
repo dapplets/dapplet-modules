@@ -4,10 +4,12 @@ import MAIN_IMG from './Red_Icon3.svg';
 import BLACK_IMG from './Black_Icon3.svg';
 import WHITE_IMG from './White_Icon3.svg';
 
+const adapterName = 'twitter-adapter.dapplet-base.eth';
+
 @Injectable
 export default class DemoDapplet implements IFeature {
 
-  @Inject('twitter-adapter.dapplet-base.eth')
+  @Inject(adapterName)
   public adapter: any
 
   private _overlay: any
@@ -40,6 +42,11 @@ export default class DemoDapplet implements IFeature {
           forceOverlay: () => localStorage.setItem('tw-dd-open-force', 'open'),
         });
     }
+
+    this._overlay.onClose((e: any) => console.log('The overlay closed!', e))
+
+    const adapterManifest = await (<any>Core).getManifest(adapterName);
+    console.log('adapterManifest', adapterManifest);
     
     Core.onAction(() => this.openOverlay());
 
@@ -114,14 +121,15 @@ export default class DemoDapplet implements IFeature {
             img: { DARK: WHITE_IMG, LIGHT: BLACK_IMG },
             exec: () => {
               console.log('ctx = ', ctx);
-              this.openOverlay({ index: '0/1', ctx });
+              //this.openOverlay({ index: '0/1', ctx });
+              Core.overlayManager.unregisterAll();
             },
           },
         }),
         usernameBadge({
           initial: 'DEFAULT',
           DEFAULT: {
-            img: { DARK: WHITE_IMG, LIGHT:BLACK_IMG  },
+            img: { DARK: WHITE_IMG, LIGHT: BLACK_IMG  },
             exec: () => {
               console.log('ctx = ', ctx);
               this.openOverlay({ index: '0/2', ctx });
@@ -144,10 +152,11 @@ export default class DemoDapplet implements IFeature {
           DEFAULT: {
             basic: true,
             img: MAIN_IMG,
-            text: 'label',
+            text: 'close overlay',
             exec: () => {
               console.log('ctx = ', ctx);
-              this.openOverlay({ index: '0/4', ctx });
+              if (this._overlay.isOpen()) this._overlay.close();
+              //this.openOverlay({ index: '0/4', ctx });
             },
           },
         }),
