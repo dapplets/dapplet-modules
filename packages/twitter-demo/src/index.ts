@@ -223,12 +223,43 @@ export default class DemoDapplet implements IFeature {
           initial: 'DEFAULT',
           DEFAULT: {
             img: MAIN_IMG,
-            label: 'button#1',
-            exec: () => {
+            label: 'LOGIN',
+            init: async (_, me) => {
+              const existSessions = await Core.sessions();
+              console.log('existSessions', existSessions);
+              if (existSessions.length !== 0) me.state = 'LOGGED';
+            },
+            exec: async (_, me) => {
               console.log('ctx = ', ctx);
               this.openOverlay({ index: '1/3', ctx });
+
+              const existSessions = await Core.sessions();
+              console.log('existSessions', existSessions);
+
+              const newSessions = await (<any>Core).login({ authMethods: ['ethereum/goerli'] }, {
+                    onLogin: () => console.log('onLogin'),
+                    onLogout: () => console.log('onLogout'),
+                    // onReject: () => console.log('onReject'),
+                    // onSwitch: () => console.log('onSwitch'),
+                });
+              console.log(newSessions);
+              me.state = 'LOGGED';
             },
           },
+          LOGGED: {
+            img: MAIN_IMG,
+            label: 'LOGOUT',
+            exec: async (_, me) => {
+              console.log('ctx = ', ctx);
+              this.openOverlay({ index: '1/3', ctx });
+
+              const existSessions = await Core.sessions();
+              await Promise.all(existSessions.map(x => x.logout()));
+              const newExistSessions = await Core.sessions();
+              console.log('existSessions', newExistSessions);
+              me.state = 'DEFAULT';
+            },
+          }
         }),
       ],
       HEADING: (ctx) => [
@@ -236,9 +267,11 @@ export default class DemoDapplet implements IFeature {
           initial: 'DEFAULT',
           DEFAULT: {
             img: MAIN_IMG,
-            exec: () => {
+            exec: async () => {
               console.log('ctx = ', ctx);
               this.openOverlay({ index: '2/0', ctx });
+              const newExistSessions = await Core.sessions();
+              console.log('existSessions', newExistSessions);
             },
           },
         }),
