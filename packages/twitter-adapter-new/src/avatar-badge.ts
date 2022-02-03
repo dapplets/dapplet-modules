@@ -1,21 +1,22 @@
 import { IWidget } from 'dynamic-adapter.dapplet-base.eth';
 
 export interface IAvatarBadgeState {
-    img?: string;
-    video?: string;
-    horizontal: 'left' | 'right';
-    vertical: 'top' | 'bottom';
-    tooltip?: string;
-    hidden?: boolean;
+    img?: string
+    video?: string
+    basic?: boolean
+    horizontal: 'left' | 'right'
+    vertical: 'top' | 'bottom'
+    tooltip?: string
+    hidden?: boolean
     theme?: 'DARK' | 'LIGHT'
-    //label?: string;
-    //loading?: boolean;
-    //disabled?: boolean;
-    exec?: (ctx: any, me: IAvatarBadgeState) => void;
-    init?: (tx: any, me: IAvatarBadgeState) => void;
-    ctx: any;
-    username: string;
-    insPointName: string;
+    //label?: string
+    //loading?: boolean
+    //disabled?: boolean
+    exec?: (ctx: any, me: IAvatarBadgeState) => void
+    init?: (tx: any, me: IAvatarBadgeState) => void
+    ctx: any
+    username: string
+    insPointName: string
 }
 
 export class AvatarBadge implements IWidget<IAvatarBadgeState> {
@@ -34,6 +35,11 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
             description:'video as blob',
             optional: true,
             TYPE: 'string',
+        },
+        basic: {
+            description:'By default there are a gray background and a border. In case of true there are no background and border. The image/video have not border radius',
+            optional: true,
+            TYPE: 'boolean',
         },
         horizontal: {
             description: 'sets a horizontal position',
@@ -82,7 +88,7 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
         this._injectStyles();
         if (!this.el) this._createElement();
 
-        const { img, video, vertical, horizontal, hidden, tooltip, theme } = this.state;
+        const { img, video, basic, vertical, horizontal, hidden, tooltip, theme } = this.state;
 
         if (!hidden) {
             if (!this.el.firstChild) {
@@ -91,11 +97,13 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
                 container.style.display = 'flex';
                 container.style.overflow = 'hidden';
                 container.style.alignItems = 'center';
-                container.style.borderRadius = '99em';
-                if (theme === 'DARK') {
-                    container.style.backgroundColor = '#222';
-                } else {
-                    container.style.backgroundColor = 'lightgray';
+                if (!basic) {
+                    container.style.borderRadius = '99em';
+                    if (theme === 'DARK') {
+                        container.style.backgroundColor = '#222';
+                    } else {
+                        container.style.backgroundColor = 'lightgray';
+                    }
                 }
                 if (img) {
                     const imgTag = document.createElement('img');
@@ -117,10 +125,12 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
                         container.style.height = '24px';
                         container.style[vertical] = '-2px';
                         container.style[horizontal] = '-7px';
-                        if (theme === 'DARK') {
-                          container.style.border = '1px solid black';
-                        } else {
-                          container.style.border = '1px solid white';
+                        if (!basic) {
+                            if (theme === 'DARK') {
+                            container.style.border = '1px solid black';
+                            } else {
+                            container.style.border = '1px solid white';
+                            }
                         }
                         break;
 
@@ -131,10 +141,12 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
                         container.style.minHeight = '13px';
                         container.style.right = (horizontal === 'right') ? '2%' : '75%';
                         container.style.top = (vertical === 'bottom') ? '75%' : '2%';
-                        if (theme === 'DARK') {
-                          container.style.border = '2px solid black';
-                        } else {
-                          container.style.border = '2px solid white';
+                        if (!basic) {
+                            if (theme === 'DARK') {
+                            container.style.border = '2px solid black';
+                            } else {
+                            container.style.border = '2px solid white';
+                            }
                         }
                         break;
                 }
