@@ -11,6 +11,7 @@ import { ILabelState, Label } from './label';
 import { Caption } from './caption';
 import Starter from './starter';
 import Slideout from 'slideout';
+import { Box, IBoxState } from './box';
 
 const widgets = {
   avatar: Avatar,
@@ -21,6 +22,7 @@ const widgets = {
   picture: Picture,
   label: Label,
   caption: Caption,
+  box: Box,
 }
 
 @Injectable
@@ -41,7 +43,8 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
         avatarBadge: this.adapter.createWidgetFactory<IAvatarBadgeState>(AvatarBadge),
         usernameBadge: this.adapter.createWidgetFactory<IUsernameBadgeState>(UsernameBadge),
         label: this.adapter.createWidgetFactory<ILabelState>(Label),
-        caption: this.adapter.createWidgetFactory<ILabelState>(Caption)
+        caption: this.adapter.createWidgetFactory<ILabelState>(Caption),
+        box: this.adapter.createWidgetFactory<IBoxState>(Box)
     });
 
     public config = {
@@ -80,6 +83,10 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                 },
                 SOCIAL_CONTEXT: {
                     selector: "div.css-1dbjc4n.r-1iusvr4.r-16y2uox.r-ttdzmv",
+                    insert: 'inside'
+                },
+                BOX: {
+                    selector: ".css-901oao.r-18jsvk2.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-bnwqim.r-qvutc0",
                     insert: 'inside'
                 },
             },
@@ -123,6 +130,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                 }
 
                 return ({
+                    el,
                     id: el.querySelector('.css-1dbjc4n.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu a time')?.parentNode?.href?.split('/')?.pop() || /status\/([0-9]*)/gm.exec(document.location.href)?.[1],
                     text: el.querySelector('.css-1dbjc4n.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu div[lang], div > div > div > div:nth-child(3) > div:nth-child(1) > div > div > span')?.innerText,
                     authorFullname: this._parseAuthorFullname(el.querySelector('.css-1dbjc4n.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu > div:nth-child(1) > div:nth-child(1) a > div > div:nth-child(1) > div:nth-child(1), div.css-1dbjc4n.r-18u37iz.r-15zivkp div > div > span')),

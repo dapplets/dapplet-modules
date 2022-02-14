@@ -43,7 +43,7 @@ export default class DemoDapplet implements IFeature {
         });
     }
 
-    this._overlay.onClose((e: any) => console.log('The overlay closed!', e))
+    this._overlay.onClose(() => console.log('The overlay closed!'))
 
     try {
       const adapterManifest = await (<any>Core).getManifest(adapterName);
@@ -59,7 +59,7 @@ export default class DemoDapplet implements IFeature {
       this.openOverlay();
     }
 
-    const { avatar, avatarBadge, usernameBadge, label, button, picture, caption } = this.adapter.exports;
+    const { avatar, avatarBadge, usernameBadge, label, button, picture, caption, box } = this.adapter.exports;
 
     /*const config = contextsNames.reduce((acc, value) => ({
       ...acc,
@@ -127,6 +127,20 @@ export default class DemoDapplet implements IFeature {
               console.log('ctx = ', ctx);
               //this.openOverlay({ index: '0/1', ctx });
               Core.overlayManager.unregisterAll();
+            },
+          },
+        }),
+        box({
+          initial: 'DEFAULT',
+          DEFAULT: {
+            img: MAIN_IMG,
+            text: '5,000 NEAR',
+            color: 'white',
+            textBackground: 'black',
+            replace: 'https://github.com/dapplets/dapplet-extension',
+            exec: () => {
+              console.log('ctx = ', ctx);
+              // this.openOverlay({ index: '0/0', ctx });
             },
           },
         }),
