@@ -170,7 +170,7 @@ export class Box implements IWidget<IBoxState> {
 
         if (!hidden) {
             if (replace !== undefined) {
-                if (!this.article) this.article = (<HTMLElement>ctx.el).querySelector('.css-901oao.r-18jsvk2.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-bnwqim.r-qvutc0').parentElement;
+                if (!this.article) this.article = (<HTMLElement>ctx.el).querySelector('.css-901oao.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-bnwqim.r-qvutc0').parentElement;
                 const tags = this.article.querySelectorAll(tag ?? 'a');
                 tags.forEach(link => {
                     if (link.textContent.includes(replace)) {
