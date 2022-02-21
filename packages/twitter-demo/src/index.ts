@@ -138,8 +138,35 @@ export default class DemoDapplet implements IFeature {
             color: 'white',
             textBackground: 'black',
             replace: 'https://github.com/dapplets/dapplet-extension',
-            exec: () => {
+            exec: (_:any, me: any) => {
               console.log('ctx = ', ctx);
+              me.state = 'ANOTHER';
+              // this.openOverlay({ index: '0/0', ctx });
+            },
+          },
+          ANOTHER: {
+            img: { DARK: WHITE_IMG, LIGHT: BLACK_IMG },
+            text: '1,000 NEAR',
+            color: 'white',
+            textBackground: 'black',
+            replace: 'https://github.com/dapplets/dapplet-extension',
+            exec: (_:any, me: any) => {
+              console.log('ctx = ', ctx);
+              me.state = 'HIDDEN';
+              setTimeout(() => me.state = 'DEFAULT', 2000);
+              // this.openOverlay({ index: '0/0', ctx });
+            },
+          },
+          HIDDEN: {
+            img: MAIN_IMG,
+            text: '5,000 NEAR',
+            color: 'white',
+            textBackground: 'black',
+            replace: 'https://github.com/dapplets/dapplet-extension',
+            hidden: true,
+            exec: (_:any, me: any) => {
+              console.log('ctx = ', ctx);
+              me.state = 'DEFAULT';
               // this.openOverlay({ index: '0/0', ctx });
             },
           },

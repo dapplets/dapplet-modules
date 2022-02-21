@@ -28,6 +28,7 @@ export class Box implements IWidget<IBoxState> {
     article: HTMLElement;
     replacedTags = <Element>{};
     insrtedTags = new WeakMap<HTMLElement, string[]>();
+    private _prevReplace: string
 
     // ToDo 
     public static widgetParamsDescription = {
@@ -114,7 +115,19 @@ export class Box implements IWidget<IBoxState> {
             ctx,
         } = this.state;
 
-        const createBox = () => {
+        if (this._prevReplace !== replace) {
+            if (this.insrtedTags.has(this.el)) {
+                const containerIds = this.insrtedTags.get(this.el);
+                for (const containerId of containerIds) {
+                    const replacedTag = this.replacedTags[containerId];
+                    const container = this.article.querySelector(`#${containerId}`);
+                    container?.replaceWith(replacedTag);
+                }
+            }
+        }
+        this._prevReplace = replace;
+
+        const addMedia = () => {
             if (img) {
                 const imgTag = document.createElement('img');
                 imgTag.src = img;
@@ -168,31 +181,52 @@ export class Box implements IWidget<IBoxState> {
             return container;
         };
 
+        const createBox = () => {
+            const container = document.createElement('div');
+            container.id = `box-${Math.trunc(Math.random() * 1_000_000_000)}`;
+            container.style.position = 'relative';
+            container.style.width = '100%';
+            container.style.bottom = '0';
+            container.style.zIndex = '50000';
+            container.style.marginTop = '12px';
+            container.style.marginBottom = '12px';
+            container.appendChild(addMedia());
+            if (text) container.appendChild(addText());
+            container.addEventListener('click', (e) => {
+                this.state.exec?.(this.state.ctx, this.state);
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            });
+            return container;
+        }
+
         if (!hidden) {
             if (replace !== undefined) {
                 if (!this.article) this.article = (<HTMLElement>ctx.el).querySelector('.css-901oao.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-bnwqim.r-qvutc0').parentElement;
                 const tags = this.article.querySelectorAll(tag ?? 'a');
+                if (this.insrtedTags.has(this.el)) {
+                    const containerIds = this.insrtedTags.get(this.el);
+                    for (const containerId of containerIds) {
+                        const container = createBox();
+                        const oldContainer = this.article.querySelector(`#${containerId}`);
+                        if (!oldContainer) {
+                            this.insrtedTags.set(this.el, this.insrtedTags.get(this.el).filter(x => x !== containerId));
+                            continue;
+                        }
+                        oldContainer.replaceWith(container);
+                        this.insrtedTags.set(this.el, [...this.insrtedTags.get(this.el), container.id]);
+                        this.replacedTags[container.id] = this.replacedTags[containerId];
+                        delete this.replacedTags[containerId];
+                    }
+                }
                 tags.forEach(link => {
                     if (link.textContent.includes(replace)) {
-                        const container = document.createElement('div');
-                        container.id = `box-${Math.trunc(Math.random() * 1_000_000_000)}`;
-                        container.style.position = 'relative';
-                        container.style.width = '100%';
-                        container.style.bottom = '0';
-                        container.style.zIndex = '50000';
-                        container.style.marginTop = '12px';
-                        container.style.marginBottom = '12px';
-                        container.appendChild(createBox());
-                        if (text) container.appendChild(addText());
-                        container.addEventListener('click', (e) => {
-                            this.state.exec?.(this.state.ctx, this.state);
-                            e.preventDefault();
-                            return false;
-                        });
+                        const container = createBox();
                         if (!this.insrtedTags.has(this.el)) {
-                          this.insrtedTags.set(this.el, [container.id]);
+                            this.insrtedTags.set(this.el, [container.id]);
                         } else if (!this.insrtedTags.get(this.el).includes(container.id)) {
-                          this.insrtedTags.set(this.el, [...this.insrtedTags.get(this.el), container.id]);
+                            this.insrtedTags.set(this.el, [...this.insrtedTags.get(this.el), container.id]);
                         }
                         this.replacedTags[container.id] = link;
                         link.replaceWith(container);
@@ -205,16 +239,22 @@ export class Box implements IWidget<IBoxState> {
                 this.el.style.bottom = '0';
                 this.el.style.zIndex = '50000';
                 this.el.style.marginTop = '12px';
-                this.el.addEventListener('click', (e) => {
-                    this.state.exec?.(this.state.ctx, this.state);
-                    e.preventDefault();
-                    return false;
-                });
-                this.el.appendChild(createBox());
+                if (this.el.firstChild) this.el.innerHTML = '';
+                this.el.appendChild(addMedia()) ;
                 if (text) this.el.appendChild(addText());
             }
         } else {
-            this.el.firstChild?.remove();
+            if (replace) {
+                if (this.insrtedTags.has(this.el)) {
+                    const containerIds = this.insrtedTags.get(this.el);
+                    for (const containerId of containerIds) {
+                        const replacedTag = this.replacedTags[containerId];
+                        const container = this.article.querySelector(`#${containerId}`);
+                        container?.replaceWith(replacedTag);
+                    }
+                }
+            }
+            this.el.innerHTML = '';
         }
     }
 
@@ -225,7 +265,7 @@ export class Box implements IWidget<IBoxState> {
                 for (const containerId of containerIds) {
                     const replacedTag = this.replacedTags[containerId];
                     const container = this.article.querySelector(`#${containerId}`);
-                    container.replaceWith(replacedTag);
+                    container?.replaceWith(replacedTag);
                 }
             }
             this.el.remove();
@@ -235,6 +275,11 @@ export class Box implements IWidget<IBoxState> {
     private _createElement() {
         this.el = document.createElement('div');
         this.el.classList.add('dapplet-widget-box');
+        this.el.addEventListener('click', (e) => {
+            this.state.exec?.(this.state.ctx, this.state);
+            e.preventDefault();
+            return false;
+        });
         this.state.init?.(this.state.ctx, this.state);
     }
 }
