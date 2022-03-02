@@ -77,25 +77,46 @@ export class State<T> {
     private createNewStateFromConfig(stateName) {
         let state = {}
         if (this.config[stateName]) {
-            const createAutoProperty = (apConfig: AutoPropertyConf, setter: (v: any) => void) =>
+            const createAutoProperty = (apConfig: AutoPropertyConf, setter: (v: any) => void) => {
                 //ToDo: move addAutoProperty to apCpnfig? 
-                apConfig.conn.addAutoProperty(apConfig, setter, this.ctx)
-            const isAutoPropertyConf = (value: any) =>
-                value && typeof value === 'object' && value.conn && value.name
+                return apConfig.conn.addAutoProperty(apConfig, setter, this.ctx);
+            }
+            
+            const isAutoPropertyConf = (value: any) => {
+                return value && typeof value === 'object' && value.conn && value.name
+            }
+
+            const isObservable = (value: any) => {
+                return value && typeof value === 'function' && value.next && value.subscribe
+            }
+
             const me = this
             Object.entries(this.config[stateName]).forEach(([key, valueOrApConf]) => {
-                state[key] = !isAutoPropertyConf(valueOrApConf)
-                    ? valueOrApConf
-                    : createAutoProperty(valueOrApConf, (v: any) => {
+                if (isAutoPropertyConf(valueOrApConf)) {
+                    state[key] = createAutoProperty(valueOrApConf, (v: any) => {
                         if (stateName == me._currentStateName) {
                             state[key] = v
                             me.changedHandler && me.changedHandler()
                         }
                     }).value
+                } else if (isObservable(valueOrApConf)) {
+                    state[key] = valueOrApConf.value;
+                    valueOrApConf.subscribe((v) => {
+                        // ToDo: potential bug
+                        if (stateName == me._currentStateName) {
+                            state[key] = v
+                            me.changedHandler && me.changedHandler()
+                        }
+                    });
+                } else {
+                    state[key] = valueOrApConf;
+                }
+                
             })
         } else {
             console.error(`The state template with name "${stateName}" doesn't exist. Skipping state updating...`)
         }
+
         return state
     }
 
