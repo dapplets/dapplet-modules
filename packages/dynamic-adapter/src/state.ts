@@ -45,7 +45,15 @@ export class State<T> {
                 } else if (property === 'newState') {
                     me.setState(value, true)
                 } else {
-                    if (me._currentStateName) {
+                    const valueOrObservable = me.config[me._currentStateName][property]
+                    if (
+                        valueOrObservable &&
+                        typeof valueOrObservable === 'function' &&
+                        valueOrObservable.next &&
+                        valueOrObservable.subscribe
+                    ) {
+                        valueOrObservable.next(value)
+                    } else if (me._currentStateName) {
                         me._cache[me._currentStateName][property] = value
                     } else {
                         me._cache[property] = value
@@ -91,27 +99,58 @@ export class State<T> {
             }
 
             const me = this
-            Object.entries(this.config[stateName]).forEach(([key, valueOrApConf]) => {
-                if (isAutoPropertyConf(valueOrApConf)) {
-                    state[key] = createAutoProperty(valueOrApConf, (v: any) => {
-                        if (stateName == me._currentStateName) {
-                            state[key] = v
-                            me.changedHandler && me.changedHandler()
+            Object.entries(this.config[stateName]).forEach(([key, value]) => {
+                if (key === undefined || key === 'undefined') return;
+                const parseWidgetParam = (valueOrApConf, i?: number) => { // i - the index of the current element being processed in the array
+                    if (isAutoPropertyConf(valueOrApConf)) {
+                        state[key] = createAutoProperty(valueOrApConf, (v: any) => {
+                            if (stateName == me._currentStateName) {
+                                state[key] = v
+                                me.changedHandler && me.changedHandler()
+                            }
+                        }).value
+                    } else if (isObservable(valueOrApConf)) {
+                        if (i === undefined) {
+                            state[key] = valueOrApConf.value;
+                            valueOrApConf.subscribe((v) => {
+                                // ToDo: potential bug
+                                if (stateName == me._currentStateName) {
+                                    state[key] = v
+                                    me.changedHandler && me.changedHandler()
+                                }
+                            });
+                        } else {
+                            if (state[key] !== undefined) {
+                                state[key].push(valueOrApConf.value);
+                            } else {
+                                state[key] = [valueOrApConf.value];
+                            }
+                            valueOrApConf.subscribe((v) => {
+                                // ToDo: potential bug
+                                if (stateName == me._currentStateName) {
+                                    state[key][i] = v
+                                    me.changedHandler && me.changedHandler()
+                                }
+                            });
                         }
-                    }).value
-                } else if (isObservable(valueOrApConf)) {
-                    state[key] = valueOrApConf.value;
-                    valueOrApConf.subscribe((v) => {
-                        // ToDo: potential bug
-                        if (stateName == me._currentStateName) {
-                            state[key] = v
-                            me.changedHandler && me.changedHandler()
+                    } else if (i !== undefined) {
+                        if (state[key] !== undefined) {
+                            state[key].push(valueOrApConf);
+                        } else {
+                            state[key] = [valueOrApConf];
                         }
-                    });
-                } else {
-                    state[key] = valueOrApConf;
-                }
-                
+                    } else {
+                        state[key] = valueOrApConf;
+                    }
+                };
+
+                /* Using arrays of values is not supported yet */
+
+                // if (Array.isArray(value)) {
+                //     value.forEach((v, i) => parseWidgetParam(v, i));
+                // } else {
+                    parseWidgetParam(value);
+                // };
             })
         } else {
             console.error(`The state template with name "${stateName}" doesn't exist. Skipping state updating...`)
