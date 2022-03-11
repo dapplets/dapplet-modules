@@ -6,6 +6,7 @@ import { IButtonStarterState, ButtonStarter } from './button-starter';
 import { IPictureState, Picture } from './picture';
 import { IAvatarState, Avatar } from './avatar';
 import { IAvatarBadgeState, AvatarBadge } from './avatar-badge';
+import { IInputState, Input } from './input';
 import { IUsernameBadgeState, UsernameBadge } from './username-badge';
 import { ILabelState, Label } from './label';
 import { Caption } from './caption';
@@ -23,6 +24,7 @@ const widgets = {
   label: Label,
   caption: Caption,
   box: Box,
+  input: Input,
 }
 
 @Injectable
@@ -44,7 +46,8 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
         usernameBadge: this.adapter.createWidgetFactory<IUsernameBadgeState>(UsernameBadge),
         label: this.adapter.createWidgetFactory<ILabelState>(Label),
         caption: this.adapter.createWidgetFactory<ILabelState>(Caption),
-        box: this.adapter.createWidgetFactory<IBoxState>(Box)
+        box: this.adapter.createWidgetFactory<IBoxState>(Box),
+        input: this.adapter.createWidgetFactory<IInputState>(Input)
     });
 
     public config = {
