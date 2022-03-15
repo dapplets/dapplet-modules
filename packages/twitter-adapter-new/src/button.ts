@@ -4,6 +4,7 @@ export interface IButtonState {
     img?: string;
     label?: string | string[];
     tooltip?: string;
+    basic?: boolean;
     theme?: 'DARK' | 'LIGHT';
     loading?: boolean;
     disabled?: boolean;
@@ -77,7 +78,7 @@ export class Button implements IWidget<IButtonState> {
     public mount() {
         if (!this.el) this._createElement();
 
-        const { label = '', img, loading, disabled, hidden, tooltip } = this.state;
+        const { label = '', img, basic, loading, disabled, hidden, tooltip } = this.state;
 
         if (hidden) {
             this.el.innerHTML = '';
@@ -85,6 +86,12 @@ export class Button implements IWidget<IButtonState> {
             return;
         } else {
             this.el.style.removeProperty('display');
+        }
+
+        if (basic) {
+            this.el.classList.add('dapplet-widget-profile-button-basic');
+        } else {
+            this.el.classList.remove('dapplet-widget-profile-button-basic');
         }
 
         if (this.insPointName === 'POST' || this.insPointName === 'QUOTE_POST') {
@@ -112,10 +119,10 @@ export class Button implements IWidget<IButtonState> {
         } else if (this.insPointName === 'PROFILE') {
             this.el.innerHTML = `
                 <img style="
-                    width: 18px;
-                    height: 18px;
+                    ${basic ? 'width: 36px;' : 'width: 18px;'}
+                    ${basic ? 'height: 36px;' : 'height: 18px;'}
                     position: relative;
-                    top: 3px;
+                    ${basic ? '' : 'top: 3px;'}
                     ${label ? 'margin-right: 6px;' : ''}
                 " src="${img}" />
                 <span>${label}</span>
@@ -191,6 +198,12 @@ export class Button implements IWidget<IButtonState> {
                 
                 .dapplet-widget-profile-button-dark:hover {
                     background-color: rgba(239, 243, 244, 0.008);
+                }
+
+                .dapplet-widget-profile-button-basic {
+                    padding: 0;
+                    border: none;
+                    border-radius: 7px;
                 }
             `;
         }

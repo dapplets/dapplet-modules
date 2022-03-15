@@ -3,6 +3,7 @@ import { IWidget } from 'dynamic-adapter.dapplet-base.eth';
 export interface IAvatarBadgeState {
     img?: string
     video?: string
+    mediaType?: string
     basic?: boolean
     horizontal: 'left' | 'right'
     vertical: 'top' | 'bottom'
@@ -33,6 +34,11 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
         },
         video: {
             description:'video as blob',
+            optional: true,
+            TYPE: 'string',
+        },
+        mediaType: {
+            description:'type of media item: image or video',
             optional: true,
             TYPE: 'string',
         },
@@ -88,7 +94,7 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
         this._injectStyles();
         if (!this.el) this._createElement();
 
-        const { img, video, basic, vertical, horizontal, hidden, tooltip, theme } = this.state;
+        const { img, video, mediaType, basic, vertical, horizontal, hidden, tooltip, theme } = this.state;
 
         if (!hidden) {
             if (!this.el.firstChild) {
@@ -105,12 +111,12 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
                         container.style.backgroundColor = 'lightgray';
                     }
                 }
-                if (img) {
+                if (img && (mediaType === undefined || mediaType !== 'application/octet-stream')) {
                     const imgTag = document.createElement('img');
                     imgTag.src = img;
                     imgTag.style.width = '100%';
                     container.appendChild(imgTag);
-                } else if (video) {
+                } else if (video || (img && mediaType === 'application/octet-stream')) {
                     const videoTag = document.createElement('video');
                     videoTag.src = video;
                     videoTag.autoplay = true;

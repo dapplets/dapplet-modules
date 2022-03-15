@@ -3,6 +3,7 @@ import { IWidget } from 'dynamic-adapter.dapplet-base.eth';
 export interface IAvatarState {
     img?: string;
     video?: string;
+    mediaType?: string
     label?: string;
     tooltip?: string;
     hidden?: boolean;
@@ -29,6 +30,11 @@ export class Avatar implements IWidget<IAvatarState> {
         },
         video: {
             description:'video as blob',
+            optional: true,
+            TYPE: 'string',
+        },
+        mediaType: {
+            description:'type of media item: image or video',
             optional: true,
             TYPE: 'string',
         },
@@ -67,9 +73,9 @@ export class Avatar implements IWidget<IAvatarState> {
 
     public mount() {
         if (!this.el) this._createElement();
-        const { img, video, hidden, tooltip } = this.state;
+        const { img, video, mediaType, hidden, tooltip } = this.state;
         if (!hidden) {
-            if (img) {
+            if (img && (mediaType === undefined || mediaType !== 'application/octet-stream')) {
                 if (!this.el.firstChild) {
                     const imgTag = document.createElement('img');
                     this.el.appendChild(imgTag);
@@ -83,7 +89,7 @@ export class Avatar implements IWidget<IAvatarState> {
                 if (this.insPointName = 'SUSPENDED') {
                     imgTag.style.cursor = 'pointer';
                 }
-            } else if (video) {
+            } else if (video || (img && mediaType === 'application/octet-stream')) {
                 if (!this.el.firstChild) {
                     const videoTag = document.createElement('video');
                     this.el.appendChild(videoTag);
