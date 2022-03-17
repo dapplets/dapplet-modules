@@ -1,7 +1,7 @@
 import { IWidget } from 'dynamic-adapter.dapplet-base.eth';
 
 export interface IAvatarState {
-    img?: string;
+    img?: string | null;
     video?: string;
     mediaType?: string
     label?: string;
@@ -26,7 +26,7 @@ export class Avatar implements IWidget<IAvatarState> {
         img: {
             description:'image as blob',
             optional: true,
-            TYPE: 'string',
+            TYPE: 'string | null',
         },
         video: {
             description:'video as blob',
@@ -72,11 +72,15 @@ export class Avatar implements IWidget<IAvatarState> {
     }
 
     public mount() {
+        console.log('******** this.state ***********', this.state)
+        console.log('******** this.state.img ***********', this.state.img)
         if (!this.el) this._createElement();
         const { img, video, mediaType, hidden, tooltip } = this.state;
-        if (!hidden) {
+        if (!hidden && (img || video)) {
+          console.log('YES. img', img)
             if (img && (mediaType === undefined || mediaType !== 'application/octet-stream')) {
-                if (!this.el.firstChild) {
+                if (!this.el.firstChild || this.el.firstChild.nodeName !== 'IMG') {
+                    this.el.innerHTML = '';
                     const imgTag = document.createElement('img');
                     this.el.appendChild(imgTag);
                 }
@@ -89,13 +93,14 @@ export class Avatar implements IWidget<IAvatarState> {
                 if (this.insPointName = 'SUSPENDED') {
                     imgTag.style.cursor = 'pointer';
                 }
-            } else if (video || (img && mediaType === 'application/octet-stream')) {
-                if (!this.el.firstChild) {
+            } else if (video ?? (img && mediaType === 'application/octet-stream')) {
+                if (!this.el.firstChild || this.el.firstChild.nodeName !== 'VIEDO') {
+                    this.el.innerHTML = '';
                     const videoTag = document.createElement('video');
                     this.el.appendChild(videoTag);
                 }
                 const videoTag: HTMLVideoElement = this.el.firstChild as any;
-                videoTag.src = video;
+                videoTag.src = video ?? img;
                 videoTag.autoplay = true;
                 videoTag.muted = true;
                 videoTag.loop = true;
@@ -106,6 +111,7 @@ export class Avatar implements IWidget<IAvatarState> {
             }
             this.el.title = tooltip ?? '';
         } else {
+          console.log('NO', img)
             this.el.firstChild?.remove();
         }
     }
@@ -115,6 +121,7 @@ export class Avatar implements IWidget<IAvatarState> {
     }
 
     private _createElement() {
+      console.log('in _createElement')
         this.el = document.createElement('div');
         this.el.style.position = 'absolute';
         this.el.style.width = '100%';

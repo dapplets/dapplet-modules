@@ -34,7 +34,7 @@ export class State<T> {
                     : me._cache[property]
 
                 if (theme) {
-                    return (typeof value === 'object' && value[theme]) ? value[theme] : value
+                    return (typeof value === 'object' && value?.[theme]) ? value[theme] : value
                 } else {
                     return value
                 }

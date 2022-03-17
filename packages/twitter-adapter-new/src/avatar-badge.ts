@@ -103,43 +103,14 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
                 container.style.display = 'flex';
                 container.style.overflow = 'hidden';
                 container.style.alignItems = 'center';
-                if (!basic) {
-                    container.style.borderRadius = '99em';
-                    if (theme === 'DARK') {
-                        container.style.backgroundColor = '#222';
-                    } else {
-                        container.style.backgroundColor = 'lightgray';
-                    }
-                }
-                if (img && (mediaType === undefined || mediaType !== 'application/octet-stream')) {
-                    const imgTag = document.createElement('img');
-                    imgTag.src = img;
-                    imgTag.style.width = '100%';
-                    container.appendChild(imgTag);
-                } else if (video || (img && mediaType === 'application/octet-stream')) {
-                    const videoTag = document.createElement('video');
-                    videoTag.src = video;
-                    videoTag.autoplay = true;
-                    videoTag.muted = true;
-                    videoTag.loop = true;
-                    videoTag.style.width = '100%';
-                    container.appendChild(videoTag);
-                }
                 switch (this.insPointName) {
                     case 'POST':
                         container.style.width = '24px';
                         container.style.height = '24px';
                         container.style[vertical] = '-2px';
                         container.style[horizontal] = '-7px';
-                        if (!basic) {
-                            if (theme === 'DARK') {
-                            container.style.border = '1px solid black';
-                            } else {
-                            container.style.border = '1px solid white';
-                            }
-                        }
                         break;
-
+    
                     case 'PROFILE':
                         container.style.width = '25%';
                         container.style.minWidth = '13px';
@@ -147,17 +118,56 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
                         container.style.minHeight = '13px';
                         container.style.right = (horizontal === 'right') ? '2%' : '75%';
                         container.style.top = (vertical === 'bottom') ? '75%' : '2%';
-                        if (!basic) {
-                            if (theme === 'DARK') {
-                            container.style.border = '2px solid black';
-                            } else {
-                            container.style.border = '2px solid white';
-                            }
-                        }
                         break;
+                    default:
+                        console.log('Wrong insPointName for avatar-badge:', this.insPointName);
                 }
                 this.el.appendChild(container);
             }
+            const container: HTMLDivElement = this.el.firstChild as any;
+
+            if (!basic) {
+                container.style.borderRadius = '99em';
+                if (theme === 'DARK') {
+                    container.style.backgroundColor = '#222';
+                    if (this.insPointName === 'POST') {
+                        container.style.border = '1px solid black';
+                    } else if (this.insPointName === 'PROFILE') {
+                        container.style.border = '2px solid black';
+                    }
+                } else {
+                    container.style.backgroundColor = 'lightgray';
+                    if (this.insPointName === 'POST') {
+                        container.style.border = '1px solid white';
+                    } else if (this.insPointName === 'PROFILE') {
+                        container.style.border = '2px solid white';
+                    }
+                }
+            }
+
+            if (img && (mediaType === undefined || mediaType !== 'application/octet-stream')) {
+                if (!container.firstChild || container.firstChild.nodeName !== 'IMG') {
+                    container.innerHTML = '';
+                    const imgTag = document.createElement('img');
+                    container.appendChild(imgTag);
+                }
+                const imgTag: HTMLImageElement = container.firstChild as any;
+                imgTag.src = img;
+                imgTag.style.width = '100%';
+            } else if (video ?? (img && mediaType === 'application/octet-stream')) {
+                if (!container.firstChild || container.firstChild.nodeName !== 'VIEDO') {
+                    container.innerHTML = '';
+                    const videoTag = document.createElement('video');
+                    container.appendChild(videoTag);
+                }
+                const videoTag: HTMLVideoElement = container.firstChild as any;
+                videoTag.src = video ?? img;
+                videoTag.autoplay = true;
+                videoTag.muted = true;
+                videoTag.loop = true;
+                videoTag.style.width = '100%';
+            }
+
             this.el.title = tooltip ?? '';
         } else {
             this.el.firstChild?.remove();
