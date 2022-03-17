@@ -194,9 +194,9 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                 if (avatar) avatar.style.overflow = 'visible';
 
                 return ({
-                    id: el.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x > div > div:nth-child(2) span')?.innerText.replace('@', '').toLowerCase(),
+                    id: el.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x div.css-901oao.css-bfa6kz.r-18u37iz.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-qvutc0 span')?.innerText.replace('@', '').toLowerCase(),
                     authorFullname: this._parseAuthorFullname(el.querySelector('div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-dnmrzs > div > span:nth-child(1)')),
-                    authorUsername: el.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x > div > div:nth-child(2) span')?.innerText.replace('@', '').toLowerCase(),
+                    authorUsername: el.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x div.css-901oao.css-bfa6kz.r-18u37iz.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-qvutc0 span')?.innerText.replace('@', '').toLowerCase(),
                     authorImg: el.querySelector('a img')?.getAttribute('src'),
                     theme: this._getTheme(),
                 });
@@ -208,7 +208,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
             contextSelector: "h2[role=heading].css-4rbku5.css-901oao.css-bfa6kz.r-37j5jr.r-adyw6z.r-b88u0q.r-135wba7.r-bcqeeo.r-qvutc0",
             insPoints: {
                 USERNAME_BADGE: {
-                    selector: "div > *:last-child",
+                    selector: "div *:last-child",
                     insert: "end"
                 }
             },
