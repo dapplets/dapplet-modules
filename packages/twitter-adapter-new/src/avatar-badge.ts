@@ -1,7 +1,7 @@
 import { IWidget } from 'dynamic-adapter.dapplet-base.eth';
 
 export interface IAvatarBadgeState {
-    img?: string
+    img?: string | null
     video?: string
     mediaType?: string
     basic?: boolean
@@ -30,7 +30,7 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
         img: {
             description:'image as blob',
             optional: true,
-            TYPE: 'string',
+            TYPE: 'string | null',
         },
         video: {
             description:'video as blob',
@@ -96,7 +96,8 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
 
         const { img, video, mediaType, basic, vertical, horizontal, hidden, tooltip, theme } = this.state;
 
-        if (!hidden) {
+        if (!hidden && (img || video)) {
+            this.el.style.display = 'block';
             if (!this.el.firstChild) {
                 const container = document.createElement('div');
                 container.style.position = 'absolute';
@@ -171,6 +172,7 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
             this.el.title = tooltip ?? '';
         } else {
             this.el.firstChild?.remove();
+            this.el.style.display = 'none';
         }
     }
 

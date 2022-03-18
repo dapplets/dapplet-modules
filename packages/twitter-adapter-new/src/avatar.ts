@@ -72,12 +72,10 @@ export class Avatar implements IWidget<IAvatarState> {
     }
 
     public mount() {
-        console.log('******** this.state ***********', this.state)
-        console.log('******** this.state.img ***********', this.state.img)
         if (!this.el) this._createElement();
         const { img, video, mediaType, hidden, tooltip } = this.state;
         if (!hidden && (img || video)) {
-          console.log('YES. img', img)
+            this.el.style.display = 'block';
             if (img && (mediaType === undefined || mediaType !== 'application/octet-stream')) {
                 if (!this.el.firstChild || this.el.firstChild.nodeName !== 'IMG') {
                     this.el.innerHTML = '';
@@ -111,8 +109,8 @@ export class Avatar implements IWidget<IAvatarState> {
             }
             this.el.title = tooltip ?? '';
         } else {
-          console.log('NO', img)
             this.el.firstChild?.remove();
+            this.el.style.display = 'none';
         }
     }
 
@@ -121,7 +119,6 @@ export class Avatar implements IWidget<IAvatarState> {
     }
 
     private _createElement() {
-      console.log('in _createElement')
         this.el = document.createElement('div');
         this.el.style.position = 'absolute';
         this.el.style.width = '100%';
@@ -134,7 +131,7 @@ export class Avatar implements IWidget<IAvatarState> {
             e.preventDefault();
             return false;
         });
-        this.el.classList.add('dapplet-widget-badge');
+        this.el.classList.add('dapplet-widget-avatar');
         this.state.init?.(this.state.ctx, this.state);
     }
 }
