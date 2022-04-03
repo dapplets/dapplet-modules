@@ -1,6 +1,6 @@
 {
   "name": "new.twitter-adapter.dapplet-base.eth",
-  "version": "0.9.30",
+  "version": "0.9.31",
   "description": "Adapter for twitter.com",
   "scripts": {
     "build": "webpack --config webpack.dev.js",
@@ -23,6 +23,7 @@
     "@types/slideout": "^0.1.19"
   },
   "dependencies": {
-    "slideout": "^1.0.1"
+    "slideout": "^1.0.1",
+    "lit": "^2.2.1"
   }
 }
