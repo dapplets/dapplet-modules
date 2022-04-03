@@ -199,7 +199,6 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
                 return me.stateStorage.get(key);
             })();
 
-            let el: any = null;
             let widget: any = null;
 
             if (Widget.prototype instanceof HTMLElement) {
@@ -207,15 +206,20 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
                 const ExtendedWidget = class extends Widget { };
                 customElements.define('dapplet-' + clazz, ExtendedWidget);
 
-                widget = new ExtendedWidget();
-                widget.insPointName = builder.contextName;
-                widget.ctx = context.parsed;
-                widget.state = state.state;
+                const webcomponent = new ExtendedWidget();
+                webcomponent.insPointName = builder.contextName;
+                webcomponent.ctx = context.parsed;
+                webcomponent.state = state.state;
                 
-                el = widget;
+                widget = {
+                    el: webcomponent,
+                    unmount: () => {
+                        webcomponent && webcomponent.remove()
+                    }
+                }
 
                 const updateWebComponent = (values: any) => {
-                    Object.entries(values).forEach(([k, v]) => el[k] = v);
+                    Object.entries(values).forEach(([k, v]) => widget.el[k] = v);
                 }
 
                 updateWebComponent(state.getStateValues()); // initialize attributes from state
@@ -228,8 +232,8 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
                 widget.mount(); // ToDo: remove it?
             }
 
-            el.classList.add('dapplet-widget', clazz);
-            el.setAttribute('data-dapplet-order', order.toString());
+            widget.el.classList.add('dapplet-widget', clazz);
+            widget.el.setAttribute('data-dapplet-order', order.toString());
 
             const insertTo: 'begin' | 'end' | 'inside' = insPoint.insert !== undefined
                 ? insPoint.insert
@@ -242,13 +246,13 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
             if (insertedElements.length === 0) {
                 switch (insertTo) {
                     case 'end':
-                        node.parentNode.insertBefore(el, node.nextSibling);
+                        node.parentNode.insertBefore(widget.el, node.nextSibling);
                         break;
                     case 'begin':
-                        node.parentNode.insertBefore(el, node);
+                        node.parentNode.insertBefore(widget.el, node);
                         break;
                     case 'inside':
-                        node.appendChild(el);
+                        node.appendChild(widget.el);
                         break;
                     default:
                         console.error('Invalid "insert" value in the insertion point config. The valid values are "begin" or "end".');
@@ -271,10 +275,10 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
 
                 if (targetElementIndex === null) {
                     const lastNode = insertedElements[insertedElements.length - 1];
-                    lastNode.parentNode.insertBefore(el, lastNode.nextSibling); // insert after lastNode
+                    lastNode.parentNode.insertBefore(widget.el, lastNode.nextSibling); // insert after lastNode
                 } else {
                     const targetNode = insertedElements[targetElementIndex];
-                    targetNode.parentNode.insertBefore(el, targetNode); // insert before targetNode
+                    targetNode.parentNode.insertBefore(widget.el, targetNode); // insert before targetNode
                 }
             }
 
