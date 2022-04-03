@@ -54,7 +54,7 @@ export default class Starter {
     public async attachConfig(config: T_TwitterFeatureConfig) {
         if (!config.POST) return;
         
-        const postConfigData = config.POST('');
+        const postConfigData = config.POST({ id: 'STARTER' });
         const insert = (configData: any) => {
             const widgets: IStarter[] | false = Array.isArray(configData) && configData
                 .filter((widget) => Array.isArray(widget))
