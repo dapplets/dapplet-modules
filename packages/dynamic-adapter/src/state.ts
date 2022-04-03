@@ -1,5 +1,3 @@
-import { AutoPropertyConf } from "@dapplets/dapplet-extension";
-
 export type WidgetConfig<T> = ({
     [key: string]: T;
 } & {
@@ -85,15 +83,6 @@ export class State<T> {
     private createNewStateFromConfig(stateName) {
         let state = {}
         if (this.config[stateName]) {
-            const createAutoProperty = (apConfig: AutoPropertyConf, setter: (v: any) => void) => {
-                //ToDo: move addAutoProperty to apCpnfig? 
-                return apConfig.conn.addAutoProperty(apConfig, setter, this.ctx);
-            }
-            
-            const isAutoPropertyConf = (value: any) => {
-                return value && typeof value === 'object' && value.conn && value.name
-            }
-
             const isObservable = (value: any) => {
                 return value && typeof value === 'function' && value.next && value.subscribe
             }
@@ -102,14 +91,7 @@ export class State<T> {
             Object.entries(this.config[stateName]).forEach(([key, value]) => {
                 if (key === undefined || key === 'undefined') return;
                 const parseWidgetParam = (valueOrApConf, i?: number) => { // i - the index of the current element being processed in the array
-                    if (isAutoPropertyConf(valueOrApConf)) {
-                        state[key] = createAutoProperty(valueOrApConf, (v: any) => {
-                            if (stateName == me._currentStateName) {
-                                state[key] = v
-                                me.changedHandler && me.changedHandler()
-                            }
-                        }).value
-                    } else if (isObservable(valueOrApConf)) {
+                    if (isObservable(valueOrApConf)) {
                         if (i === undefined) {
                             state[key] = valueOrApConf.value;
                             valueOrApConf.subscribe((v) => {
