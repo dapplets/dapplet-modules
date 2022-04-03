@@ -10,7 +10,7 @@ export class State<T> {
     private _currentStateName = undefined
     public state: T
     private _cache: any = {}
-    public changedHandler: Function
+    public changedHandler: (newValues: Partial<T>) => void;
     public id: string;
 
     constructor(private config: WidgetConfig<T>, public readonly ctx: any, private getTheme: () => string) {
@@ -26,7 +26,7 @@ export class State<T> {
                 if (property === 'theme') return me.getTheme?.()
 
                 const theme = me.getTheme?.();
-                
+
                 const value = me._currentStateName
                     ? me._cache[me._currentStateName][property]
                     : me._cache[property]
@@ -56,7 +56,7 @@ export class State<T> {
                     } else {
                         me._cache[property] = value
                     }
-                    me.changedHandler && me.changedHandler()
+                    me.changedHandler && me.changedHandler(me._themifyState({ [property]: value }));
                 }
                 return true
             }
@@ -76,8 +76,13 @@ export class State<T> {
             this._currentStateName = stateName
             stateName = this._cache[stateName].NEXT
         } while (stateName)
-        this.changedHandler && this.changedHandler()
+        this.changedHandler && this.changedHandler(this.getStateValues())
         return this._cache[this._currentStateName]
+    }
+
+    public getStateValues(): T {
+        const cachedState = this._currentStateName ? this._cache[this._currentStateName] : this._cache;
+        return this._themifyState(cachedState);
     }
 
     private createNewStateFromConfig(stateName) {
@@ -98,7 +103,7 @@ export class State<T> {
                                 // ToDo: potential bug
                                 if (stateName == me._currentStateName) {
                                     state[key] = v
-                                    me.changedHandler && me.changedHandler()
+                                    me.changedHandler && me.changedHandler(me._themifyState({ [key]: v }))
                                 }
                             });
                         } else {
@@ -111,7 +116,7 @@ export class State<T> {
                                 // ToDo: potential bug
                                 if (stateName == me._currentStateName) {
                                     state[key][i] = v
-                                    me.changedHandler && me.changedHandler()
+                                    me.changedHandler && me.changedHandler(me._themifyState({ [key]: v }))
                                 }
                             });
                         }
@@ -139,6 +144,16 @@ export class State<T> {
         }
 
         return state
+    }
+
+    private _themifyState(values: any): any {
+        const theme = this.getTheme?.();
+        if (!theme) return values;
+
+        const themedEntries = Object.entries(values).map(([k, v]) => ([k, (typeof v === 'object' && v[theme]) ? v[theme] : v]));
+        const themedState = Object.fromEntries(themedEntries);
+        
+        return { ...themedState, theme };
     }
 
 }// class State

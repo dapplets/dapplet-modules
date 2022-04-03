@@ -13,11 +13,12 @@ import { Caption } from './caption';
 import Starter from './starter';
 import Slideout from 'slideout';
 import { Box, IBoxState } from './box';
+import { WbButton, IWbButtonProps } from './wb-button';
 
 const widgets = {
   avatar: Avatar,
   avatarBadge: AvatarBadge,
-  button: Button,
+  button: WbButton,
   buttonStarter: ButtonStarter,
   usernameBadge: UsernameBadge,
   picture: Picture,
@@ -38,7 +39,8 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
 
     // ToDo: refactor it
     public exports = featureId => ({
-        button: this.adapter.createWidgetFactory<IButtonState>(Button),
+        // button: this.adapter.createWidgetFactory<IButtonState>(Button),
+        button: this.adapter.createWidgetFactory<IWbButtonProps>(WbButton),
         buttonStarter: this.adapter.createWidgetFactory<IButtonStarterState>(ButtonStarter),
         picture: this.adapter.createWidgetFactory<IPictureState>(Picture),
         avatar: this.adapter.createWidgetFactory<IAvatarState>(Avatar),
