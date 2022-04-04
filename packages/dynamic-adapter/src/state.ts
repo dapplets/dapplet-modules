@@ -149,10 +149,8 @@ export class State<T> {
     private _themifyState(values: any): any {
         const theme = this.getTheme?.();
         if (!theme) return values;
-
-        const themedEntries = Object.entries(values).map(([k, v]) => ([k, (typeof v === 'object' && v[theme]) ? v[theme] : v]));
+        const themedEntries = Object.entries(values).map(([k, v]) => ([k, (typeof v === 'object' && v?.[theme]) ? v[theme] : v]));
         const themedState = Object.fromEntries(themedEntries);
-        
         return { ...themedState, theme };
     }
 
