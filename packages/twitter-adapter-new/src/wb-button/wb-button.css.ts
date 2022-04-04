@@ -275,4 +275,10 @@ export const styles = css`
     .dapplet-widget-profile-button-dark:hover {
         background-color: rgba(239, 243, 244, 0.008);
     }
+
+    .dapplet-widget-profile-button-basic {
+        padding: 0;
+        border: none;
+        border-radius: 7px;
+    }
 `;

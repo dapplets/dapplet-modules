@@ -12,6 +12,7 @@ export interface IWbButtonProps {
     insPointName?: string;
 
     img: string;
+    basic?: boolean;
     label: string;
     tooltip?: string;
     loading: boolean;
@@ -35,6 +36,7 @@ export class WbButton extends LitElement implements IWbButtonProps {
     @property() theme;
     @property() insPointName;
     @property() img;
+    @property() basic;
     @property() label;
     @property() tooltip;
     @property() loading = false;
@@ -126,15 +128,16 @@ export class WbButton extends LitElement implements IWbButtonProps {
                 class=${classMap({
                     "dapplet-widget-profile-button": this.theme === "LIGHT",
                     "dapplet-widget-profile-button-dark": this.theme === "DARK",
+                    "dapplet-widget-profile-button-basic": this.basic,
                 })}
             >
                 ${this.img
                     ? html`<img
                           style=${styleMap({
-                              width: "18px",
-                              height: "18px",
+                              width: this.basic ? "36px" : "18px",
+                              height: this.basic ? "36px" : "18px",
                               position: "relative",
-                              top: "3px",
+                              top: this.basic ? undefined : "3px",
                               marginRight: this.label ? "6px" : undefined,
                           })}
                           src="${this.img}"

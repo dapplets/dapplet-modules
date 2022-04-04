@@ -4,6 +4,11 @@ export const description = {
         optional: true,
         TYPE: "string",
     },
+    basic: {
+        description: "By default there is a round border. In case of true there is no border",
+        optional: true,
+        TYPE: "boolean",
+    },
     label: {
         description: "text label",
         optional: true,
