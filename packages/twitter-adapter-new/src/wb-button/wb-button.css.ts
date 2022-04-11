@@ -249,6 +249,7 @@ export const styles = css`
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
             Helvetica, Arial, sans-serif;
         line-height: 33px;
+        transition: background-color .2s ease-in-out;
     }
 
     .dapplet-widget-profile-button:hover {
@@ -270,10 +271,11 @@ export const styles = css`
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
             Helvetica, Arial, sans-serif;
         line-height: 33px;
+        transition: background-color .2s ease-in-out;
     }
 
     .dapplet-widget-profile-button-dark:hover {
-        background-color: rgba(239, 243, 244, 0.008);
+        background-color: rgba(239, 243, 244, 0.1);
     }
 
     .dapplet-widget-profile-button-basic {

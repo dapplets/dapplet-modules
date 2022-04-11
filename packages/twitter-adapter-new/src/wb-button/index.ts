@@ -58,6 +58,13 @@ export class WbButton extends LitElement implements IWbButtonProps {
     override render() {
         if (this.hidden) return null;
 
+        if (!document.querySelector('#dapplet-wbbutton-styles')) {
+            const styleTag: HTMLStyleElement = document.createElement('style');
+            styleTag.id = 'dapplet-wbbutton-styles';
+            styleTag.innerText = '.dapplet-wbbutton{vertical-align:middle;display:flex;}';
+            document.head.appendChild(styleTag);
+        }
+
         if (
             this.insPointName === "POST" ||
             this.insPointName === "QUOTE_POST"

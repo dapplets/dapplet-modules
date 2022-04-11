@@ -233,6 +233,7 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
             }
 
             widget.el.classList.add('dapplet-widget', clazz);
+            widget.el.classList.add('dapplet-' + Widget.prototype.constructor.name.toLowerCase());
             widget.el.setAttribute('data-dapplet-order', order.toString());
 
             const insertTo: 'begin' | 'end' | 'inside' = insPoint.insert !== undefined
