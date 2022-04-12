@@ -1,6 +1,11 @@
 import { css } from "lit";
 
 export const styles = css`
+    :host {
+        vertical-align: middle;
+        display: flex;
+    }
+
     .css-18t94o4 {
         cursor: pointer;
     }

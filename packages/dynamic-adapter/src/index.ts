@@ -204,7 +204,7 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
             if (Widget.prototype instanceof HTMLElement) {
                 // WebComponent-based widget
                 const ExtendedWidget = class extends Widget { };
-                customElements.define('dapplet-' + clazz, ExtendedWidget);
+                customElements.define('dapplet-' + Widget.prototype.constructor.name.toLowerCase() + '-' + clazz, ExtendedWidget);
 
                 const webcomponent = new ExtendedWidget();
                 webcomponent.insPointName = builder.contextName;
@@ -233,7 +233,6 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
             }
 
             widget.el.classList.add('dapplet-widget', clazz);
-            widget.el.classList.add('dapplet-' + Widget.prototype.constructor.name.toLowerCase());
             widget.el.setAttribute('data-dapplet-order', order.toString());
 
             const insertTo: 'begin' | 'end' | 'inside' = insPoint.insert !== undefined
