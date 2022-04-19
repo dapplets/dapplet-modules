@@ -213,6 +213,8 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
                 
                 widget = {
                     el: webcomponent,
+                    insPointName: builder.contextName, // for DemoDapplet
+                    state: state.state, // for WidgetBuilder.findWidget()
                     unmount: () => {
                         webcomponent && webcomponent.remove()
                     }
