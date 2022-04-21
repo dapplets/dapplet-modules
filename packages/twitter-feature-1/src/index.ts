@@ -1,13 +1,13 @@
-import { IFeature } from '@dapplets/dapplet-extension' // ToDo: import { Core } from '@dapplets/dapplet-extension'
-import { T_TwitterFeatureConfig, ITwitterAdapter } from 'twitter-adapter.dapplet-base.eth'
+import { } from '@dapplets/dapplet-extension' // ToDo: import { Core } from '@dapplets/dapplet-extension'
+import { ITwitterAdapter } from 'twitter-adapter.dapplet-base.eth'
 import GNOSIS_ICON from './gnosis.png'
 
-const EVENTS_DEF = {
-    TX_SENT: (op: any, m: any) => m.type === "TX_SENT",
-    WC_CONNECT: (op: any, m: any) => m.type === "WC_CONNECT",
-    SWARM_NODE: (op: any, m: any) => m.type === "SWARM_NODE",
-    SWARM_SENT: "SWARM_SENT"
-}
+// const EVENTS_DEF = {
+//     TX_SENT: (op: any, m: any) => m.type === "TX_SENT",
+//     WC_CONNECT: (op: any, m: any) => m.type === "WC_CONNECT",
+//     SWARM_NODE: (op: any, m: any) => m.type === "SWARM_NODE",
+//     SWARM_SENT: "SWARM_SENT"
+// }
 
 @Injectable
 export default class TwitterFeature {
@@ -16,70 +16,107 @@ export default class TwitterFeature {
     public adapter: ITwitterAdapter;
 
     async activate() {
+        if (Core.state === undefined) {
+          alert(`
+GNOSIS DAPPLET
+
+Download the latest version of Dapplets Extension here:
+
+https://github.com/dapplets/dapplet-extension/releases/latest
+          `);
+          return;
+        }
         const serverUrl = await Core.storage.get('serverUrl');
         const wallet = await Core.wallet({ type: 'ethereum', network: 'goerli' });
-        const server = Core.connect<{ pm_num: string }>({ url: serverUrl });
+        const server = Core.connect({ url: serverUrl }, { pm_num: '' });
 
         // ToDo: exports in ITwitterAdapter type is function, but in runtime it's object.
-        const { button, badge } = this.adapter.exports;
+        const { button } = this.adapter.exports;
 
         this.adapter.attachConfig({
-            POST: () => [
+            POST: async (ctx) => [
                 [{
                     label: 'Attach tweet to prediction market',
-                    exec: async (ctx) => {
+                    exec: async (_, me) => {
                         const overlayUrl = await Core.storage.get('overlayUrl');
                         const overlay = Core.overlay({ url: overlayUrl, title: 'Gnosis' });
-                        overlay.sendAndListen('tweet_select', ctx, {
-                            'pm_attach': (op, { market, tweet }) => {
-                                wallet.sendAndListen('1', ctx, {
-                                    created: () => {
-                                        overlay.send('tx_created');
-                                    }
-                                });
+                        overlay.listen({
+                            pm_attach: async () => {
+                              try {
+                                  // if (!(await wallet.isConnected())) {
+                                  //     try {
+                                  //         await wallet.connect();
+                                  //     } catch (err) {
+                                  //         console.error('ERROR connect to wallet:', err)
+                                  //         me.state = 'ERR';
+                                  //         return;
+                                  //     }
+                                  // }
+                                  // await wallet.request({ method: '1', params: [ctx] });
+                                  overlay.send('tx_created');
+                              } catch (err) {
+                                  console.error(err);
+                                  me.state = 'ERR';
+                              }
                             }
                         });
+                        overlay.send('tweet_select', ctx);
                     }
                 }],
                 button({
                     initial: "DEFAULT",
                     "DEFAULT": {
-                        label: server.pm_num,
+                        label: server.state[ctx.id].pm_num,
                         img: GNOSIS_ICON,
+                        loading: false,
                         disabled: false,
-                        exec: async (ctx, me) => {
+                        exec: async (_, me) => {
                             const overlayUrl = await Core.storage.get('overlayUrl');
                             const overlay = Core.overlay({ url: overlayUrl, title: 'Gnosis' });
-                            overlay.sendAndListen('tweet_select', ctx, {
-                                'pm_attach': (op, { market, tweet }) => {
+                            overlay.listen({
+                                pm_attach: async () => {
                                     me.state = 'PENDING';
-                                    wallet.sendAndListen('1', ctx, {
-                                        rejected: () => me.state = 'ERR',
-                                        created: () => {
-                                            me.state = 'DEFAULT';
-                                            overlay.send('tx_created');
-                                        }
-                                    });
+                                    try {
+                                      // if (!(await wallet.isConnected())) {
+                                      //     try {
+                                      //         await wallet.connect();
+                                      //     } catch (err) {
+                                      //         console.error('ERROR connect to wallet:', err)
+                                      //         me.state = 'ERR';
+                                      //         return;
+                                      //     }
+                                      // }
+                                      // const res = await wallet.request({ method: '1', params: [ctx] });
+                                      me.state = 'DEFAULT';
+                                      overlay.send('tx_created');
+                                    } catch (err) {
+                                      console.error(err);
+                                      me.state = 'ERR';
+                                    }
                                 }
                             });
+                            overlay.send('tweet_select', ctx);
                         }
                     },
                     "PENDING": {
                         label: 'Pending',
                         loading: true,
-                        disabled: true
+                        disabled: true,
+                        exec: null,
                     },
                     "ERR": {
                         label: 'Error',
+                        loading: false,
+                        disabled: false,
                         img: GNOSIS_ICON,
-                        exec: (ctx, me) => me.state = 'DEFAULT'
+                        exec: (_, me) => me.state = 'DEFAULT'
                     }
                 })
             ]
         });
     }
 
-    async deactivate() {
+    // async deactivate() {
         
-    }
+    // }
 }

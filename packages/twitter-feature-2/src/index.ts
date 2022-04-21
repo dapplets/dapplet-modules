@@ -1,4 +1,4 @@
-import { IFeature } from '@dapplets/dapplet-extension'
+import { } from '@dapplets/dapplet-extension'
 import { T_TwitterFeatureConfig, ITwitterAdapter } from 'twitter-adapter.dapplet-base.eth'
 import ETHEREUM_ICON from './ethereum.png'
 
@@ -10,57 +10,91 @@ export default class TwitterFeature {
     public adapter: ITwitterAdapter;
 
     public async activate() {
-        const wallet = await Core.wallet({ type: 'ethereum', network: 'rinkeby' });
+        if (Core.state === undefined) {
+            alert(`
+ETHEREUM CONTRACT EXAMPLE DAPPLET
+
+Download the latest version of Dapplets Extension here:
+
+https://github.com/dapplets/dapplet-extension/releases/latest
+            `);
+            return;
+        }
+        const wallet = await Core.wallet({ type: 'ethereum', network: 'goerli' });
         const serverUrl = await Core.storage.get('serverUrl');
-        const server = Core.connect<{ like_num: string }>({ url: serverUrl });
+        const server = Core.connect({ url: serverUrl }, { like_num: '' });
 
         // ToDo: exports in ITwitterAdapter type is function, but in runtime it's object.
         const { button } = this.adapter.exports;
         const { $ } = this.adapter.attachConfig({
-            POST: () => [
+            POST: async (ctx) => [
                 [{
                     label: 'Add tweet to the Ethereum registry',
-                    exec: async (ctx, me) => {
-                        wallet.sendAndListen('1', ctx, {});
+                    exec: async () => {
+                        // try {
+                        //     if (!(await wallet.isConnected())) {
+                        //         try {
+                        //             await wallet.connect();
+                        //         } catch (err) {
+                        //             console.error('ERROR connect to wallet:', err)
+                        //             return;
+                        //         }
+                        //     }
+                        //     wallet.request({ method: '1', params: [ctx] });
+                        // } catch (err) {
+                        //     console.error(err);
+                        // }
                     }
                 }],
                 button({
                     id: 'first_button',
                     initial: "DEFAULT",
-                    "DEFAULT": {
-                        label: server.like_num,
+                    DEFAULT: {
+                        label: server.state[ctx.id].like_num,
                         img: ETHEREUM_ICON,
                         disabled: false,
-                        exec: (ctx, me) => { // ToDo: rename exec() to onclick()
+                        exec: async (_, me) => { // ToDo: rename exec() to onclick()
                             me.state = 'PENDING';
-                            wallet.sendAndListen('1', ctx, {
-                                rejected: () => me.state = 'ERR',
-                                created: () => me.state = 'DEFAULT'
-                            });
+                            try {
+                                // if (!(await wallet.isConnected())) {
+                                //     try {
+                                //         await wallet.connect();
+                                //     } catch (err) {
+                                //         console.error('ERROR connect to wallet:', err)
+                                //         me.state = 'ERR';
+                                //         return;
+                                //     }
+                                // }
+                                // await wallet.request({ method: '1', params: [ctx] });
+                                me.state = 'DEFAULT';
+                            } catch (err) {
+                                console.error(err);
+                                me.state = 'ERR';
+                            }
                         }
                     },
-                    "PENDING": {
+                    PENDING: {
                         label: 'Pending',
                         loading: true,
                         disabled: true
                     },
-                    "ERR": {
+                    ERR: {
                         label: 'Error',
                         img: ETHEREUM_ICON,
-                        exec: (ctx, me) => me.state = 'DEFAULT'
+                        exec: (_, me) => me.state = 'DEFAULT'
                     }
                 }),
                 button({
                     id: 'second_button',
                     initial: "DEFAULT",
-                    "DEFAULT": {
+                    DEFAULT: {
                         img: ETHEREUM_ICON,
                         label: "LOADING...",
-                        init: async (ctx, me) => {
+                        init: async (_, me) => {
                             const counter = (await Core.storage.get(ctx.id)) ?? 0;
                             me.label = counter;
                         },
-                        exec: async (ctx, me) => {
+                        exec: async (_, me) => {
                             let counter = (await Core.storage.get(ctx.id)) ?? 0;
                             await Core.storage.set(ctx.id, ++counter);
                             me.label = counter;
@@ -70,18 +104,18 @@ export default class TwitterFeature {
                 }),
                 button({
                     initial: "ON",
-                    "ON": {
+                    ON: {
                         img: ETHEREUM_ICON,
                         label: "ON",
-                        exec: async (ctx, me) => {
+                        exec: async (_, me) => {
                             me.label = "ON2";
                             me.newState = 'OFF';
                         }
                     },
-                    "OFF": {
+                    OFF: {
                         img: ETHEREUM_ICON,
                         label: "OFF",
-                        exec: async (ctx, me) => {
+                        exec: async (_, me) => {
                             me.label = "OFF2";
                             me.setState("ON", true);
                         }
