@@ -5,6 +5,7 @@ export interface IBoxState {
     video?: string
     text?: string
     position?: 'center' | 'top' | 'bottom'
+    width?: string
     color?: string,
     textBackground?: string,
     tag?: string
@@ -113,6 +114,7 @@ export class Box implements IWidget<IBoxState> {
             replace,
             tag,
             ctx,
+            width,
         } = this.state;
 
         if (this._prevReplace !== replace) {
@@ -131,7 +133,7 @@ export class Box implements IWidget<IBoxState> {
             if (img) {
                 const imgTag = document.createElement('img');
                 imgTag.src = img;
-                imgTag.style.width = '100%';
+                imgTag.style.width = width ?? '100%';
                 imgTag.style.position = 'relative';
                 imgTag.style.objectFit = 'cover';
                 if (this.insPointName = 'SUSPENDED') {
@@ -144,7 +146,7 @@ export class Box implements IWidget<IBoxState> {
                 videoTag.autoplay = true;
                 videoTag.muted = true;
                 videoTag.loop = true;
-                videoTag.style.width = '100%';
+                videoTag.style.width = width ?? '100%';
                 if (this.insPointName = 'SUSPENDED') {
                     videoTag.style.cursor = 'pointer';
                 }
@@ -174,7 +176,7 @@ export class Box implements IWidget<IBoxState> {
             container.style.color = color;
             container.style.background = textBackground;
             container.style.padding = '10px 30px';
-            container.style.fontSize = '1.45rem';
+            container.style.fontSize = '1.20rem';
             container.style.fontWeight = 'bold';
             container.style.textAlign = 'center';
             container.textContent = text;
@@ -188,8 +190,9 @@ export class Box implements IWidget<IBoxState> {
             container.style.width = '100%';
             container.style.bottom = '0';
             container.style.zIndex = '50000';
-            container.style.marginTop = '12px';
-            container.style.marginBottom = '12px';
+            container.style.textAlign = 'center';
+            // container.style.marginTop = '12px';
+            // container.style.marginBottom = '12px';
             container.appendChild(addMedia());
             if (text) container.appendChild(addText());
             container.addEventListener('click', (e) => {
