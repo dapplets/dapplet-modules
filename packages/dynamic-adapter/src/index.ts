@@ -1,6 +1,5 @@
 // Polyfill for WebComponents that doesn't work in an Extension's JS-context
-import '@webcomponents/custom-elements';
-
+import './custom-elements.min.js';
 import { WidgetBuilder } from './widgets';
 import { IFeature, IContentAdapter } from '@dapplets/dapplet-extension';
 import { IWidgetBuilderConfig, Context, IWidget } from './types';
