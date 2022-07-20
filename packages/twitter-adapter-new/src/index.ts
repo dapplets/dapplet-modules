@@ -15,6 +15,7 @@ import Slideout from 'slideout';
 import { Box, IBoxState } from './box';
 import { Text, ITextState } from './text';
 import { WbButton, IWbButtonProps } from './wb-button';
+import { Post, IPostProps } from './post';
 
 const widgets = {
   avatar: Avatar,
@@ -27,7 +28,8 @@ const widgets = {
   caption: Caption,
   box: Box,
   input: Input,
-  text:Text
+  text: Text,
+  post: Post,
 }
 
 @Injectable
@@ -52,7 +54,8 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
         caption: this.adapter.createWidgetFactory<ILabelState>(Caption),
         box: this.adapter.createWidgetFactory<IBoxState>(Box),
         input: this.adapter.createWidgetFactory<IInputState>(Input),
-        text: this.adapter.createWidgetFactory<ITextState>(Text)
+        text: this.adapter.createWidgetFactory<ITextState>(Text),
+        post: this.adapter.createWidgetFactory<IPostProps>(Post)
     });
 
     public config = {
@@ -190,24 +193,28 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
         },
         PROFILE: {
             containerSelector: "main[role=main]",
-            contextSelector: "div.css-1dbjc4n.r-1ifxtd0.r-ymttw5.r-ttdzmv",
+            contextSelector: "div[data-testid=primaryColumn] > div > div:nth-child(2) div.css-1dbjc4n.r-1jgb5lz.r-1ye8kvj.r-13qz1uu",
             insPoints: {
                 AVATAR: {
-                    selector: "a",
+                    selector: "div.css-1dbjc4n.r-1ifxtd0.r-ymttw5.r-ttdzmv a",
                     insert: 'inside'
                 },
                 AVATAR_BADGE: {
-                    selector: "div.css-1dbjc4n.r-ggadg3.r-u8s1d.r-8jfcpp",
+                    selector: "div.css-1dbjc4n.r-1ifxtd0.r-ymttw5.r-ttdzmv div.css-1dbjc4n.r-ggadg3.r-u8s1d.r-8jfcpp",
                     insert: 'end'
                 },
                 USERNAME_BADGE: {
-                    selector: "div.css-1dbjc4n.r-1wbh5a2.r-dnmrzs.r-1ny4l3l",
+                    selector: "div.css-1dbjc4n.r-1ifxtd0.r-ymttw5.r-ttdzmv div.css-1dbjc4n.r-1wbh5a2.r-dnmrzs.r-1ny4l3l",
                     insert: "end"
                 },
                 BUTTON_GROUP: {
-                    selector: "div.css-1dbjc4n.r-obd0qt.r-18u37iz.r-1w6e6rj.r-1h0z5md.r-dnmrzs > *:last-child",
+                    selector: "div.css-1dbjc4n.r-1ifxtd0.r-ymttw5.r-ttdzmv div.css-1dbjc4n.r-obd0qt.r-18u37iz.r-1w6e6rj.r-1h0z5md.r-dnmrzs > *:last-child",
                     insert: "begin"
                 },
+                POSTS: {
+                    selector: "section[role=region] > div > div",
+                    insert: "begin"
+                }
             },
             events: {
                 // calls for every new context
@@ -215,14 +222,15 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
             },
             // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
             contextBuilder: (el: any) => {
-                const avatar = el.querySelector('a.css-4rbku5.css-18t94o4.css-1dbjc4n.r-14lw9ot.r-11mg6pl');
+                const ph = el.querySelector('div.css-1dbjc4n.r-1ifxtd0.r-ymttw5.r-ttdzmv');
+                const avatar = ph.querySelector('a.css-4rbku5.css-18t94o4.css-1dbjc4n.r-14lw9ot.r-11mg6pl');
                 if (avatar) avatar.style.overflow = 'visible';
 
                 return ({
-                    id: el.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x div.css-901oao.css-bfa6kz.r-18u37iz.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-qvutc0 span')?.innerText.replace('@', '').toLowerCase(),
-                    authorFullname: this._parseAuthorFullname(el.querySelector('div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-dnmrzs > div > span:nth-child(1)')),
-                    authorUsername: el.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x div.css-901oao.css-bfa6kz.r-18u37iz.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-qvutc0 span')?.innerText.replace('@', '').toLowerCase(),
-                    authorImg: el.querySelector('a img')?.getAttribute('src'),
+                    id: ph.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x div.css-901oao.css-bfa6kz.r-18u37iz.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-qvutc0 span')?.innerText.replace('@', '').toLowerCase(),
+                    authorFullname: this._parseAuthorFullname(ph.querySelector('div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-dnmrzs > div > span:nth-child(1)')),
+                    authorUsername: ph.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x div.css-901oao.css-bfa6kz.r-18u37iz.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-qvutc0 span')?.innerText.replace('@', '').toLowerCase(),
+                    authorImg: ph.querySelector('a img')?.getAttribute('src'),
                     theme: this._getTheme(),
                 });
             },
