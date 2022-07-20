@@ -13,7 +13,7 @@ import { Caption } from './caption';
 import Starter from './starter';
 import Slideout from 'slideout';
 import { Box, IBoxState } from './box';
-import { Text, ITextState } from './text';
+import { Quote, IQuoteState } from './quote';
 import { WbButton, IWbButtonProps } from './wb-button';
 import { Post, IPostProps } from './post';
 
@@ -28,7 +28,7 @@ const widgets = {
   caption: Caption,
   box: Box,
   input: Input,
-  text: Text,
+  quote: Quote,
   post: Post,
 }
 
@@ -54,7 +54,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
         caption: this.adapter.createWidgetFactory<ILabelState>(Caption),
         box: this.adapter.createWidgetFactory<IBoxState>(Box),
         input: this.adapter.createWidgetFactory<IInputState>(Input),
-        text: this.adapter.createWidgetFactory<ITextState>(Text),
+        quote: this.adapter.createWidgetFactory<IQuoteState>(Quote),
         post: this.adapter.createWidgetFactory<IPostProps>(Post)
     });
 
@@ -148,7 +148,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                     text: el.querySelector('.css-901oao.r-18jsvk2.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-14gqq1x.r-bcqeeo.r-bnwqim.r-qvutc0 > span')?.innerText,
                     img: el.querySelector('.css-1dbjc4n.r-1ets6dv.r-1867qdf.r-rs99b7.r-1loqt21.r-adacv.r-1ny4l3l.r-1udh08x.r-o7ynqc.r-6416eg > div > div:nth-child(3) > div > div > div > div > a > div > div:last-child > div > img')?.getAttribute('src'),
                     authorFullname: el.querySelector('.css-1dbjc4n.r-1ets6dv.r-1867qdf.r-rs99b7.r-1loqt21.r-adacv.r-1ny4l3l.r-1udh08x.r-o7ynqc.r-6416eg > div > div:nth-child(1) > div > div > div > div > div > div > div > div > div:nth-child(2) > span > span')?.innerText,
-                    authorUsername: el.querySelector('.css-1dbjc4n.r-1ets6dv.r-1867qdf.r-rs99b7.r-1loqt21.r-adacv.r-1ny4l3l.r-1udh08x.r-o7ynqc.r-6416eg > div > div:nth-child(1) > div > div > div > div > div > div:last-child > div > div > div > div > span')?.innerText,
+                    authorUsername: el.querySelector('.css-1dbjc4n.r-1ets6dv.r-1867qdf.r-rs99b7.r-1loqt21.r-adacv.r-1ny4l3l.r-1udh08x.r-o7ynqc.r-6416eg > div > div:nth-child(1) > div > div > div > div > div > div:last-child > div > div > div > div > span')?.innerText?.replace('@', ''),
                     authorImg: el.querySelector('.css-1dbjc4n.r-1ets6dv.r-1867qdf.r-rs99b7.r-1loqt21.r-adacv.r-1ny4l3l.r-1udh08x.r-o7ynqc.r-6416eg > div > div > div > div > div > div > div > div > div > div > div > div:last-child > div > div:last-child > div > div > div:nth-child(3) > div > div:last-child > div > img')?.getAttribute('src'),
                     createdAt: el.querySelector('.css-1dbjc4n.r-1ssbvtb.r-1s2bzr4 > div > div:last-child > div > div > div > div:last-child > span:last-child > time')?.getAttribute('datetime'),
                     isDeleted: el.innerHTML.includes('This Tweet was deleted') || el.innerHTML.includes('This Tweet is unavailable')
