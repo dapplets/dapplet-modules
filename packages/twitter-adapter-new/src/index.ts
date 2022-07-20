@@ -13,8 +13,9 @@ import { Caption } from './caption';
 import Starter from './starter';
 import Slideout from 'slideout';
 import { Box, IBoxState } from './box';
-import { Text, ITextState } from './text';
+import { Quote, IQuoteState } from './quote';
 import { WbButton, IWbButtonProps } from './wb-button';
+import { Post, IPostProps } from './post';
 
 const widgets = {
   avatar: Avatar,
@@ -27,7 +28,8 @@ const widgets = {
   caption: Caption,
   box: Box,
   input: Input,
-  text:Text
+  quote: Quote,
+  post: Post,
 }
 
 @Injectable
@@ -52,7 +54,8 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
         caption: this.adapter.createWidgetFactory<ILabelState>(Caption),
         box: this.adapter.createWidgetFactory<IBoxState>(Box),
         input: this.adapter.createWidgetFactory<IInputState>(Input),
-        text: this.adapter.createWidgetFactory<ITextState>(Text)
+        quote: this.adapter.createWidgetFactory<IQuoteState>(Quote),
+        post: this.adapter.createWidgetFactory<IPostProps>(Post)
     });
 
     public config = {
@@ -141,6 +144,16 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                     classList.add('r-16y2uox');
                 }
 
+                const quote = {
+                    text: el.querySelector('.css-901oao.r-18jsvk2.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-14gqq1x.r-bcqeeo.r-bnwqim.r-qvutc0 > span')?.innerText,
+                    img: el.querySelector('.css-1dbjc4n.r-1ets6dv.r-1867qdf.r-rs99b7.r-1loqt21.r-adacv.r-1ny4l3l.r-1udh08x.r-o7ynqc.r-6416eg > div > div:nth-child(3) > div > div > div > div > a > div > div:last-child > div > img')?.getAttribute('src'),
+                    authorFullname: el.querySelector('.css-1dbjc4n.r-1ets6dv.r-1867qdf.r-rs99b7.r-1loqt21.r-adacv.r-1ny4l3l.r-1udh08x.r-o7ynqc.r-6416eg > div > div:nth-child(1) > div > div > div > div > div > div > div > div > div:nth-child(2) > span > span')?.innerText,
+                    authorUsername: el.querySelector('.css-1dbjc4n.r-1ets6dv.r-1867qdf.r-rs99b7.r-1loqt21.r-adacv.r-1ny4l3l.r-1udh08x.r-o7ynqc.r-6416eg > div > div:nth-child(1) > div > div > div > div > div > div:last-child > div > div > div > div > span')?.innerText?.replace('@', ''),
+                    authorImg: el.querySelector('.css-1dbjc4n.r-1ets6dv.r-1867qdf.r-rs99b7.r-1loqt21.r-adacv.r-1ny4l3l.r-1udh08x.r-o7ynqc.r-6416eg > div > div > div > div > div > div > div > div > div > div > div > div:last-child > div > div:last-child > div > div > div:nth-child(3) > div > div:last-child > div > img')?.getAttribute('src'),
+                    createdAt: el.querySelector('.css-1dbjc4n.r-1ssbvtb.r-1s2bzr4 > div > div:last-child > div > div > div > div:last-child > span:last-child > time')?.getAttribute('datetime'),
+                    isDeleted: el.innerHTML.includes('This Tweet was deleted') || el.innerHTML.includes('This Tweet is unavailable')
+                };
+
                 return ({
                     el,
                     id: el.querySelector('.css-1dbjc4n.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu a time')?.parentNode?.href?.split('/')?.pop() || /status\/([0-9]*)/gm.exec(document.location.href)?.[1],
@@ -148,20 +161,9 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                     authorFullname: el.querySelector('div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-dnmrzs > div > span:nth-child(1) > span')?.innerText,
                     authorUsername: el.querySelector('div.css-901oao.css-bfa6kz.r-18u37iz.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-qvutc0 > span')?.innerText?.replace('@', '')?.toLowerCase(),
                     authorImg: el.querySelector('.css-1dbjc4n.r-1awozwy.r-1hwvwag.r-18kxxzh.r-1b7u577 > div:first-child img.css-9pa8cd')?.getAttribute('src'),
+                    createdAt: el.querySelector('div[data-testid="User-Names"] div.css-1dbjc4n.r-18u37iz.r-1wbh5a2.r-13hce6t > div > div.css-1dbjc4n.r-18u37iz.r-1q142lx > a > time')?.getAttribute('datetime'),
+                    quote: (quote.createdAt || quote.isDeleted) ? quote : null,
                     theme: this._getTheme(),
-                    // css-4rbku5 css-18t94o4 css-1dbjc4n r-1loqt21 r-1pi2tsx r-1ny4l3l
-                    // .css-1dbjc4n.r-1ets6dv.r-1867qdf.r-rs99b7.r-1loqt21.r-adacv.r-1ny4l3l.r-1udh08x.r-o7ynqc.r-6416eg
-                    imgRetweet:el.querySelector('.css-1dbjc4n.r-1ets6dv.r-1867qdf.r-rs99b7.r-1loqt21.r-adacv.r-1ny4l3l.r-1udh08x.r-o7ynqc.r-6416eg > div > div:nth-child(3) > div > div > div > div > a > div > div:last-child > div > img')?.getAttribute('src'),
-            //    idRetweetTest: el.querySelector('.css-1dbjc4n.r-1ssbvtb.r-1s2bzr4 > div > div:last-child > div > div > div > div:last-child > span:last-child > time'),
-            //    idTest:  el.querySelector('.css-1dbjc4n.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu a time'),
-               authorRetweet: el.querySelector('.css-1dbjc4n.r-1ets6dv.r-1867qdf.r-rs99b7.r-1loqt21.r-adacv.r-1ny4l3l.r-1udh08x.r-o7ynqc.r-6416eg > div > div:nth-child(1) > div > div > div > div > div > div > div > div > div:nth-child(2) > span > span')?.innerText,
-
-               authorRetweetUserName: el.querySelector('.css-1dbjc4n.r-1ets6dv.r-1867qdf.r-rs99b7.r-1loqt21.r-adacv.r-1ny4l3l.r-1udh08x.r-o7ynqc.r-6416eg > div > div:nth-child(1) > div > div > div > div > div > div:last-child > div > div > div > div > span')?.innerText,
-               innerTextRetweet: el.querySelector('.css-901oao.r-18jsvk2.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-14gqq1x.r-bcqeeo.r-bnwqim.r-qvutc0 > span')?.innerText,
-               idRetweetTime: el.querySelector('.css-1dbjc4n.r-1ssbvtb.r-1s2bzr4 > div > div:last-child > div > div > div > div:last-child > span:last-child > time')?.getAttribute('datetime'),
-               authorRetweetImg: el.querySelector('.css-1dbjc4n.r-1ets6dv.r-1867qdf.r-rs99b7.r-1loqt21.r-adacv.r-1ny4l3l.r-1udh08x.r-o7ynqc.r-6416eg > div > div > div > div > div > div > div > div > div > div > div > div:last-child > div > div:last-child > div > div > div:nth-child(3) > div > div:last-child > div > img')?.getAttribute('src'),
-               cidRetweet:'',
-               tweetDelete:el.querySelector('.css-1dbjc4n.r-1awozwy.r-x572qd.r-jxzhtn.r-1867qdf.r-1phboty.r-rs99b7.r-18u37iz.r-1wtj0ep.r-s1qlax.r-1f1sjgu'),
                 });
             },
             theme: this._getTheme,
@@ -190,24 +192,28 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
         },
         PROFILE: {
             containerSelector: "main[role=main]",
-            contextSelector: "div.css-1dbjc4n.r-1ifxtd0.r-ymttw5.r-ttdzmv",
+            contextSelector: "div[data-testid=primaryColumn] > div > div:nth-child(2) div.css-1dbjc4n.r-1jgb5lz.r-1ye8kvj.r-13qz1uu",
             insPoints: {
                 AVATAR: {
-                    selector: "a",
+                    selector: "div.css-1dbjc4n.r-1ifxtd0.r-ymttw5.r-ttdzmv a",
                     insert: 'inside'
                 },
                 AVATAR_BADGE: {
-                    selector: "div.css-1dbjc4n.r-ggadg3.r-u8s1d.r-8jfcpp",
+                    selector: "div.css-1dbjc4n.r-1ifxtd0.r-ymttw5.r-ttdzmv div.css-1dbjc4n.r-ggadg3.r-u8s1d.r-8jfcpp",
                     insert: 'end'
                 },
                 USERNAME_BADGE: {
-                    selector: "div.css-1dbjc4n.r-1wbh5a2.r-dnmrzs.r-1ny4l3l",
+                    selector: "div.css-1dbjc4n.r-1ifxtd0.r-ymttw5.r-ttdzmv div.css-1dbjc4n.r-1wbh5a2.r-dnmrzs.r-1ny4l3l",
                     insert: "end"
                 },
                 BUTTON_GROUP: {
-                    selector: "div.css-1dbjc4n.r-obd0qt.r-18u37iz.r-1w6e6rj.r-1h0z5md.r-dnmrzs > *:last-child",
+                    selector: "div.css-1dbjc4n.r-1ifxtd0.r-ymttw5.r-ttdzmv div.css-1dbjc4n.r-obd0qt.r-18u37iz.r-1w6e6rj.r-1h0z5md.r-dnmrzs > *:last-child",
                     insert: "begin"
                 },
+                POSTS: {
+                    selector: "section[role=region] > div > div",
+                    insert: "begin"
+                }
             },
             events: {
                 // calls for every new context
@@ -215,14 +221,15 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
             },
             // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
             contextBuilder: (el: any) => {
-                const avatar = el.querySelector('a.css-4rbku5.css-18t94o4.css-1dbjc4n.r-14lw9ot.r-11mg6pl');
+                const ph = el.querySelector('div.css-1dbjc4n.r-1ifxtd0.r-ymttw5.r-ttdzmv');
+                const avatar = ph.querySelector('a.css-4rbku5.css-18t94o4.css-1dbjc4n.r-14lw9ot.r-11mg6pl');
                 if (avatar) avatar.style.overflow = 'visible';
 
                 return ({
-                    id: el.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x div.css-901oao.css-bfa6kz.r-18u37iz.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-qvutc0 span')?.innerText.replace('@', '').toLowerCase(),
-                    authorFullname: this._parseAuthorFullname(el.querySelector('div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-dnmrzs > div > span:nth-child(1)')),
-                    authorUsername: el.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x div.css-901oao.css-bfa6kz.r-18u37iz.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-qvutc0 span')?.innerText.replace('@', '').toLowerCase(),
-                    authorImg: el.querySelector('a img')?.getAttribute('src'),
+                    id: ph.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x div.css-901oao.css-bfa6kz.r-18u37iz.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-qvutc0 span')?.innerText.replace('@', '').toLowerCase(),
+                    authorFullname: this._parseAuthorFullname(ph.querySelector('div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-dnmrzs > div > span:nth-child(1)')),
+                    authorUsername: ph.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x div.css-901oao.css-bfa6kz.r-18u37iz.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-qvutc0 span')?.innerText.replace('@', '').toLowerCase(),
+                    authorImg: ph.querySelector('a img')?.getAttribute('src'),
                     theme: this._getTheme(),
                 });
             },
