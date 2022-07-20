@@ -160,8 +160,8 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                innerTextRetweet: el.querySelector('.css-901oao.r-18jsvk2.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-14gqq1x.r-bcqeeo.r-bnwqim.r-qvutc0 > span')?.innerText,
                idRetweetTime: el.querySelector('.css-1dbjc4n.r-1ssbvtb.r-1s2bzr4 > div > div:last-child > div > div > div > div:last-child > span:last-child > time')?.getAttribute('datetime'),
                authorRetweetImg: el.querySelector('.css-1dbjc4n.r-1ets6dv.r-1867qdf.r-rs99b7.r-1loqt21.r-adacv.r-1ny4l3l.r-1udh08x.r-o7ynqc.r-6416eg > div > div > div > div > div > div > div > div > div > div > div > div:last-child > div > div:last-child > div > div > div:nth-child(3) > div > div:last-child > div > img')?.getAttribute('src'),
-               cidRetweet:''
-            
+               cidRetweet:'',
+               tweetDelete:el.querySelector('.css-1dbjc4n.r-1awozwy.r-x572qd.r-jxzhtn.r-1867qdf.r-1phboty.r-rs99b7.r-18u37iz.r-1wtj0ep.r-s1qlax.r-1f1sjgu'),
                 });
             },
             theme: this._getTheme,
