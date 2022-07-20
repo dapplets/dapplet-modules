@@ -190,7 +190,7 @@ export class Text implements IWidget<ITextState> {
             container.style.width = "inherit";
             container.style.maxWidth = "max-content";
             container.style.minWidth = "min-content";
-            container.style.color = "inherit";
+            container.style.color = color;
             container.style.background = "inherit";
             container.style.fontSize = "15px";
             container.style.fontWeight = "700";
@@ -226,7 +226,7 @@ export class Text implements IWidget<ITextState> {
             container.style.position = "inherit";
             container.style.width = "inherit";
             container.style.maxWidth = "inherit";
-            container.style.color = "rgb(83, 100, 113)";
+            container.style.color = color;
             container.style.background = "inherit";
             container.style.fontSize = "15px";
             container.style.fontWeight = "400";
@@ -244,7 +244,7 @@ export class Text implements IWidget<ITextState> {
         container.style.position = "inherit";
         container.style.width = "inherit";
         container.style.maxWidth = "inherit";
-        container.style.color = "inherit";
+        container.style.color = color;
         container.style.background = "inherit";
         container.style.padding = "10px 0px";
         container.style.fontSize = "inherit";
