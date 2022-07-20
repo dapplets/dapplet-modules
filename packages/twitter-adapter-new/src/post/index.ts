@@ -9,7 +9,7 @@ export interface IPostProps {
     ctx: any;
     theme?: "DARK" | "LIGHT";
     insPointName?: string;
-
+color?:string
     id: string;
     text: string;
     authorFullname: string;
@@ -31,7 +31,7 @@ export class Post extends LitElement implements IPostProps {
     @property() ctx;
     @property() theme;
     @property() insPointName;
-    
+    @property() color;
     @property() id;
     @property() text;
     @property() authorFullname;
