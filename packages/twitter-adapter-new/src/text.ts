@@ -1,7 +1,7 @@
 import { IWidget } from "dynamic-adapter.dapplet-base.eth";
 
 export interface ITextState {
-  img?: string;
+    imgRetweet?: string;
   // video?: string
   text?: string;
   color?: string;
@@ -35,7 +35,7 @@ export class Text implements IWidget<ITextState> {
 
   // ToDo
   public static widgetParamsDescription = {
-    img: {
+    imgRetweet: {
       description: "image as blob",
       optional: true,
       TYPE: "string",
@@ -121,7 +121,7 @@ export class Text implements IWidget<ITextState> {
   public mount() {
     if (!this.el) this._createElement();
     const {
-      img,
+        imgRetweet,
       // video,
       text,
       color = "black",
@@ -151,9 +151,9 @@ export class Text implements IWidget<ITextState> {
     this._prevReplace = replace;
 
     const addMedia = () => {
-      if (img) {
+      if (imgRetweet) {
         const imgTag = document.createElement("img");
-        imgTag.src = img;
+        imgTag.src = imgRetweet;
         imgTag.style.position = "relative";
         imgTag.style.objectFit = "cover";
         imgTag.style.width = "auto";
@@ -306,7 +306,7 @@ export class Text implements IWidget<ITextState> {
       container.style.paddingLeft = "10px";
     if  (authorRetweetImage ) container.appendChild(addRetweetInfo())
       if (innerText) container.appendChild(addInnerText());
-      if (img) container.appendChild(addMedia());
+      if (imgRetweet) container.appendChild(addMedia());
 
       if (text) container.appendChild(addText());
       container.addEventListener("click", (e) => {
