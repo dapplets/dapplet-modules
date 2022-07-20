@@ -7,7 +7,7 @@ export interface IAvatarBadgeState {
     basic?: boolean
     horizontal: 'left' | 'right'
     vertical: 'top' | 'bottom'
-    tooltip?: string
+    tooltip?: string | string[]
     hidden?: boolean
     theme?: 'DARK' | 'LIGHT'
     //label?: string
@@ -94,7 +94,7 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
         this._injectStyles();
         if (!this.el) this._createElement();
 
-        const { img, video, mediaType, basic, vertical, horizontal, hidden, tooltip, theme } = this.state;
+        const { img, video, mediaType, basic, vertical, horizontal, hidden, tooltip, theme, exec } = this.state;
 
         if (!hidden && (img || video)) {
             this.el.style.display = 'block';
@@ -104,6 +104,7 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
                 container.style.display = 'flex';
                 container.style.overflow = 'hidden';
                 container.style.alignItems = 'center';
+                container.style.cursor = exec ? 'pointer' : 'default';
                 switch (this.insPointName) {
                     case 'POST':
                         container.style.width = '24px';
@@ -169,7 +170,11 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
                 videoTag.style.width = '100%';
             }
 
-            this.el.title = tooltip ?? '';
+            this.el.title = tooltip
+                ? typeof tooltip === 'string'
+                  ? tooltip
+                  : tooltip.join('\n')
+                : '';
         } else {
             this.el.firstChild?.remove();
             this.el.style.display = 'none';
@@ -184,7 +189,6 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
         switch (this.insPointName) {
             case 'PROFILE':
                 this.el = document.createElement('div');
-                this.el.classList.add("dapplet-widget-profile-avatar-badge");
                 this.el.style.zIndex = '50100';
                 break;
 
@@ -221,10 +225,6 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
 
             .dapplet-widget-profile-button:hover {
                 background-color: rgba(15, 20, 25, 0.1);
-            }
-
-            .dapplet-widget-profile-avatar-badge {
-                cursor: pointer;
             }
         `;
         document.head.appendChild(styleTag);
