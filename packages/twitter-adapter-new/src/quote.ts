@@ -231,6 +231,7 @@ export class Quote implements IWidget<IQuoteState> {
                 container.style.fontSize = "inherit";
                 container.style.fontWeight = "inherit";
                 container.style.textAlign = "inherit";
+                container.style.fontFamily = "TwitterChirp";
                 container.textContent = text;
                 return container;
             }
