@@ -60,11 +60,11 @@ export class Post extends LitElement implements IPostProps {
                 </div>
                 <div class="text-container">
                     <div>
-                        <span>${this.authorFullname}</span>
+                        <span class='${this.theme === "DARK" ? 'text-dark-name': 'text-light-name'}'>${this.authorFullname}</span>
                         <span> </span>
-                        <span>@${this.authorUsername}</span>
+                        <span class='${this.theme === "DARK" ? 'text-dark-user-name': 'text-light-user-name'}'>@${this.authorUsername}</span>
                     </div>
-                    <div>${this.text}</div>
+                    <div class='${this.theme === "DARK" ? 'text-dark': 'text-light'}'>${this.text}</div>
                 </div>
             </div>`;
         }

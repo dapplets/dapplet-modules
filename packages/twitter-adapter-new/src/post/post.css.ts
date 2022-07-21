@@ -52,7 +52,7 @@ export const styles = css`
     .post {
         padding: 12px 16px;
         cursor: pointer;
-        border-bottom: 1px solid #eff3f4;
+        border-bottom: 0.5px solid rgba(204, 204, 204, 0.3);
         transition-property: background-color, box-shadow;
         transition-duration: 0.2s;
         display: flex;
@@ -75,5 +75,22 @@ export const styles = css`
     }
 
     .text-container {
+    }
+    .text-dark{
+        color: #FFF;
+    }
+    .text-dark-user-name{
+        color: rgb(83, 100, 113);
+    }
+    .text-light-name{
+        font-weight: 700;
+        color: #000;
+    }
+    .text-dark-name{
+        font-weight: 700;
+        color: #FFF;
+    }
+    .text-light-user-name{
+       color: rgb(83, 100, 113);  
     }
 `;
