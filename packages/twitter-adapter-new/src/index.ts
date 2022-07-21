@@ -144,15 +144,17 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                     classList.add('r-16y2uox');
                 }
 
-                const quote = {
-                    text: el.querySelector('.css-901oao.r-18jsvk2.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-14gqq1x.r-bcqeeo.r-bnwqim.r-qvutc0 > span')?.innerText,
-                    img: el.querySelector('.css-1dbjc4n.r-1ets6dv.r-1867qdf.r-rs99b7.r-1loqt21.r-adacv.r-1ny4l3l.r-1udh08x.r-o7ynqc.r-6416eg > div > div:nth-child(3) > div > div > div > div > a > div > div:last-child > div > img')?.getAttribute('src'),
-                    authorFullname: el.querySelector('.css-1dbjc4n.r-1ets6dv.r-1867qdf.r-rs99b7.r-1loqt21.r-adacv.r-1ny4l3l.r-1udh08x.r-o7ynqc.r-6416eg > div > div:nth-child(1) > div > div > div > div > div > div > div > div > div:nth-child(2) > span > span')?.innerText,
-                    authorUsername: el.querySelector('.css-1dbjc4n.r-1ets6dv.r-1867qdf.r-rs99b7.r-1loqt21.r-adacv.r-1ny4l3l.r-1udh08x.r-o7ynqc.r-6416eg > div > div:nth-child(1) > div > div > div > div > div > div:last-child > div > div > div > div > span')?.innerText?.replace('@', ''),
-                    authorImg: el.querySelector('.css-1dbjc4n.r-1ets6dv.r-1867qdf.r-rs99b7.r-1loqt21.r-adacv.r-1ny4l3l.r-1udh08x.r-o7ynqc.r-6416eg > div > div > div > div > div > div > div > div > div > div > div > div:last-child > div > div:last-child > div > div > div:nth-child(3) > div > div:last-child > div > img')?.getAttribute('src'),
-                    createdAt: el.querySelector('.css-1dbjc4n.r-1ssbvtb.r-1s2bzr4 > div > div:last-child > div > div > div > div:last-child > span:last-child > time')?.getAttribute('datetime'),
-                    isDeleted: el.innerHTML.includes('This Tweet was deleted') || el.innerHTML.includes('This Tweet is unavailable')
-                };
+                const qel = el.querySelector('div.css-1dbjc4n.r-1ssbvtb.r-1s2bzr4');
+
+                const quote = qel ? {
+                    text: qel.querySelector('div[data-testid=tweetText]')?.innerText,
+                    img: qel.querySelector('div[data-testid="tweetPhoto"] img')?.getAttribute('src'),
+                    authorFullname: qel.querySelector('div[data-testid="UserAvatar-Container-unknown"] + div')?.innerText,
+                    authorUsername: qel.querySelector('div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-1wbh5a2.r-13hce6t span')?.innerText?.replace('@', ''),
+                    authorImg: qel.querySelector('div[data-testid="UserAvatar-Container-unknown"] img')?.getAttribute('src'),
+                    createdAt: qel.querySelector('time[datetime]')?.getAttribute('datetime'),
+                    isDeleted: qel.innerHTML.includes('This Tweet was deleted') || qel.innerHTML.includes('This Tweet is unavailable')
+                } : null;
 
                 return ({
                     el,
@@ -162,7 +164,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                     authorUsername: el.querySelector('div.css-901oao.css-bfa6kz.r-18u37iz.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-qvutc0 > span')?.innerText?.replace('@', '')?.toLowerCase(),
                     authorImg: el.querySelector('.css-1dbjc4n.r-1awozwy.r-1hwvwag.r-18kxxzh.r-1b7u577 > div:first-child img.css-9pa8cd')?.getAttribute('src'),
                     createdAt: el.querySelector('div[data-testid="User-Names"] div.css-1dbjc4n.r-18u37iz.r-1wbh5a2.r-13hce6t > div > div.css-1dbjc4n.r-18u37iz.r-1q142lx > a > time')?.getAttribute('datetime'),
-                    quote: (quote.createdAt || quote.isDeleted) ? quote : null,
+                    quote: quote,
                     theme: this._getTheme(),
                 });
             },
