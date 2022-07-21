@@ -124,8 +124,12 @@ export class WidgetBuilder {
 
                 for (const childrenContext of this.childrenContexts ?? []) {
                     const wb = widgetBuilders.find(x => x.contextName === childrenContext);
-                    Object.values(featureConfig).forEach((fn) => {
-                        if (typeof fn !== 'function') return;
+                    for (const contextName in featureConfig) {
+                        if (contextName !== this.contextName) continue;
+
+                        const fn = featureConfig[contextName];
+                        if (typeof fn !== 'function') continue;
+                        
                         const widgets = fn(context.parsed);
                         const insert = (widgets: any[] | any) => {
                             (Array.isArray(widgets) ? widgets : [widgets])
@@ -140,7 +144,7 @@ export class WidgetBuilder {
                                 });
                         };
                         (widgets instanceof Promise) ? widgets.then(insert) : insert(widgets);
-                    });
+                    }
                 }
             }
         } // end loop
