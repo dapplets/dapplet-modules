@@ -74,7 +74,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                     insert: 'inside'
                 },
                 AVATAR: {
-                    selector: ".css-1dbjc4n.r-1awozwy.r-1hwvwag.r-18kxxzh.r-1b7u577 > div:first-child",
+                    selector: ".css-1dbjc4n.r-1awozwy.r-1hwvwag.r-18kxxzh.r-1b7u577 > div:first-child > div:first-child",
                     insert: 'inside',
                 },
                 AVATAR_BADGE: {
