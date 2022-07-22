@@ -31,8 +31,8 @@ export class WidgetBuilder {
         this.contextName = contextName;
     }
 
-    public emitEvent(target: any, event: string, context: Context, args: any[]) {
-        this.eventHandler?.(event, args, target);
+    public emitEvent(targetCtx: any, event: string, context: Context, args: any[]) {
+        this.eventHandler?.(event, args, targetCtx);
         context.eventHandlers[event]?.forEach(h => h(...args));
     }
 
@@ -86,7 +86,7 @@ export class WidgetBuilder {
             if (isNewContext) {
                 this.contexts.set(contextNode, context);
                 for (const event in this.events) {
-                    const emitHandler = (target, ...args) => this.emitEvent(target, event, context, args);
+                    const emitHandler = (targetCtx, ...args) => this.emitEvent(targetCtx, event, context, args);
                     const onHandler = (event, handler) => {
                         if (!context.eventHandlers[event]) context.eventHandlers[event] = [];
                         context.eventHandlers[event].push(handler);
@@ -124,8 +124,12 @@ export class WidgetBuilder {
 
                 for (const childrenContext of this.childrenContexts ?? []) {
                     const wb = widgetBuilders.find(x => x.contextName === childrenContext);
-                    Object.values(featureConfig).forEach((fn) => {
-                        if (typeof fn !== 'function') return;
+                    for (const contextName in featureConfig) {
+                        if (contextName !== this.contextName) continue;
+
+                        const fn = featureConfig[contextName];
+                        if (typeof fn !== 'function') continue;
+                        
                         const widgets = fn(context.parsed);
                         const insert = (widgets: any[] | any) => {
                             (Array.isArray(widgets) ? widgets : [widgets])
@@ -140,7 +144,7 @@ export class WidgetBuilder {
                                 });
                         };
                         (widgets instanceof Promise) ? widgets.then(insert) : insert(widgets);
-                    });
+                    }
                 }
             }
         } // end loop

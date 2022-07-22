@@ -66,9 +66,9 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
     public configure(config: { [contextName: string]: IWidgetBuilderConfig }): void {
         const builders = Object.entries(config).map(([contextName, cfg]) => {
             const builder = new WidgetBuilder(contextName, cfg);
-            builder.eventHandler = (event, args, target) => {
-                if (target) {
-                    target?.events?.[event]?.(...args);
+            builder.eventHandler = (event, args, targetCtx) => {
+                if (targetCtx) {
+                    this.featureConfigs.forEach(config => config?.events?.[event]?.(targetCtx, ...args));
                 } else {
                     this.featureConfigs.forEach(config => config?.events?.[event]?.(...args));
                 }

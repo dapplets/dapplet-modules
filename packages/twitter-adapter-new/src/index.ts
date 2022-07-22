@@ -13,7 +13,9 @@ import { Caption } from './caption';
 import Starter from './starter';
 import Slideout from 'slideout';
 import { Box, IBoxState } from './box';
+import { Quote, IQuoteState } from './quote';
 import { WbButton, IWbButtonProps } from './wb-button';
+import { Post, IPostProps } from './post';
 
 const widgets = {
   avatar: Avatar,
@@ -26,6 +28,8 @@ const widgets = {
   caption: Caption,
   box: Box,
   input: Input,
+  quote: Quote,
+  post: Post,
 }
 
 @Injectable
@@ -49,7 +53,9 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
         label: this.adapter.createWidgetFactory<ILabelState>(Label),
         caption: this.adapter.createWidgetFactory<ILabelState>(Caption),
         box: this.adapter.createWidgetFactory<IBoxState>(Box),
-        input: this.adapter.createWidgetFactory<IInputState>(Input)
+        input: this.adapter.createWidgetFactory<IInputState>(Input),
+        quote: this.adapter.createWidgetFactory<IQuoteState>(Quote),
+        post: this.adapter.createWidgetFactory<IPostProps>(Post)
     });
 
     public config = {
@@ -94,16 +100,20 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                     selector: ".css-901oao.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-bnwqim.r-qvutc0",
                     insert: 'inside'
                 },
+                TEXT: {
+                    selector: ".css-901oao.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-bnwqim.r-qvutc0",
+                    insert: 'inside'
+                },
             },
             events: {
                 like: (node: any, ctx: any, emit: Function) => {
-                    const likeBtn = node.querySelector('div.css-1dbjc4n.r-18u37iz.r-1wtj0ep.r-156q2ks.r-1mdbhws div[role=button][data-testid*="like"]');
+                    const likeBtn = node.querySelector('div[role=button][data-testid*="like"]');
                     likeBtn?.addEventListener('click', () => {
                         if (likeBtn.getAttribute('data-testid') === 'like') emit(ctx);
                     });
                 },
                 dislike: (node: any, ctx: any, emit: Function) => {
-                    const likeBtn = node.querySelector('div.css-1dbjc4n.r-18u37iz.r-1wtj0ep.r-156q2ks.r-1mdbhws div[role=button][data-testid*="like"]');
+                    const likeBtn = node.querySelector('div[role=button][data-testid*="like"]');
                     likeBtn?.addEventListener('click', () => {
                         if (likeBtn.getAttribute('data-testid') === 'unlike') emit(ctx);
                     });
@@ -121,6 +131,20 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                         emit(ctx);
                         slideout.close();
                     });
+                },
+                repost: (node: any, ctx: any, emit: Function) => {
+                    const retweetBtn = node.querySelector('div[data-testid="retweet"]');
+                    retweetBtn?.addEventListener('click', () => {
+                        const disabled = retweetBtn.getAttribute('aria-disabled') === 'true';
+                        emit(ctx, { disabled });
+                    });
+                },
+                unrepost: (node: any, ctx: any, emit: Function) => {
+                    const retweetBtn = node.querySelector('div[data-testid="unretweet"]');
+                    retweetBtn?.addEventListener('click', () => {
+                        const disabled = retweetBtn.getAttribute('aria-disabled') === 'true';
+                        emit(ctx, { disabled });
+                    });
                 }
             },
             // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
@@ -134,6 +158,18 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                     classList.add('r-16y2uox');
                 }
 
+                const qel = el.querySelector('div.css-1dbjc4n.r-1ssbvtb.r-1s2bzr4');
+
+                const quote = qel ? {
+                    text: qel.querySelector('div[data-testid=tweetText]')?.innerText,
+                    img: qel.querySelector('div[data-testid="tweetPhoto"] img')?.getAttribute('src'),
+                    authorFullname: qel.querySelector('div[data-testid="UserAvatar-Container-unknown"] + div')?.innerText,
+                    authorUsername: qel.querySelector('div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-1wbh5a2.r-13hce6t span')?.innerText?.replace('@', ''),
+                    authorImg: qel.querySelector('div[data-testid="UserAvatar-Container-unknown"] img')?.getAttribute('src'),
+                    createdAt: qel.querySelector('time[datetime]')?.getAttribute('datetime'),
+                    isDeleted: qel.innerHTML.includes('This Tweet was deleted') || qel.innerHTML.includes('This Tweet is unavailable')
+                } : null;
+
                 return ({
                     el,
                     id: el.querySelector('.css-1dbjc4n.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu a time')?.parentNode?.href?.split('/')?.pop() || /status\/([0-9]*)/gm.exec(document.location.href)?.[1],
@@ -141,6 +177,8 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                     authorFullname: el.querySelector('div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-dnmrzs > div > span:nth-child(1) > span')?.innerText,
                     authorUsername: el.querySelector('div.css-901oao.css-bfa6kz.r-18u37iz.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-qvutc0 > span')?.innerText?.replace('@', '')?.toLowerCase(),
                     authorImg: el.querySelector('.css-1dbjc4n.r-1awozwy.r-1hwvwag.r-18kxxzh.r-1b7u577 > div:first-child img.css-9pa8cd')?.getAttribute('src'),
+                    createdAt: el.querySelector('div[data-testid="User-Names"] div.css-1dbjc4n.r-18u37iz.r-1wbh5a2.r-13hce6t > div > div.css-1dbjc4n.r-18u37iz.r-1q142lx > a > time')?.getAttribute('datetime'),
+                    quote: quote,
                     theme: this._getTheme(),
                 });
             },
@@ -170,24 +208,28 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
         },
         PROFILE: {
             containerSelector: "main[role=main]",
-            contextSelector: "div.css-1dbjc4n.r-1ifxtd0.r-ymttw5.r-ttdzmv",
+            contextSelector: "div[data-testid=primaryColumn] > div > div:nth-child(2) div.css-1dbjc4n.r-1jgb5lz.r-1ye8kvj.r-13qz1uu",
             insPoints: {
                 AVATAR: {
-                    selector: "a",
+                    selector: "div.css-1dbjc4n.r-1ifxtd0.r-ymttw5.r-ttdzmv a",
                     insert: 'inside'
                 },
                 AVATAR_BADGE: {
-                    selector: "div.css-1dbjc4n.r-ggadg3.r-u8s1d.r-8jfcpp",
+                    selector: "div.css-1dbjc4n.r-1ifxtd0.r-ymttw5.r-ttdzmv div.css-1dbjc4n.r-ggadg3.r-u8s1d.r-8jfcpp",
                     insert: 'end'
                 },
                 USERNAME_BADGE: {
-                    selector: "div.css-1dbjc4n.r-1wbh5a2.r-dnmrzs.r-1ny4l3l",
+                    selector: "div.css-1dbjc4n.r-1ifxtd0.r-ymttw5.r-ttdzmv div.css-1dbjc4n.r-1wbh5a2.r-dnmrzs.r-1ny4l3l",
                     insert: "end"
                 },
                 BUTTON_GROUP: {
-                    selector: "div.css-1dbjc4n.r-obd0qt.r-18u37iz.r-1w6e6rj.r-1h0z5md.r-dnmrzs > *:last-child",
+                    selector: "div.css-1dbjc4n.r-1ifxtd0.r-ymttw5.r-ttdzmv div.css-1dbjc4n.r-obd0qt.r-18u37iz.r-1w6e6rj.r-1h0z5md.r-dnmrzs > *:last-child",
                     insert: "begin"
                 },
+                POSTS: {
+                    selector: "section[role=region] > div > div",
+                    insert: "begin"
+                }
             },
             events: {
                 // calls for every new context
@@ -195,14 +237,15 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
             },
             // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
             contextBuilder: (el: any) => {
-                const avatar = el.querySelector('a.css-4rbku5.css-18t94o4.css-1dbjc4n.r-14lw9ot.r-11mg6pl');
+                const ph = el.querySelector('div.css-1dbjc4n.r-1ifxtd0.r-ymttw5.r-ttdzmv');
+                const avatar = ph.querySelector('a.css-4rbku5.css-18t94o4.css-1dbjc4n.r-14lw9ot.r-11mg6pl');
                 if (avatar) avatar.style.overflow = 'visible';
 
                 return ({
-                    id: el.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x div.css-901oao.css-bfa6kz.r-18u37iz.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-qvutc0 span')?.innerText.replace('@', '').toLowerCase(),
-                    authorFullname: this._parseAuthorFullname(el.querySelector('div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-dnmrzs > div > span:nth-child(1)')),
-                    authorUsername: el.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x div.css-901oao.css-bfa6kz.r-18u37iz.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-qvutc0 span')?.innerText.replace('@', '').toLowerCase(),
-                    authorImg: el.querySelector('a img')?.getAttribute('src'),
+                    id: ph.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x div.css-901oao.css-bfa6kz.r-18u37iz.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-qvutc0 span')?.innerText.replace('@', '').toLowerCase(),
+                    authorFullname: this._parseAuthorFullname(ph.querySelector('div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-dnmrzs > div > span:nth-child(1)')),
+                    authorUsername: ph.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x div.css-901oao.css-bfa6kz.r-18u37iz.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-qvutc0 span')?.innerText.replace('@', '').toLowerCase(),
+                    authorImg: ph.querySelector('a img')?.getAttribute('src'),
                     theme: this._getTheme(),
                 });
             },
