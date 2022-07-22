@@ -107,13 +107,13 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
             },
             events: {
                 like: (node: any, ctx: any, emit: Function) => {
-                    const likeBtn = node.querySelector('div.css-1dbjc4n.r-18u37iz.r-1wtj0ep.r-156q2ks.r-1mdbhws div[role=button][data-testid*="like"]');
+                    const likeBtn = node.querySelector('div[role=button][data-testid*="like"]');
                     likeBtn?.addEventListener('click', () => {
                         if (likeBtn.getAttribute('data-testid') === 'like') emit(ctx);
                     });
                 },
                 dislike: (node: any, ctx: any, emit: Function) => {
-                    const likeBtn = node.querySelector('div.css-1dbjc4n.r-18u37iz.r-1wtj0ep.r-156q2ks.r-1mdbhws div[role=button][data-testid*="like"]');
+                    const likeBtn = node.querySelector('div[role=button][data-testid*="like"]');
                     likeBtn?.addEventListener('click', () => {
                         if (likeBtn.getAttribute('data-testid') === 'unlike') emit(ctx);
                     });
@@ -130,6 +130,20 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                     slideout.on('open', () => {
                         emit(ctx);
                         slideout.close();
+                    });
+                },
+                repost: (node: any, ctx: any, emit: Function) => {
+                    const retweetBtn = node.querySelector('div[data-testid="retweet"]');
+                    retweetBtn?.addEventListener('click', () => {
+                        const disabled = retweetBtn.getAttribute('aria-disabled') === 'true';
+                        emit(ctx, { disabled });
+                    });
+                },
+                unrepost: (node: any, ctx: any, emit: Function) => {
+                    const retweetBtn = node.querySelector('div[data-testid="unretweet"]');
+                    retweetBtn?.addEventListener('click', () => {
+                        const disabled = retweetBtn.getAttribute('aria-disabled') === 'true';
+                        emit(ctx, { disabled });
                     });
                 }
             },
