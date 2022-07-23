@@ -248,8 +248,6 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                     authorImg: ph.querySelector('a img')?.getAttribute('src'),
                     theme: this._getTheme(),
                 }
-// console.log(profile,'lala');
-// console.log(testUserName);
                 return (
                   profile
                 );
