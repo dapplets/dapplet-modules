@@ -44,4 +44,14 @@ export const description = {
         optional: true,
         TYPE: "(ctx: any, me: IButtonState) => void",
     },
+    date:{
+        description: "Date custom tweet",
+        optional: true,
+        TYPE: "string",
+    },
+    time:{
+        description: "Time custom tweet",
+        optional: true,
+        TYPE: "string",
+    }
 };

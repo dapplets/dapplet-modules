@@ -16,6 +16,8 @@ color?:string
     authorUsername: string;
     authorImg: string;
     hidden?: boolean;
+    date:string;
+    time:string;
     exec: (ctx: any, me: this) => void;
     init: (ctx: any, me: this) => void;
 }
@@ -38,6 +40,8 @@ export class Post extends LitElement implements IPostProps {
     @property() authorUsername;
     @property() authorImg;
     @property() hidden = false;
+    @property() date;
+    @property() time;
     @property() exec: (ctx: any, me: this) => void;
     @property() init: (ctx: any, me: this) => void;
 
@@ -63,8 +67,16 @@ export class Post extends LitElement implements IPostProps {
                         <span class='${this.theme === "DARK" ? 'text-dark-name': 'text-light-name'}'>${this.authorFullname}</span>
                         <span> </span>
                         <span class='${this.theme === "DARK" ? 'text-dark-user-name': 'text-light-user-name'}'>@${this.authorUsername}</span>
+                        <span class='delimeter-profile-info'> </span>
+                        <span class='${this.theme === "DARK" ? 'text-dark-user-name': 'text-light-user-name'}'>${this.date}</span>
                     </div>
                     <div class='${this.theme === "DARK" ? 'text-dark': 'text-light'}'>${this.text}</div>
+                    <div>
+                    <span class='${this.theme === "DARK" ? 'text-dark-user-name': 'text-light-user-name'}'>${this.time}</span>
+                    <span class='delimeter-profile-info'> </span>
+                    <span class='tweery-lable'>/tweered<span class='tweery-lable-delimeter'></span></span>
+                    
+                </div>
                 </div>
             </div>`;
         }

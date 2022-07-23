@@ -237,6 +237,31 @@ export class Quote implements IWidget<IQuoteState> {
                 return container;
             }
         };
+        const addRecoveredInfo = () => {
+            const label = document.createElement("span");
+            label.style.display ='inline-block';
+            label.style.width ='6px';
+            label.style.height ='6px';
+            label.style.background = '#D7422E';
+            label.style.borderRadius ='50%';
+            label.style.marginLeft = '4px';
+            label.style.marginBottom = '1px';
+                const container = document.createElement("div");
+                container.style.position = "inherit";
+                container.style.width = "inherit";
+                container.style.maxWidth = "inherit";
+                container.style.color = '#2F8ECD';
+                container.style.background = "inherit";
+                container.style.padding = "10px 0px";
+                container.style.fontSize = "inherit";
+                container.style.fontWeight = "inherit";
+                container.style.textAlign = "inherit";
+                container.style.fontFamily = "TwitterChirp";
+                container.textContent = 'Recovered from IPFS';
+                container.appendChild(label)
+                return container;
+            
+        };
         const addRetweetInfo = () => {
             const container = document.createElement("div");
             container.id = `text-${Math.trunc(Math.random() * 1_000_000_000)}`;
@@ -261,42 +286,31 @@ export class Quote implements IWidget<IQuoteState> {
             container.style.width = "97%";
             container.style.bottom = "0";
             container.style.zIndex = "50000";
-            container.style.border = "1px solid #ccc";
-            container.style.borderStyle = "1px solid #ccc";
+            container.style.border = "0.5px solid #777";
+            container.style.borderStyle = "0.5px solid #777";
             container.style.borderRadius = "10px";
-            // container.style.textAlign = 'center';
-            // container.style.marginTop = '12px';
             container.style.margin = "0 auto";
             container.style.paddingLeft = "10px";
             if (authorImg) container.appendChild(addRetweetInfo());
             if (text) container.appendChild(addInnerText());
             if (img) container.appendChild(addMedia());
-
+            container.appendChild(addRecoveredInfo())
             container.addEventListener("click", (e) => {
                 this.state.exec?.(this.state.ctx, this.state);
                 e.preventDefault();
                 e.stopPropagation();
                 return false;
             });
-            // if(text)container.appendChild(addInnerText());
-            // container.addEventListener('click', (e) => {
-            //     this.state.exec?.(this.state.ctx, this.state);
-            //     e.preventDefault();
-            //     e.stopPropagation();
-            //     return false;
-            // });
             return container;
         };
 
         if (!hidden) {
             if (replace !== undefined) {
-                // console.log('ctx.el', ctx.el)
                 if (!this.article)
                     this.article = (<HTMLElement>ctx.el).querySelector(
                         ".css-901oao.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-bnwqim.r-qvutc0"
                     ).parentElement;
                 const tags = ctx.el.querySelectorAll(tag ?? "article");
-                // console.log('tags', tags)
                 if (this.insrtedTags.has(this.el)) {
                     const containerIds = this.insrtedTags.get(this.el);
                     for (const containerId of containerIds) {
@@ -348,7 +362,6 @@ export class Quote implements IWidget<IQuoteState> {
                 this.el.style.bottom = "0";
                 this.el.style.zIndex = "50000";
                 this.el.style.marginTop = "12px";
-                // this.el.style.marginBottom = '22px';
                 const retweet = this.el.querySelector(
                     ".css-1dbjc4n.r-1ssbvtb.r-1s2bzr4"
                 );
@@ -361,7 +374,6 @@ export class Quote implements IWidget<IQuoteState> {
                 if (this.insrtedTags.has(this.el)) {
                     const containerIds = this.insrtedTags.get(this.el);
                     for (const containerId of containerIds) {
-                        // console.log('replacedTag',containerId)
                         const replacedTag = this.replacedTags[containerId];
                         const container = this.article.querySelector(
                             `#${containerId}`
