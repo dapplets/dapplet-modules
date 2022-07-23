@@ -240,14 +240,19 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                 const ph = el.querySelector('div.css-1dbjc4n.r-1ifxtd0.r-ymttw5.r-ttdzmv');
                 const avatar = ph.querySelector('a.css-4rbku5.css-18t94o4.css-1dbjc4n.r-14lw9ot.r-11mg6pl');
                 if (avatar) avatar.style.overflow = 'visible';
-
-                return ({
+                // const testUserName = ph.querySelector('div.css-1dbjc4n.r-1wbh5a2.r-dnmrzs.r-1ny4l3l > div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-1wbh5a2 > div > div >div span')?.innerText.replace('@', '').toLowerCase()
+                const profile = {
                     id: ph.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x div.css-901oao.css-bfa6kz.r-18u37iz.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-qvutc0 span')?.innerText.replace('@', '').toLowerCase(),
                     authorFullname: this._parseAuthorFullname(ph.querySelector('div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-dnmrzs > div > span:nth-child(1)')),
-                    authorUsername: ph.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x div.css-901oao.css-bfa6kz.r-18u37iz.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-qvutc0 span')?.innerText.replace('@', '').toLowerCase(),
+                    authorUsername: ph.querySelector('div.css-1dbjc4n.r-1wbh5a2.r-dnmrzs.r-1ny4l3l > div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-1wbh5a2 > div > div >div span')?.innerText.replace('@', '').toLowerCase(),
                     authorImg: ph.querySelector('a img')?.getAttribute('src'),
                     theme: this._getTheme(),
-                });
+                }
+// console.log(profile,'lala');
+// console.log(testUserName);
+                return (
+                  profile
+                );
             },
             theme: this._getTheme
         },
