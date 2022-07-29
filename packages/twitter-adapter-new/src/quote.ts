@@ -126,7 +126,6 @@ export class Quote implements IWidget<IQuoteState> {
             if (this.insrtedTags.has(this.el)) {
                 const containerIds = this.insrtedTags.get(this.el);
                 for (const containerId of containerIds) {
-                    // console.log('container id 1', containerId)
                     const replacedTag = this.replacedTags[containerId];
                     const container = this.article.querySelector(
                         `#${containerId}`

@@ -97,7 +97,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                     insert: 'inside'
                 },
                 BOX: {
-                    selector: ".css-901oao.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-bnwqim.r-qvutc0",
+                    selector: ".css-1dbjc4n.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu",
                     insert: 'inside'
                 },
                 TEXT: {
@@ -169,7 +169,8 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                     createdAt: qel.querySelector('time[datetime]')?.getAttribute('datetime'),
                     isDeleted: qel.innerHTML.includes('This Tweet was deleted') || qel.innerHTML.includes('This Tweet is unavailable')
                 } : null;
-
+                // console.log(el.querySelector('.css-1dbjc4n.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu'));
+                // console.log(el.querySelector('.css-1dbjc4n.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu'));
                 return ({
                     el,
                     id: el.querySelector('.css-1dbjc4n.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu a time')?.parentNode?.href?.split('/')?.pop() || /status\/([0-9]*)/gm.exec(document.location.href)?.[1],

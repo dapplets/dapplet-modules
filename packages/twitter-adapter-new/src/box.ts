@@ -206,13 +206,14 @@ export class Box implements IWidget<IBoxState> {
 
         if (!hidden) {
             if (replace !== undefined) {
-                if (!this.article) this.article = (<HTMLElement>ctx.el).querySelector('.css-901oao.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-bnwqim.r-qvutc0').parentElement;
-                const tags = this.article.querySelectorAll(tag ?? 'a');
+                if (!this.article) this.article = (<HTMLElement>ctx.el).querySelector('.css-1dbjc4n.r-eqz5dr.r-16y2uox.r-1wbh5a2').parentElement;
+                const tags = this.article.querySelectorAll(tag ?? 'a'  );
                 if (this.insrtedTags.has(this.el)) {
                     const containerIds = this.insrtedTags.get(this.el);
                     for (const containerId of containerIds) {
                         const container = createBox();
                         const oldContainer = this.article.querySelector(`#${containerId}`);
+                     
                         if (!oldContainer) {
                             this.insrtedTags.set(this.el, this.insrtedTags.get(this.el).filter(x => x !== containerId));
                             continue;
@@ -224,6 +225,37 @@ export class Box implements IWidget<IBoxState> {
                     }
                 }
                 tags.forEach(link => {
+                    
+                    if (link.textContent.includes(replace)) {
+                        const container = createBox();
+                        if (!this.insrtedTags.has(this.el)) {
+                            this.insrtedTags.set(this.el, [container.id]);
+                        } else if (!this.insrtedTags.get(this.el).includes(container.id)) {
+                            this.insrtedTags.set(this.el, [...this.insrtedTags.get(this.el), container.id]);
+                        }
+                        this.replacedTags[container.id] = link;
+                        link.replaceWith(container);
+                    }
+                });
+                const tagsSpan  = this.article.querySelectorAll(tag ?? 'span');
+                if (this.insrtedTags.has(this.el)) {
+                    const containerIds = this.insrtedTags.get(this.el);
+                    for (const containerId of containerIds) {
+                        const container = createBox();
+                        const oldContainer = this.article.querySelector(`#${containerId}`);
+                     
+                        if (!oldContainer) {
+                            this.insrtedTags.set(this.el, this.insrtedTags.get(this.el).filter(x => x !== containerId));
+                            continue;
+                        }
+                        oldContainer.replaceWith(container);
+                        this.insrtedTags.set(this.el, [...this.insrtedTags.get(this.el), container.id]);
+                        this.replacedTags[container.id] = this.replacedTags[containerId];
+                        delete this.replacedTags[containerId];
+                    }
+                }
+                tagsSpan.forEach(link => {
+                    
                     if (link.textContent.includes(replace)) {
                         const container = createBox();
                         if (!this.insrtedTags.has(this.el)) {
