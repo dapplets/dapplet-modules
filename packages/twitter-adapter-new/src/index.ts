@@ -169,19 +169,20 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                     createdAt: qel.querySelector('time[datetime]')?.getAttribute('datetime'),
                     isDeleted: qel.innerHTML.includes('This Tweet was deleted') || qel.innerHTML.includes('This Tweet is unavailable')
                 } : null;
-                // console.log(el.querySelector('.css-1dbjc4n.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu'));
-                // console.log(el.querySelector('.css-1dbjc4n.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu'));
-                return ({
+                
+                const ctx = ({
                     el,
-                    id: el.querySelector('.css-1dbjc4n.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu a time')?.parentNode?.href?.split('/')?.pop() || /status\/([0-9]*)/gm.exec(document.location.href)?.[1],
-                    text: el.querySelector('.css-1dbjc4n.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu div[lang], div > div > div > div:nth-child(3) > div:nth-child(1) > div > div > span')?.innerText,
-                    authorFullname: el.querySelector('div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-dnmrzs > div > span:nth-child(1) > span')?.innerText,
-                    authorUsername: el.querySelector('div.css-901oao.css-bfa6kz.r-18u37iz.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-qvutc0 > span')?.innerText?.replace('@', '')?.toLowerCase(),
-                    authorImg: el.querySelector('.css-1dbjc4n.r-1awozwy.r-1hwvwag.r-18kxxzh.r-1b7u577 > div:first-child img.css-9pa8cd')?.getAttribute('src'),
-                    createdAt: el.querySelector('div[data-testid="User-Names"] div.css-1dbjc4n.r-18u37iz.r-1wbh5a2.r-13hce6t > div > div.css-1dbjc4n.r-18u37iz.r-1q142lx > a > time')?.getAttribute('datetime'),
+                    id: el.querySelector('div[data-testid="User-Names"] time')?.parentNode?.href?.split('/')?.pop() || /status\/([0-9]*)/gm.exec(document.location.href)?.[1],
+                    text: el.querySelector('div[data-testid="tweetText"]')?.innerText,
+                    authorFullname: el.querySelector('div[data-testid="User-Names"] > div:nth-child(1) span')?.innerText,
+                    authorUsername: el.querySelector('div[data-testid="User-Names"] > div:nth-child(2) span')?.innerText?.replace('@', '')?.toLowerCase(),
+                    authorImg: el.querySelector('div[data-testid="Tweet-User-Avatar"] img')?.getAttribute('src'),
+                    createdAt: el.querySelector('div[data-testid="User-Names"] time')?.getAttribute('datetime'),
                     quote: quote,
                     theme: this._getTheme(),
                 });
+
+                return ctx;
             },
             theme: this._getTheme,
             childrenContexts: ['QUOTE_POST'],
@@ -243,9 +244,9 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                 if (avatar) avatar.style.overflow = 'visible';
                 // const testUserName = ph.querySelector('div.css-1dbjc4n.r-1wbh5a2.r-dnmrzs.r-1ny4l3l > div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-1wbh5a2 > div > div >div span')?.innerText.replace('@', '').toLowerCase()
                 const profile = {
-                    id: ph.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x div.css-901oao.css-bfa6kz.r-18u37iz.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-qvutc0 span')?.innerText.replace('@', '').toLowerCase(),
+                    id: ph.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x > div > div > div:nth-child(2) span')?.innerText.replace('@', '').toLowerCase(),
                     authorFullname: this._parseAuthorFullname(ph.querySelector('div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-dnmrzs > div > span:nth-child(1)')),
-                    authorUsername: ph.querySelector('div.css-1dbjc4n.r-1wbh5a2.r-dnmrzs.r-1ny4l3l > div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-1wbh5a2 > div > div >div span')?.innerText.replace('@', '').toLowerCase(),
+                    authorUsername: ph.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x > div > div > div:nth-child(2) span')?.innerText.replace('@', '').toLowerCase(),
                     authorImg: ph.querySelector('a img')?.getAttribute('src'),
                     theme: this._getTheme(),
                 }
