@@ -88,7 +88,7 @@ export class Avatar implements IWidget<IAvatarState> {
                 imgTag.style.height = '100%';
                 imgTag.style.position = 'absolute';
                 imgTag.style.objectFit = 'cover';
-                if (this.insPointName = 'SUSPENDED') {
+                if (this.insPointName === 'SUSPENDED') {
                     imgTag.style.cursor = 'pointer';
                 }
             } else if (video ?? (img && mediaType === 'application/octet-stream')) {
@@ -103,7 +103,7 @@ export class Avatar implements IWidget<IAvatarState> {
                 videoTag.muted = true;
                 videoTag.loop = true;
                 videoTag.style.width = '100%';
-                if (this.insPointName = 'SUSPENDED') {
+                if (this.insPointName === 'SUSPENDED') {
                     videoTag.style.cursor = 'pointer';
                 }
             }

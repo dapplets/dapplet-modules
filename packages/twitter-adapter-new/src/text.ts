@@ -159,9 +159,6 @@ export class Text implements IWidget<ITextState> {
         imgTag.style.width = "auto";
         imgTag.style.height = "auto";
         imgTag.style.margin = "inherit";
-        if ((this.insPointName = "SUSPENDED")) {
-          imgTag.style.cursor = "pointer";
-        }
         return imgTag;
       }
     };
@@ -176,9 +173,6 @@ export class Text implements IWidget<ITextState> {
           imgAuthorRetweet.style.height = "20px";
           imgAuthorRetweet.style.borderRadius = "50%";
           imgAuthorRetweet.style.marginRight = "10px";
-          if ((this.insPointName = "SUSPENDED")) {
-            imgAuthorRetweet.style.cursor = "pointer";
-          }
          return imgAuthorRetweet
          
         }

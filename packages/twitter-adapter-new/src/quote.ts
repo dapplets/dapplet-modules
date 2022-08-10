@@ -145,9 +145,6 @@ export class Quote implements IWidget<IQuoteState> {
                 imgTag.style.width = "auto";
                 imgTag.style.height = "auto";
                 imgTag.style.margin = "inherit";
-                if ((this.insPointName = "SUSPENDED")) {
-                    imgTag.style.cursor = "pointer";
-                }
                 return imgTag;
             }
         };
@@ -161,9 +158,6 @@ export class Quote implements IWidget<IQuoteState> {
                 imgAuthorRetweet.style.height = "20px";
                 imgAuthorRetweet.style.borderRadius = "50%";
                 imgAuthorRetweet.style.marginRight = "10px";
-                if ((this.insPointName = "SUSPENDED")) {
-                    imgAuthorRetweet.style.cursor = "pointer";
-                }
                 return imgAuthorRetweet;
             }
         };

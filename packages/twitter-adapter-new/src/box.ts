@@ -136,9 +136,6 @@ export class Box implements IWidget<IBoxState> {
                 imgTag.style.width = width ?? '100%';
                 imgTag.style.position = 'relative';
                 imgTag.style.objectFit = 'cover';
-                if (this.insPointName = 'SUSPENDED') {
-                    imgTag.style.cursor = 'pointer';
-                }
                 return imgTag;
             } else if (video) {
                 const videoTag = document.createElement('video');
@@ -147,9 +144,6 @@ export class Box implements IWidget<IBoxState> {
                 videoTag.muted = true;
                 videoTag.loop = true;
                 videoTag.style.width = width ?? '100%';
-                if (this.insPointName = 'SUSPENDED') {
-                    videoTag.style.cursor = 'pointer';
-                }
                 return videoTag;
             }
         }
