@@ -118,8 +118,8 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
                         container.style.minWidth = '13px';
                         container.style.height = '25%';
                         container.style.minHeight = '13px';
-                        container.style.right = (horizontal === 'right') ? '2%' : '75%';
-                        container.style.top = (vertical === 'bottom') ? '75%' : '2%';
+                        container.style.right = (horizontal === 'right') ? '0' : null;
+                        container.style.bottom = (vertical === 'bottom') ? '0' : null;
                         break;
                     default:
                         console.log('Wrong insPointName for avatar-badge:', this.insPointName);
