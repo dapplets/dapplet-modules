@@ -1,7 +1,6 @@
 import { IContentAdapter } from '@dapplets/dapplet-extension';
 import { IDynamicAdapter } from 'dynamic-adapter.dapplet-base.eth';
 import { T_TwitterFeatureConfig } from 'twitter-adapter.dapplet-base.eth';
-import { IButtonState, Button } from './button';
 import { IButtonStarterState, ButtonStarter } from './button-starter';
 import { IPictureState, Picture } from './picture';
 import { IAvatarState, Avatar } from './avatar';
@@ -12,7 +11,8 @@ import { ILabelState, Label } from './label';
 import { Caption } from './caption';
 import Starter from './starter';
 import Slideout from 'slideout';
-import { Box, IBoxState } from './box';
+import Box from './box';
+import { IBoxState } from './box/types';
 import { Quote, IQuoteState } from './quote';
 import { WbButton, IWbButtonProps } from './wb-button';
 import { Post, IPostProps } from './post';
