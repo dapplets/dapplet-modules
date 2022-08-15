@@ -5,6 +5,7 @@ import { IFeature, IContentAdapter } from '@dapplets/dapplet-extension';
 import { IWidgetBuilderConfig, Context, IWidget } from './types';
 import { State, WidgetConfig } from './state';
 import { Locator } from './locator';
+import ContextReplacer from './replacer';
 
 interface IDynamicAdapter<IAdapterConfig> extends IContentAdapter<IAdapterConfig> {
     configure(config: { [contextName: string]: IWidgetBuilderConfig }): void;
@@ -209,11 +210,13 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
                 webcomponent.insPointName = builder.contextName;
                 webcomponent.ctx = context.parsed;
                 webcomponent.state = state.state;
+                webcomponent.contextReplacer = new ContextReplacer();
                 
                 widget = {
                     el: webcomponent,
                     insPointName: builder.contextName, // for DemoDapplet
                     state: state.state, // for WidgetBuilder.findWidget()
+                    contextReplacer: webcomponent.contextReplacer,
                     unmount: () => {
                         webcomponent && webcomponent.remove()
                     }
@@ -229,6 +232,7 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
                 widget = new Widget() as IWidget<T>;
                 widget.state = state.state;
                 widget.insPointName = builder.contextName;
+                widget.contextReplacer = new ContextReplacer();
                 state.changedHandler = () => widget.mount(); // when data in state was changed, then rerender a widget
                 widget.mount(); // ToDo: remove it?
             }
@@ -300,4 +304,4 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
     }
 }
 
-export { DynamicAdapter, IWidget, IDynamicAdapter }
+export { DynamicAdapter, IWidget, IDynamicAdapter, ContextReplacer }

@@ -1,17 +1,13 @@
-import { IWidget } from 'dynamic-adapter.dapplet-base.eth';
+import { IWidget, ContextReplacer } from 'dynamic-adapter.dapplet-base.eth';
 import description from './description';
 import { addMedia, addText } from './helpers';
 import { Position, IBoxState } from './types';
 
-class Box implements IWidget<IBoxState> {
+export default class Box implements IWidget<IBoxState> {
     public el: HTMLElement;
     public state: IBoxState;
-    insPointName: string;
-
-    article: HTMLElement;
-    replacedTags = <Element>{};
-    insrtedTags = new WeakMap<HTMLElement, string[]>();
-    private _prevReplace: string
+    public insPointName: string;
+    public contextReplacer: ContextReplacer;
 
     // ToDo 
     public static widgetParamsDescription = description;
@@ -33,21 +29,10 @@ class Box implements IWidget<IBoxState> {
             tooltip,
             replace,
             tag,
-            ctx,
             width,
         } = this.state;
 
-        if (this._prevReplace !== replace) {
-            if (this.insrtedTags.has(this.el)) {
-                const containerIds = this.insrtedTags.get(this.el);
-                for (const containerId of containerIds) {
-                    const replacedTag = this.replacedTags[containerId];
-                    const container = this.article.querySelector(`#${containerId}`);
-                    container?.replaceWith(replacedTag);
-                }
-            }
-        }
-        this._prevReplace = replace;
+        this.contextReplacer.updateReplacedContext(replace);
 
         const createBox = () => {
             const container = document.createElement('div');
@@ -70,67 +55,7 @@ class Box implements IWidget<IBoxState> {
 
         if (!hidden) {
             if (replace !== undefined) {
-                if (!this.article) this.article = (<HTMLElement>ctx.el).querySelector('.css-1dbjc4n.r-eqz5dr.r-16y2uox.r-1wbh5a2').parentElement;
-                const tags = this.article.querySelectorAll(tag ?? 'a'  );
-                if (this.insrtedTags.has(this.el)) {
-                    const containerIds = this.insrtedTags.get(this.el);
-                    for (const containerId of containerIds) {
-                        const container = createBox();
-                        const oldContainer = this.article.querySelector(`#${containerId}`);
-                     
-                        if (!oldContainer) {
-                            this.insrtedTags.set(this.el, this.insrtedTags.get(this.el).filter(x => x !== containerId));
-                            continue;
-                        }
-                        oldContainer.replaceWith(container);
-                        this.insrtedTags.set(this.el, [...this.insrtedTags.get(this.el), container.id]);
-                        this.replacedTags[container.id] = this.replacedTags[containerId];
-                        delete this.replacedTags[containerId];
-                    }
-                }
-                tags.forEach(link => {
-                    
-                    if (link.textContent.includes(replace)) {
-                        const container = createBox();
-                        if (!this.insrtedTags.has(this.el)) {
-                            this.insrtedTags.set(this.el, [container.id]);
-                        } else if (!this.insrtedTags.get(this.el).includes(container.id)) {
-                            this.insrtedTags.set(this.el, [...this.insrtedTags.get(this.el), container.id]);
-                        }
-                        this.replacedTags[container.id] = link;
-                        link.replaceWith(container);
-                    }
-                });
-                const tagsSpan  = this.article.querySelectorAll(tag ?? 'span');
-                if (this.insrtedTags.has(this.el)) {
-                    const containerIds = this.insrtedTags.get(this.el);
-                    for (const containerId of containerIds) {
-                        const container = createBox();
-                        const oldContainer = this.article.querySelector(`#${containerId}`);
-                     
-                        if (!oldContainer) {
-                            this.insrtedTags.set(this.el, this.insrtedTags.get(this.el).filter(x => x !== containerId));
-                            continue;
-                        }
-                        oldContainer.replaceWith(container);
-                        this.insrtedTags.set(this.el, [...this.insrtedTags.get(this.el), container.id]);
-                        this.replacedTags[container.id] = this.replacedTags[containerId];
-                        delete this.replacedTags[containerId];
-                    }
-                }
-                tagsSpan.forEach(link => {
-                    
-                    if (link.textContent.includes(replace)) {
-                        const container = createBox();
-                        if (!this.insrtedTags.has(this.el)) {
-                            this.insrtedTags.set(this.el, [container.id]);
-                        } else if (!this.insrtedTags.get(this.el).includes(container.id)) {
-                            this.insrtedTags.set(this.el, [...this.insrtedTags.get(this.el), container.id]);
-                        }
-                        this.replacedTags[container.id] = link;
-                        link.replaceWith(container);
-                    }
-                });
+                this.contextReplacer.replace(replace, tag ?? 'a, span', createBox);
             } else {
                 this.el.title = tooltip ?? '';
                 this.el.style.position = 'relative';
@@ -144,14 +69,7 @@ class Box implements IWidget<IBoxState> {
             }
         } else {
             if (replace) {
-                if (this.insrtedTags.has(this.el)) {
-                    const containerIds = this.insrtedTags.get(this.el);
-                    for (const containerId of containerIds) {
-                        const replacedTag = this.replacedTags[containerId];
-                        const container = this.article.querySelector(`#${containerId}`);
-                        container?.replaceWith(replacedTag);
-                    }
-                }
+                this.contextReplacer.cancelReplace();
             }
             this.el.innerHTML = '';
         }
@@ -159,14 +77,7 @@ class Box implements IWidget<IBoxState> {
 
     public unmount() {
         if (this.el) {
-            if (this.insrtedTags.has(this.el)) {
-                const containerIds = this.insrtedTags.get(this.el);
-                for (const containerId of containerIds) {
-                    const replacedTag = this.replacedTags[containerId];
-                    const container = this.article.querySelector(`#${containerId}`);
-                    container?.replaceWith(replacedTag);
-                }
-            }
+            this.contextReplacer.cancelReplace();
             this.el.remove();
         }
     }
@@ -180,7 +91,7 @@ class Box implements IWidget<IBoxState> {
             return false;
         });
         this.state.init?.(this.state.ctx, this.state);
+        const article = (<HTMLElement>this.state.ctx.el).querySelector('.css-1dbjc4n.r-eqz5dr.r-16y2uox.r-1wbh5a2').parentElement;
+        this.contextReplacer.init(this.el, article);
     }
 }
-
-export default Box;

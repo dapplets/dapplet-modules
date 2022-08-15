@@ -1,15 +1,15 @@
 import { Position } from "./types";
 
 export const addMedia = (
-  {
-    img,
-    video,
-    width 
-  }: {
-    img?: string,
-    video?: string,
-    width?: string
-  }
+    {
+        img,
+        video,
+        width
+    }: {
+        img?: string,
+        video?: string,
+        width?: string
+    }
 ) => {
     if (img) {
         const imgTag = document.createElement('img');
@@ -30,17 +30,17 @@ export const addMedia = (
 }
 
 export const addText = (
-  {
-    position,
-    color,
-    textBackground,
-    text
-  }: {
-    position: Position,
-    color: string,
-    textBackground: string,
-    text: string
-  }
+    {
+        position,
+        color,
+        textBackground,
+        text
+    }: {
+        position: Position,
+        color: string,
+        textBackground: string,
+        text: string
+    }
 ) => {
     const container = document.createElement('div');
     container.style.position = 'absolute';
