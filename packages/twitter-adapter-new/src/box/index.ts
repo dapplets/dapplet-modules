@@ -55,7 +55,7 @@ export default class Box implements IWidget<IBoxState> {
 
         if (!hidden) {
             if (replace !== undefined) {
-                this.contextReplacer.replace(replace, tag ?? 'a, span', createBox);
+                this.contextReplacer.replaceAll(replace, tag ?? 'a, span', createBox);
             } else {
                 this.el.title = tooltip ?? '';
                 this.el.style.position = 'relative';
@@ -69,7 +69,7 @@ export default class Box implements IWidget<IBoxState> {
             }
         } else {
             if (replace) {
-                this.contextReplacer.cancelReplace();
+                this.contextReplacer.restore();
             }
             this.el.innerHTML = '';
         }
@@ -77,7 +77,7 @@ export default class Box implements IWidget<IBoxState> {
 
     public unmount() {
         if (this.el) {
-            this.contextReplacer.cancelReplace();
+            this.contextReplacer.restore();
             this.el.remove();
         }
     }
@@ -91,7 +91,7 @@ export default class Box implements IWidget<IBoxState> {
             return false;
         });
         this.state.init?.(this.state.ctx, this.state);
-        const article = (<HTMLElement>this.state.ctx.el).querySelector('.css-1dbjc4n.r-eqz5dr.r-16y2uox.r-1wbh5a2').parentElement;
-        this.contextReplacer.init(this.el, article);
+        const contextEl = (<HTMLElement>this.state.ctx.el).querySelector('.css-1dbjc4n.r-eqz5dr.r-16y2uox.r-1wbh5a2').parentElement;
+        this.contextReplacer.init(this.el, contextEl);
     }
 }

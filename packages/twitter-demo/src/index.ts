@@ -137,7 +137,7 @@ export default class DemoDapplet implements IFeature {
             text: '5,000 NEAR',
             color: 'white',
             textBackground: 'black',
-            replace: 'https://github.com/dapplets/dapplet-extension',
+            replace: 'https://test.ltbx.app/',
             exec: (_:any, me: any) => {
               console.log('ctx = ', ctx);
               me.state = 'ANOTHER';
@@ -149,7 +149,7 @@ export default class DemoDapplet implements IFeature {
             text: '1,000 NEAR',
             color: 'white',
             textBackground: 'black',
-            replace: 'https://github.com/dapplets/dapplet-extension',
+            replace: 'https://test.ltbx.app/',
             exec: (_:any, me: any) => {
               console.log('ctx = ', ctx);
               me.state = 'HIDDEN';
@@ -162,7 +162,7 @@ export default class DemoDapplet implements IFeature {
             text: '5,000 NEAR',
             color: 'white',
             textBackground: 'black',
-            replace: 'https://github.com/dapplets/dapplet-extension',
+            replace: 'https://test.ltbx.app/',
             hidden: true,
             exec: (_:any, me: any) => {
               console.log('ctx = ', ctx);
