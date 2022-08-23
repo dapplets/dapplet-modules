@@ -13,7 +13,8 @@ import Starter from './starter';
 import Slideout from 'slideout';
 import Box from './box';
 import { IBoxState } from './box/types';
-import { Quote, IQuoteState } from './quote';
+import Quote from './quote';
+import { IQuoteState } from './quote/types';
 import { WbButton, IWbButtonProps } from './wb-button';
 import { Post, IPostProps } from './post';
 
