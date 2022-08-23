@@ -97,7 +97,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                     insert: 'inside'
                 },
                 BOX: {
-                    selector: ".css-1dbjc4n.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu",
+                    selector: '.css-1dbjc4n.r-1iusvr4.r-16y2uox.r-1777fci.r-kzbkwu, [data-testid="tweetText"]',
                     insert: 'inside'
                 },
                 TEXT: {
