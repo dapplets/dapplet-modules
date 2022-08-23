@@ -16,7 +16,7 @@ export default class Quote implements IWidget<IQuoteState> {
     };
 
     public mount() {
-        if (!this.el) this._createElement();
+        if (!this.el) this._createElement(this.state.ctx.el);
         const {
             img,
             hidden,
@@ -95,7 +95,7 @@ export default class Quote implements IWidget<IQuoteState> {
         }
     }
 
-    private _createElement() {
+    private _createElement(contextEl: HTMLElement) {
         this.el = document.createElement("div");
         this.el.classList.add("dapplet-widget-text");
         this.el.addEventListener("click", (e) => {
@@ -104,9 +104,6 @@ export default class Quote implements IWidget<IQuoteState> {
             return false;
         });
         this.state.init?.(this.state.ctx, this.state);
-        const contextEl = (<HTMLElement>this.state.ctx.el).querySelector(
-            ".css-901oao.r-37j5jr.r-a023e6.r-16dba41.r-rjixqe.r-bcqeeo.r-bnwqim.r-qvutc0"
-        ).parentElement;
         this.contextReplacer.init(this.el, contextEl);
     }
 }

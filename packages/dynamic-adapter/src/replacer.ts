@@ -35,16 +35,12 @@ export default class ContextReplacer {
     ) {
         if (this._insertedWidgetIdsByElements.has(this._el)) {
             const containerIds = this._insertedWidgetIdsByElements.get(this._el);
-            console.log('containerIds', containerIds)
             if (containerIds && containerIds.length !== 0) { 
                 const container = createWidget();
-                console.log('container', container)
                 const oldContainer = this._contextEl.querySelector(`#${containerIds[0]}`);
                 if (!oldContainer) {
-                    console.log('1')
                     this._insertedWidgetIdsByElements.set(this._el, this._insertedWidgetIdsByElements.get(this._el).filter(x => x !== containerIds[0]));
                 } else {
-                    console.log('2')
                     oldContainer.replaceWith(container);
                     this._insertedWidgetIdsByElements.set(this._el, [...this._insertedWidgetIdsByElements.get(this._el), container.id]);
                     this._replacedElements[container.id] = this._replacedElements[containerIds[0]];
@@ -77,7 +73,6 @@ export default class ContextReplacer {
     ) {
         if (this._insertedWidgetIdsByElements.has(this._el)) {
             const containerIds = this._insertedWidgetIdsByElements.get(this._el);
-            console.log('containerIds', containerIds)
             for (const containerId of containerIds) {
                 const container = createWidget();
                 const oldContainer = this._contextEl.querySelector(`#${containerId}`);

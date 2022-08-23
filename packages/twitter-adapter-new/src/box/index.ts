@@ -17,7 +17,7 @@ export default class Box implements IWidget<IBoxState> {
     }
 
     public mount() {
-        if (!this.el) this._createElement();
+        if (!this.el) this._createElement(this.state.ctx.el);
         const {
             img,
             video,
@@ -82,7 +82,7 @@ export default class Box implements IWidget<IBoxState> {
         }
     }
 
-    private _createElement() {
+    private _createElement(contextEl: HTMLElement) {
         this.el = document.createElement('div');
         this.el.classList.add('dapplet-widget-box');
         this.el.addEventListener('click', (e) => {
@@ -91,7 +91,7 @@ export default class Box implements IWidget<IBoxState> {
             return false;
         });
         this.state.init?.(this.state.ctx, this.state);
-        const contextEl = (<HTMLElement>this.state.ctx.el).querySelector('.css-1dbjc4n.r-eqz5dr.r-16y2uox.r-1wbh5a2').parentElement;
+        // const contextEl = (<HTMLElement>this.state.ctx.el).querySelector('.css-1dbjc4n.r-eqz5dr.r-16y2uox.r-1wbh5a2').parentElement;
         this.contextReplacer.init(this.el, contextEl);
     }
 }
