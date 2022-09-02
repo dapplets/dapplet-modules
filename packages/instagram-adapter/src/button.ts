@@ -36,7 +36,7 @@ export class Button implements IWidget<IButtonState> {
         if (this.insPointName === 'POST') {
             const htmlString = `
                 <span class="_15y0l">
-                    <button class="wpO6b" type="button">
+                    <button class="wpO6b" type="button" style="align-items: center;background: transparent;border: none;cursor: pointer;display: flex;justify-content: center;padding: 8px;">
                         ${loading ? `<svg width="24px" height="24px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="lds-rolling" style="background: none;">
                                 <circle cx="50" cy="50" fill="none" stroke="#1da1f2" stroke-width="14" r="40" stroke-dasharray="188.49555921538757 64.83185307179586" transform="rotate(77.5793 50 50)">
                                     <animateTransform attributeName="transform" type="rotate" calcMode="linear" values="0 50 50;360 50 50" keyTimes="0;1" dur="1s" begin="0s" repeatCount="indefinite"></animateTransform>

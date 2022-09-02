@@ -18,7 +18,7 @@ export default class InstagramAdapter {
             contextSelector: undefined, // the same as containerSelector
             insPoints: {
                 POST_SOUTH: {
-                    selector: "section.ltpMr.Slqrh > *:nth-last-child(2)"
+                    selector: "section._aamu._ae3_._ae47._ae48 > *:nth-last-child(2)"
                 },
                 POST_AVATAR_BADGE: {
                     selector: "header canvas"
@@ -26,13 +26,14 @@ export default class InstagramAdapter {
             },
             events: {
                 like: (node: any, ctx: any, emit: Function) => {
-                    const likeBtn = node.querySelector('section.ltpMr.Slqrh svg[aria-label*="ike"]').parentElement.parentElement;
+                    const likeBtn = node.querySelector('section._aamu._ae3_._ae47._ae48 svg[aria-label*="Like"]').parentElement;
                     likeBtn.addEventListener('click', (e) => {
                         if (likeBtn.querySelector('svg').getAttribute('aria-label') === 'Like') emit(ctx);
                     });
                 },
                 dislike: (node: any, ctx: any, emit: Function) => {
-                    const likeBtn = node.querySelector('section.ltpMr.Slqrh svg[aria-label*="ike"]').parentElement.parentElement;
+                    const likeBtn = node.querySelector('section._aamu._ae3_._ae47._ae48 svg[aria-label*="Unlike"]')?.parentElement;
+                    if(!likeBtn) return
                     likeBtn.addEventListener('click', (e) => {
                         if (likeBtn.querySelector('svg').getAttribute('aria-label') === 'Unlike') emit(ctx);
                     });
