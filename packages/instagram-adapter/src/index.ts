@@ -26,7 +26,6 @@ export default class InstagramAdapter {
             },
             events: {
                 like: (node: any, ctx: any, emit: Function) => {
-                    console.log(node.querySelector('section._aamu._ae3_._ae47._ae48 svg[aria-label*="Like"]'));
                     const likeBtn = node.querySelector('section._aamu._ae3_._ae47._ae48 svg[aria-label*="Like"]').parentElement;
                     likeBtn.addEventListener('click', (e) => {
                         if (likeBtn.querySelector('svg').getAttribute('aria-label') === 'Like') emit(ctx);
