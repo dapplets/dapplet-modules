@@ -131,14 +131,14 @@ export class AvatarBadge implements IWidget<IAvatarBadgeState> {
             if (!basic) {
                 container.style.borderRadius = '99em';
                 if (theme === 'DARK') {
-                    container.style.backgroundColor = '#222';
+                    container.style.backgroundColor = '#000';
                     if (this.insPointName === 'POST') {
                         container.style.border = '1px solid black';
                     } else if (this.insPointName === 'PROFILE') {
                         container.style.border = '2px solid black';
                     }
                 } else {
-                    container.style.backgroundColor = 'lightgray';
+                    container.style.backgroundColor = 'white';
                     if (this.insPointName === 'POST') {
                         container.style.border = '1px solid white';
                     } else if (this.insPointName === 'PROFILE') {
