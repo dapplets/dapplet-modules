@@ -244,6 +244,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                 if (avatar) avatar.style.overflow = 'visible';
                 // const testUserName = ph.querySelector('div.css-1dbjc4n.r-1wbh5a2.r-dnmrzs.r-1ny4l3l > div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-1wbh5a2 > div > div >div span')?.innerText.replace('@', '').toLowerCase()
                 const profile = {
+                    el,
                     id: ph.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x > div > div > div:nth-child(2) span')?.innerText.replace('@', '').toLowerCase(),
                     authorFullname: this._parseAuthorFullname(ph.querySelector('div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-dnmrzs > div > span:nth-child(1)')),
                     authorUsername: ph.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x > div > div > div:nth-child(2) span')?.innerText.replace('@', '').toLowerCase(),
