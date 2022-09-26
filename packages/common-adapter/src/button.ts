@@ -38,6 +38,7 @@ export class Button implements IWidget<IButtonState> {
                 display: block;
                 box-sizing: content-box;
                 background: no-repeat center/100% url(${img}) #d4e0e9;
+                z-index:9999;
             ">
             </div>
         `;
