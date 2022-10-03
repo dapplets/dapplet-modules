@@ -26,16 +26,18 @@ export default class InstagramAdapter {
             },
             events: {
                 like: (node: any, ctx: any, emit: Function) => {
-                    const likeBtn = node.querySelector('section._aamu._ae3_._ae47._ae48 svg[aria-label*="Like"]').parentElement;
+                    const likeBtn = node.querySelector('section._aamu._ae3_._ae47._ae48 svg[class*="_ab6-"]').parentElement;
+                    if(!likeBtn) return
                     likeBtn.addEventListener('click', (e) => {
-                        if (likeBtn.querySelector('svg').getAttribute('aria-label') === 'Like') emit(ctx);
+                     
+                        if (likeBtn.querySelector('svg').getAttribute('class') === '_ab6-') emit(ctx);
                     });
                 },
                 dislike: (node: any, ctx: any, emit: Function) => {
-                    const likeBtn = node.querySelector('section._aamu._ae3_._ae47._ae48 svg[aria-label*="Unlike"]')?.parentElement;
+                    const likeBtn = node.querySelector('section._aamu._ae3_._ae47._ae48 svg[class*="_ab6-"]')?.parentElement;
                     if(!likeBtn) return
                     likeBtn.addEventListener('click', (e) => {
-                        if (likeBtn.querySelector('svg').getAttribute('aria-label') === 'Unlike') emit(ctx);
+                        if (likeBtn.querySelector('svg').getAttribute('class') === '_ab6-') emit(ctx);
                     });
                 }
             },
