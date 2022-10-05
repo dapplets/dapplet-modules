@@ -18,7 +18,7 @@ export default class InstagramAdapter {
             contextSelector: undefined, // the same as containerSelector
             insPoints: {
                 POST_SOUTH: {
-                    selector: "section._aamu._ae3_._ae47._ae48 > *:nth-last-child(2)"
+                    selector: "section._aamu._ae3_._ae47._ae48 > *:nth-last-child(2), section._aamu._ae3_._ae40._ae41._ae48 > *:nth-last-child(3)"
                 },
                 POST_AVATAR_BADGE: {
                     selector: "header canvas"
@@ -26,7 +26,7 @@ export default class InstagramAdapter {
             },
             events: {
                 like: (node: any, ctx: any, emit: Function) => {
-                    const likeBtn = node.querySelector('section._aamu._ae3_._ae47._ae48 svg[class*="_ab6-"]').parentElement;
+                    const likeBtn = node.querySelector('section._aamu._ae3_._ae47._ae48 svg[class*="_ab6-"]')?.parentElement;
                     if(!likeBtn) return
                     likeBtn.addEventListener('click', (e) => {
                      
@@ -42,7 +42,7 @@ export default class InstagramAdapter {
                 }
             },
             contextBuilder: (p: any) => ({
-                id: p.querySelector('div.eo2As a.c-Yi7')?.getAttribute('href').split('/')[2],
+                id: p.querySelector('div.eo2As a.c-Yi7')?.getAttribute('href')?.split('/')[2],
                 authorUsername: p.querySelector('header a.sqdOP')?.innerText,
                 authorImg: p.querySelector('header canvas')?.toDataURL(),
                 location: p.querySelector('header a.O4GlU')?.innerText,
