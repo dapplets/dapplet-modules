@@ -14,11 +14,11 @@ export default class InstagramAdapter {
 
     public config = {
         POST: {
-            containerSelector: 'article[role="presentation"]',
-            contextSelector: undefined, // the same as containerSelector
+            containerSelector: 'main > div > section > ._aam1._aam2._aam5 > ._ab8w._ab94._abc0._abcm, main > ._aa6b._aa6d > ._aa6e, .x78zum5.xdt5ytf.xg6iff7.x1n2onr6',
+            contextSelector: 'article[role="presentation"]',
             insPoints: {
                 POST_SOUTH: {
-                    selector: "section._aamu._ae3_._ae47._ae48 > *:nth-last-child(2), section._aamu._ae3_._ae40._ae41._ae48 > *:nth-last-child(3)"
+                    selector: "section._aamu._ae3_ > *:nth-last-child(2), section._aamu._ae3_._ae40._ae41._ae48 > *:nth-last-child(3)"
                 },
                 POST_AVATAR_BADGE: {
                     selector: "header canvas"
