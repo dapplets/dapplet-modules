@@ -14,11 +14,11 @@ export default class InstagramAdapter {
 
     public config = {
         POST: {
-            containerSelector: 'article[role="presentation"]',
-            contextSelector: undefined, // the same as containerSelector
+            containerSelector: 'main > div > section > ._aam1._aam5 > ._ab8w._ab94._abc0._abcm, main > ._aa6b._aa6d > ._aa6e, .x78zum5.xdt5ytf.xg6iff7.x1n2onr6',
+            contextSelector: 'article[role="presentation"]',
             insPoints: {
                 POST_SOUTH: {
-                    selector: "section._aamu._ae3_._ae47._ae48 > *:nth-last-child(2)"
+                    selector: "section._aamu._ae3_ > *:nth-last-child(2), section._aamu._ae3_._ae40._ae41._ae48 > *:nth-last-child(3)"
                 },
                 POST_AVATAR_BADGE: {
                     selector: "header canvas"
@@ -26,7 +26,7 @@ export default class InstagramAdapter {
             },
             events: {
                 like: (node: any, ctx: any, emit: Function) => {
-                    const likeBtn = node.querySelector('section._aamu._ae3_._ae47._ae48 svg[class*="_ab6-"]').parentElement;
+                    const likeBtn = node.querySelector('section._aamu._ae3_._ae47._ae48 svg[class*="_ab6-"]')?.parentElement;
                     if(!likeBtn) return
                     likeBtn.addEventListener('click', (e) => {
                      
@@ -41,13 +41,14 @@ export default class InstagramAdapter {
                     });
                 }
             },
+            // console.log(p.querySelector('div._aagv img').getAttribute('src'))
             contextBuilder: (p: any) => ({
-                id: p.querySelector('div.eo2As a.c-Yi7')?.getAttribute('href').split('/')[2],
-                authorUsername: p.querySelector('header a.sqdOP')?.innerText,
-                authorImg: p.querySelector('header canvas')?.toDataURL(),
-                location: p.querySelector('header a.O4GlU')?.innerText,
-                img: p.querySelector('div._97aPb img')?.getAttribute('src'),
-                text: p.querySelector('div.eo2As span._8Pl3R > span')?.innerText
+                id: p.querySelector('div._aacl._aaco._aacu._aacx._aad6._aade._aaqb a')?.getAttribute('href')?.split('/')[2],
+                authorUsername: p.querySelector('header a._acao._acat, a._acao._acat, a._acao._acat')?.innerText,
+                authorImg: p.querySelector('header img')?.src,
+                location: p.querySelector('div._aaqm a')?.innerText,
+                img: p.querySelector('div._aagv img')?.getAttribute('src'),
+                text: p.querySelector('span._aacl._aaco._aacu._aacx._aad7._aade > span._aacl._aaco._aacu._aacx._aad7._aade, ul._a9z6._a9za li._a9zj._a9zl._a9z5 span._aacl._aaco._aacu._aacx._aad7._aade')?.innerText
             })
         },
         PROFILE: {
