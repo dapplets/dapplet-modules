@@ -1,11 +1,11 @@
 {
-    "main": {
-        "serverUrl": "wss://dapplet-modules.herokuapp.com/feature-2"
-    },
-    "test": {
-        "serverUrl": "wss://dapplet-modules.herokuapp.com/feature-2"
-    },
-    "dev": {
-        "serverUrl": "wss://localhost:8080/feature-2"
-    }
+  "main": {
+    "serverUrl": "wss://dapplet-modules.herokuapp.com/feature-2"
+  },
+  "test": {
+    "serverUrl": "wss://dapplet-modules.herokuapp.com/feature-2"
+  },
+  "dev": {
+    "serverUrl": "wss://localhost:8080/feature-2"
+  }
 }

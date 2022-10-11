@@ -1,25 +1,25 @@
 {
-    "name": { "$ref": "package.json#/name" },
-    "branch": "default",
-    "version": { "$ref": "package.json#/version" },
-    "type": "ADAPTER",
-    "title": "Common Adapter",
-    "description": { "$ref": "package.json#/description" },
-    "main": { "$ref": "package.json#/main" },
-    "contextIds": [
-      "dapplets.org", 
-      "127.0.0.1", 
-      "forum.dapplets.org", 
-      "youtube.com", 
-      "www.youtube.com",
-      "m.youtube.com", 
-      "twitter.com", 
-      "www.twitter.com", 
-      "mobile.twitter.com",
-      "instagram.com", 
-      "www.instagram.com"
-    ],
-    "dependencies": {
-      "dynamic-adapter.dapplet-base.eth": "0.6.14"
-    }
+  "name": { "$ref": "package.json#/name" },
+  "branch": "default",
+  "version": { "$ref": "package.json#/version" },
+  "type": "ADAPTER",
+  "title": "Common Adapter",
+  "description": { "$ref": "package.json#/description" },
+  "main": { "$ref": "package.json#/main" },
+  "contextIds": [
+    "dapplets.org",
+    "127.0.0.1",
+    "forum.dapplets.org",
+    "youtube.com",
+    "www.youtube.com",
+    "m.youtube.com",
+    "twitter.com",
+    "www.twitter.com",
+    "mobile.twitter.com",
+    "instagram.com",
+    "www.instagram.com"
+  ],
+  "dependencies": {
+    "dynamic-adapter.dapplet-base.eth": "0.6.14"
+  }
 }

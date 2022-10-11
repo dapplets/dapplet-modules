@@ -1,3 +1,1 @@
-export default interface IdentityAdapter {
-
-}
+export default interface IdentityAdapter {}

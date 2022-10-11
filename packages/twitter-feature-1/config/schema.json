@@ -1,17 +1,14 @@
 {
-    "type": "object",
-    "required": [
-        "serverUrl",
-        "overlayUrl"
-    ],
-    "properties": {
-        "serverUrl": {
-            "type": "string",
-            "title": "WebSocket Server URL"
-        },
-        "overlayUrl": {
-            "type": "string",
-            "title": "Overlay URL"
-        }
+  "type": "object",
+  "required": ["serverUrl", "overlayUrl"],
+  "properties": {
+    "serverUrl": {
+      "type": "string",
+      "title": "WebSocket Server URL"
+    },
+    "overlayUrl": {
+      "type": "string",
+      "title": "Overlay URL"
     }
+  }
 }

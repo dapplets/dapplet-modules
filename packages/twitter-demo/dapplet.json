@@ -1,17 +1,17 @@
 {
-    "name": { "$ref": "package.json#/name" },
-    "branch": "default",
-    "version": { "$ref": "package.json#/version" },
-    "type": "FEATURE",
-    "title": "Demo Dapplet",
-    "description": { "$ref": "package.json#/description" },
-    "main": { "$ref": "package.json#/main" },
-    "icon": "src/Red_Icon3.png",
-    "contextIds": ["twitter-adapter.dapplet-base.eth"],
-    "dependencies": {
-        "twitter-adapter.dapplet-base.eth": "0.9.0"
-    },
-    "overlays": {
-        "twitter-demo-overlay": "https://localhost:8080/packages/twitter-demo-overlay/build/"
-    }
+  "name": { "$ref": "package.json#/name" },
+  "branch": "default",
+  "version": { "$ref": "package.json#/version" },
+  "type": "FEATURE",
+  "title": "Demo Dapplet",
+  "description": { "$ref": "package.json#/description" },
+  "main": { "$ref": "package.json#/main" },
+  "icon": "src/Red_Icon3.png",
+  "contextIds": ["twitter-adapter.dapplet-base.eth"],
+  "dependencies": {
+    "twitter-adapter.dapplet-base.eth": "0.9.0"
+  },
+  "overlays": {
+    "twitter-demo-overlay": "https://localhost:8080/packages/twitter-demo-overlay/build/"
+  }
 }

@@ -1,29 +1,29 @@
-import { IWidget } from 'dynamic-adapter.dapplet-base.eth';
+import { IWidget } from 'dynamic-adapter.dapplet-base.eth'
 
 export interface IButtonState {
-    img?: string;
-    disabled?: boolean;
-    tooltip?: string;
-    exec?: (ctx: any, me: IButtonState) => void;
-    init?: (ctx: any, me: IButtonState) => void;
-    ctx?: any;
+  img?: string
+  disabled?: boolean
+  tooltip?: string
+  exec?: (ctx: any, me: IButtonState) => void
+  init?: (ctx: any, me: IButtonState) => void
+  ctx?: any
 }
 
 export class Button implements IWidget<IButtonState> {
-    public el: HTMLElement;
-    public state: IButtonState;
-    public insPointName: string;
+  public el: HTMLElement
+  public state: IButtonState
+  public insPointName: string
 
-    public static contextInsPoints = {
-        BODY: 'BODY'
-    }
+  public static contextInsPoints = {
+    BODY: 'BODY',
+  }
 
-    public mount() {
-        if (!this.el) this._createElement();
+  public mount() {
+    if (!this.el) this._createElement()
 
-        const { img, tooltip } = this.state;
+    const { img, tooltip } = this.state
 
-        const htmlString = `
+    const htmlString = `
             <div style="
                 position:fixed;
                 width:60px;
@@ -41,24 +41,24 @@ export class Button implements IWidget<IButtonState> {
                 z-index:9999;
             ">
             </div>
-        `;
+        `
 
-        this.el.title = tooltip ?? '';
-        this.el.innerHTML = htmlString;
-    }
+    this.el.title = tooltip ?? ''
+    this.el.innerHTML = htmlString
+  }
 
-    public unmount() {
-        this.el && this.el.remove();
-    }
+  public unmount() {
+    this.el && this.el.remove()
+  }
 
-    private _createElement() {
-        this.el = document.createElement('div');
-        this.el.addEventListener("click", e => {
-            if (!this.state.disabled) {
-                this.state.exec?.(this.state.ctx, this.state);
-            }
-        });
-        this.mount();
-        this.state.init?.(this.state.ctx, this.state);
-    }
+  private _createElement() {
+    this.el = document.createElement('div')
+    this.el.addEventListener('click', (e) => {
+      if (!this.state.disabled) {
+        this.state.exec?.(this.state.ctx, this.state)
+      }
+    })
+    this.mount()
+    this.state.init?.(this.state.ctx, this.state)
+  }
 }

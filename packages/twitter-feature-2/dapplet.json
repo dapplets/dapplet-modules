@@ -1,18 +1,18 @@
 {
-    "name": { "$ref": "package.json#/name" },
-    "branch": "default",
-    "version": { "$ref": "package.json#/version" },
-    "type": "FEATURE",
-    "title": "Ethereum Contract Example",
-    "description": { "$ref": "package.json#/description" },
-    "main": { "$ref": "package.json#/main" },
-    "icon": "src/icon.png",
-    "contextIds": ["twitter-adapter.dapplet-base.eth"],
-    "config": {
-        "schema": "config/schema.json",
-        "default": "config/default.json"
-    },
-    "dependencies": {
-      "twitter-adapter.dapplet-base.eth": "0.9.0"
-    }
+  "name": { "$ref": "package.json#/name" },
+  "branch": "default",
+  "version": { "$ref": "package.json#/version" },
+  "type": "FEATURE",
+  "title": "Ethereum Contract Example",
+  "description": { "$ref": "package.json#/description" },
+  "main": { "$ref": "package.json#/main" },
+  "icon": "src/icon.png",
+  "contextIds": ["twitter-adapter.dapplet-base.eth"],
+  "config": {
+    "schema": "config/schema.json",
+    "default": "config/default.json"
+  },
+  "dependencies": {
+    "twitter-adapter.dapplet-base.eth": "0.9.0"
+  }
 }

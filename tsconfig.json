@@ -16,5 +16,4 @@
         "types": [ "../../typesPatch" ],
         "composite": true
     },
-    "include": [ ]
 }

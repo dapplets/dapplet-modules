@@ -1,14 +1,14 @@
 {
-    "name": { "$ref": "package.json#/name" },
-    "version": { "$ref": "package.json#/version" },
-    "description": { "$ref": "package.json#/description" },
-    "main": { "$ref": "package.json#/main" },
-    "branch": "default",
-    "type": "FEATURE",
-    "icon": "src/icon.png",
-    "title": "Floating Button and Popup",
-    "contextIds": ["common-adapter.dapplet-base.eth"],
-    "dependencies": {
-      "common-adapter.dapplet-base.eth": "0.3.9"
-    }
+  "name": { "$ref": "package.json#/name" },
+  "version": { "$ref": "package.json#/version" },
+  "description": { "$ref": "package.json#/description" },
+  "main": { "$ref": "package.json#/main" },
+  "branch": "default",
+  "type": "FEATURE",
+  "icon": "src/icon.png",
+  "title": "Floating Button and Popup",
+  "contextIds": ["common-adapter.dapplet-base.eth"],
+  "dependencies": {
+    "common-adapter.dapplet-base.eth": "0.3.9"
+  }
 }

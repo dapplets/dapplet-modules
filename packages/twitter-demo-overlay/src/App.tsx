@@ -1,53 +1,53 @@
-import React, { useEffect, useState } from 'react';
-import { bridge } from './dappletBridge';
-import { Accordion, Card, Header } from 'semantic-ui-react';
-import Widget from './Widget';
-import dappletData from './dappletData';
+import React, { useEffect, useState } from 'react'
+import { Accordion, Card, Header } from 'semantic-ui-react'
+import { bridge } from './dappletBridge'
+import dappletData from './dappletData'
+import Widget from './Widget'
 
 export default () => {
-  const [activeIndexes, changeActiveItemes] = useState<string[]>([]);
-  const [theme, setTheme] = useState<'LIGHT' | 'DARK'>('LIGHT');
+  const [activeIndexes, changeActiveItemes] = useState<string[]>([])
+  const [theme, setTheme] = useState<'LIGHT' | 'DARK'>('LIGHT')
 
   useEffect(() => {
     bridge.onData((data) => {
-      setTheme(data.ctx.theme);
+      setTheme(data.ctx.theme)
       if (data.index) {
         refs[data.index].current.scrollIntoView({
           behavior: 'smooth',
           block: 'center',
-        });
+        })
       }
-      console.log(data.adapterDescription);
-    });
-  }, []);
+      console.log(data.adapterDescription)
+    })
+  }, [])
 
   const handleClick = (e: any, titleProps: any) => {
-    const { index } = titleProps;
+    const { index } = titleProps
     activeIndexes.includes(index)
-      ? changeActiveItemes(activeIndexes.filter(x => x !== index))
-      : changeActiveItemes([...activeIndexes, index]);
-  };
+      ? changeActiveItemes(activeIndexes.filter((x) => x !== index))
+      : changeActiveItemes([...activeIndexes, index])
+  }
 
   const goToContextPage = (e: any, url: string, index: string) => {
-    e.preventDefault();
-    bridge.forceOverlay(index);
-    window.open(url, '_parent');
-  };
+    e.preventDefault()
+    bridge.forceOverlay(index)
+    window.open(url, '_parent')
+  }
 
-  const refs: any = {};
+  const refs: any = {}
   dappletData().forEach((value, index) =>
-    value.widgets.forEach((v, i) => refs[index + '/' + i] = React.createRef()));
+    value.widgets.forEach((v, i) => (refs[index + '/' + i] = React.createRef()))
+  )
 
   if (theme === 'DARK') {
-    document.body.style.background = '#15202B';
-    const el: HTMLElement | null = document.querySelector('#root');
-    el!.style.background = '#15202B';
+    document.body.style.background = '#15202B'
+    const el: HTMLElement | null = document.querySelector('#root')
+    el!.style.background = '#15202B'
   }
 
   return (
-    <div
-      className={theme === 'DARK' ? 'overlay-container dpp-dark' : 'overlay-container'}>
-      {false && <Header as='h3'>Contexts</Header>}
+    <div className={theme === 'DARK' ? 'overlay-container dpp-dark' : 'overlay-container'}>
+      {false && <Header as="h3">Contexts</Header>}
       {dappletData().map((context, ctxId) => (
         <Card key={ctxId} style={{ width: '100%' }}>
           <Card.Content>
@@ -56,13 +56,14 @@ export default () => {
           <Card.Content>
             <Card.Description>
               {context.description}
-              {context.link && 
+              {context.link && (
                 <button
-                  className='link'
+                  className="link"
                   onClick={(e) => goToContextPage(e, context.link!, ctxId + '/' + 0)}
                 >
                   this page
-                </button>}
+                </button>
+              )}
             </Card.Description>
             <Accordion exclusive={false} fluid>
               {context.widgets.map((widget: any, i: number) => (
@@ -81,5 +82,5 @@ export default () => {
         </Card>
       ))}
     </div>
-  );
-};
+  )
+}
