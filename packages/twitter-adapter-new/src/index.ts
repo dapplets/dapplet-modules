@@ -210,7 +210,8 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
         },
         PROFILE: {
             containerSelector: "main[role=main]",
-            contextSelector: "div[data-testid=primaryColumn] > div > div:nth-child(2) div.css-1dbjc4n.r-1jgb5lz.r-1ye8kvj.r-13qz1uu",
+            // contextSelector: "div[data-testid=primaryColumn] > div > div:nth-child(2) div.css-1dbjc4n.r-1jgb5lz.r-1ye8kvj.r-13qz1uu",
+            contextSelector: "div[data-testid=primaryColumn]",
             insPoints: {
                 AVATAR: {
                     selector: "div.css-1dbjc4n.r-1ifxtd0.r-ymttw5.r-ttdzmv a",
@@ -252,6 +253,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
                     theme: this._getTheme(),
                 }
                 return (
+                    
                   profile
                 );
             },
