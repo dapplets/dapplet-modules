@@ -261,7 +261,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
         },
         HEADING: {
             containerSelector: "main[role=main]",
-            contextSelector: "h2[role=heading].css-4rbku5.css-901oao.css-bfa6kz.r-37j5jr.r-adyw6z.r-b88u0q.r-135wba7.r-bcqeeo.r-qvutc0",
+            contextSelector: "h2[role=heading].css-4rbku5.css-901oao.css-1hf3ou5.r-18jsvk2.r-37j5jr.r-adyw6z.r-b88u0q.r-135wba7.r-bcqeeo.r-1vvnge1.r-qvutc0",
             insPoints: {
                 USERNAME_BADGE: {
                     selector: "div *:last-child",
