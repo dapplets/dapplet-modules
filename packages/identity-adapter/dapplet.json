@@ -1,8 +1,8 @@
 {
-    "name": { "$ref": "package.json#/name" },
-    "branch": "default",
-    "version": { "$ref": "package.json#/version" },
-    "type": "INTERFACE",
-    "title": "Identity Adapter",
-    "description": { "$ref": "package.json#/description" }
+  "name": { "$ref": "package.json#/name" },
+  "branch": "default",
+  "version": { "$ref": "package.json#/version" },
+  "type": "INTERFACE",
+  "title": "Identity Adapter",
+  "description": { "$ref": "package.json#/description" }
 }

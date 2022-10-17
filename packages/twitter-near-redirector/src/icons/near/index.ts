@@ -1,4 +1,4 @@
-import DARK from './white.svg';
-import LIGHT from './black.svg';
+import LIGHT from './black.svg'
+import DARK from './white.svg'
 
 export default { DARK, LIGHT }

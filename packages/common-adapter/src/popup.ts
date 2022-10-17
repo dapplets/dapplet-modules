@@ -1,31 +1,31 @@
-import { IWidget } from 'dynamic-adapter.dapplet-base.eth';
-import CLOSE_ICON from './close_cross.svg';
+import { IWidget } from 'dynamic-adapter.dapplet-base.eth'
+import CLOSE_ICON from './close_cross.svg'
 
 export interface IPopupState {
-    exec?: (ctx: any, me: IPopupState) => void;
-    init?: () => void;
-    ctx?: any;
-    text?: string;
-    link?: string;
-    img?: string;
-    closed?: boolean;
+  exec?: (ctx: any, me: IPopupState) => void
+  init?: () => void
+  ctx?: any
+  text?: string
+  link?: string
+  img?: string
+  closed?: boolean
 }
 
 export class Popup implements IWidget<IPopupState> {
-    public el: HTMLElement;
-    public state: IPopupState;
-    public insPointName: string;
+  public el: HTMLElement
+  public state: IPopupState
+  public insPointName: string
 
-    public static contextInsPoints = {
-        BODY: 'BODY'
-    }
+  public static contextInsPoints = {
+    BODY: 'BODY',
+  }
 
-    public mount() {
-        if (!this.el) this._createElement();
+  public mount() {
+    if (!this.el) this._createElement()
 
-        const { text, link, img, closed } = this.state;
+    const { text, link, img, closed } = this.state
 
-        const htmlString = `<style>
+    const htmlString = `<style>
             .dapplet-widget-basic-container {
                 position: absolute;
                 overflow-wrap: break-word;
@@ -92,27 +92,27 @@ export class Popup implements IWidget<IPopupState> {
             </div>
         </div>`
 
-        this.el.innerHTML = htmlString;
-    }
+    this.el.innerHTML = htmlString
+  }
 
-    public unmount() {
-        this.el && this.el.remove();
-    }
+  public unmount() {
+    this.el && this.el.remove()
+  }
 
-    private _createElement() {
-        this.el = document.createElement('div');
-        this.el.addEventListener("click", e => {
-            const target = e.target as HTMLElement;
-            if (!target.classList.contains('dapplet-widget-close-icon')) return; 
+  private _createElement() {
+    this.el = document.createElement('div')
+    this.el.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement
+      if (!target.classList.contains('dapplet-widget-close-icon')) return
 
-            // if (target.classList.contains('dapplet-widget-close-icon')) {
-            //     const popupContainer: HTMLElement = this.el.querySelector('.dapplet-widget-basic-container');
-            //     popupContainer.classList.add('no-displayed');
-            // }
+      // if (target.classList.contains('dapplet-widget-close-icon')) {
+      //     const popupContainer: HTMLElement = this.el.querySelector('.dapplet-widget-basic-container');
+      //     popupContainer.classList.add('no-displayed');
+      // }
 
-            this.state.closed = true;
-        });
-        this.mount();
-        this.state.init?.();
-    }
+      this.state.closed = true
+    })
+    this.mount()
+    this.state.init?.()
+  }
 }

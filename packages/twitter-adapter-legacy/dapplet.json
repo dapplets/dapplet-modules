@@ -1,15 +1,15 @@
 {
-    "name": "twitter-adapter.dapplet-base.eth",
-    "branch": "legacy",
-    "version": { "$ref": "package.json#/version" },
-    "type": "ADAPTER",
-    "title": "TwitterAdapter",
-    "description": { "$ref": "package.json#/description" },
-    "main": { "$ref": "package.json#/main" },
-    "dependencies": {
-      "dynamic-adapter.dapplet-base.eth": "0.6.9"
-    },
-    "interfaces": {
-      "identity-adapter.dapplet-base.eth": "0.3.0"
-    }
+  "name": "twitter-adapter.dapplet-base.eth",
+  "branch": "legacy",
+  "version": { "$ref": "package.json#/version" },
+  "type": "ADAPTER",
+  "title": "TwitterAdapter",
+  "description": { "$ref": "package.json#/description" },
+  "main": { "$ref": "package.json#/main" },
+  "dependencies": {
+    "dynamic-adapter.dapplet-base.eth": "0.6.9"
+  },
+  "interfaces": {
+    "identity-adapter.dapplet-base.eth": "0.3.0"
+  }
 }

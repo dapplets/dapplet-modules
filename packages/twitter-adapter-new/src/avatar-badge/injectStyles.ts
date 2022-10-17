@@ -1,9 +1,9 @@
 export default () => {
-    if (!!document.getElementById('dapplet-widget-badge-styles')) return
+  if (document.getElementById('dapplet-widget-badge-styles')) return
 
-    const styleTag: HTMLStyleElement = document.createElement('style')
-    styleTag.id = 'dapplet-widget-badge-styles'
-    styleTag.innerText = `
+  const styleTag: HTMLStyleElement = document.createElement('style')
+  styleTag.id = 'dapplet-widget-badge-styles'
+  styleTag.innerText = `
         .dapplets-connected-accounts-wrapper .accounts {
             position: absolute;
             display: flex;
@@ -114,5 +114,5 @@ export default () => {
             width: 18px;
         }
     `
-    document.head.appendChild(styleTag)
+  document.head.appendChild(styleTag)
 }

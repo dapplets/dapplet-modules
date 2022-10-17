@@ -1,24 +1,26 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
 
 body {
-  background-color: #F4F4F4 !important;
   height: calc(100% - 50px) !important;
+
+  background-color: #f4f4f4 !important;
 }
 
 .overlay-container {
   display: flex;
+  overflow-y: overlay;
   flex-wrap: wrap;
   justify-content: center;
-  margin: 14px 4px 20px 4px;
-  height: 100%;
+
   width: calc(100% - 7px);
-  padding: 0 15px 3px 15px;
-  overflow-y: overlay;
+  height: 100%;
   max-height: calc(100vh - 30px);
+  margin: 14px 4px 20px;
+  padding: 0 15px 3px;
 }
 
 .ui.card {
-  margin: .5em 0 !important;
+  margin: 0.5em 0 !important;
 }
 
 .ui.header {
@@ -26,13 +28,15 @@ body {
 }
 
 button.link {
-  color: rgb(27, 149, 224);
+  cursor: pointer;
+
+  color: rgb(27 149 224);
   border: none;
   background: none;
-  font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
+
+  font-family: Lato, "Helvetica Neue", Arial, Helvetica, sans-serif;
   font-size: 1em;
   line-height: 1.4285em;
-  cursor: pointer;
 }
 
 button.link:hover {
@@ -41,33 +45,34 @@ button.link:hover {
 
 .overlay-container.dpp-dark,
 .dpp-dark h2,
-.dpp-dark [role='listbox'],
-.dpp-dark .ui.menu .ui.dropdown .menu>.item,
+.dpp-dark [role="listbox"],
+.dpp-dark .ui.menu .ui.dropdown .menu > .item,
 .dpp-dark .ui.icon.input > input,
 .dpp-dark .content,
 .dpp-dark .ui.feed,
 .dpp-dark .ui.feed > .event,
-.dpp-dark .ui.feed>.event>.content .summary,
-.dpp-dark .ui.feed>.event>.content .summary > .ui.slider.checkbox > label,
+.dpp-dark .ui.feed > .event > .content .summary,
+.dpp-dark .ui.feed > .event > .content .summary > .ui.slider.checkbox > label,
 .dpp-dark .ui.accordion .title:not(.ui),
-.dpp-dark .ui.card>.content>.header,
-.dpp-dark .ui.cards>.card>.content>.header,
-.dpp-dark .ui.card>.content>.description,
-.dpp-dark .ui.cards>.card>.content>.description  {
+.dpp-dark .ui.card > .content > .header,
+.dpp-dark .ui.cards > .card > .content > .header,
+.dpp-dark .ui.card > .content > .description,
+.dpp-dark .ui.cards > .card > .content > .description {
   color: #fff !important;
-  background: #15202B !important;
+  background: #15202b !important;
 }
 
-.dpp-dark .ui.menu .ui.dropdown .menu>.item:hover {
+.dpp-dark .ui.menu .ui.dropdown .menu > .item:hover {
   color: #fff !important;
   background: #1f2a35 !important;
 }
 
-.dpp-dark .ui.slider.checkbox .box:before,
-.dpp-dark .ui.slider.checkbox label:before {
+.dpp-dark .ui.slider.checkbox .box::before,
+.dpp-dark .ui.slider.checkbox label::before {
   background-color: rgb(255 255 255 / 30%) !important;
 }
-.dpp-dark .ui.slider.checkbox input:checked~.box:before,
-.dpp-dark .ui.slider.checkbox input:checked~label:before {
+
+.dpp-dark .ui.slider.checkbox input:checked ~ .box::before,
+.dpp-dark .ui.slider.checkbox input:checked ~ label::before {
   background-color: rgb(255 255 255 / 80%) !important;
 }

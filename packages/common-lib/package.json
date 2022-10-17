@@ -11,6 +11,5 @@
   },
   "author": "Dapplets Team",
   "license": "MIT",
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }

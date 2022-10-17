@@ -1,46 +1,40 @@
-import { css } from "lit";
+import { css } from 'lit'
 
 export const styles = css`
   @font-face {
     font-family: TwitterChirp;
-    src: url(https://abs.twimg.com/fonts/v2/chirp-regular-web.woff2)
-      format("woff2");
-    src: url(https://abs.twimg.com/fonts/v2/chirp-regular-web.woff)
-      format("woff");
+    src: url(https://abs.twimg.com/fonts/v2/chirp-regular-web.woff2) format('woff2');
+    src: url(https://abs.twimg.com/fonts/v2/chirp-regular-web.woff) format('woff');
     font-weight: 400;
-    font-style: "normal";
-    font-display: "swap";
+    font-style: 'normal';
+    font-display: 'swap';
   }
 
   @font-face {
     font-family: TwitterChirp;
-    src: url(https://abs.twimg.com/fonts/v2/chirp-medium-web.woff2)
-      format("woff2");
-    src: url(https://abs.twimg.com/fonts/v2/chirp-medium-web.woff)
-      format("woff");
+    src: url(https://abs.twimg.com/fonts/v2/chirp-medium-web.woff2) format('woff2');
+    src: url(https://abs.twimg.com/fonts/v2/chirp-medium-web.woff) format('woff');
     font-weight: 500;
-    font-style: "normal";
-    font-display: "swap";
+    font-style: 'normal';
+    font-display: 'swap';
   }
 
   @font-face {
     font-family: TwitterChirp;
-    src: url(https://abs.twimg.com/fonts/v2/chirp-bold-web.woff2)
-      format("woff2");
-    src: url(https://abs.twimg.com/fonts/v2/chirp-bold-web.woff) format("woff");
+    src: url(https://abs.twimg.com/fonts/v2/chirp-bold-web.woff2) format('woff2');
+    src: url(https://abs.twimg.com/fonts/v2/chirp-bold-web.woff) format('woff');
     font-weight: 700;
-    font-style: "normal";
-    font-display: "swap";
+    font-style: 'normal';
+    font-display: 'swap';
   }
 
   @font-face {
     font-family: TwitterChirp;
-    src: url(https://abs.twimg.com/fonts/v2/chirp-heavy-web.woff2)
-      format("woff2");
-    src: url(https://abs.twimg.com/fonts/v2/chirp-heavy-web.woff) format("woff");
+    src: url(https://abs.twimg.com/fonts/v2/chirp-heavy-web.woff2) format('woff2');
+    src: url(https://abs.twimg.com/fonts/v2/chirp-heavy-web.woff) format('woff');
     font-weight: 800;
-    font-style: "normal";
-    font-display: "swap";
+    font-style: 'normal';
+    font-display: 'swap';
   }
 
   :host {
@@ -116,4 +110,4 @@ export const styles = css`
     margin-left: 4px;
     margin-bottom: 2px;
   }
-`;
+`
