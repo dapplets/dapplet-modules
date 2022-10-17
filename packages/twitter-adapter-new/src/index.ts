@@ -41,7 +41,8 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
   public getWidgetParamsDescription = (widgetName) => widgets[widgetName].widgetParamsDescription
 
   // ToDo: refactor it
-  public exports = () => ({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public exports = (adapterName?: string) => ({
     // button: this.adapter.createWidgetFactory<IButtonState>(Button),
     button: this.adapter.createWidgetFactory<IWbButtonProps>(WbButton),
     buttonStarter: this.adapter.createWidgetFactory<IButtonStarterState>(ButtonStarter),
@@ -108,18 +109,21 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
         },
       },
       events: {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
         like: (node: any, ctx: any, emit: Function) => {
           const likeBtn = node.querySelector('div[role=button][data-testid*="like"]')
           likeBtn?.addEventListener('click', () => {
             if (likeBtn.getAttribute('data-testid') === 'like') emit(ctx)
           })
         },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
         dislike: (node: any, ctx: any, emit: Function) => {
           const likeBtn = node.querySelector('div[role=button][data-testid*="like"]')
           likeBtn?.addEventListener('click', () => {
             if (likeBtn.getAttribute('data-testid') === 'unlike') emit(ctx)
           })
         },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
         starter: (node: any, ctx: any, emit: Function) => {
           node.parentNode.style.overflow = 'hidden'
           const slideout = new Slideout({
@@ -134,6 +138,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
             slideout.close()
           })
         },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
         repost: (node: any, ctx: any, emit: Function) => {
           const retweetBtn = node.querySelector('div[data-testid="retweet"]')
           retweetBtn?.addEventListener('click', () => {
@@ -141,6 +146,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
             emit(ctx, { disabled })
           })
         },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
         unrepost: (node: any, ctx: any, emit: Function) => {
           const retweetBtn = node.querySelector('div[data-testid="unretweet"]')
           retweetBtn?.addEventListener('click', () => {
@@ -150,6 +156,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
         },
       },
       // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       contextBuilder: (el: any) => {
         // Adding of right margin to last twitter's native button
         const classList = el.querySelector(
@@ -223,6 +230,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
         },
       },
       events: {},
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       contextBuilder: (el: any) => {
         return {
           id:
@@ -276,10 +284,12 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
       },
       events: {
         // calls for every new context
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
         profile_changed: (node: any, ctx: any, emit: Function, on: Function) =>
           on('context_changed', emit),
       },
       // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       contextBuilder: (el: any) => {
         const ph = el.querySelector('div.css-1dbjc4n.r-1ifxtd0.r-ymttw5.r-ttdzmv')
         const avatar = ph.querySelector('a.css-4rbku5.css-18t94o4.css-1dbjc4n.r-14lw9ot.r-11mg6pl')
@@ -318,6 +328,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
         },
       },
       // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       contextBuilder: (el: any) => ({
         id: el.innerText,
         profileFullname: el.innerText,
@@ -339,6 +350,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
         },
       },
       // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       contextBuilder: (el: any) => ({
         id: el.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x')?.textContent,
         profileUsername: el.querySelector('div.css-1dbjc4n.r-6gpygo.r-14gqq1x')?.textContent,
@@ -365,16 +377,12 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
 
   // ToDo: refactor it
   public detachConfig(config: T_TwitterFeatureConfig, featureId?: string): void {
-    this.starter.detachConfig(config, featureId)
+    this.starter.detachConfig(config)
     this.adapter.detachConfig(config, featureId)
   }
 
-  public resetConfig(
-    config: T_TwitterFeatureConfig,
-    newConfig?: T_TwitterFeatureConfig,
-    featureId?: string
-  ): void {
-    this.starter.detachConfig(config, featureId)
+  public resetConfig(config: T_TwitterFeatureConfig, newConfig?: T_TwitterFeatureConfig): void {
+    this.starter.detachConfig(config)
     this.starter.attachConfig(newConfig ?? config)
     this.adapter.resetConfig(config, newConfig ?? config)
   }
@@ -396,6 +404,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _parseAuthorFullname(node: any): string {
     if (!node) return null
     const strings = [...node.childNodes].map((x) => {

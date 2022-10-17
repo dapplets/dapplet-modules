@@ -7,6 +7,7 @@ declare let chrome
 interface IStarter {
   label: string
   exec: (ctx) => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   config: any
   id: number
   dapplet?: string
@@ -14,9 +15,11 @@ interface IStarter {
 }
 
 export default class Starter {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public config: any
   public widgets: IStarter[] = []
   private _buttonId = 0
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _core: any = Core
   private _overlay = this._core.starterOverlay
     ? this._core.starterOverlay()
@@ -38,6 +41,7 @@ export default class Starter {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public openStarter(ctx: any) {
     this._overlay.sendAndListen(
       'ctx',
@@ -46,6 +50,7 @@ export default class Starter {
         buttons: this.widgets,
       },
       {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         button_clicked: (op, { _, message }) => {
           const id = message
           const button = this.widgets.find((b) => b.id === id)
@@ -59,6 +64,7 @@ export default class Starter {
     if (!config.POST) return
 
     const postConfigData = config.POST({ id: 'STARTER' })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const insert = (configData: any) => {
       const widgets: IStarter[] | false =
         Array.isArray(configData) &&
@@ -78,6 +84,7 @@ export default class Starter {
     postConfigData instanceof Promise ? postConfigData.then(insert) : insert(postConfigData)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public detachConfig(config: any) {
     this.widgets = this.widgets.filter((w) => w.config !== config)
     if (this.widgets.length === 0) this.adapter.adapter.detachConfig(this.config)
