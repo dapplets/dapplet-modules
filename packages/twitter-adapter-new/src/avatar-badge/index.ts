@@ -2,11 +2,14 @@ import { html, LitElement } from 'lit'
 import { property } from 'lit/decorators.js'
 import { classMap } from 'lit/directives/class-map.js'
 import { styleMap } from 'lit/directives/style-map.js'
+import { AccountsWidget } from './accounts-widget'
 import { styles } from './avatar-badge.css'
 import description from './description'
-import injectStyles from './injectStyles'
+// import injectStyles from './injectStyles'
 import { IAvatarBadgeState, IConnectedAccountUser } from './types'
-import useAccountsWidget from './useAccountsWidget'
+// import useAccountsWidget from './useAccountsWidget'
+
+customElements.define('accounts-widget', AccountsWidget)
 
 class AvatarBadge extends LitElement implements IAvatarBadgeState {
   public static override styles = styles
@@ -15,6 +18,7 @@ class AvatarBadge extends LitElement implements IAvatarBadgeState {
     POST: 'AVATAR_BADGE',
     PROFILE: 'AVATAR_BADGE',
   }
+  private _accountsWidget
 
   @property() state: IAvatarBadgeState
   @property() insPointName: string
@@ -27,8 +31,11 @@ class AvatarBadge extends LitElement implements IAvatarBadgeState {
   @property() hidden: boolean
   @property() tooltip?: string | string[]
   @property() theme?: 'DARK' | 'LIGHT'
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   @property() exec?: (ctx: any, me: IAvatarBadgeState) => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   @property() init?: (tx: any, me: IAvatarBadgeState) => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   @property() ctx: any
   @property() username: string
   @property() accounts?: IConnectedAccountUser[]
@@ -45,21 +52,25 @@ class AvatarBadge extends LitElement implements IAvatarBadgeState {
   }
 
   override render() {
-    injectStyles()
+    // injectStyles()
     if (this.hidden || !(this.img || this.video)) return null
 
     if (this.accounts && this.username) {
       const handleCloseAccounts = () => {
         this.state.showAccounts = false
       }
-      useAccountsWidget({
-        username: this.username,
-        accounts: this.accounts,
-        showAccounts: this.showAccounts,
-        el: this.ctx.el,
-        insPointName: this.insPointName,
-        handleClose: handleCloseAccounts,
-      })
+      if (!this._accountsWidget) {
+        this._accountsWidget = document.createElement('accounts-widget')
+        const elementToInsertWidget = document.querySelector('main > div > div')
+        elementToInsertWidget.append(this._accountsWidget)
+        window.addEventListener('popstate', () => handleCloseAccounts())
+      }
+      this._accountsWidget.username = this.username
+      this._accountsWidget.accounts = this.accounts
+      this._accountsWidget.showAccounts = this.showAccounts
+      this._accountsWidget.el = this.ctx.el
+      this._accountsWidget.insPointName = this.insPointName
+      this._accountsWidget.handleClose = handleCloseAccounts
     }
 
     return html`<div

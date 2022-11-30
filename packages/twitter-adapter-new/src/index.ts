@@ -401,6 +401,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
       img: document
         .querySelector('[data-testid=SideNav_AccountSwitcher_Button] > div:nth-child(1) img')
         .getAttribute('src'),
+      websiteName: 'Twitter',
     }
   }
 
