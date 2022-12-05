@@ -5,9 +5,7 @@ import { styleMap } from 'lit/directives/style-map.js'
 import { AccountsWidget } from './accounts-widget'
 import { styles } from './avatar-badge.css'
 import description from './description'
-// import injectStyles from './injectStyles'
 import { IAvatarBadgeState, IConnectedAccountUser } from './types'
-// import useAccountsWidget from './useAccountsWidget'
 
 customElements.define('accounts-widget', AccountsWidget)
 
@@ -52,7 +50,6 @@ class AvatarBadge extends LitElement implements IAvatarBadgeState {
   }
 
   override render() {
-    // injectStyles()
     if (this.hidden || !(this.img || this.video)) return null
 
     if (this.accounts && this.username) {
@@ -63,14 +60,22 @@ class AvatarBadge extends LitElement implements IAvatarBadgeState {
         this._accountsWidget = document.createElement('accounts-widget')
         const elementToInsertWidget = document.querySelector('main > div > div')
         elementToInsertWidget.append(this._accountsWidget)
-        window.addEventListener('popstate', () => handleCloseAccounts())
+        window.addEventListener('popstate', handleCloseAccounts)
+        window.addEventListener('click', (e) => {
+          if (e.target === this._accountsWidget) {
+            setTimeout(() => {
+              handleCloseAccounts()
+            }, 400)
+          } else {
+            handleCloseAccounts()
+          }
+        })
       }
       this._accountsWidget.username = this.username
       this._accountsWidget.accounts = this.accounts
       this._accountsWidget.showAccounts = this.showAccounts
       this._accountsWidget.el = this.ctx.el
       this._accountsWidget.insPointName = this.insPointName
-      this._accountsWidget.handleClose = handleCloseAccounts
     }
 
     return html`<div

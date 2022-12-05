@@ -12,8 +12,6 @@ export interface IAccountsWidgetState {
   username: string
   accounts: IConnectedAccountUser[]
   showAccounts: boolean
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  handleClose: any
 }
 
 export class AccountsWidget extends LitElement implements IAccountsWidgetState {
@@ -22,28 +20,19 @@ export class AccountsWidget extends LitElement implements IAccountsWidgetState {
   @property() username: string
   @property() accounts: IConnectedAccountUser[]
   @property() showAccounts: boolean
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  @property() handleClose: any
 
-  private _clickAccountHandler = (account: IConnectedAccountUser) => (e) => {
+  private _clickAccountHandler = (account: IConnectedAccountUser) => (e: PointerEvent) => {
     e.preventDefault()
     window.open(resources[account.origin].uri(account.name), '_blank')
-    this.handleClose()
   }
 
-  private _clickCopyHandler = (account: IConnectedAccountUser) => (e) => {
+  private _clickCopyHandler = (account: IConnectedAccountUser) => (e: PointerEvent) => {
     e.preventDefault()
+    const image = <HTMLImageElement>e.target
     navigator.clipboard.writeText(account.name)
-    const imgEl = e.target
-    imgEl.src = COPIED
-    const wrapperEl = imgEl.parentElement.parentElement.parentElement.parentElement
+    image.src = COPIED
     setTimeout(() => {
-      wrapperEl.style.visibility = 'hidden'
-      wrapperEl.style.opacity = '0'
-    }, 400)
-    setTimeout(() => {
-      imgEl.src = COPY
-      this.handleClose()
+      image.src = COPY
     }, 600)
   }
 
