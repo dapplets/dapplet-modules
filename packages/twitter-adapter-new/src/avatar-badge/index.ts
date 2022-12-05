@@ -74,8 +74,16 @@ class AvatarBadge extends LitElement implements IAvatarBadgeState {
       this._accountsWidget.username = this.username
       this._accountsWidget.accounts = this.accounts
       this._accountsWidget.showAccounts = this.showAccounts
-      this._accountsWidget.el = this.ctx.el
-      this._accountsWidget.insPointName = this.insPointName
+
+      const getDistanceFromTop = () => {
+        const elForRects = this.ctx.el.querySelector(
+          'div > div > div > div.css-1dbjc4n.r-18u37iz > div.css-1dbjc4n.r-1awozwy.r-1hwvwag.r-18kxxzh.r-1b7u577 > div'
+        )
+        const rect = elForRects.getBoundingClientRect()
+        return `${rect.top + window.scrollY}px`
+      }
+
+      this._accountsWidget.top = this.insPointName === 'POST' && getDistanceFromTop()
     }
 
     return html`<div

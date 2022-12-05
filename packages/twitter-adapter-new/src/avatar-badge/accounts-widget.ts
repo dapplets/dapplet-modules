@@ -12,6 +12,7 @@ export interface IAccountsWidgetState {
   username: string
   accounts: IConnectedAccountUser[]
   showAccounts: boolean
+  top: string
 }
 
 export class AccountsWidget extends LitElement implements IAccountsWidgetState {
@@ -20,6 +21,7 @@ export class AccountsWidget extends LitElement implements IAccountsWidgetState {
   @property() username: string
   @property() accounts: IConnectedAccountUser[]
   @property() showAccounts: boolean
+  @property() top: string
 
   private _clickAccountHandler = (account: IConnectedAccountUser) => (e: PointerEvent) => {
     e.preventDefault()
@@ -42,6 +44,7 @@ export class AccountsWidget extends LitElement implements IAccountsWidgetState {
       style=${styleMap({
         visibility: this.showAccounts ? 'visible' : 'hidden',
         opacity: this.showAccounts ? '1' : '0',
+        top: this.top,
       })}
     >
       <div class="accounts">
