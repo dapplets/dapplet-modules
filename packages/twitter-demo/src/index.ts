@@ -49,6 +49,8 @@ export default class DemoDapplet implements IFeature {
     }
 
     Core.onAction(() => this.openOverlay())
+    ;(<any>Core).onWalletsUpdate(() => console.log('*** Wallets updated'))
+    ;(<any>Core).onConnectedAccountsUpdate(() => console.log('*** Connected Accounts updated'))
 
     if (localStorage.getItem('tw-dd-open-force') === 'open') {
       localStorage.removeItem('tw-dd-open-force')
