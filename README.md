@@ -1,4 +1,4 @@
-# Dapplet Extension: Examples of Using
+# Dapplet Extension: Usage Examples
 
 ## Getting Started
 
