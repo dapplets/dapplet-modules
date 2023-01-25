@@ -1,3 +1,4 @@
+import ETH_ICON from './assets/eth.svg'
 import GITHUB_ICON from './assets/github.svg'
 import NEAR_ICON from './assets/near-black.svg'
 import TWITTER_ICON from './assets/twitter-icon.svg'
@@ -30,5 +31,10 @@ export const resources: Resources = {
     uri: (name) => 'https://explorer.near.org/accounts/' + name,
     pageName: 'NEAR Mainnet explorer',
     icon: NEAR_ICON,
+  },
+  ethereum: {
+    uri: (name) => 'https://goerli.etherscan.io/address/' + name,
+    pageName: 'Etherscan page',
+    icon: ETH_ICON,
   },
 }
