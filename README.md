@@ -1,4 +1,6 @@
-# Dapplet Extension: Usage Examples
+<img width="1245" alt="dapplet-modules" src="https://user-images.githubusercontent.com/43613968/225050355-86e8e904-d198-4913-9458-6bb0daf03d01.png">
+
+# Dapplet Modules
 
 ## Getting Started
 
