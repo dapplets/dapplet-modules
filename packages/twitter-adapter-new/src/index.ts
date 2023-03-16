@@ -195,21 +195,21 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
           el,
           id:
             el
-              .querySelector('div[data-testid="User-Names"] time')
+              .querySelector('div[data-testid*="User-Name"] time')
               ?.parentNode?.href?.split('/')
               ?.pop() || /status\/([0-9]*)/gm.exec(document.location.href)?.[1],
           text: el.querySelector('div[data-testid="tweetText"]')?.innerText,
-          authorFullname: el.querySelector('div[data-testid="User-Names"] > div:nth-child(1) span')
+          authorFullname: el.querySelector('div[data-testid*="User-Name"] > div:nth-child(1) span')
             ?.innerText,
           authorUsername: el
-            .querySelector('div[data-testid="User-Names"] > div:nth-child(2) span')
+            .querySelector('div[data-testid*="User-Name"] > div:nth-child(2) span')
             ?.innerText?.replace('@', '')
             ?.toLowerCase(),
           authorImg: el
             .querySelector('div[data-testid="Tweet-User-Avatar"] img')
             ?.getAttribute('src'),
           createdAt: el
-            .querySelector('div[data-testid="User-Names"] time')
+            .querySelector('div[data-testid*="User-Name"] time')
             ?.getAttribute('datetime'),
           quote: quote,
           theme: this._getTheme(),
