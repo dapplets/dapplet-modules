@@ -158,6 +158,9 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
       // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       contextBuilder: (el: any) => {
+        // Skip ads
+        if (!el.querySelector('time')) return null
+
         // Adding of right margin to last twitter's native button
         const classList = el.querySelector(
           'div.css-1dbjc4n.r-1mlwlqe.r-18u37iz.r-18kxxzh.r-1h0z5md'
@@ -291,6 +294,7 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
       // ToDo: This selectors are unstable, because Twitter has changed class names to auto-generated.
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       contextBuilder: (el: any) => {
+        if (!el.querySelector('[data-testid="UserName"]')) return null
         const ph = el.querySelector('div.css-1dbjc4n.r-1ifxtd0.r-ymttw5.r-ttdzmv')
         const avatar = ph.querySelector('a.css-4rbku5.css-18t94o4.css-1dbjc4n.r-14lw9ot.r-11mg6pl')
         if (avatar) avatar.style.overflow = 'visible'
