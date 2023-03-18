@@ -221,6 +221,8 @@ export class WidgetBuilder {
     const widgetConstructors = Array.isArray(insPointConfig) ? insPointConfig : [insPointConfig]
 
     for (const widgetConstructor of widgetConstructors) {
+      // ToDo: remove the following condition. Since the extension v0.54.1, contextIds are not defined.
+      // This contextIds are defined by Injector of the extension
       const contextIds = featureConfig.contextIds || []
 
       if (contextIds.length === 0 || contextIds.indexOf(context.parsed.id) !== -1) {
