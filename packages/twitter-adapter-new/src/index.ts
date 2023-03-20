@@ -392,7 +392,8 @@ export default class TwitterAdapter implements IContentAdapter<T_TwitterFeatureC
   }
 
   public getCurrentUser() {
-    if (!document.querySelector('[data-testid=SideNav_AccountSwitcher_Button]')) return null
+    if (!document.querySelector('[data-testid=SideNav_AccountSwitcher_Button]'))
+      return { websiteName: 'Twitter' }
     return {
       username: document
         .querySelector('nav > a:nth-last-child(2')
