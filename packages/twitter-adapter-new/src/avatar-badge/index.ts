@@ -77,8 +77,15 @@ class AvatarBadge extends LitElement implements IAvatarBadgeState {
 
       const getDistanceFromTop = () => {
         const elForRects = this.ctx.el.querySelector(
-          'div > div > div > div.css-1dbjc4n.r-18u37iz > div.css-1dbjc4n.r-1awozwy.r-1hwvwag.r-18kxxzh.r-1b7u577 > div'
+          'div > div > div > div.css-1dbjc4n.r-18u37iz > div.css-1dbjc4n.r-1awozwy > div'
         )
+        if (!elForRects) {
+          console.log(
+            'ATTENTION! getDistanceFromTop() in Twitter adapter -> AvatarBadge cannot find an element! elForRects:',
+            elForRects
+          )
+          return '0'
+        }
         const rect = elForRects.getBoundingClientRect()
         return `${rect.top + window.scrollY}px`
       }
