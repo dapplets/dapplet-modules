@@ -236,44 +236,44 @@ export const styles = css`
     color: rgb(83, 100, 113);
   }
 
+  /* POST */
+
+  .dapplet-widget-post-button {
+    color: inherit;
+    background: none;
+  }
+
   /* PROFILE */
 
   .dapplet-widget-profile-button {
+    background: inherit;
     user-select: none;
-    border: 1px solid rgb(207, 217, 222);
     padding: 0 10px;
     height: 35px;
     cursor: pointer;
     border-radius: 9999px;
     margin: 0 8px 12px 0;
     font-weight: 600;
-    color: #000;
     box-sizing: border-box;
     font-size: 15px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'TwitterChirp', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+      Arial, sans-serif;
     line-height: 33px;
     transition: background-color 0.2s ease-in-out;
   }
 
-  .dapplet-widget-profile-button:hover {
+  .dapplet-widget-profile-button-light {
+    border: 1px solid rgb(207, 217, 222);
+    color: #000;
+  }
+
+  .dapplet-widget-profile-button-light:hover {
     background-color: rgba(15, 20, 25, 0.1);
   }
 
   .dapplet-widget-profile-button-dark {
-    user-select: none;
     border: 1px solid rgb(83, 100, 113);
-    padding: 0 10px;
-    height: 35px;
-    cursor: pointer;
-    border-radius: 9999px;
-    margin: 0 8px 12px 0;
-    font-weight: 600;
     color: #fff;
-    box-sizing: border-box;
-    font-size: 15px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    line-height: 33px;
-    transition: background-color 0.2s ease-in-out;
   }
 
   .dapplet-widget-profile-button-dark:hover {

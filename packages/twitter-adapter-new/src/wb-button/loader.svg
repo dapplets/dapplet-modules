@@ -1,7 +1,4 @@
-import { html } from 'lit'
-
-export const loader = html`
-  <svg
+<svg
     width="18px"
     height="18px"
     xmlns="http://www.w3.org/2000/svg"
@@ -32,4 +29,3 @@ export const loader = html`
       ></animateTransform>
     </circle>
   </svg>
-`
