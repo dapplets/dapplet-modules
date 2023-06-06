@@ -1,0 +1,20 @@
+[
+  "packages/common-adapter/dapplet.json",
+  "packages/common-lib/dapplet.json",
+  "packages/dapplets-org-feature-1/dapplet.json",
+  "packages/dynamic-adapter/dapplet.json",
+  "packages/google-drive-adapter/dapplet.json",
+  "packages/identity-adapter/dapplet.json",
+  "packages/instagram-adapter/dapplet.json",
+  "packages/social-feature-1/dapplet.json",
+  "packages/twitter-adapter/dapplet.json",
+  "packages/twitter-adapter-legacy/dapplet.json",
+  "packages/twitter-adapter-new/dapplet.json",
+  "packages/twitter-demo/dapplet.json",
+  "packages/twitter-feature-1/dapplet.json",
+  "packages/twitter-feature-2/dapplet.json",
+  "packages/twitter-feature-3/dapplet.json",
+  "packages/twitter-near-redirector/dapplet.json",
+  "packages/video-adapter/dapplet.json",
+  "packages/video-feature/dapplet.json"
+]

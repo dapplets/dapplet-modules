@@ -18,8 +18,8 @@ var server = null;
 
 if (IS_HTTPS) {
     server = https.createServer({
-        key: fs.readFileSync('src/server/secret/server.key'),
-        cert: fs.readFileSync('src/server/secret/server.cert')
+        key: fs.readFileSync('src/server/secret/localhost/localhost.decrypted.key'),
+        cert: fs.readFileSync('src/server/secret/localhost/localhost.crt')
     }, app);
 
     var expressWs = require('express-ws')(app, server);
