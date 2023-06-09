@@ -73,7 +73,9 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
 
   // Config from adapter
   public configure(config: { [contextName: string]: IWidgetBuilderConfig }): void {
-    const builders = Object.entries(config).map(([contextName, cfg]) => {
+    const builders = Object.entries(config).map((arr) => {
+      const contextName = arr[0]
+      const cfg = arr[1]
       const builder = new WidgetBuilder(contextName, cfg)
       builder.eventHandler = (event, args, targetCtx) => {
         if (targetCtx) {
@@ -267,7 +269,7 @@ class DynamicAdapter<IAdapterConfig> implements IDynamicAdapter<IAdapterConfig> 
         }
 
         const updateWebComponent = (values: any) => {
-          Object.entries(values).forEach(([k, v]) => (widget.el[k] = v))
+          Object.entries(values).forEach((entry) => (widget.el[entry[0]] = entry[1]))
         }
 
         updateWebComponent(state.getStateValues()) // initialize attributes from state

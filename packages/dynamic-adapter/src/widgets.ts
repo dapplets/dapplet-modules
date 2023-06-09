@@ -144,7 +144,9 @@ export class WidgetBuilder {
               ;(Array.isArray(widgets) ? widgets : [widgets])
                 .filter((widget) => !Array.isArray(widget) && typeof widget === 'object')
                 .forEach((configsWrapper) => {
-                  Object.entries(configsWrapper).forEach(([key, value]) => {
+                  Object.entries(configsWrapper).forEach((entry) => {
+                    const key = entry[0]
+                    const value = entry[1]
                     if (childrenContext === key) {
                       featureConfig[key] = value // ToDo: [POTENTIAL BUG] unclear consequences of overwriting configurations of child contexts
                       wb.updateContexts(
@@ -230,12 +232,18 @@ export class WidgetBuilder {
           // console.error(`Invalid widget configuration in the insertion point "${insPointName}". It must be WidgetConstructor instance.`);
           continue
         }
-        const insertedWidget = widgetConstructor(
-          this,
-          insPointName,
-          featureConfig.orderIndex,
-          contextNode
-        )
+        let insertedWidget
+        try {
+          insertedWidget = widgetConstructor(
+            this,
+            insPointName,
+            featureConfig.orderIndex,
+            contextNode
+            )
+          } catch (err) {
+          console.log(widgetConstructor)
+          console.log(err)
+        }
         if (!insertedWidget) continue
 
         const registeredWidgets = this.widgets.get(featureConfig)

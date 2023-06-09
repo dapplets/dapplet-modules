@@ -24,6 +24,6 @@
   },
   "dependencies": {
     "slideout": "^1.0.1",
-    "lit": "^2.2.1"
+    "lit": "^2.7.5"
   }
 }

@@ -23,7 +23,7 @@ export default class Starter {
   private _core: any = Core
   private _overlay = this._core.starterOverlay
     ? this._core.starterOverlay()
-    : Core.overlay({ url: chrome.extension.getURL('starter.html'), title: 'Starter' }) // ToDo: utilize starterOverlay
+    : Core.overlay({ url: 'starter.html', title: 'Starter' }) // ToDo: utilize starterOverlay
 
   constructor(public adapter: TwitterAdapter) {
     const { buttonStarter } = this.adapter.exports('twitter-adapter.dapplet-base.eth')

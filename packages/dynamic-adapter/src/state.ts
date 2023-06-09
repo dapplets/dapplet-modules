@@ -100,7 +100,9 @@ export class State<T> {
       }
 
       const me = this
-      Object.entries(this.config[stateName]).forEach(([key, value]) => {
+      Object.entries(this.config[stateName]).forEach((entry) => {
+        const key = entry[0]
+        const value = entry[1]
         if (key === undefined || key === 'undefined') return
         const parseWidgetParam = (valueOrApConf, i?: number) => {
           // i - the index of the current element being processed in the array
@@ -159,10 +161,11 @@ export class State<T> {
   private _themifyState(values: any): any {
     const theme = this.getTheme?.()
     if (!theme) return values
-    const themedEntries = Object.entries(values).map(([k, v]) => [
-      k,
-      typeof v === 'object' && v?.[theme] ? v[theme] : v,
-    ])
+    const themedEntries = Object.entries(values).map((entry) => {
+      const k = entry[0]
+      const v = entry[1]
+      return [k, typeof v === 'object' && v?.[theme] ? v[theme] : v]
+    })
     const themedState = Object.fromEntries(themedEntries)
     return { ...themedState, theme }
   }
