@@ -1,10 +1,10 @@
 {
-  "name": "twitter-parser.dapplet-base.eth",
+  "name": "twitter-config.dapplet-base.eth",
   "branch": "default",
   "version": "0.1.0",
-  "type": "PARSER",
-  "title": "Twitter Parser",
-  "description": "Parser for Twitter",
+  "type": "CONFIG",
+  "title": "Twitter Config",
+  "description": "Parser config for Twitter",
   "main": "index.json",
   "contextIds": [
     "twitter.com",
@@ -16,9 +16,5 @@
   ],
   "dependencies": {
     "dynamic-adapter.dapplet-base.eth": "0.6.22"
-  },
-  "interfaces": {
-    "identity-adapter.dapplet-base.eth": "0.3.0",
-    "ca-virtual-adapter.dapplet-base.eth": "0.1.0"
   }
 }
