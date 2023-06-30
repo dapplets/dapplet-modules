@@ -1,7 +1,7 @@
 {
   "name": "twitter-config.dapplet-base.eth",
   "branch": "default",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "type": "CONFIG",
   "title": "Twitter Config",
   "description": "Parser config for Twitter",
