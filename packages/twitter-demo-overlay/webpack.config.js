@@ -31,7 +31,10 @@ module.exports = {
       },
       {
         test: [/\.eot$/, /\.ttf$/, /\.woff$/, /\.woff2$/, /\.svg$/, /\.png$/],
-        use: 'file-loader',
+        loader: 'file-loader',
+        options: {
+          name: '[name].[sha512:hash:6].[ext]',
+        }
       },
     ],
   },
