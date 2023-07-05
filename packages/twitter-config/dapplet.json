@@ -9,12 +9,7 @@
   "contextIds": [
     "twitter.com",
     "www.twitter.com",
-    "mobile.twitter.com",
-    "twitter.com/id",
-    "www.twitter.com/id",
-    "mobile.twitter.com/id"
+    "mobile.twitter.com"
   ],
-  "dependencies": {
-    "dynamic-adapter.dapplet-base.eth": "0.6.22"
-  }
+  "dependencies": {}
 }
