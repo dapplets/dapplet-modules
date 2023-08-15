@@ -11,6 +11,7 @@
   "packages/twitter-adapter-legacy/dapplet.json",
   "packages/twitter-adapter-new/dapplet.json",
   "packages/twitter-config/dapplet.json",
+  "packages/twitter-config-demo/dapplet.json",
   "packages/twitter-demo/dapplet.json",
   "packages/twitter-feature-1/dapplet.json",
   "packages/twitter-feature-2/dapplet.json",

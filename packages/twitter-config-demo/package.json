@@ -1,0 +1,16 @@
+{
+  "name": "twitter-config-demo.dapplet-base.eth",
+  "version": "0.1.0",
+  "description": "Demonstration of adapters capabilities",
+  "main": "build/index.js",
+  "scripts": {
+    "build": "webpack --config webpack.dev.js",
+    "watch": "webpack -w --config webpack.dev.js",
+    "clean": "rimraf build lib"
+  },
+  "author": "Dapplets Team",
+  "license": "MIT",
+  "devDependencies": {
+    "twitter-adapter.dapplet-base.eth": "^0.9.0"
+  }
+}
