@@ -30,7 +30,8 @@
     "lint": "npm run prettify && npm run stylelint && npm run eslint",
     "prettify": "prettier --write ./packages",
     "eslint": "eslint ./packages --ext .ts --fix",
-    "stylelint": "stylelint ./packages/**/*.{css,scss,module.scss} --fix"
+    "stylelint": "stylelint ./packages/**/*.{css,scss,module.scss} --fix",
+    "test": "playwright test"
   },
   "repository": {
     "type": "git",
@@ -42,6 +43,8 @@
   "homepage": "https://github.com/dapplets/typescript-examples#readme",
   "devDependencies": {
     "@dapplets/dapplet-extension": "latest",
+    "@dapplets/dapplet-playwright": "^0.1.3",
+    "@playwright/test": "^1.37.0",
     "@typescript-eslint/eslint-plugin": "^5.27.0",
     "@typescript-eslint/parser": "^5.27.0",
     "eslint": "^8.16.0",

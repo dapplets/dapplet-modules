@@ -13,7 +13,7 @@
         "lib": [
             "es2019", "dom"
         ],
-        "types": [ "../../typesPatch" ],
+        "types": [ "../../typesPatch", "node" ],
         "composite": true
     },
 }
