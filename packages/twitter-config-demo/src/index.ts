@@ -19,13 +19,15 @@ export default class DemoDapplet implements IFeature {
             vertical: 'bottom',
             horizontal: 'right',
             img: MAIN_IMG,
+            tooltip: 'PROFILE_AVATAR_BADGE',
           },
         }),
         button({
           initial: 'DEFAULT',
           DEFAULT: {
             img: MAIN_IMG,
-            label: 'TEST1',
+            label: 'TEST',
+            tooltip: 'PROFILE_BUTTON',
           },
         }),
       ],
@@ -35,14 +37,16 @@ export default class DemoDapplet implements IFeature {
           DEFAULT: {
             vertical: 'bottom',
             horizontal: 'right',
+            tooltip: 'POST_AVATAR_BADGE',
             img: { DARK: WHITE_IMG, LIGHT: BLACK_IMG },
           },
         }),
         button({
           initial: 'DEFAULT',
           DEFAULT: {
-            label: 'TEST2',
+            label: 'TEST',
             img: MAIN_IMG,
+            tooltip: 'POST_BUTTON',
           },
         }),
       ],

@@ -1,20 +1,21 @@
-import { expect, test } from '@dapplets/dapplet-playwright'
+import { expect, test } from '../fixtures/twitter-login'
 
 const registry = 'http://localhost:8080/index.json'
 
-// ToDo: unskip when authorization will be implemented
-test.skip('should inject widgets in Twitter profile', async ({
+test('should inject widgets in Twitter profile', async ({
   page,
+  skipOnboarding,
   enableDevServer,
   activateDapplet,
 }) => {
   await page.goto('https://twitter.com/alsakhaev')
+
+  await skipOnboarding()
   await enableDevServer(registry)
   await activateDapplet('twitter-config-demo.dapplet-base.eth', registry)
 
-  // avatar badge
-  await expect(page.locator('.dapplet-widget .avatar-badge img')).toBeVisible()
-
-  // button
-  await expect(page.locator('.dapplet-widget').getByText('TEST2')).toBeVisible()
+  await expect(page.getByTitle('PROFILE_AVATAR_BADGE')).toBeAttached()
+  await expect(page.getByTitle('PROFILE_BUTTON')).toBeAttached()
+  await expect(page.getByTitle('POST_AVATAR_BADGE').first()).toBeAttached()
+  await expect(page.getByTitle('POST_BUTTON').first()).toBeAttached()
 })

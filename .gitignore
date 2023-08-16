@@ -14,3 +14,6 @@ lerna-debug.log
 /test-results/
 /playwright-report/
 /playwright/.cache/
+
+.env
+artifacts
