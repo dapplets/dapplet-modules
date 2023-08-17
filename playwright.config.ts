@@ -20,9 +20,10 @@ export default defineConfig<TwitterLoginOptions & BrowserOptions>({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        twitterPassword: process.env.TWITTER_PASSWORD,
-        twitterEmail: process.env.TWITTER_EMAIL,
-        twitterUsername: process.env.TWITTER_USERNAME,
+        twitterPassword: process.env.TWITTER_AUTH_PASSWORD,
+        twitterEmail: process.env.TWITTER_AUTH_EMAIL,
+        twitterUsername: process.env.TWITTER_AUTH_USERNAME,
+        twitterBio: process.env.TWITTER_AUTH_BIO,
         newHeadless: process.env.CI ? true : false,
         extensionVersion: 'v0.60.0-alpha.2',
       },

@@ -8,7 +8,7 @@ test('should inject widgets in Twitter post', async ({
   enableDevServer,
   activateDapplet,
 }) => {
-  await page.goto('https://twitter.com/alsakhaev/status/1691462269182611456')
+  await page.goto(process.env.TWITTER_TEST_POST_URL)
   await skipOnboarding()
   await enableDevServer(registry)
   await activateDapplet('twitter-config-demo.dapplet-base.eth', registry)

@@ -5,23 +5,20 @@ import path from 'path'
 const artifactsPath = path.join(__dirname, '..', 'artifacts')
 const cookiesPath = path.join(artifactsPath, 'cookies.json')
 
-const tipsReciever = {
-  username: 'alsakhaev',
-  bio: 'Web3 Developer at Dapplets',
-}
-
 export type TwitterLoginOptions = {
   twitterPassword: string
   twitterEmail: string
   twitterUsername: string
+  twitterBio: string
 }
 
 export const test = base.extend<TwitterLoginOptions>({
   twitterPassword: [null, { option: true }],
   twitterEmail: [null, { option: true }],
   twitterUsername: [null, { option: true }],
+  twitterBio: [null, { option: true }],
 
-  page: async ({ context, twitterPassword, twitterEmail, twitterUsername }, use) => {
+  page: async ({ context, twitterPassword, twitterEmail, twitterUsername, twitterBio }, use) => {
     if (fs.existsSync(cookiesPath)) {
       const cookies = fs.readFileSync(cookiesPath, 'utf8')
       const deserializedCookies = JSON.parse(cookies)
@@ -30,7 +27,7 @@ export const test = base.extend<TwitterLoginOptions>({
 
     const page = await context.newPage()
 
-    await page.goto('https://twitter.com/alsakhaev')
+    await page.goto('https://twitter.com/' + twitterUsername)
     await page.waitForTimeout(5000) // ToDo: remove
 
     // ToDo: move to POM
@@ -56,7 +53,7 @@ export const test = base.extend<TwitterLoginOptions>({
       // }
 
       await page.waitForTimeout(5000)
-      await page.locator(`span:has-text("${tipsReciever.bio}")`) // ToDo: remove hardcoded values
+      await page.locator(`span:has-text("${twitterBio}")`) // ToDo: remove hardcoded values
 
       // save cookies to reuse later
       const cookies = await context.cookies()

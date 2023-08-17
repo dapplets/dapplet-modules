@@ -8,7 +8,7 @@ test('should inject widgets in Twitter profile', async ({
   enableDevServer,
   activateDapplet,
 }) => {
-  await page.goto('https://twitter.com/alsakhaev')
+  await page.goto(process.env.TWITTER_TEST_PROFILE_URL)
 
   await skipOnboarding()
   await enableDevServer(registry)
